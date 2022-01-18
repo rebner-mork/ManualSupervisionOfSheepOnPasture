@@ -38,25 +38,28 @@ class _MyAppState extends State<MyApp> {
             ),
             const SizedBox(height: 20),
             TextFormField(
-              textAlign: TextAlign.center,
               autofocus: true,
               validator: (value) => validateUserName(value),
               decoration: const InputDecoration(
-                  hintText: 'Brukernavn', border: OutlineInputBorder()),
+                  labelText: 'Brukernavn',
+                  alignLabelWithHint: true,
+                  border: OutlineInputBorder()),
             ),
             const SizedBox(height: 20),
             TextFormField(
-              textAlign: TextAlign.center,
               validator: (value) => validatePassword(value),
-              obscureText: visiblePassword,
+              obscureText: !visiblePassword,
               decoration: InputDecoration(
-                  //contentPadding: EdgeInsets.fromLTRB(left, top, right, bottom),
-                  // Align hinttext og synlig-ikon
                   suffixIcon: IconButton(
-                      icon: const Icon(Icons.visibility, size: 20),
-                      highlightColor: Colors.black,
+                      icon: Icon(
+                          visiblePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          size: 20),
+                      color: Colors
+                          .blue, //!visiblePassword ? Colors.grey : Colors.blue,
                       onPressed: _toggleVisiblePassword),
-                  hintText: 'Passord',
+                  labelText: 'Passord',
                   border: const OutlineInputBorder()),
             ),
             const SizedBox(height: 20),
