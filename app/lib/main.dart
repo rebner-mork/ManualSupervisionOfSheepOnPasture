@@ -56,8 +56,7 @@ class _MyAppState extends State<MyApp> {
                               ? Icons.visibility_off
                               : Icons.visibility,
                           size: 20),
-                      color: Colors
-                          .blue, //!visiblePassword ? Colors.grey : Colors.blue,
+                      color: !visiblePassword ? Colors.grey : Colors.blue,
                       onPressed: _toggleVisiblePassword),
                   labelText: 'Passord',
                   border: const OutlineInputBorder()),
