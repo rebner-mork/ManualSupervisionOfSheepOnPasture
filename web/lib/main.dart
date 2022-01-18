@@ -11,18 +11,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Material(
-            child: Row(
-      children: [
-        const WelcomeInfo(),
-        const Padding(
-            padding: EdgeInsets.symmetric(
-                vertical: 100), //TODO bruke symetric constructor
-            child: VerticalDivider(
-              color: Colors.black,
-            )),
-        LoginForm(key),
-      ],
-    )));
+            child: Row(children: [
+      const Flexible(flex: 10, child: Center(child: WelcomeInfo())),
+      Flexible(flex: 1, child: Container(color: Colors.yellow)),
+      Flexible(
+          flex: 10,
+          child: Center(
+              child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 150),
+            child: LoginForm(key),
+          ))),
+    ])));
   }
 }
 
@@ -33,17 +32,19 @@ class WelcomeInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
         child: Column(
-      children: [
+      children: const [
         Text("Overskrift", style: TextStyle(fontSize: 70)),
         SizedBox(
           height: 40,
         ),
-        Image.network(
-            'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl-2.jpg'),
+        Expanded(
+            child: Image(
+          image: AssetImage('../assets/sheep.jpg'),
+        )),
         SizedBox(
           height: 40,
         ),
-        Text("Forklaring\n" * 10),
+        Text("Forklaring\n"),
       ],
     ));
   }
@@ -82,42 +83,90 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-        child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                const SizedBox(
-                  //TODO fjerne med å sette padding på heile widgeten
-                  height: 200,
-                ),
-                TextFormField(
-                  autofocus: true,
-                  textAlign: TextAlign.left,
-                  validator: _validateUserName,
-                  decoration: const InputDecoration(
-                      hintText: "Brukernavn", border: OutlineInputBorder()),
-                ),
-                const SizedBox(height: 30 //TODO sette til const,
-                    ),
-                TextFormField(
-                    textAlign: TextAlign.left,
-                    validator: _validatePassword,
-                    obscureText: _visiblePassword,
-                    decoration: InputDecoration(
-                        hintText: "Passord",
-                        suffixIcon: IconButton(
-                            icon: const Icon(Icons.visibility),
-                            onPressed: _toggleVisiblePassword),
-                        border: const OutlineInputBorder())),
-                const SizedBox(height: 40 //TODO sette til const,
-                    ),
-                ElevatedButton(
-                    onPressed: () {
-                      _formKey.currentState!.validate();
-                    },
-                    child: const Text("Logg inn"))
-              ],
-            )));
+    return Form(
+        key: _formKey,
+        child: Column(children: [
+          const Flexible(
+              child: FractionallySizedBox(
+            heightFactor: 0.7,
+          )),
+          const Icon(
+            Icons.account_circle,
+            size: 200,
+          ),
+          const Flexible(
+              child: FractionallySizedBox(
+            heightFactor: 0.1,
+          )),
+          TextFormField(
+            autofocus: true,
+            textAlign: TextAlign.left,
+            validator: _validateUserName,
+            decoration: const InputDecoration(
+                hintText: "Brukernavn", border: OutlineInputBorder()),
+          ),
+          const Flexible(
+              child: FractionallySizedBox(
+            heightFactor: 0.1,
+          )),
+          TextFormField(
+              textAlign: TextAlign.left,
+              validator: _validatePassword,
+              obscureText: _visiblePassword,
+              decoration: InputDecoration(
+                  hintText: "Passord",
+                  suffixIcon: IconButton(
+                      icon: const Icon(Icons.visibility),
+                      onPressed: _toggleVisiblePassword),
+                  border: const OutlineInputBorder())),
+          const Flexible(
+              child: FractionallySizedBox(
+            heightFactor: 0.1,
+          )),
+          ElevatedButton(
+              onPressed: () {
+                _formKey.currentState!.validate();
+              },
+              child: const Text("Logg inn"))
+        ]));
   }
 }
+
+    /*return Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            const Icon(Icons.account_circle, size: 180),
+            const SizedBox(
+              height: 40,
+            ),
+            TextFormField(
+              autofocus: true,
+              textAlign: TextAlign.left,
+              validator: _validateUserName,
+              decoration: const InputDecoration(
+                  hintText: "Brukernavn", border: OutlineInputBorder()),
+            ),
+            const SizedBox(height: 30 //TODO sette til const,
+                ),
+            TextFormField(
+                textAlign: TextAlign.left,
+                validator: _validatePassword,
+                obscureText: _visiblePassword,
+                decoration: InputDecoration(
+                    hintText: "Passord",
+                    suffixIcon: IconButton(
+                        icon: const Icon(Icons.visibility),
+                        onPressed: _toggleVisiblePassword),
+                    border: const OutlineInputBorder())),
+            const SizedBox(height: 40 //TODO sette til const,
+                ),
+            ElevatedButton(
+                onPressed: () {
+                  _formKey.currentState!.validate();
+                },
+                child: const Text("Logg inn"))
+          ],
+        ));
+  }*/
+
