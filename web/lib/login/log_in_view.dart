@@ -8,10 +8,10 @@ class LogInView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
         child: Row(children: [
-      const Flexible(flex: 10, child: Center(child: WelcomeInfo())),
-      Flexible(flex: 1, child: Container(color: Colors.yellow)),
+      const Flexible(flex: 80, child: Center(child: WelcomePicture())),
+      Flexible(flex: 1, child: Container(color: Colors.black)),
       Flexible(
-          flex: 10,
+          flex: 60,
           child: Center(
               child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 150),
@@ -21,24 +21,16 @@ class LogInView extends StatelessWidget {
   }
 }
 
-class WelcomeInfo extends StatelessWidget {
-  const WelcomeInfo({Key? key}) : super(key: key);
+class WelcomePicture extends StatelessWidget {
+  const WelcomePicture({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Material(
-        child: Column(
-      children: [
-        const Text("Overskrift", style: TextStyle(fontSize: 70)),
-        const SizedBox(
-          height: 40,
-        ),
-        Expanded(child: Image.asset('images/sheep.jpg')),
-        const SizedBox(
-          height: 40,
-        ),
-        const Text("Forklaring\n"),
-      ],
+        child: Container(
+      foregroundDecoration: const BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('images/sheep.jpg'), fit: BoxFit.fill)),
     ));
   }
 }

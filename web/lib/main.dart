@@ -11,9 +11,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: const LogInView(), initialRoute: 'login', routes: {
-      'login': (context) => const LogInView(),
-      'create_user': (context) => const CreateUserView(),
-    });
+    //TODO Remove path on this branch
+    return MaterialApp(
+      home: const LogInView(),
+      initialRoute: 'login',
+      routes: {
+        'login': (context) => const LogInView(),
+        'create_user': (context) => const CreateUserView(),
+      },
+      theme: ThemeData(
+          colorScheme: ColorScheme.fromSwatch(
+        primarySwatch: Colors.green,
+      )),
+    );
   }
 }
