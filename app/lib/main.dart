@@ -1,4 +1,4 @@
-import 'package:app/secondscreen.dart';
+import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,12 +19,13 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final _formKey = GlobalKey<FormState>();
-  bool visiblePassword = false;
-  late String _email, _password;
+  bool _visiblePassword = false;
+  bool _loginFailed = false;
+  late String _email, _password, _feedbackMessage;
 
   void _toggleVisiblePassword() {
     setState(() {
-      visiblePassword = !visiblePassword;
+      _visiblePassword = !_visiblePassword;
     });
   }
 
@@ -46,10 +47,17 @@ class _MyAppState extends State<MyApp> {
             const SizedBox(height: 20),
             TextFormField(
               autofocus: true,
-              validator: (input) => validateUserName(input),
+              validator: (input) => validateMail(input),
               onSaved: (input) => _email = input.toString(),
+              onChanged: (text) {
+                if (_loginFailed) {
+                  setState(() {
+                    _loginFailed = false;
+                  });
+                }
+              },
               decoration: const InputDecoration(
-                  labelText: 'Brukernavn',
+                  labelText: 'E-post',
                   alignLabelWithHint: true,
                   border: OutlineInputBorder()),
             ),
@@ -57,20 +65,41 @@ class _MyAppState extends State<MyApp> {
             TextFormField(
               validator: (input) => validatePassword(input),
               onSaved: (input) => _password = input.toString(),
-              obscureText: !visiblePassword,
+              onChanged: (text) {
+                if (_loginFailed) {
+                  setState(() {
+                    _loginFailed = false;
+                  });
+                }
+              },
+              obscureText: !_visiblePassword,
               decoration: InputDecoration(
                   suffixIcon: IconButton(
                       icon: Icon(
-                          visiblePassword
+                          _visiblePassword
                               ? Icons.visibility_off
                               : Icons.visibility,
                           size: 20),
-                      color: !visiblePassword ? Colors.grey : Colors.blue,
+                      color: !_visiblePassword ? Colors.grey : Colors.blue,
                       onPressed: _toggleVisiblePassword),
                   labelText: 'Passord',
                   border: const OutlineInputBorder()),
             ),
             const SizedBox(height: 20),
+            AnimatedOpacity(
+              opacity: _loginFailed ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 200),
+              child: Text(
+                (() {
+                  if (_loginFailed) {
+                    return _feedbackMessage;
+                  } else {
+                    return '';
+                  }
+                })(),
+                style: TextStyle(backgroundColor: Colors.red.shade400),
+              ),
+            ),
             ElevatedButton(
                 onPressed: signIn,
                 //_formKey.currentState!.validate();
@@ -94,23 +123,28 @@ class _MyAppState extends State<MyApp> {
       try {
         UserCredential user = await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: _email, password: _password);
-
         logger.log("JA: " + user.toString());
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => SecondScreen(
-                    userCredential:
-                        user))); //SecondScreen(user: FirebaseAuth.instance.currentUser)));
+        // TODO: bytt skjerm
+
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'invalid-email') {
+          _feedbackMessage = 'E-post er ugyldig';
+        } else {
+          _feedbackMessage = 'E-post eller passord er ugyldig';
+        }
+        setState(() {
+          _loginFailed = true;
+        });
       } catch (e) {
-        logger.log("NEI: " + e.toString());
+        logger.log(e.toString());
+        // TODO: Annen error
       }
     }
   }
 
-  String? validateUserName(String? userName) {
-    if (userName!.isEmpty) {
-      return 'Skriv brukernavn';
+  String? validateMail(String? mail) {
+    if (mail!.isEmpty) {
+      return 'Skriv e-post';
     }
     return null;
   }
@@ -118,6 +152,8 @@ class _MyAppState extends State<MyApp> {
   String? validatePassword(String? password) {
     if (password!.isEmpty) {
       return 'Skriv passord';
+    } else if (password.length < 8) {
+      return 'Passord må inneholde minst 8 tegn';
     }
 
     return null;
