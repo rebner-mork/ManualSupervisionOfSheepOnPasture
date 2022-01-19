@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:email_validator/email_validator.dart';
 import 'dart:developer' as logger;
 
 void main() async {
@@ -21,7 +22,7 @@ class _MyAppState extends State<MyApp> {
   final _formKey = GlobalKey<FormState>();
   bool _visiblePassword = false;
   bool _loginFailed = false;
-  late String _email, _password, _feedbackMessage;
+  late String _email, _password;
 
   void _toggleVisiblePassword() {
     setState(() {
@@ -47,7 +48,7 @@ class _MyAppState extends State<MyApp> {
             const SizedBox(height: 20),
             TextFormField(
               autofocus: true,
-              validator: (input) => validateMail(input),
+              validator: (input) => validateEmail(input),
               onSaved: (input) => _email = input.toString(),
               onChanged: (text) {
                 if (_loginFailed) {
@@ -56,6 +57,8 @@ class _MyAppState extends State<MyApp> {
                   });
                 }
               },
+              textInputAction: TextInputAction.go,
+              onFieldSubmitted: (value) => signIn(),
               decoration: const InputDecoration(
                   labelText: 'E-post',
                   alignLabelWithHint: true,
@@ -72,6 +75,8 @@ class _MyAppState extends State<MyApp> {
                   });
                 }
               },
+              textInputAction: TextInputAction.go,
+              onFieldSubmitted: (value) => signIn(),
               obscureText: !_visiblePassword,
               decoration: InputDecoration(
                   suffixIcon: IconButton(
@@ -90,20 +95,11 @@ class _MyAppState extends State<MyApp> {
               opacity: _loginFailed ? 1.0 : 0.0,
               duration: const Duration(milliseconds: 200),
               child: Text(
-                (() {
-                  if (_loginFailed) {
-                    return _feedbackMessage;
-                  } else {
-                    return '';
-                  }
-                })(),
-                style: TextStyle(backgroundColor: Colors.red.shade400),
+                _loginFailed ? 'E-post eller passord er ugyldig' : '',
+                style: const TextStyle(color: Colors.red),
               ),
             ),
-            ElevatedButton(
-                onPressed: signIn,
-                //_formKey.currentState!.validate();
-                child: const Text('Logg inn')),
+            ElevatedButton(onPressed: signIn, child: const Text('Logg inn')),
             const SizedBox(height: 300),
             ElevatedButton(
                 onPressed: () {}, child: const Text('Registrer ny bruker'))
@@ -114,37 +110,27 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> signIn() async {
-    // Future<User>?
-    logger.log('Logger inn');
-    //print(object)
     final formState = _formKey.currentState;
     if (formState!.validate()) {
       formState.save();
       try {
         UserCredential user = await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: _email, password: _password);
-        logger.log("JA: " + user.toString());
-        // TODO: bytt skjerm
-
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'invalid-email') {
-          _feedbackMessage = 'E-post er ugyldig';
-        } else {
-          _feedbackMessage = 'E-post eller passord er ugyldig';
-        }
+        logger.log("Innlogget som: " + user.toString());
+      } catch (e) {
+        logger.log("Ikke innlogget: " + e.toString());
         setState(() {
           _loginFailed = true;
         });
-      } catch (e) {
-        logger.log(e.toString());
-        // TODO: Annen error
       }
     }
   }
 
-  String? validateMail(String? mail) {
-    if (mail!.isEmpty) {
+  String? validateEmail(String? email) {
+    if (email!.isEmpty) {
       return 'Skriv e-post';
+    } else if (!EmailValidator.validate(email)) {
+      return 'Skriv gyldig e-post';
     }
     return null;
   }
