@@ -1,6 +1,12 @@
+import 'package:app/secondscreen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:developer' as logger;
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp(null));
 }
 
@@ -14,6 +20,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final _formKey = GlobalKey<FormState>();
   bool visiblePassword = false;
+  late String _email, _password;
 
   void _toggleVisiblePassword() {
     setState(() {
@@ -31,7 +38,7 @@ class _MyAppState extends State<MyApp> {
         widthFactor: 0.6,
         child: Column(
           children: [
-            const SizedBox(height: 120), // TODO?
+            const SizedBox(height: 120),
             const Icon(
               Icons.account_circle,
               size: 80,
@@ -39,7 +46,8 @@ class _MyAppState extends State<MyApp> {
             const SizedBox(height: 20),
             TextFormField(
               autofocus: true,
-              validator: (value) => validateUserName(value),
+              validator: (input) => validateUserName(input),
+              onSaved: (input) => _email = input.toString(),
               decoration: const InputDecoration(
                   labelText: 'Brukernavn',
                   alignLabelWithHint: true,
@@ -47,7 +55,8 @@ class _MyAppState extends State<MyApp> {
             ),
             const SizedBox(height: 20),
             TextFormField(
-              validator: (value) => validatePassword(value),
+              validator: (input) => validatePassword(input),
+              onSaved: (input) => _password = input.toString(),
               obscureText: !visiblePassword,
               decoration: InputDecoration(
                   suffixIcon: IconButton(
@@ -63,9 +72,8 @@ class _MyAppState extends State<MyApp> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-                onPressed: () {
-                  _formKey.currentState!.validate();
-                },
+                onPressed: signIn,
+                //_formKey.currentState!.validate();
                 child: const Text('Logg inn')),
             const SizedBox(height: 300),
             ElevatedButton(
@@ -75,19 +83,43 @@ class _MyAppState extends State<MyApp> {
       ),
     )));
   }
-}
 
-String? validateUserName(String? userName) {
-  if (userName!.isEmpty) {
-    return 'Skriv brukernavn';
+  Future<void> signIn() async {
+    // Future<User>?
+    logger.log('Logger inn');
+    //print(object)
+    final formState = _formKey.currentState;
+    if (formState!.validate()) {
+      formState.save();
+      try {
+        UserCredential user = await FirebaseAuth.instance
+            .signInWithEmailAndPassword(email: _email, password: _password);
+
+        logger.log("JA: " + user.toString());
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SecondScreen(
+                    userCredential:
+                        user))); //SecondScreen(user: FirebaseAuth.instance.currentUser)));
+      } catch (e) {
+        logger.log("NEI: " + e.toString());
+      }
+    }
   }
-  return null;
-}
 
-String? validatePassword(String? password) {
-  if (password!.isEmpty) {
-    return 'Skriv passord';
+  String? validateUserName(String? userName) {
+    if (userName!.isEmpty) {
+      return 'Skriv brukernavn';
+    }
+    return null;
   }
 
-  return null;
+  String? validatePassword(String? password) {
+    if (password!.isEmpty) {
+      return 'Skriv passord';
+    }
+
+    return null;
+  }
 }
