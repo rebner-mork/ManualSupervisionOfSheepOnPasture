@@ -15,7 +15,7 @@ class LogInView extends StatelessWidget {
           child: Center(
               child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 150),
-            child: LoginForm(key),
+            child: const LoginForm(),
           ))),
     ]));
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class LoginForm extends StatefulWidget {
-  const LoginForm(Key? key) : super(key: key);
+  const LoginForm({Key? key}) : super(key: key);
 
   @override
   State<LoginForm> createState() => _LoginFormState();
@@ -89,7 +89,7 @@ class _LoginFormState extends State<LoginForm> {
               flex: 10,
               child: ElevatedButton(
                 onPressed: () {
-                  print("Hello world"); // TODO add functionality
+                  Navigator.pushNamed(context, 'create_user');
                 },
                 child: const Text("Opprett brukerkonto"),
                 style: ElevatedButton.styleFrom(fixedSize: const Size(200, 50)),
