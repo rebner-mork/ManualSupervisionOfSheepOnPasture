@@ -99,7 +99,11 @@ class _MyAppState extends State<MyApp> {
                 style: const TextStyle(color: Colors.red),
               ),
             ),
-            ElevatedButton(onPressed: signIn, child: const Text('Logg inn')),
+            ElevatedButton(
+              onPressed: signIn,
+              child: const Text('Logg inn'),
+              style: ElevatedButton.styleFrom(fixedSize: const Size(180, 60)),
+            ),
             const SizedBox(height: 300),
             ElevatedButton(
                 onPressed: () {}, child: const Text('Registrer ny bruker'))
