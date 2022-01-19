@@ -28,19 +28,16 @@ class WelcomeInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
         child: Column(
-      children: const [
-        Text("Overskrift", style: TextStyle(fontSize: 70)),
-        SizedBox(
+      children: [
+        const Text("Overskrift", style: TextStyle(fontSize: 70)),
+        const SizedBox(
           height: 40,
         ),
-        Expanded(
-            child: Image(
-          image: AssetImage('../assets/sheep.jpg'),
-        )),
-        SizedBox(
+        Expanded(child: Image.asset('images/sheep.jpg')),
+        const SizedBox(
           height: 40,
         ),
-        Text("Forklaring\n"),
+        const Text("Forklaring\n"),
       ],
     ));
   }
