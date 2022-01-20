@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:email_validator/email_validator.dart';
 import 'dart:developer' as logger;
 
+import 'package:flutter/services.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -32,6 +34,8 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     return MaterialApp(
         home: Material(
             child: Form(
@@ -47,7 +51,6 @@ class _MyAppState extends State<MyApp> {
             ),
             const SizedBox(height: 20),
             TextFormField(
-              autofocus: true,
               validator: (input) => validateEmail(input),
               onSaved: (input) => _email = input.toString(),
               onChanged: (text) {
@@ -99,6 +102,7 @@ class _MyAppState extends State<MyApp> {
                 style: const TextStyle(color: Colors.red),
               ),
             ),
+            const SizedBox(height: 10),
             ElevatedButton(
               onPressed: signIn,
               child: const Text('Logg inn'),
