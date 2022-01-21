@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web/utils/authenticiation.dart' as authentication;
 
 class LoginForm extends StatefulWidget {
   const LoginForm({Key? key}) : super(key: key);
@@ -10,16 +11,20 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
   bool _visiblePassword = true;
+  String _email = '';
+  String _password = '';
+  String _loginMessage = '';
+  bool _failedAtLogin = false;
 
   String? _validateUserName(String? userName) {
-    if (userName!.isEmpty) {
+    if (userName!.isEmpty && _failedAtLogin) {
       return "Skriv inn brukernavn";
     }
     return null;
   }
 
   String? _validatePassword(String? password) {
-    if (password!.isEmpty) {
+    if (password!.isEmpty && _failedAtLogin) {
       return "Skriv inn passord";
     }
     return null;
@@ -29,6 +34,40 @@ class _LoginFormState extends State<LoginForm> {
     setState(() {
       _visiblePassword = !_visiblePassword;
     });
+  }
+
+  Future<void> _logIn() async {
+    String tmp = '';
+    if (_formKey.currentState!.validate()) {
+      tmp = await authentication.signIn(_email, _password);
+      if (_loginMessage.isEmpty) {
+        //TODO Navigator.pushNamed(context, 'home_widget_something');
+      } else {
+        _failedAtLogin = true;
+      }
+    } else {
+      setState(() {
+        _loginMessage = tmp;
+      });
+    }
+  }
+
+  void _onChangeEmail(String input) {
+    setState(() {
+      _email = input;
+    });
+    if (_failedAtLogin) {
+      _formKey.currentState!.validate();
+    }
+  }
+
+  void _onChangePassword(String input) {
+    setState(() {
+      _password = input;
+    });
+    if (_failedAtLogin) {
+      _formKey.currentState!.validate();
+    }
   }
 
   @override
@@ -48,8 +87,11 @@ class _LoginFormState extends State<LoginForm> {
                 autofocus: true,
                 textAlign: TextAlign.left,
                 validator: _validateUserName,
+                onChanged: (text) {
+                  _onChangeEmail(text);
+                },
                 decoration: const InputDecoration(
-                    hintText: "Brukernavn", border: OutlineInputBorder()),
+                    hintText: "E-post", border: OutlineInputBorder()),
               )),
           const Spacer(),
           Flexible(
@@ -58,6 +100,9 @@ class _LoginFormState extends State<LoginForm> {
                 textAlign: TextAlign.left,
                 validator: _validatePassword,
                 obscureText: _visiblePassword,
+                onChanged: (text) {
+                  _onChangePassword(text);
+                },
                 decoration: InputDecoration(
                     hintText: "Passord",
                     suffixIcon: IconButton(
@@ -69,10 +114,16 @@ class _LoginFormState extends State<LoginForm> {
           ),
           const Spacer(flex: 2),
           Flexible(
+              child: Text(
+            _loginMessage,
+            style: const TextStyle(color: Colors.red),
+          )),
+          const Spacer(flex: 5),
+          Flexible(
               flex: 10,
               child: ElevatedButton(
                 onPressed: () {
-                  _formKey.currentState!.validate();
+                  _logIn();
                 },
                 child: const Text("Logg inn"),
                 style: ElevatedButton.styleFrom(
@@ -82,9 +133,10 @@ class _LoginFormState extends State<LoginForm> {
           const Spacer(flex: 10),
           //TODO forgot password
           const Flexible(
-              flex: 4,
+              flex: 10,
               child: Text(
-                  "Om du ikker har en brukerkonto ennå, kan du oprette en her:")),
+                "Om du ikker har en brukerkonto ennå, kan du oprette en her:",
+              )),
           const Spacer(),
           Flexible(
               flex: 10,
