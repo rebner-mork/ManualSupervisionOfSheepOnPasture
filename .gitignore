@@ -22,3 +22,6 @@ doc/api/
 
 # Firebase
 app/android/app/google-services.json
+
+# Editor specific files
+*.vscode
