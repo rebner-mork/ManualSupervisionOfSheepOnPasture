@@ -1,5 +1,4 @@
 import 'package:app/utils/authentication.dart';
-import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as logger;
@@ -33,7 +32,8 @@ class _LoginWidgetState extends State<LoginWidget> {
           children: [
             const Icon(
               Icons.account_circle,
-              size: 80,
+              size: 90,
+              color: Colors.black54,
             ),
             const SizedBox(height: 20),
             TextFormField(
