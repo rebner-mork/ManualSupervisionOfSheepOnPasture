@@ -1,4 +1,4 @@
-import 'package:app/utils/authentication.dart';
+import 'package:app/utils/fieldValidation.dart';
 import 'package:app/utils/customWidgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -113,9 +113,9 @@ class _RegisterState extends State<RegisterScreen> {
       // invalid e-mail
       // weak-password
       try {
-        UserCredential user =
-            await createUserWithEmailAndPassword(_email, _password);
-        logger.log('Bruker registrert');
+        UserCredential user = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(email: _email, password: _password);
+        logger.log('Bruker registrert' + user.toString());
       } catch (e) {
         setState(() {
           logger.log('Bruker ikke registrert' + e.toString());

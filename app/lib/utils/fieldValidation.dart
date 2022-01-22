@@ -1,13 +1,4 @@
 import 'package:email_validator/email_validator.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
-Future<UserCredential> createUserWithEmailAndPassword(
-    String email, String password) async {
-  UserCredential user = await FirebaseAuth.instance
-      .createUserWithEmailAndPassword(email: email, password: password);
-
-  return user;
-}
 
 String? validateEmail(String? email) {
   if (email!.isEmpty) {
