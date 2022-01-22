@@ -22,3 +22,7 @@ doc/api/
 
 # Editor specific files
 *.vscode
+
+# Debug logs
+firebase-debug.log
+ui-debug.log

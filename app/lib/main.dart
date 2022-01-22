@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:app/register/register_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +9,7 @@ import 'package:flutter/services.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  FirebaseAuth.instance.useAuthEmulator('10.0.2.2', 9099); // TODO: remove
   runApp(const MyApp(null));
 }
 
