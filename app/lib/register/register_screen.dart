@@ -1,6 +1,8 @@
 import 'package:app/utils/authentication.dart';
 import 'package:app/utils/customWidgets.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer' as logger;
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen(Key? key) : super(key: key);
@@ -15,6 +17,7 @@ class _RegisterState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _registerFailed = false;
   late String _email, _password, _phone;
+  String _feedback = '';
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +69,7 @@ class _RegisterState extends State<RegisterScreen> {
                         const SizedBox(height: 20),
                         TextFormField(
                             key: const Key('inputPhone'),
-                            validator: (input) => validatePassword(input),
+                            validator: (input) => validatePhone(input),
                             onSaved: (input) => _phone = input.toString(),
                             onChanged: (text) {
                               if (_registerFailed) {
@@ -84,9 +87,7 @@ class _RegisterState extends State<RegisterScreen> {
                           opacity: _registerFailed ? 1.0 : 0.0,
                           duration: const Duration(milliseconds: 200),
                           child: Text(
-                            _registerFailed
-                                ? 'E-post eller passord er ugyldig'
-                                : '',
+                            _feedback,
                             key: const Key('feedback'),
                             style: const TextStyle(color: Colors.red),
                           ),
@@ -103,5 +104,24 @@ class _RegisterState extends State<RegisterScreen> {
         ));
   }
 
-  void register() {}
+  void register() async {
+    final formState = _formKey.currentState;
+
+    if (formState!.validate()) {
+      formState.save();
+      // email already in use
+      // invalid e-mail
+      // weak-password
+      try {
+        UserCredential user =
+            await createUserWithEmailAndPassword(_email, _password);
+        logger.log('Bruker registrert');
+      } catch (e) {
+        setState(() {
+          logger.log('Bruker ikke registrert' + e.toString());
+          _registerFailed = true;
+        });
+      }
+    }
+  }
 }
