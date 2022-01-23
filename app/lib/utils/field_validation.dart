@@ -22,8 +22,10 @@ String? validatePassword(String? password) {
 String? validatePhone(String? phone) {
   if (phone!.isEmpty) {
     return 'Skriv telefonnummer';
+  } else if (double.tryParse(phone) == null) {
+    return 'Telefonnummer må kun bestå av siffer';
   } else if (phone.length < 8) {
-    return 'Telefonnummer må inneholde minst 8 tegn';
+    return 'Telefonnummer må inneholde minst 8 siffer';
   }
 
   return null;
