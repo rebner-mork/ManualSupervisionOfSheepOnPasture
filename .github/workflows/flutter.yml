@@ -3,7 +3,7 @@ name: Flutter
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, app-register ]
   pull_request:
     branches: [ main ]
 
@@ -17,7 +17,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable' # or: 'beta', 'dev' or 'master'
@@ -25,8 +27,11 @@ jobs:
       - name: Flutter version
         run: flutter --version
 
-      - name: Install dependencies
+      - name: Install Flutter dependencies
         run: flutter pub get
+      
+      - name: Install Firebase
+        run: npm install -g firebase-tools
 
       # Uncomment this step to verify the use of 'dart format' on each commit.
       - name: Verify formatting
@@ -41,3 +46,6 @@ jobs:
       # want to change this to 'flutter test'.
       - name: Run tests
         run: flutter test
+
+      - name: Run integration test
+        run: firebase emulators:exec --only auth 'flutter test ./app/integration_test/int_test.dart'
