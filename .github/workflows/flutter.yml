@@ -62,8 +62,8 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: firebase emulators:exec --only auth 'flutter test ./integration_test/int_test.dart'
+          script: pwd && cd .. && firebase emulators:exec --only auth 'flutter test ./integration_test/int_test.dart'
         
 
       #- name: Run integration test
-      #  run: firebase emulators:exec --only auth 'flutter test ./integration_test/int_test.dart'
+      #  run: pwd && cd .. && firebase emulators:exec --only auth 'flutter test ./integration_test/int_test.dart'
