@@ -1,5 +1,5 @@
-import 'package:app/utils/fieldValidation.dart';
-import 'package:app/utils/customWidgets.dart';
+import 'package:app/utils/field_validation.dart';
+import 'package:app/utils/custom_widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as logger;
@@ -16,8 +16,8 @@ class _RegisterState extends State<RegisterScreen> {
 
   final _formKey = GlobalKey<FormState>();
   bool _registerFailed = false;
-  late String _email, _password, _phone;
-  String _feedback = '';
+  late String _email, _password; //, _phone;
+  final String _feedback = '';
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +70,7 @@ class _RegisterState extends State<RegisterScreen> {
                         TextFormField(
                             key: const Key('inputPhone'),
                             validator: (input) => validatePhone(input),
-                            onSaved: (input) => _phone = input.toString(),
+                            //onSaved: (input) => _phone = input.toString(),
                             onChanged: (text) {
                               if (_registerFailed) {
                                 setState(() {
