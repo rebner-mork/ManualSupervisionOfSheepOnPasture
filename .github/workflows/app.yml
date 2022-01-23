@@ -1,5 +1,5 @@
 
-name: Flutter
+name: app
 
 on:
   push:
@@ -13,7 +13,7 @@ defaults:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: windows-2022 #macos-latest
 
     steps:
       - uses: actions/checkout@v2
@@ -23,13 +23,13 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable' # or: 'beta', 'dev' or 'master'
-      - uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: false
-          script: echo "Generated AVD snapshot for caching."
+      #- uses: reactivecircus/android-emulator-runner@v2
+      #  with:
+      #    api-level: 29
+      #    force-avd-creation: false
+      #    emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+      #    disable-animations: false
+      #    script: echo "Generated AVD snapshot for caching."
         
       
       - name: Flutter version
@@ -55,7 +55,7 @@ jobs:
       #- name: Run tests
       #  run: flutter test
 
-      - name: Run integration tests on AVD
+      - name: Run integration tests on Android emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
@@ -63,7 +63,4 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: cd app && pwd && ls && firebase emulators:exec --only auth 'flutter test ./integration_test/int_test.dart'
-        
 
-      #- name: Run integration test
-      #  run: pwd && cd .. && firebase emulators:exec --only auth 'flutter test ./integration_test/int_test.dart'
