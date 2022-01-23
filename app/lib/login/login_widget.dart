@@ -1,4 +1,4 @@
-import 'package:app/utils/authentication.dart';
+import 'package:app/utils/field_validation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as logger;
@@ -118,8 +118,8 @@ class _LoginWidgetState extends State<LoginWidget> {
     if (formState!.validate()) {
       formState.save();
       try {
-        UserCredential user =
-            await signInWithEmailAndPassword(_email, _password);
+        UserCredential user = await FirebaseAuth.instance
+            .signInWithEmailAndPassword(email: _email, password: _password);
 
         logger.log("Innlogget som: " + user.toString());
         setState(() {
