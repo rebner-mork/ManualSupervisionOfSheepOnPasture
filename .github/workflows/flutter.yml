@@ -23,6 +23,14 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable' # or: 'beta', 'dev' or 'master'
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: echo "Generated AVD snapshot for caching."
+        
       
       - name: Flutter version
         run: flutter --version
@@ -32,20 +40,30 @@ jobs:
       
       - name: Install Firebase
         run: npm install -g firebase-tools
-
+      
       # Uncomment this step to verify the use of 'dart format' on each commit.
-      - name: Verify formatting
-        run: flutter format --output=none --set-exit-if-changed .
+      #- name: Verify formatting
+      #  run: flutter format --output=none --set-exit-if-changed .
 
       # Consider passing '--fatal-infos' for slightly stricter analysis.
-      - name: Analyze project source
-        run: flutter analyze
+      #- name: Analyze project source
+      #  run: flutter analyze
 
       # Your project will need to have tests in test/ and a dependency on
       # package:test for this step to succeed. Note that Flutter projects will
       # want to change this to 'flutter test'.
-      - name: Run tests
-        run: flutter test
+      #- name: Run tests
+      #  run: flutter test
 
-      - name: Run integration test
-        run: firebase emulators:exec --only auth 'flutter test ./integration_test/int_test.dart'
+      - name: Run integration tests on AVD
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: firebase emulators:exec --only auth 'flutter test ./integration_test/int_test.dart'
+        
+
+      #- name: Run integration test
+      #  run: firebase emulators:exec --only auth 'flutter test ./integration_test/int_test.dart'
