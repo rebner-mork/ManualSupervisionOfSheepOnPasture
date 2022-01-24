@@ -15,9 +15,16 @@ class _RegisterState extends State<RegisterPage> {
   _RegisterState();
 
   final _formKey = GlobalKey<FormState>();
+  bool _visiblePassword = false;
   bool _registerFailed = false;
   late String _email, _password, _phone;
   final String _feedback = '';
+
+  void _toggleVisiblePassword() {
+    setState(() {
+      _visiblePassword = !_visiblePassword;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,8 +71,12 @@ class _RegisterState extends State<RegisterPage> {
                             },
                             textInputAction: TextInputAction.go,
                             onFieldSubmitted: (value) => register(),
-                            decoration:
-                                customInputDecoration('Passord', Icons.lock)),
+                            obscureText: !_visiblePassword,
+                            decoration: customInputDecoration(
+                                'Passord', Icons.lock,
+                                passwordField: true,
+                                isVisible: _visiblePassword,
+                                onPressed: _toggleVisiblePassword)),
                         const SizedBox(height: 20),
                         TextFormField(
                             key: const Key('inputPhone'),
