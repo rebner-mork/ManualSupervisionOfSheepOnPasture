@@ -1,14 +1,14 @@
 import 'package:app/login/login_widget.dart';
 import 'package:flutter/material.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen(Key? key) : super(key: key);
+class LoginPage extends StatefulWidget {
+  const LoginPage(Key? key) : super(key: key);
 
   @override
-  State<LoginScreen> createState() => _LoginState();
+  State<LoginPage> createState() => _LoginState();
 }
 
-class _LoginState extends State<LoginScreen> {
+class _LoginState extends State<LoginPage> {
   _LoginState();
 
   @override
