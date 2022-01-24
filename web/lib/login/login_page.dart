@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'login_widget.dart';
 
-class LogInView extends StatelessWidget {
-  const LogInView({Key? key}) : super(key: key);
+class LoginPage extends StatelessWidget {
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,15 @@ class LogInView extends StatelessWidget {
           child: Center(
               child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 150),
-            child: const LoginForm(),
+            child: Column(
+              children: const [
+                Spacer(flex: 5),
+                Flexible(flex: 25, child: LoginForm()),
+                Spacer(flex: 10),
+                Flexible(flex: 5, child: CreateUserButton()),
+                Spacer()
+              ],
+            ),
           ))),
     ]));
   }
@@ -32,5 +40,20 @@ class WelcomePicture extends StatelessWidget {
           image: DecorationImage(
               image: AssetImage('images/sheep.jpg'), fit: BoxFit.fill)),
     ));
+  }
+}
+
+class CreateUserButton extends StatelessWidget {
+  const CreateUserButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+        child: const Text("Oprett brukerkonto"),
+        onPressed:
+            null, // TODO Navigator.pushNamed(context, 'name to new view')
+        style: ElevatedButton.styleFrom(
+            fixedSize: const Size(300, 60),
+            textStyle: const TextStyle(fontSize: 30)));
   }
 }

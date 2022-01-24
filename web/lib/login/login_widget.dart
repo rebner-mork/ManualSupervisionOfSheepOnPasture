@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web/utils/authenticiation.dart' as authentication;
+import 'package:email_validator/email_validator.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({Key? key}) : super(key: key);
@@ -19,6 +20,8 @@ class _LoginFormState extends State<LoginForm> {
   String? _validateUserName(String? userName) {
     if (userName!.isEmpty && _failedAtLogin) {
       return "Skriv inn brukernavn";
+    } else if (!EmailValidator.validate(_email)) {
+      return "Skriv gyldig e-post";
     }
     return null;
   }
@@ -26,6 +29,8 @@ class _LoginFormState extends State<LoginForm> {
   String? _validatePassword(String? password) {
     if (password!.isEmpty && _failedAtLogin) {
       return "Skriv inn passord";
+    } else if (_password.length < 8) {
+      return "Passordet er for kort";
     }
     return null;
   }
@@ -46,10 +51,11 @@ class _LoginFormState extends State<LoginForm> {
         _failedAtLogin = true;
       }
     } else {
-      setState(() {
-        _loginMessage = tmp;
-      });
+      _failedAtLogin = true;
     }
+    setState(() {
+      _loginMessage = tmp;
+    });
   }
 
   void _onChangeEmail(String input) {
@@ -75,78 +81,65 @@ class _LoginFormState extends State<LoginForm> {
     return Form(
         key: _formKey,
         child: Column(children: [
-          const Spacer(flex: 10),
           const Icon(
             Icons.account_circle,
             size: 200,
           ),
-          const Spacer(flex: 2),
-          Flexible(
-              flex: 10,
-              child: TextFormField(
-                autofocus: true,
-                textAlign: TextAlign.left,
-                validator: _validateUserName,
-                onChanged: (text) {
-                  _onChangeEmail(text);
-                },
-                decoration: const InputDecoration(
-                    hintText: "E-post", border: OutlineInputBorder()),
-              )),
-          const Spacer(),
-          Flexible(
-            flex: 10,
-            child: TextFormField(
-                textAlign: TextAlign.left,
-                validator: _validatePassword,
-                obscureText: _visiblePassword,
-                onChanged: (text) {
-                  _onChangePassword(text);
-                },
-                decoration: InputDecoration(
-                    hintText: "Passord",
-                    suffixIcon: IconButton(
-                        icon: Icon(_visiblePassword
-                            ? Icons.visibility_off
-                            : Icons.visibility),
-                        onPressed: _toggleVisiblePassword),
-                    border: const OutlineInputBorder())),
+          const SizedBox(
+            height: 15,
           ),
-          const Spacer(flex: 2),
-          Flexible(
-              child: Text(
+          TextFormField(
+            autofocus: true,
+            textAlign: TextAlign.left,
+            validator: _validateUserName,
+            onChanged: (text) {
+              _onChangeEmail(text);
+            },
+            decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.mail),
+                hintText: "E-post",
+                border: OutlineInputBorder()),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          TextFormField(
+              textAlign: TextAlign.left,
+              validator: _validatePassword,
+              obscureText: _visiblePassword,
+              onChanged: (text) {
+                _onChangePassword(text);
+              },
+              decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.lock),
+                  hintText: "Passord",
+                  suffixIcon: IconButton(
+                      icon: Icon(_visiblePassword
+                          ? Icons.visibility_off
+                          : Icons.visibility),
+                      onPressed: _toggleVisiblePassword),
+                  border: const OutlineInputBorder())),
+          const SizedBox(
+            height: 5,
+          ),
+          Text(
             _loginMessage,
             style: const TextStyle(color: Colors.red),
-          )),
-          const Spacer(flex: 5),
-          Flexible(
-              flex: 10,
-              child: ElevatedButton(
-                onPressed: () {
-                  _logIn();
-                },
-                child: const Text("Logg inn"),
-                style: ElevatedButton.styleFrom(
-                    fixedSize: const Size(300, 60),
-                    textStyle: const TextStyle(fontSize: 30)),
-              )),
-          const Spacer(flex: 10),
-          //TODO forgot password
-          const Flexible(
-              flex: 10,
-              child: Text(
-                "Om du ikker har en brukerkonto ennå, kan du oprette en her:",
-              )),
-          const Spacer(),
-          Flexible(
-              flex: 10,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, 'create_user');
-                },
-                child: const Text("Opprett brukerkonto"),
-                style: ElevatedButton.styleFrom(fixedSize: const Size(200, 50)),
-              ))
+          ),
+          const SizedBox(
+            height: 25,
+          ),
+          ElevatedButton(
+            onPressed: () {
+              _logIn();
+            },
+            child: const Text("Logg inn"),
+            style: ElevatedButton.styleFrom(
+              fixedSize: const Size(300, 60),
+              textStyle: const TextStyle(
+                  fontSize: 30, fontWeight: FontWeight.bold, letterSpacing: 2),
+            ),
+          ),
         ]));
   }
 }

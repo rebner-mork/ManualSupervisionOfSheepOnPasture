@@ -44,7 +44,7 @@ class DefaultFirebaseOptions {
     );
   }
 
-  //TODO https://pub.dev/packages/flutter_dotenv
+  //https://pub.dev/packages/flutter_dotenv
   static FirebaseOptions web = FirebaseOptions(
     apiKey: dotenv.env['FIREBASE_API_KEY'] ?? '',
     appId: dotenv.env['FIREBASE_APP_ID'] ?? '',
