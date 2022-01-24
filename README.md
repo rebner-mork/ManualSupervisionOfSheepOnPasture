@@ -4,7 +4,7 @@
 Make sure to be inside the `./app` directory to run commands towards the mobile app.
 
 ### Testing
-Due to Flutter not yet supporting integration tests directly in browsers, they have to run on an emulator/AVD (Android virtual device).
+Due to Flutter not yet supporting integration tests directly in browsers, they have to run on an emulator/AVD (Android virtual device). The AVD has to be a digital device as the tests relies on a localhost connection (i.e. not a physical device).
 
 <b>Unit & widget tests</b>: `flutter test`
 

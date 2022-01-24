@@ -4,19 +4,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as logger;
 
-class RegisterScreen extends StatefulWidget {
-  const RegisterScreen(Key? key) : super(key: key);
+class RegisterPage extends StatefulWidget {
+  const RegisterPage(Key? key) : super(key: key);
 
   @override
-  State<RegisterScreen> createState() => _RegisterState();
+  State<RegisterPage> createState() => _RegisterState();
 }
 
-class _RegisterState extends State<RegisterScreen> {
+class _RegisterState extends State<RegisterPage> {
   _RegisterState();
 
   final _formKey = GlobalKey<FormState>();
   bool _registerFailed = false;
-  late String _email, _password; //, _phone;
+  late String _email, _password, _phone;
   final String _feedback = '';
 
   @override
@@ -70,7 +70,7 @@ class _RegisterState extends State<RegisterScreen> {
                         TextFormField(
                             key: const Key('inputPhone'),
                             validator: (input) => validatePhone(input),
-                            //onSaved: (input) => _phone = input.toString(),
+                            onSaved: (input) => _phone = input.toString(),
                             onChanged: (text) {
                               if (_registerFailed) {
                                 setState(() {
@@ -116,9 +116,12 @@ class _RegisterState extends State<RegisterScreen> {
         UserCredential user = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: _email, password: _password);
         logger.log('Bruker registrert' + user.toString());
-      } catch (e) {
         setState(() {
-          logger.log('Bruker ikke registrert' + e.toString());
+          _registerFailed = false;
+        });
+      } catch (e) {
+        logger.log('Bruker ikke registrert' + e.toString());
+        setState(() {
           _registerFailed = true;
         });
       }

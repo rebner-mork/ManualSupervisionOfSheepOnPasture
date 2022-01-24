@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'dart:developer' as logger;
 
+// This test can onlu run on an emulator (not on a physical device)
 void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
