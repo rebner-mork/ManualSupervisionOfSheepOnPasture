@@ -10,11 +10,23 @@ String? validateEmail(String? email) {
 }
 
 String? validatePassword(String? password) {
-  /*if (password!.isEmpty) {
+  if (password!.isEmpty) {
     return 'Skriv passord';
   } else if (password.length < 8) {
     return 'Passord må inneholde minst 8 tegn';
-  }*/
+  }
+
+  return null;
+}
+
+String? passwordsAreEqual(String? passwordOne, String? passwordTwo) {
+  if (passwordOne != passwordTwo) {
+    return 'Passordene er ikke like';
+  } else if (validatePassword(passwordOne) != null) {
+    return validatePassword(passwordOne);
+  } else if (validatePassword(passwordTwo) != null) {
+    return validatePassword(passwordTwo);
+  }
 
   return null;
 }

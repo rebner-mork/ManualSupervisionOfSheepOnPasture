@@ -1,5 +1,6 @@
 import 'package:app/utils/field_validation.dart';
 import 'package:app/utils/custom_widgets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as logger;
@@ -24,6 +25,8 @@ class _RegisterState extends State<RegisterPage> {
       _visiblePassword = !_visiblePassword;
     });
   }
+
+  final passwordOneController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +61,8 @@ class _RegisterState extends State<RegisterPage> {
                                 customInputDecoration('E-post', Icons.mail)),
                         const SizedBox(height: 20),
                         TextFormField(
-                            key: const Key('inputPassword'),
+                            controller: passwordOneController,
+                            key: const Key('inputPasswordOne'),
                             validator: (input) => validatePassword(input),
                             onSaved: (input) => _password = input.toString(),
                             onChanged: (text) {
@@ -73,6 +77,26 @@ class _RegisterState extends State<RegisterPage> {
                             obscureText: !_visiblePassword,
                             decoration: customInputDecoration(
                                 'Passord', Icons.lock,
+                                passwordField: true,
+                                isVisible: _visiblePassword,
+                                onPressed: _toggleVisiblePassword)),
+                        const SizedBox(height: 20),
+                        TextFormField(
+                            key: const Key('inputPasswordTwo'),
+                            validator: (input) => passwordsAreEqual(
+                                passwordOneController.text, input),
+                            onChanged: (text) {
+                              if (_registerFailed) {
+                                setState(() {
+                                  _registerFailed = false;
+                                });
+                              }
+                            },
+                            textInputAction: TextInputAction.go,
+                            onFieldSubmitted: (value) => register(),
+                            obscureText: !_visiblePassword,
+                            decoration: customInputDecoration(
+                                'Gjenta passord', Icons.lock,
                                 passwordField: true,
                                 isVisible: _visiblePassword,
                                 onPressed: _toggleVisiblePassword)),
@@ -122,8 +146,17 @@ class _RegisterState extends State<RegisterPage> {
       try {
         UserCredential user = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: _email, password: _password);
-        logger.log('Bruker registrert' + user.toString());
-        // TODO: lagre telefonnummer i Firestore db
+        logger.log('Bruker registrert: ' + user.toString());
+
+        CollectionReference users =
+            FirebaseFirestore.instance.collection('users');
+
+        await users
+            .add({'email': _email, 'phone': _phone})
+            .then((value) =>
+                logger.log('Telefonnummer lagt til i users/' + value.id))
+            .catchError((error) => logger.log('Feil: ' + error.toString()));
+
         setState(() {
           _registerFailed = false;
         });
@@ -149,5 +182,11 @@ class _RegisterState extends State<RegisterPage> {
         });
       }
     }
+  }
+
+  @override
+  void dispose() {
+    passwordOneController.dispose();
+    super.dispose();
   }
 }

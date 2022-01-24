@@ -1,53 +1,63 @@
 import 'dart:io';
 
 import 'package:app/main.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'dart:developer' as logger;
 
-// This test can onlu run on an emulator (not on a physical device)
+// This test can only run on an emulator (not on a physical device)
 void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  testWidgets('INTEGRATION', (WidgetTester tester) async {
+  testWidgets('Integration', (WidgetTester tester) async {
     await tester.pumpWidget(const MyApp(null));
     String host = Platform.isAndroid ? '10.0.2.2' : 'localhost';
     FirebaseAuth.instance.useAuthEmulator(host, 9099);
+    FirebaseFirestore.instance.useFirestoreEmulator('10.0.2.2', 8080);
 
     var registerButton = find.text('Opprett bruker');
     var emailField = find.byKey(const Key('inputEmail'));
-    var passwordField = find.byKey(const Key('inputPassword'));
+    var passwordOneField = find.byKey(const Key('inputPasswordOne'));
+    var passwordTwoField = find.byKey(const Key('inputPasswordTwo'));
     var phoneField = find.byKey(const Key('inputPhone'));
 
-    bool userExists = false;
-
+    // Assert user does not exist
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: 'testregistrert@gmail.com', password: '12345678');
-      userExists = true;
-    } catch (e) {
-      logger.log(e.toString()); // TODO
+          email: 'test@gmail.com', password: '12345678');
+      fail('signIn did not throw exception as expected');
+    } on FirebaseAuthException catch (e) {
+      if (e.code != 'user-not-found') {
+        fail('User already exists');
+      }
     }
-    expect(userExists, false);
 
-    await tester.enterText(emailField, 'testregistrert@gmail.com');
-    await tester.enterText(passwordField, '12345678');
+    // Register user
+    await tester.enterText(emailField, 'test@gmail.com');
+    await tester.enterText(passwordOneField, '12345678');
+    await tester.enterText(passwordTwoField, '12345678');
     await tester.enterText(phoneField, '12345678');
 
     await tester.tap(registerButton);
     await tester.pump();
 
+    // Assert user exists
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: 'testregistrert@gmail.com', password: '12345678');
-      userExists = true;
+          email: 'test@gmail.com', password: '12345678');
     } catch (e) {
-      logger.log(e.toString());
+      fail(e.toString());
     }
-    expect(userExists, true);
+
+    // Assert phone number exists
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    QuerySnapshot user =
+        await users.where('email', isEqualTo: 'test@gmail.com').get();
+
+    expect(user.docs.first.get('email'), 'test@gmail.com');
   });
 }
