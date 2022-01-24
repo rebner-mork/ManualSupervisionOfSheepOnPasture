@@ -53,11 +53,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                 labelText: 'E-post',
                 alignLabelWithHint: true,
                 border: OutlineInputBorder(),
-                prefixIcon: Align(
-                  widthFactor: 1.0,
-                  heightFactor: 1.0,
-                  child: Icon(Icons.mail),
-                ),
+                prefixIcon: Icon(Icons.mail),
               ),
             ),
             const SizedBox(height: 20),
@@ -78,11 +74,7 @@ class _LoginWidgetState extends State<LoginWidget> {
               decoration: InputDecoration(
                   labelText: 'Passord',
                   border: const OutlineInputBorder(),
-                  prefixIcon: const Align(
-                    widthFactor: 1.0,
-                    heightFactor: 1.0,
-                    child: Icon(Icons.lock),
-                  ),
+                  prefixIcon: const Icon(Icons.lock),
                   suffixIcon: IconButton(
                       icon: Icon(
                           _visiblePassword
