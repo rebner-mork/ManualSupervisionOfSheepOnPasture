@@ -7,6 +7,6 @@ Future<String> signIn(String email, String password) async {
     return '';
   } catch (e) {
     //TODO return different thing based on exception
-    return "Passord og/eller e-post stemmer ikke";
+    return "Passord og/eller e-post er ugyldig";
   }
 }

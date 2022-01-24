@@ -15,22 +15,23 @@ class _LoginFormState extends State<LoginForm> {
   String _email = '';
   String _password = '';
   String _loginMessage = '';
-  bool _failedAtLogin = false;
+  bool _validationActivated = false;
 
   String? _validateUserName(String? userName) {
-    if (userName!.isEmpty && _failedAtLogin) {
-      return "Skriv inn brukernavn";
-    } else if (!EmailValidator.validate(_email)) {
+    if (userName!.isEmpty && _validationActivated) {
+      return "Skriv inn e-post";
+    } else if (!EmailValidator.validate(_email) && _validationActivated) {
       return "Skriv gyldig e-post";
     }
     return null;
   }
 
   String? _validatePassword(String? password) {
-    if (password!.isEmpty && _failedAtLogin) {
+    int requiredLenght = 8;
+    if (password!.isEmpty && _validationActivated) {
       return "Skriv inn passord";
-    } else if (_password.length < 8) {
-      return "Passordet er for kort";
+    } else if (_password.length < requiredLenght && _validationActivated) {
+      return "Passord må inneholde minst $requiredLenght tegn";
     }
     return null;
   }
@@ -43,26 +44,25 @@ class _LoginFormState extends State<LoginForm> {
 
   Future<void> _logIn() async {
     String tmp = '';
+    setState(() {
+      _validationActivated = true;
+    });
     if (_formKey.currentState!.validate()) {
       tmp = await authentication.signIn(_email, _password);
       if (_loginMessage.isEmpty) {
         //TODO Navigator.pushNamed(context, 'home_widget_something');
-      } else {
-        _failedAtLogin = true;
       }
-    } else {
-      _failedAtLogin = true;
+      setState(() {
+        _loginMessage = tmp;
+      });
     }
-    setState(() {
-      _loginMessage = tmp;
-    });
   }
 
   void _onChangeEmail(String input) {
     setState(() {
       _email = input;
     });
-    if (_failedAtLogin) {
+    if (_validationActivated) {
       _formKey.currentState!.validate();
     }
   }
@@ -71,7 +71,7 @@ class _LoginFormState extends State<LoginForm> {
     setState(() {
       _password = input;
     });
-    if (_failedAtLogin) {
+    if (_validationActivated) {
       _formKey.currentState!.validate();
     }
   }
@@ -89,6 +89,7 @@ class _LoginFormState extends State<LoginForm> {
             height: 15,
           ),
           TextFormField(
+            key: const Key('inputEmail'),
             autofocus: true,
             textAlign: TextAlign.left,
             validator: _validateUserName,
@@ -104,6 +105,7 @@ class _LoginFormState extends State<LoginForm> {
             height: 10,
           ),
           TextFormField(
+              key: const Key('inputPassword'),
               textAlign: TextAlign.left,
               validator: _validatePassword,
               obscureText: _visiblePassword,

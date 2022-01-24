@@ -18,7 +18,7 @@ class LoginPage extends StatelessWidget {
             child: Column(
               children: const [
                 Spacer(flex: 5),
-                Flexible(flex: 25, child: LoginForm()),
+                LoginForm(),
                 Spacer(flex: 10),
                 Flexible(flex: 5, child: CreateUserButton()),
                 Spacer()
