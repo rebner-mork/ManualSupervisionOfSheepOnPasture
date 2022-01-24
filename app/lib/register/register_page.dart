@@ -17,8 +17,7 @@ class _RegisterState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   bool _visiblePassword = false;
   bool _registerFailed = false;
-  late String _email, _password, _phone;
-  final String _feedback = '';
+  late String _email, _password, _phone, _feedback;
 
   void _toggleVisiblePassword() {
     setState(() {
@@ -98,7 +97,7 @@ class _RegisterState extends State<RegisterPage> {
                           opacity: _registerFailed ? 1.0 : 0.0,
                           duration: const Duration(milliseconds: 200),
                           child: Text(
-                            _feedback,
+                            _registerFailed ? _feedback : '',
                             key: const Key('feedback'),
                             style: const TextStyle(color: Colors.red),
                           ),
@@ -120,18 +119,31 @@ class _RegisterState extends State<RegisterPage> {
 
     if (formState!.validate()) {
       formState.save();
-      // email already in use
-      // invalid e-mail
-      // weak-password
       try {
         UserCredential user = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: _email, password: _password);
         logger.log('Bruker registrert' + user.toString());
+        // TODO: lagre telefonnummer i Firestore db
         setState(() {
           _registerFailed = false;
         });
+      } on FirebaseAuthException catch (e) {
+        switch (e.code) {
+          case 'email-already-in-use':
+            _feedback = 'E-posten er allerede i bruk';
+            break;
+          case 'invalid-email':
+            _feedback = 'Skriv gyldig e-post';
+            break;
+          case 'weak-password':
+            _feedback = 'Skriv sterkere passord';
+            break;
+        }
+        setState(() {
+          _registerFailed = true;
+        });
       } catch (e) {
-        logger.log('Bruker ikke registrert' + e.toString());
+        _feedback = 'Kunne ikke opprette bruker';
         setState(() {
           _registerFailed = true;
         });

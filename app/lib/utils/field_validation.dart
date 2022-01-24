@@ -10,11 +10,11 @@ String? validateEmail(String? email) {
 }
 
 String? validatePassword(String? password) {
-  if (password!.isEmpty) {
+  /*if (password!.isEmpty) {
     return 'Skriv passord';
   } else if (password.length < 8) {
     return 'Passord må inneholde minst 8 tegn';
-  }
+  }*/
 
   return null;
 }
