@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
       home: LoginPage(widget.key),
       initialRoute: 'login',
       routes: {
-        'login': (context) => const LoginPage(),
+        'login': (context) => LoginPage(widget.key),
       },
       theme: ThemeData(
           colorScheme: ColorScheme.fromSwatch(
