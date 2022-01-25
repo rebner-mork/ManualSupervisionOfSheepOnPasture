@@ -20,10 +20,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: LoginPage(widget.key),
+      home: const LoginPage(),
       initialRoute: 'login',
       routes: {
-        'login': (context) => LoginPage(widget.key),
+        'login': (context) => const LoginPage(),
       },
       theme: ThemeData(
           colorScheme: ColorScheme.fromSwatch(
