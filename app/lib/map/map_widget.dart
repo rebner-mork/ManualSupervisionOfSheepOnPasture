@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -20,7 +20,10 @@ class NorgesKart extends StatelessWidget {
               "https://opencache{s}.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=$mapType&zoom={z}&x={x}&y={y}",
           subdomains: ['', '2', '3'],
           attributionBuilder: (_) {
-            return const Text("Kartverket");
+            return const Text(
+              "Kartverket",
+              style: TextStyle(color: Colors.black, fontSize: 20),
+            );
           },
         ),
       ],
