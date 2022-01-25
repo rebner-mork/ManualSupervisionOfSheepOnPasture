@@ -119,7 +119,8 @@ class _LoginFormState extends State<LoginForm> {
                       icon: Icon(_visiblePassword
                           ? Icons.visibility_off
                           : Icons.visibility),
-                      onPressed: _toggleVisiblePassword),
+                      onPressed: _toggleVisiblePassword,
+                      color: _visiblePassword ? Colors.grey : Colors.green),
                   border: const OutlineInputBorder())),
           const SizedBox(
             height: 5,
