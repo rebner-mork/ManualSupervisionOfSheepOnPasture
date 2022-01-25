@@ -1,11 +1,10 @@
-
 name: Flutter
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 defaults:
   run:
@@ -20,8 +19,8 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          channel: 'stable' # or: 'beta', 'dev' or 'master'
-      
+          channel: "stable" # or: 'beta', 'dev' or 'master'
+
       - name: Flutter version
         run: flutter --version
 
@@ -40,4 +39,4 @@ jobs:
       # package:test for this step to succeed. Note that Flutter projects will
       # want to change this to 'flutter test'.
       - name: Run tests
-        run: flutter test
+        run: flutter test --suppress-analytics
