@@ -17,3 +17,7 @@ InputDecoration customInputDecoration(String labelText, IconData icon,
               onPressed: onPressed)
           : null);
 }
+
+SizedBox customFieldSpacing() {
+  return const SizedBox(height: 18);
+}

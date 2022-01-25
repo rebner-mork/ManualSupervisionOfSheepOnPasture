@@ -70,17 +70,20 @@ void main() {
       await tester.enterText(
           find.byKey(const Key('inputPassword')), '12345678');
 
-      // Password is obscure
-      final textFormField = find.descendant(
+      // Assert password is obscure
+      var textFormField = find.descendant(
           of: find.byKey(const Key('inputPassword')),
           matching: find.byType(EditableText));
-      final input = tester.widget<EditableText>(textFormField);
-      expect(input.obscureText, isTrue);
+      expect(tester.widget<EditableText>(textFormField).obscureText, isTrue);
 
-      // Password is not obscure
+      // Assert password is not obscure
       await tester.tap(find.byIcon(Icons.visibility_off));
       await tester.pump();
-      expect(find.text('12345678'), findsOneWidget);
+
+      textFormField = find.descendant(
+          of: find.byKey(const Key('inputPassword')),
+          matching: find.byType(EditableText));
+      expect(tester.widget<EditableText>(textFormField).obscureText, isFalse);
       expect(find.byIcon(Icons.visibility), findsOneWidget);
     });
   });

@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:app/register/register_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,8 +12,7 @@ void main() async {
   await Firebase.initializeApp();
 
   testWidgets('Integration test register', (WidgetTester tester) async {
-    await tester.pumpWidget(
-        const MaterialApp(home: Material(child: RegisterPage(null))));
+    await tester.pumpWidget(const MaterialApp(home: RegisterPage(null)));
     String host = Platform.isAndroid ? '10.0.2.2' : 'localhost';
     FirebaseAuth.instance.useAuthEmulator(host, 9099);
     FirebaseFirestore.instance.useFirestoreEmulator('10.0.2.2', 8080);
