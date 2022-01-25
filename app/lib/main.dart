@@ -30,7 +30,7 @@ class _MyAppState extends State<MyApp> {
           colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green)),
       initialRoute: 'map',
       routes: {
-        'login': (context) => Material(child: LoginPage(widget.key)),
+        'login': (context) => LoginPage(widget.key),
         'map': (context) => const Material(child: NorgesKart()),
       },
     );
