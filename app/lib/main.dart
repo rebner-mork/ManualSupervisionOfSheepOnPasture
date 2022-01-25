@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/services.dart';
 
+import 'map/map_widget.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -27,6 +29,6 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
         theme: ThemeData(
             colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green)),
-        home: Material(child: LoginPage(widget.key)));
+        home: const Material(child: NorgesKart()));
   }
 }
