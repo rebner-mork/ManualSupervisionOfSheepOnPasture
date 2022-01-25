@@ -1,8 +1,9 @@
-import 'package:app/login/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter/services.dart';
+
+import 'package:app/login/login_page.dart';
+import 'map/map_widget.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,8 +26,13 @@ class _MyAppState extends State<MyApp> {
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     return MaterialApp(
-        theme: ThemeData(
-            colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green)),
-        home: Material(child: LoginPage(widget.key)));
+      theme: ThemeData(
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green)),
+      initialRoute: 'map',
+      routes: {
+        'login': (context) => LoginPage(widget.key),
+        'map': (context) => const Material(child: NorgesKart()),
+      },
+    );
   }
 }

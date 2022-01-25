@@ -1,12 +1,11 @@
+import 'package:app/login/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:app/main.dart';
 
 void main() {
   group('Widget tests', () {
     testWidgets('Initial layout and content', (WidgetTester tester) async {
-      await tester.pumpWidget(const MyApp(null));
+      await tester.pumpWidget(const MaterialApp(home: LoginPage(null)));
 
       expect(find.text('Logg inn'), findsOneWidget);
       expect(find.text('E-post'), findsOneWidget);
@@ -26,7 +25,7 @@ void main() {
     });
 
     testWidgets('Invalid inputs', (WidgetTester tester) async {
-      await tester.pumpWidget(const MyApp(null));
+      await tester.pumpWidget(const MaterialApp(home: LoginPage(null)));
 
       var loginButton = find.text('Logg inn');
       var emailField = find.byKey(const Key('inputEmail'));
@@ -66,7 +65,7 @@ void main() {
     });
 
     testWidgets('Password obscurity', (WidgetTester tester) async {
-      await tester.pumpWidget(const MyApp(null));
+      await tester.pumpWidget(const MaterialApp(home: LoginPage(null)));
       await tester.enterText(
           find.byKey(const Key('inputPassword')), '12345678');
 

@@ -13,7 +13,8 @@ class _LoginState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FractionallySizedBox(
+    return Material(
+        child: FractionallySizedBox(
       widthFactor: 0.6,
       child: Column(
         children: [
@@ -29,6 +30,6 @@ class _LoginState extends State<LoginPage> {
           )
         ],
       ),
-    );
+    ));
   }
 }
