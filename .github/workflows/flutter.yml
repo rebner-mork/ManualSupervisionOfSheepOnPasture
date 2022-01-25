@@ -1,11 +1,10 @@
-
 name: Flutter
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 defaults:
   run:
@@ -20,8 +19,8 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          channel: 'stable' # or: 'beta', 'dev' or 'master'
-      
+          channel: "stable" # or: 'beta', 'dev' or 'master'
+
       - name: Flutter version
         run: flutter --version
 
