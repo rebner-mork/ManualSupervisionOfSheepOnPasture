@@ -30,7 +30,7 @@ class _LoginFormState extends State<LoginForm> {
     int requiredLength = 8;
     if (password!.isEmpty && _validationActivated) {
       return "Skriv inn passord";
-    } else if (_password.length < requiredLenght && _validationActivated) {
+    } else if (_password.length < requiredLength && _validationActivated) {
       return "Passord må inneholde minst $requiredLength tegn";
     }
     return null;
