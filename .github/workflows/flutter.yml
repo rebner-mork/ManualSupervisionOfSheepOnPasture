@@ -38,10 +38,10 @@ jobs:
       # Consider passing '--fatal-infos' for slightly stricter analysis.
       - name: Analyze app source
         run: cd app && flutter analyze
-      -name: Analyze web source
+      - name: Analyze web source
         run: cd web && flutter analyze
 
       - name: Run app tests
         run: cd app && flutter test
-      -name: Run web tests
+      - name: Run web tests
         run: cd web && flutter test
