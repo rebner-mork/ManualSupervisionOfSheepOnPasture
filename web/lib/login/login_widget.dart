@@ -27,7 +27,7 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   String? _validatePassword(String? password) {
-    int requiredLenght = 8;
+    int requiredLength = 8;
     if (password!.isEmpty && _validationActivated) {
       return "Skriv inn passord";
     } else if (_password.length < requiredLenght && _validationActivated) {
