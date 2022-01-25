@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web/utils/authenticiation.dart' as authentication;
-import 'package:email_validator/email_validator.dart';
+import '../utils/validation.dart' as validation;
 
 class LoginForm extends StatefulWidget {
   const LoginForm({Key? key}) : super(key: key);
@@ -16,25 +16,6 @@ class _LoginFormState extends State<LoginForm> {
   String _password = '';
   String _loginMessage = '';
   bool _validationActivated = false;
-
-  String? _validateUserName(String? userName) {
-    if (userName!.isEmpty && _validationActivated) {
-      return "Skriv inn e-post";
-    } else if (!EmailValidator.validate(_email) && _validationActivated) {
-      return "Skriv gyldig e-post";
-    }
-    return null;
-  }
-
-  String? _validatePassword(String? password) {
-    int requiredLength = 8;
-    if (password!.isEmpty && _validationActivated) {
-      return "Skriv inn passord";
-    } else if (_password.length < requiredLength && _validationActivated) {
-      return "Passord må inneholde minst $requiredLength tegn";
-    }
-    return null;
-  }
 
   void _toggleVisiblePassword() {
     setState(() {
@@ -92,7 +73,7 @@ class _LoginFormState extends State<LoginForm> {
             key: const Key('inputEmail'),
             autofocus: true,
             textAlign: TextAlign.left,
-            validator: _validateUserName,
+            validator: (input) => validation.validateEmail(input),
             onChanged: (text) {
               _onChangeEmail(text);
             },
@@ -107,7 +88,7 @@ class _LoginFormState extends State<LoginForm> {
           TextFormField(
               key: const Key('inputPassword'),
               textAlign: TextAlign.left,
-              validator: _validatePassword,
+              validator: (input) => validation.validatePassword(input),
               obscureText: _visiblePassword,
               onChanged: (text) {
                 _onChangePassword(text);
