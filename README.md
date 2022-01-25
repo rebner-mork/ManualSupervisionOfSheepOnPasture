@@ -8,7 +8,7 @@ Due to Flutter not yet supporting integration tests directly in browsers, they h
 
 <b>Unit & widget tests</b>: `flutter test`
 
-<b>Integration tests</b>: `firebase emulators:exec --only auth 'flutter test ./integration_test/int_test.dart'`
+<b>Integration tests</b>: `firebase emulators:exec 'flutter test integration_test'`
 
 ## Web app
 Make sure to be inside the `./web` directory to run commands towards the web app.
