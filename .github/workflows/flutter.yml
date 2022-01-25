@@ -25,17 +25,23 @@ jobs:
       - name: Flutter version
         run: flutter --version
 
-      - name: Install dependencies
+      - name: Install app dependencies
         run: cd app && flutter pub get
+      - name: Install web dependencies
+        run: cd web && flutter pub get
 
-      - name: Verify formatting
+      - name: Verify app formatting
         run: cd app && flutter format --output=none --set-exit-if-changed .
+      - name: Verify web formatting
         run: cd web && flutter format --output=none --set-exit-if-changed .
 
       # Consider passing '--fatal-infos' for slightly stricter analysis.
-      - name: Analyze project source
+      - name: Analyze app source
         run: cd app && flutter analyze
+      - name: Analyze web source
         run: cd web && flutter analyze
 
-      - name: Run tests
-        run: flutter test
+      - name: Run app tests
+        run: cd app && flutter test
+      - name: Run web tests
+        run: cd web && flutter test
