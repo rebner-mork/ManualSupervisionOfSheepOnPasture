@@ -2,7 +2,7 @@ import 'package:email_validator/email_validator.dart';
 
 String? validateEmail(String? userName) {
   if (userName!.isEmpty) {
-    return "Skriv inn e-post";
+    return "Skriv e-post";
   } else if (!EmailValidator.validate(userName)) {
     return "Skriv gyldig e-post";
   }
@@ -12,7 +12,7 @@ String? validateEmail(String? userName) {
 String? validatePassword(String? password) {
   int requiredLength = 8;
   if (password!.isEmpty) {
-    return "Skriv inn passord";
+    return "Skriv passord";
   } else if (password.length < requiredLength) {
     return "Passord må inneholde minst $requiredLength tegn";
   }
