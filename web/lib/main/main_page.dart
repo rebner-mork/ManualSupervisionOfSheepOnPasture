@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web/my_page/my_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage(Key? key) : super(key: key);
@@ -31,21 +32,20 @@ class _MainState extends State<MainPage> {
                     Tab(
                         child: Text(
                       'Årsrapporter',
-                      style: TextStyle(fontSize: 17),
+                      style: TabTextStyle,
                     )),
-                    Tab(
-                        child: Text('Oppsynsturer',
-                            style: TextStyle(fontSize: 17))),
-                    Tab(
-                        child:
-                            Text('Min side', style: TextStyle(fontSize: 17))),
+                    Tab(child: Text('Oppsynsturer', style: TabTextStyle)),
+                    Tab(child: Text('Min side', style: TabTextStyle)),
                   ]),
             ),
-            body: const TabBarView(children: [Text('1'), Text('2'), Text('3')]),
+            body: const TabBarView(
+                children: [Text('1'), Text('2'), MyPage(null)]),
           )),
     );
   }
 }
+
+const TextStyle TabTextStyle = TextStyle(fontSize: 18);
 
 /* Tab divider (not quite correcty placed)
 Container(
