@@ -39,20 +39,9 @@ class _LoginFormState extends State<LoginForm> {
     }
   }
 
-  void _onChangeEmail(String input) {
-    setState(() {
-      _email = input;
-    });
+  void _onFieldChange(String input) {
     if (_validationActivated) {
-      _formKey.currentState!.validate();
-    }
-  }
-
-  void _onChangePassword(String input) {
-    setState(() {
-      _password = input;
-    });
-    if (_validationActivated) {
+      _formKey.currentState!.save();
       _formKey.currentState!.validate();
     }
   }
@@ -74,9 +63,8 @@ class _LoginFormState extends State<LoginForm> {
             autofocus: true,
             textAlign: TextAlign.left,
             validator: (input) => validation.validateEmail(input),
-            onChanged: (text) {
-              _onChangeEmail(text);
-            },
+            onChanged: _onFieldChange,
+            onSaved: (input) => input = input.toString(),
             decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.mail),
                 hintText: "E-post",
@@ -90,9 +78,8 @@ class _LoginFormState extends State<LoginForm> {
               textAlign: TextAlign.left,
               validator: (input) => validation.validatePassword(input),
               obscureText: _visiblePassword,
-              onChanged: (text) {
-                _onChangePassword(text);
-              },
+              onChanged: _onFieldChange,
+              onSaved: (input) => _password = input.toString(),
               decoration: InputDecoration(
                   prefixIcon: const Icon(Icons.lock),
                   hintText: "Passord",
