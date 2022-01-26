@@ -30,30 +30,30 @@ class _MyPageState extends State<MyPage> {
               icon: Icon(Icons.gite_outlined),
               label: Text(
                 'Gård',
-                style: NatigationTextStyle,
+                style: natigationTextStyle,
               ),
               selectedIcon: Icon(Icons.gite)),
           NavigationRailDestination(
               icon: Icon(Icons.hearing_outlined), //Icons.tag (#)
               label: Text(
                 'Øremerker',
-                style: NatigationTextStyle,
+                style: natigationTextStyle,
               ),
               selectedIcon: Icon(Icons.hearing)),
           NavigationRailDestination(
               icon: Icon(Icons.filter_alt_outlined),
-              label: Text('Slips', style: NatigationTextStyle),
+              label: Text('Slips', style: natigationTextStyle),
               selectedIcon: Icon(Icons.filter_alt)),
           NavigationRailDestination(
               icon: Icon(Icons.groups_outlined),
-              label: Text('Oppsynspersonell', style: NatigationTextStyle),
+              label: Text('Oppsynspersonell', style: natigationTextStyle),
               selectedIcon: Icon(Icons.groups))
         ],
       ),
       const VerticalDivider(thickness: 1, width: 1),
-      if (_selectedIndex == 0) Expanded(child: MyFarm(null))
+      if (_selectedIndex == 0) const Expanded(child: MyFarm(null))
     ]));
   }
 }
 
-const TextStyle NatigationTextStyle = TextStyle(fontWeight: FontWeight.bold);
+const TextStyle natigationTextStyle = TextStyle(fontWeight: FontWeight.bold);
