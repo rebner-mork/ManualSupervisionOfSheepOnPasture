@@ -3,7 +3,6 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -45,13 +44,13 @@ class DefaultFirebaseOptions {
   }
 
   //https://pub.dev/packages/flutter_dotenv
-  static FirebaseOptions web = FirebaseOptions(
-    apiKey: dotenv.env['FIREBASE_API_KEY'] ?? '',
-    appId: dotenv.env['FIREBASE_APP_ID'] ?? '',
-    messagingSenderId: dotenv.env['FIREBASE_MESSAGING_SENDER_ID'] ?? '',
+  static FirebaseOptions web = const FirebaseOptions(
+    apiKey: 'AIzaSyAfuDTlmRtxnYyy6UNY4b31IU2adokhjB0',
+    appId: '1:867330479261:web:223a6baec61b5da03c3074',
+    messagingSenderId: '867330479261',
     projectId: 'master-backend-93896',
     authDomain: 'master-backend-93896.firebaseapp.com',
     storageBucket: 'master-backend-93896.appspot.com',
-    measurementId: dotenv.env['FIREBASE_MEASUREMENT_ID'] ?? '',
+    measurementId: 'G-04J5DY3HPY',
   );
 }
