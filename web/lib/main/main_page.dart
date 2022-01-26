@@ -20,24 +20,28 @@ class _MainState extends State<MainPage> {
             appBar: AppBar(
               toolbarHeight: 0,
               backgroundColor: Colors.grey[800],
-              bottom: const TabBar(
-                  unselectedLabelColor: Colors.grey,
-                  indicatorColor: Colors.red,
-                  //indicatorSize: TabBarIndicatorSize.tab,
-                  tabs: [
+              bottom: TabBar(
+                  unselectedLabelColor: Colors.grey[400],
+                  indicator: const UnderlineTabIndicator(
+                    borderSide:
+                        BorderSide(width: 3, color: Colors.green), //Colors.red
+                  ),
+                  //indicatorSize: TabBarIndicatorSize.label,
+                  tabs: const [
                     Tab(
                         child: Text(
                       'Årsrapporter',
-                      style: TextStyle(fontSize: 16),
+                      style: TextStyle(fontSize: 17),
                     )),
                     Tab(
                         child: Text('Oppsynsturer',
-                            style: TextStyle(fontSize: 16))),
+                            style: TextStyle(fontSize: 17))),
                     Tab(
                         child:
-                            Text('Min side', style: TextStyle(fontSize: 16))),
+                            Text('Min side', style: TextStyle(fontSize: 17))),
                   ]),
             ),
+            body: const TabBarView(children: [Text('1'), Text('2'), Text('3')]),
           )),
     );
   }
