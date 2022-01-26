@@ -2,13 +2,13 @@ name: Flutter
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
 defaults:
   run:
-    working-directory: ./app
+    working-directory: ./
 
 jobs:
   build:
@@ -19,24 +19,24 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          channel: "stable" # or: 'beta', 'dev' or 'master'
-
+          channel: 'stable' # or: 'beta', 'dev' or 'master'
+      
       - name: Flutter version
         run: flutter --version
 
-      - name: Install dependencies
-        run: flutter pub get
+      - name: Install app dependencies
+        run: cd app && flutter pub get
+      - name: Install web dependencies
+        run: cd web && flutter pub get
 
-      # Uncomment this step to verify the use of 'dart format' on each commit.
-      - name: Verify formatting
+      - name: Verify project formatting
         run: flutter format --output=none --set-exit-if-changed .
 
       # Consider passing '--fatal-infos' for slightly stricter analysis.
       - name: Analyze project source
         run: flutter analyze
 
-      # Your project will need to have tests in test/ and a dependency on
-      # package:test for this step to succeed. Note that Flutter projects will
-      # want to change this to 'flutter test'.
-      - name: Run tests
-        run: flutter test
+      - name: Run app tests
+        run: cd app && flutter test
+      - name: Run web tests
+        run: cd web && flutter test
