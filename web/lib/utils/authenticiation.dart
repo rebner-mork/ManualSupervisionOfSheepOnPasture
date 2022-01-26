@@ -5,8 +5,9 @@ Future<String> signIn(String email, String password) async {
     await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password);
     return '';
-  } catch (e) {
-    //TODO return different thing based on exception
+  } on FirebaseAuthException {
     return "Passord og/eller e-post er ugyldig";
+  } catch (e) {
+    return "Noe gikk galt";
   }
 }
