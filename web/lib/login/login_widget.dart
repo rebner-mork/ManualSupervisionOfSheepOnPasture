@@ -64,7 +64,7 @@ class _LoginFormState extends State<LoginForm> {
             textAlign: TextAlign.left,
             validator: (input) => validation.validateEmail(input),
             onChanged: _onFieldChange,
-            onSaved: (input) => input = input.toString(),
+            onSaved: (input) => _email = input.toString(),
             decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.mail),
                 hintText: "E-post",
