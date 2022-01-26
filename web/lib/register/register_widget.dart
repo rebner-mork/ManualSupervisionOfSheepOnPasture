@@ -50,7 +50,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                     validator: (input) => validateEmail(input),
                     onSaved: (input) => _email = input.toString(),
                     onChanged: (_) {
-                      _onFieldChanged;
+                      _onFieldChanged();
                     },
                     textInputAction: TextInputAction.go,
                     onFieldSubmitted: (value) => register(),
@@ -62,7 +62,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                     validator: (input) => validatePassword(input),
                     onSaved: (input) => _password = input.toString(),
                     onChanged: (_) {
-                      _onFieldChanged;
+                      _onFieldChanged();
                     },
                     textInputAction: TextInputAction.go,
                     onFieldSubmitted: (value) => register(),
@@ -77,7 +77,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                     validator: (input) =>
                         passwordsAreEqual(passwordOneController.text, input),
                     onChanged: (_) {
-                      _onFieldChanged;
+                      _onFieldChanged();
                     },
                     textInputAction: TextInputAction.go,
                     onFieldSubmitted: (value) => register(),
@@ -93,7 +93,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                     validator: (input) => validatePhone(input),
                     onSaved: (input) => _phone = input.toString(),
                     onChanged: (_) {
-                      _onFieldChanged;
+                      _onFieldChanged();
                     },
                     textInputAction: TextInputAction.go,
                     onFieldSubmitted: (value) => register(),
@@ -122,6 +122,10 @@ class _RegisterWidgetState extends State<RegisterWidget> {
   void register() async {
     final formState = _formKey.currentState;
 
+    setState(() {
+      _validationActivated = true;
+    });
+
     if (formState!.validate()) {
       formState.save();
       try {
@@ -138,9 +142,6 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                 logger.log('Telefonnummer lagt til i users/' + value.id))
             .catchError((error) => logger.log('Feil: ' + error.toString()));
       } on FirebaseAuthException catch (e) {
-        setState(() {
-          _validationActivated = true;
-        });
         switch (e.code) {
           case 'email-already-in-use':
             _feedback = 'E-posten er allerede i bruk';
@@ -153,9 +154,6 @@ class _RegisterWidgetState extends State<RegisterWidget> {
             break;
         }
       } catch (e) {
-        setState(() {
-          _validationActivated = true;
-        });
         _feedback = 'Kunne ikke opprette bruker';
       }
     }
