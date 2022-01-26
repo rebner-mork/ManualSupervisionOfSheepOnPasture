@@ -38,7 +38,9 @@ class WelcomePicture extends StatelessWidget {
         child: Container(
       foregroundDecoration: const BoxDecoration(
           image: DecorationImage(
-              image: AssetImage('images/sheep.jpg'), fit: BoxFit.fill)),
+        image: AssetImage('images/sheep.jpg'),
+        fit: BoxFit.fill,
+      )),
     ));
   }
 }
