@@ -71,6 +71,7 @@ void main() {
     });
 
     testWidgets('Password obscurity', (WidgetTester tester) async {
+      TestWidgetsFlutterBinding.ensureInitialized();
       tester.binding.window.physicalSizeTestValue = const Size(1024, 768);
       tester.binding.window.devicePixelRatioTestValue = 1.0;
       await tester.pumpWidget(const MaterialApp(home: LoginPage()));
