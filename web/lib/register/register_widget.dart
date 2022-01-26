@@ -141,6 +141,10 @@ class _RegisterWidgetState extends State<RegisterWidget> {
             .then((value) =>
                 logger.log('Telefonnummer lagt til i users/' + value.id))
             .catchError((error) => logger.log('Feil: ' + error.toString()));
+
+        setState(() {
+          _feedback = "Bruker registrert: ${user.user!.uid}";
+        });
       } on FirebaseAuthException catch (e) {
         switch (e.code) {
           case 'email-already-in-use':
