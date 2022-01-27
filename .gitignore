@@ -29,3 +29,6 @@ app/android/app/google-services.json
 # Debug logs
 firebase-debug.log
 ui-debug.log
+
+# Environment variables
+*.env

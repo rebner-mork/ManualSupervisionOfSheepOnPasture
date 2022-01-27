@@ -1,14 +1,14 @@
-name: app
+name: Flutter
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 defaults:
   run:
-    working-directory: ./app
+    working-directory: ./
 
 jobs:
   build:
@@ -21,25 +21,31 @@ jobs:
           node-version: 16.x
       - uses: subosito/flutter-action@v2
         with:
-          channel: 'stable' # or: 'beta', 'dev' or 'master'
-      
+          channel: "stable" # or: 'beta', 'dev' or 'master'
+
       - name: Flutter version
         run: flutter --version
-
-      - name: Install Flutter dependencies
-        run: flutter pub get
-      
-      #- name: Install Firebase
-      #  run: npm install -g firebase-tools
-      
-      - name: Verify formatting
-        run: flutter format --output=none --set-exit-if-changed .
 
       - name: Analyze project source
         run: flutter analyze
 
+      #- name: Install Firebase
+      #  run: npm install -g firebase-tools
+
+      - name: Install app dependencies
+        run: cd app && flutter pub get
+      - name: Install web dependencies
+        run: cd web && flutter pub get
+
+      - name: Verify app formatting
+        run: cd app && flutter format --output=none --set-exit-if-changed .
+      - name: Verify web formatting
+        run: cd web && flutter format --output=none --set-exit-if-changed .
+
       - name: Run tests
-        run: flutter test
+        run: cd app && flutter test
+      - name: Run web tests
+        run: cd web && flutter test
 
       # Integration test, can only run on ubuntu-latest (not macOS or Windows)
       #- name: Run integration tests on Android emulator

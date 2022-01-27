@@ -3,6 +3,7 @@ import 'package:app/register_user/register_user_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'map/map_widget.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,6 +32,7 @@ class _MyAppState extends State<MyApp> {
       routes: {
         'login': (context) => const LoginPage(),
         'register': (context) => const RegisterUserPage(),
+        'map': (context) => const Material(child: NorgesKart()),
       },
     );
   }
