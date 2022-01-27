@@ -37,80 +37,6 @@ class _MyFarmState extends State<MyFarm> {
     });
   }
 
-  void getFarmInfo() async {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: 'test@gmail.com', password: '12345678'); // TODO: remove
-    String? currentUser = FirebaseAuth.instance.currentUser!.uid;
-
-// TODO: try/catch
-    if (currentUser != null) {
-      CollectionReference farmCollection =
-          FirebaseFirestore.instance.collection('farm');
-      DocumentReference farmDoc = farmCollection.doc(currentUser);
-
-      await farmDoc.get().then((doc) => {
-            if (doc.exists)
-              {
-                debugPrint('Dokument eksisterer'),
-                debugPrint("print: " + doc.data().toString()),
-                _farmName = doc.get('name'),
-                _farmAddress = doc.get('address'),
-                farmNameController.text = _farmName,
-                farmAddressController.text = _farmAddress
-              }
-            else
-              {
-                debugPrint('Dokument eksisterer ikke'),
-              },
-          });
-    }
-    setState(() {
-      _loadingData = false;
-    });
-  }
-
-  void _saveFarm() async {
-    setState(() {
-      _validationActivated = true;
-      _feedback = '';
-    });
-
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      try {
-        String? currentUser = FirebaseAuth.instance.currentUser!.uid;
-
-        if (currentUser != null) {
-          CollectionReference farmCollection =
-              FirebaseFirestore.instance.collection('farm');
-          DocumentReference farmDoc = farmCollection.doc(
-              currentUser); //.where('owner', isEqualTo: currentUser).get();
-
-          await farmDoc.get().then((doc) => {
-                if (doc.exists)
-                  {
-                    debugPrint('Dokument eksisterer'),
-                    farmDoc.update({'name': _farmName, 'address': _farmAddress})
-                  }
-                else
-                  {
-                    debugPrint('Dokument eksisterer ikke'),
-                    farmDoc.set({
-                      'name': _farmName,
-                      'address': _farmAddress
-                    }) // set for custom doc id, add ellers
-                  },
-              });
-          setState(() {
-            _feedback = 'Gårdsinfo lagret';
-          });
-        }
-      } catch (e) {
-        debugPrint('exc: ' + e.toString());
-      }
-    }
-  }
-
   void _onFieldChanged() {
     setState(() {
       _feedback = '';
@@ -121,7 +47,6 @@ class _MyFarmState extends State<MyFarm> {
     }
   }
 
-  // TODO: nanv og adresse forsvinner når man bytter tab (les inn?)
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -212,16 +137,69 @@ class _MyFarmState extends State<MyFarm> {
               ))
         ]));
   }
-}
 
-class FarmModel {
-  String _id = '';
-  String name;
-  String address;
+  void getFarmInfo() async {
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: 'test@gmail.com', password: '12345678'); // TODO: remove
+    String? currentUser = FirebaseAuth.instance.currentUser!.uid;
 
-  FarmModel({required this.name, required this.address});
+    CollectionReference farmCollection =
+        FirebaseFirestore.instance.collection('farm');
+    DocumentReference farmDoc = farmCollection.doc(currentUser);
 
-  Map<String, dynamic> toMap() {
-    return {"name": name, "address": address};
+    await farmDoc.get().then((doc) => {
+          if (doc.exists)
+            {
+              debugPrint('Dokument eksisterer'),
+              debugPrint("print: " + doc.data().toString()),
+              _farmName = doc.get('name'),
+              _farmAddress = doc.get('address'),
+              farmNameController.text = _farmName,
+              farmAddressController.text = _farmAddress
+            }
+          else
+            {
+              debugPrint('Dokument eksisterer ikke'),
+            },
+        });
+    setState(() {
+      _loadingData = false;
+    });
+  }
+
+  void _saveFarm() async {
+    setState(() {
+      _validationActivated = true;
+      _feedback = '';
+    });
+
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      try {
+        String? currentUser = FirebaseAuth.instance.currentUser!.uid;
+
+        CollectionReference farmCollection =
+            FirebaseFirestore.instance.collection('farm');
+        DocumentReference farmDoc = farmCollection.doc(currentUser);
+
+        await farmDoc.get().then((doc) => {
+              if (doc.exists)
+                {
+                  debugPrint('Dokument eksisterer'),
+                  farmDoc.update({'name': _farmName, 'address': _farmAddress})
+                }
+              else
+                {
+                  debugPrint('Dokument eksisterer ikke'),
+                  farmDoc.set({'name': _farmName, 'address': _farmAddress})
+                },
+            });
+        setState(() {
+          _feedback = 'Gårdsinfo lagret';
+        });
+      } catch (e) {
+        debugPrint('exception: ' + e.toString());
+      }
+    }
   }
 }
