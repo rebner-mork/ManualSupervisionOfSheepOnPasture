@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:web/utils/custom_widgets.dart';
 
 class MyFarm extends StatefulWidget {
-  const MyFarm(Key? key) : super(key: key);
+  const MyFarm({Key? key}) : super(key: key);
 
   @override
   State<MyFarm> createState() => _MyFarmState();
@@ -14,7 +14,7 @@ class _MyFarmState extends State<MyFarm> {
   _MyFarmState();
 
   final _formKey = GlobalKey<FormState>();
-  late String _farmName, _farmAddress; // TODO: les inn fra db først
+  late String _farmName, _farmAddress;
   String _feedback = '';
   bool _validationActivated = false;
   bool _loadingData = true;

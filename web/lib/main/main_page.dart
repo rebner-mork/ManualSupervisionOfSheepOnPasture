@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:web/my_page/my_page.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage(Key? key) : super(key: key);
+  const MainPage({Key? key}) : super(key: key);
 
   @override
   State<MainPage> createState() => _MainState();
@@ -38,8 +38,7 @@ class _MainState extends State<MainPage> {
                     Tab(child: Text('Min side', style: tabTextStyle)),
                   ]),
             ),
-            body: const TabBarView(
-                children: [Text('1'), Text('2'), MyPage(null)]),
+            body: const TabBarView(children: [Text('1'), Text('2'), MyPage()]),
           )),
     );
   }

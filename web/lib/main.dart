@@ -9,11 +9,11 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp(null));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp(Key? key) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -30,7 +30,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
           colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green)),
       initialRoute: 'main',
-      routes: {'main': (context) => MainPage(widget.key)},
+      routes: {'main': (context) => const MainPage()},
     );
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:web/my_page/my_farm.dart';
 
 class MyPage extends StatefulWidget {
-  const MyPage(Key? key) : super(key: key);
+  const MyPage({Key? key}) : super(key: key);
 
   @override
   State<MyPage> createState() => _MyPageState();
@@ -51,7 +51,7 @@ class _MyPageState extends State<MyPage> {
         ],
       ),
       const VerticalDivider(thickness: 1, width: 1),
-      if (_selectedIndex == 0) const Expanded(child: MyFarm(null))
+      if (_selectedIndex == 0) const Expanded(child: MyFarm())
     ]));
   }
 }
