@@ -22,12 +22,12 @@ void main() {
     });
 
     test('Equal password validator', () {
-      expect(passwordsAreEqual('', ''), 'Skriv passord');
-      expect(passwordsAreEqual('1', '1'), 'Passord må inneholde minst 8 tegn');
-      expect(passwordsAreEqual('1', '2'), 'Passordene er ikke like');
+      expect(validatePasswords('', ''), 'Skriv passord');
+      expect(validatePasswords('1', '1'), 'Passord må inneholde minst 8 tegn');
+      expect(validatePasswords('1', '2'), 'Passordene er ikke like');
       expect(
-          passwordsAreEqual('12345678', '87654321'), 'Passordene er ikke like');
-      expect(passwordsAreEqual('11111111', '11111111'), null);
+          validatePasswords('12345678', '87654321'), 'Passordene er ikke like');
+      expect(validatePasswords('11111111', '11111111'), null);
     });
 
     test('Phone validator', () {

@@ -1,24 +1,24 @@
+import 'package:app/utils/authentication.dart';
 import 'package:app/utils/field_validation.dart';
 import 'package:app/utils/custom_widgets.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as logger;
 
-class RegisterWidget extends StatefulWidget {
-  const RegisterWidget(Key? key) : super(key: key);
+class RegisterUserWidget extends StatefulWidget {
+  const RegisterUserWidget({Key? key}) : super(key: key);
 
   @override
-  State<RegisterWidget> createState() => _RegisterWidgetState();
+  State<RegisterUserWidget> createState() => _RegisterUserWidgetState();
 }
 
-class _RegisterWidgetState extends State<RegisterWidget> {
-  _RegisterWidgetState();
+class _RegisterUserWidgetState extends State<RegisterUserWidget> {
+  _RegisterUserWidgetState();
 
   final _formKey = GlobalKey<FormState>();
   bool _visiblePassword = false;
   bool _registerFailed = false;
+  bool _validationActivated = false;
   late String _email, _password, _phone, _feedback;
+  final passwordOneController = TextEditingController();
 
   void _toggleVisiblePassword() {
     setState(() {
@@ -26,7 +26,18 @@ class _RegisterWidgetState extends State<RegisterWidget> {
     });
   }
 
-  final passwordOneController = TextEditingController();
+  void _onFieldChange(String input) {
+    if (_registerFailed) {
+      setState(() {
+        _registerFailed = false;
+      });
+    }
+
+    if (_validationActivated) {
+      _formKey.currentState!.save();
+      _formKey.currentState!.validate();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,77 +48,53 @@ class _RegisterWidgetState extends State<RegisterWidget> {
               children: [
                 const Icon(Icons.account_circle,
                     size: 90, color: Colors.black54),
-                customFieldSpacing(),
+                inputFieldSpacer(),
                 TextFormField(
                     key: const Key('inputEmail'),
                     validator: (input) => validateEmail(input),
                     onSaved: (input) => _email = input.toString(),
-                    onChanged: (text) {
-                      if (_registerFailed) {
-                        setState(() {
-                          _registerFailed = false;
-                        });
-                      }
-                    },
+                    onChanged: _onFieldChange,
                     textInputAction: TextInputAction.go,
-                    onFieldSubmitted: (value) => register(),
+                    onFieldSubmitted: (value) => _createUser(),
                     decoration: customInputDecoration('E-post', Icons.mail)),
-                customFieldSpacing(),
+                inputFieldSpacer(),
                 TextFormField(
                     controller: passwordOneController,
                     key: const Key('inputPasswordOne'),
                     validator: (input) => validatePassword(input),
                     onSaved: (input) => _password = input.toString(),
-                    onChanged: (text) {
-                      if (_registerFailed) {
-                        setState(() {
-                          _registerFailed = false;
-                        });
-                      }
-                    },
+                    onChanged: _onFieldChange,
                     textInputAction: TextInputAction.go,
-                    onFieldSubmitted: (value) => register(),
+                    onFieldSubmitted: (value) => _createUser(),
                     obscureText: !_visiblePassword,
                     decoration: customInputDecoration('Passord', Icons.lock,
                         passwordField: true,
                         isVisible: _visiblePassword,
                         onPressed: _toggleVisiblePassword)),
-                customFieldSpacing(),
+                inputFieldSpacer(),
                 TextFormField(
                     key: const Key('inputPasswordTwo'),
                     validator: (input) =>
-                        passwordsAreEqual(passwordOneController.text, input),
-                    onChanged: (text) {
-                      if (_registerFailed) {
-                        setState(() {
-                          _registerFailed = false;
-                        });
-                      }
-                    },
+                        validatePasswords(passwordOneController.text, input),
+                    onChanged: _onFieldChange,
                     textInputAction: TextInputAction.go,
-                    onFieldSubmitted: (value) => register(),
+                    onFieldSubmitted: (value) => _createUser(),
                     obscureText: !_visiblePassword,
                     decoration: customInputDecoration(
                         'Gjenta passord', Icons.lock,
                         passwordField: true,
                         isVisible: _visiblePassword,
                         onPressed: _toggleVisiblePassword)),
-                customFieldSpacing(),
+                inputFieldSpacer(),
                 TextFormField(
                     key: const Key('inputPhone'),
                     validator: (input) => validatePhone(input),
                     onSaved: (input) => _phone = input.toString(),
-                    onChanged: (text) {
-                      if (_registerFailed) {
-                        setState(() {
-                          _registerFailed = false;
-                        });
-                      }
-                    },
+                    onChanged: _onFieldChange,
                     textInputAction: TextInputAction.go,
-                    onFieldSubmitted: (value) => register(),
+                    onFieldSubmitted: (value) => _createUser(),
                     decoration: customInputDecoration('Telefon', Icons.phone)),
-                customFieldSpacing(),
+                inputFieldSpacer(),
                 AnimatedOpacity(
                   opacity: _registerFailed ? 1.0 : 0.0,
                   duration: const Duration(milliseconds: 200),
@@ -119,7 +106,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
-                    onPressed: register,
+                    onPressed: _createUser,
                     child: const Text('Opprett bruker',
                         style: TextStyle(fontSize: 20)),
                     style: ElevatedButton.styleFrom(
@@ -128,46 +115,27 @@ class _RegisterWidgetState extends State<RegisterWidget> {
             )));
   }
 
-  void register() async {
+  void _createUser() async {
     final formState = _formKey.currentState;
+
+    setState(() {
+      _validationActivated = true;
+    });
 
     if (formState!.validate()) {
       formState.save();
       try {
-        UserCredential user = await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(email: _email, password: _password);
-        logger.log('Bruker registrert: ' + user.toString());
-
-        CollectionReference users =
-            FirebaseFirestore.instance.collection('users');
-
-        await users
-            .add({'email': _email, 'phone': _phone})
-            .then((value) =>
-                logger.log('Telefonnummer lagt til i users/' + value.id))
-            .catchError((error) => logger.log('Feil: ' + error.toString()));
+        String? response = await createUser(_email, _password, _phone);
 
         setState(() {
-          _registerFailed = false;
-        });
-      } on FirebaseAuthException catch (e) {
-        switch (e.code) {
-          case 'email-already-in-use':
-            _feedback = 'E-posten er allerede i bruk';
-            break;
-          case 'invalid-email':
-            _feedback = 'Skriv gyldig e-post';
-            break;
-          case 'weak-password':
-            _feedback = 'Skriv sterkere passord';
-            break;
-        }
-        setState(() {
-          _registerFailed = true;
+          _registerFailed = response == null ? false : true;
+          _feedback = response ?? '';
         });
       } catch (e) {
         _feedback = 'Kunne ikke opprette bruker';
+        debugPrint(e.toString());
         setState(() {
+          _validationActivated = true;
           _registerFailed = true;
         });
       }

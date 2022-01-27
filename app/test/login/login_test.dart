@@ -6,7 +6,7 @@ import 'package:app/main.dart';
 void main() {
   group('Widget tests', () {
     testWidgets('Initial layout and content', (WidgetTester tester) async {
-      await tester.pumpWidget(const MyApp(null));
+      await tester.pumpWidget(const MyApp());
 
       expect(find.text('Logg inn'), findsOneWidget);
       expect(find.text('E-post'), findsOneWidget);
@@ -26,7 +26,7 @@ void main() {
     });
 
     testWidgets('Invalid inputs', (WidgetTester tester) async {
-      await tester.pumpWidget(const MyApp(null));
+      await tester.pumpWidget(const MyApp());
 
       var loginButton = find.text('Logg inn');
       var emailField = find.byKey(const Key('inputEmail'));
@@ -66,7 +66,7 @@ void main() {
     });
 
     testWidgets('Password obscurity', (WidgetTester tester) async {
-      await tester.pumpWidget(const MyApp(null));
+      await tester.pumpWidget(const MyApp());
       await tester.enterText(
           find.byKey(const Key('inputPassword')), '12345678');
 

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'dart:developer' as logger;
 
 class LoginWidget extends StatefulWidget {
-  const LoginWidget(Key? key) : super(key: key);
+  const LoginWidget({Key? key}) : super(key: key);
 
   @override
   State<LoginWidget> createState() => _LoginWidgetState();
@@ -36,7 +36,7 @@ class _LoginWidgetState extends State<LoginWidget> {
               size: 90,
               color: Colors.black54,
             ),
-            customFieldSpacing(),
+            inputFieldSpacer(),
             TextFormField(
               key: const Key('inputEmail'),
               validator: (input) => validateEmail(input),
@@ -57,7 +57,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                 prefixIcon: Icon(Icons.mail),
               ),
             ),
-            customFieldSpacing(),
+            inputFieldSpacer(),
             TextFormField(
               key: const Key('inputPassword'),
               validator: (input) => validatePassword(input),
@@ -85,7 +85,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                       color: !_visiblePassword ? Colors.grey : Colors.green,
                       onPressed: _toggleVisiblePassword)),
             ),
-            customFieldSpacing(),
+            inputFieldSpacer(),
             AnimatedOpacity(
               opacity: _loginFailed ? 1.0 : 0.0,
               duration: const Duration(milliseconds: 200),

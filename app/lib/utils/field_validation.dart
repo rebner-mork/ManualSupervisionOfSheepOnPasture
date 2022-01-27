@@ -19,7 +19,7 @@ String? validatePassword(String? password) {
   return null;
 }
 
-String? passwordsAreEqual(String? passwordOne, String? passwordTwo) {
+String? validatePasswords(String? passwordOne, String? passwordTwo) {
   if (passwordOne != passwordTwo) {
     return 'Passordene er ikke like';
   } else if (validatePassword(passwordOne) != null) {

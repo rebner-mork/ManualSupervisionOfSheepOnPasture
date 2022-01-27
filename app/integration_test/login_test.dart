@@ -14,7 +14,7 @@ void main() async {
 
   testWidgets('Integration test login', (WidgetTester tester) async {
     await tester
-        .pumpWidget(const MaterialApp(home: Material(child: LoginPage(null))));
+        .pumpWidget(const MaterialApp(home: Material(child: LoginPage())));
     String host = Platform.isAndroid ? '10.0.2.2' : 'localhost';
     FirebaseAuth.instance.useAuthEmulator(host, 9099);
 

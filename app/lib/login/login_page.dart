@@ -2,14 +2,14 @@ import 'package:app/login/login_widget.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage(Key? key) : super(key: key);
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
-  State<LoginPage> createState() => _LoginState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginState extends State<LoginPage> {
-  _LoginState();
+class _LoginPageState extends State<LoginPage> {
+  _LoginPageState();
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +19,8 @@ class _LoginState extends State<LoginPage> {
       child: Column(
         children: [
           const Spacer(flex: 3),
-          Flexible(
-            child: LoginWidget(widget.key),
+          const Flexible(
+            child: LoginWidget(),
             flex: 12,
           ),
           Flexible(
