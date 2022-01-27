@@ -34,14 +34,14 @@ class _MyPageState extends State<MyPage> {
               ),
               selectedIcon: Icon(Icons.gite)),
           NavigationRailDestination(
-              icon: Icon(Icons.hearing_outlined), //Icons.tag (#)
+              icon: Icon(Icons.local_offer_outlined), //Icons.tag (#)
               label: Text(
                 'Øremerker',
                 style: natigationTextStyle,
               ),
-              selectedIcon: Icon(Icons.hearing)),
+              selectedIcon: Icon(Icons.local_offer_outlined)),
           NavigationRailDestination(
-              icon: Icon(Icons.filter_alt_outlined),
+              icon: Icon(Icons.filter_alt),
               label: Text('Slips', style: natigationTextStyle),
               selectedIcon: Icon(Icons.filter_alt)),
           NavigationRailDestination(

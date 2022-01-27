@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:web/utils/custom_widgets.dart';
 
@@ -23,12 +25,58 @@ class _MyFarmState extends State<MyFarm> {
     return null;
   }
 
-  void _saveFarm() {
+  void _saveFarm() async {
     setState(() {
+      _validationActivated = true;
+      _feedback = '';
+    });
+
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      try {
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: 'test@gmail.com', password: '12345678');
+        String? currentUser = FirebaseAuth.instance.currentUser!.uid;
+
+        if (currentUser != null) {
+          CollectionReference farmCollection =
+              FirebaseFirestore.instance.collection('farm');
+          DocumentReference farmDoc = farmCollection.doc(
+              currentUser); //.where('owner', isEqualTo: currentUser).get();
+
+          await farmDoc.get().then((doc) => {
+                if (doc.exists)
+                  {
+                    debugPrint('Dokument eksisterer'),
+                    farmDoc.update({'name': _farmName, 'address': _farmAddress})
+                  }
+                else
+                  {
+                    debugPrint('Dokument eksisterer ikke'),
+                    farmDoc.set({
+                      'name': _farmName,
+                      'address': _farmAddress
+                    }) // set for custom doc id, add ellers
+                  },
+              });
+          setState(() {
+            _feedback = 'Gårdsinfo lagret';
+          });
+        }
+      } catch (e) {
+        debugPrint('exc: ' + e.toString());
+      }
+    }
+  }
+
+  void _onFieldChanged() {
+    setState(() {
+      _feedback = '';
+    });
+    if (_validationActivated) {
       _formKey.currentState!.save();
       _formKey.currentState!.validate();
-      _validationActivated = true;
-    });
+    }
   }
 
   @override
@@ -36,7 +84,7 @@ class _MyFarmState extends State<MyFarm> {
     return Form(
         key: _formKey,
         child: Column(children: [
-          const SizedBox(height: 20),
+          const SizedBox(height: 50),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -56,14 +104,13 @@ class _MyFarmState extends State<MyFarm> {
                           validator: (input) =>
                               validateLength(input, 'Skriv gårdsnavn'),
                           onSaved: (input) => _farmName = input.toString(),
-                          onChanged: (text) {
-                            setState(() {
-                              _feedback = '';
-                            });
+                          onChanged: (_) {
+                            _onFieldChanged();
                           },
                           onFieldSubmitted: (_) => _saveFarm(),
                           decoration:
                               customInputDecoration('Navn', Icons.badge)))),
+              const Spacer()
             ],
           ),
           customFieldSpacing(),
@@ -85,26 +132,24 @@ class _MyFarmState extends State<MyFarm> {
                           key: const Key('inputFarmAddress'),
                           validator: (input) =>
                               validateLength(input, 'Skriv adresse'),
-                          onSaved: (input) => _farmName = input.toString(),
-                          onChanged: (text) {
-                            if (_validationActivated) {
-                              setState(() {
-                                _feedback = '';
-                              });
-                            }
+                          onSaved: (input) => _farmAddress = input.toString(),
+                          onChanged: (_) {
+                            _onFieldChanged();
                           },
                           onFieldSubmitted: (_) => _saveFarm(),
                           decoration:
-                              customInputDecoration('Adresse', Icons.badge)))),
+                              customInputDecoration('Adresse', Icons.place)))),
+              const Spacer()
             ],
           ),
+          customFieldSpacing(),
           AnimatedOpacity(
             opacity: _validationActivated ? 1.0 : 0.0,
             duration: const Duration(milliseconds: 200),
             child: Text(
               _feedback,
               key: const Key('feedback'),
-              style: const TextStyle(color: Colors.red),
+              style: const TextStyle(color: Colors.green),
             ),
           ),
           const SizedBox(height: 25),

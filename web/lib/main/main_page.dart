@@ -32,10 +32,10 @@ class _MainState extends State<MainPage> {
                     Tab(
                         child: Text(
                       'Årsrapporter',
-                      style: TabTextStyle,
+                      style: tabTextStyle,
                     )),
-                    Tab(child: Text('Oppsynsturer', style: TabTextStyle)),
-                    Tab(child: Text('Min side', style: TabTextStyle)),
+                    Tab(child: Text('Oppsynsturer', style: tabTextStyle)),
+                    Tab(child: Text('Min side', style: tabTextStyle)),
                   ]),
             ),
             body: const TabBarView(
@@ -45,7 +45,7 @@ class _MainState extends State<MainPage> {
   }
 }
 
-const TextStyle TabTextStyle = TextStyle(fontSize: 18);
+const TextStyle tabTextStyle = TextStyle(fontSize: 18);
 
 /* Tab divider (not quite correcty placed)
 Container(
