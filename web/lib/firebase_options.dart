@@ -43,7 +43,7 @@ class DefaultFirebaseOptions {
     );
   }
 
-  //https://pub.dev/packages/flutter_dotenv
+  //https://firebase.google.com/docs/projects/learn-more
   static FirebaseOptions web = const FirebaseOptions(
     apiKey: 'AIzaSyAfuDTlmRtxnYyy6UNY4b31IU2adokhjB0',
     appId: '1:867330479261:web:223a6baec61b5da03c3074',

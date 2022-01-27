@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'firebase_options.dart';
 import 'package:web/register/register_user_page.dart';
+import 'package:web/firebase_options.dart';
+import 'login/login_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,10 +29,12 @@ class _MyAppState extends State<MyApp> {
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     return MaterialApp(
-      theme: ThemeData(
-          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green)),
-      initialRoute: 'register',
-      routes: {'register': (context) => const RegisterUserPage()},
-    );
+        theme: ThemeData(
+            colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green)),
+        initialRoute: 'login',
+        routes: {
+          'login': (context) => const LoginPage(),
+          'register': (context) => const RegisterUserPage()
+        });
   }
 }

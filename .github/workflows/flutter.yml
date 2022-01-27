@@ -29,11 +29,13 @@ jobs:
       - name: Install web dependencies
         run: cd web && flutter pub get
 
-      - name: Verify project formatting
-        run: flutter format --output=none --set-exit-if-changed .
+      - name: Verify app formatting
+        run: cd app && flutter format --output=none --set-exit-if-changed .
+      - name: Verify web formatting
+        run: cd web && flutter format --output=none --set-exit-if-changed .
 
       # Consider passing '--fatal-infos' for slightly stricter analysis.
-      - name: Analyze project source
+      - name: Analyze source
         run: flutter analyze
 
       - name: Run app tests
