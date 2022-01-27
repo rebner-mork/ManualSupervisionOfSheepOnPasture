@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:web/register/register_page.dart';
+import 'package:web/register/register_user_page.dart';
 
 void main() {
   group('Widget tests', () {
     TestWidgetsFlutterBinding.ensureInitialized();
     testWidgets('Initial layout and content', (WidgetTester tester) async {
       await tester.pumpWidget(
-          const MaterialApp(home: Material(child: RegisterPage(null))));
+          const MaterialApp(home: Material(child: RegisterUserPage())));
       TestWidgetsFlutterBinding.ensureInitialized();
 
       expect(find.text('E-post'), findsOneWidget);
@@ -39,7 +39,7 @@ void main() {
 
     testWidgets('Invalid inputs', (WidgetTester tester) async {
       TestWidgetsFlutterBinding.ensureInitialized();
-      await tester.pumpWidget(const MaterialApp(home: RegisterPage(null)));
+      await tester.pumpWidget(const MaterialApp(home: RegisterUserPage()));
 
       var registerButton = find.text('Opprett bruker');
       var emailField = find.byKey(const Key('inputEmail'));
@@ -85,7 +85,7 @@ void main() {
   });
 
   testWidgets('Password obscurity', (WidgetTester tester) async {
-    await tester.pumpWidget(const MaterialApp(home: RegisterPage(null)));
+    await tester.pumpWidget(const MaterialApp(home: RegisterUserPage()));
     await tester.enterText(
         find.byKey(const Key('inputPasswordOne')), '12345678');
     await tester.enterText(

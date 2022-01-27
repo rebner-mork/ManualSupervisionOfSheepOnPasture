@@ -8,7 +8,7 @@ InputDecoration customInputDecoration(String labelText, IconData icon,
       labelText: labelText,
       alignLabelWithHint: true,
       border: const OutlineInputBorder(),
-      prefixIcon: Align(widthFactor: 1.0, heightFactor: 1.0, child: Icon(icon)),
+      prefixIcon: Icon(icon),
       suffixIcon: passwordField
           ? IconButton(
               icon: Icon(isVisible ? Icons.visibility : Icons.visibility_off,
@@ -18,6 +18,6 @@ InputDecoration customInputDecoration(String labelText, IconData icon,
           : null);
 }
 
-SizedBox customFieldSpacing() {
+SizedBox inputFieldSpacer() {
   return const SizedBox(height: 18);
 }

@@ -2,18 +2,18 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'firebase_options.dart';
-import 'package:web/register/register_page.dart';
+import 'package:web/register/register_user_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp(null));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp(Key? key) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -30,7 +30,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
           colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green)),
       initialRoute: 'register',
-      routes: {'register': (context) => RegisterPage(widget.key)},
+      routes: {'register': (context) => const RegisterUserPage()},
     );
   }
 }
