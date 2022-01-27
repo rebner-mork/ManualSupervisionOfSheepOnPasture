@@ -17,12 +17,56 @@ class _MyFarmState extends State<MyFarm> {
   late String _farmName, _farmAddress; // TODO: les inn fra db først
   String _feedback = '';
   bool _validationActivated = false;
+  bool _loadingData = true;
+
+  var farmNameController = TextEditingController();
+  var farmAddressController = TextEditingController();
 
   String? validateLength(String? input, String feedback) {
     if (input!.isEmpty) {
       return feedback;
     }
     return null;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      getFarmInfo();
+    });
+  }
+
+  void getFarmInfo() async {
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: 'test@gmail.com', password: '12345678'); // TODO: remove
+    String? currentUser = FirebaseAuth.instance.currentUser!.uid;
+
+// TODO: try/catch
+    if (currentUser != null) {
+      CollectionReference farmCollection =
+          FirebaseFirestore.instance.collection('farm');
+      DocumentReference farmDoc = farmCollection.doc(currentUser);
+
+      await farmDoc.get().then((doc) => {
+            if (doc.exists)
+              {
+                debugPrint('Dokument eksisterer'),
+                debugPrint("print: " + doc.data().toString()),
+                _farmName = doc.get('name'),
+                _farmAddress = doc.get('address'),
+                farmNameController.text = _farmName,
+                farmAddressController.text = _farmAddress
+              }
+            else
+              {
+                debugPrint('Dokument eksisterer ikke'),
+              },
+          });
+    }
+    setState(() {
+      _loadingData = false;
+    });
   }
 
   void _saveFarm() async {
@@ -34,8 +78,6 @@ class _MyFarmState extends State<MyFarm> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       try {
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-            email: 'test@gmail.com', password: '12345678');
         String? currentUser = FirebaseAuth.instance.currentUser!.uid;
 
         if (currentUser != null) {
@@ -79,6 +121,7 @@ class _MyFarmState extends State<MyFarm> {
     }
   }
 
+  // TODO: nanv og adresse forsvinner når man bytter tab (les inn?)
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -101,6 +144,7 @@ class _MyFarmState extends State<MyFarm> {
                       constraints: const BoxConstraints(maxWidth: 400),
                       child: TextFormField(
                           key: const Key('inputFarmName'),
+                          controller: farmNameController,
                           validator: (input) =>
                               validateLength(input, 'Skriv gårdsnavn'),
                           onSaved: (input) => _farmName = input.toString(),
@@ -130,6 +174,7 @@ class _MyFarmState extends State<MyFarm> {
                       constraints: const BoxConstraints(maxWidth: 400),
                       child: TextFormField(
                           key: const Key('inputFarmAddress'),
+                          controller: farmAddressController,
                           validator: (input) =>
                               validateLength(input, 'Skriv adresse'),
                           onSaved: (input) => _farmAddress = input.toString(),
@@ -143,15 +188,17 @@ class _MyFarmState extends State<MyFarm> {
             ],
           ),
           customFieldSpacing(),
-          AnimatedOpacity(
-            opacity: _validationActivated ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 200),
-            child: Text(
-              _feedback,
-              key: const Key('feedback'),
-              style: const TextStyle(color: Colors.green),
-            ),
-          ),
+          _loadingData
+              ? const Text('Laster data...')
+              : AnimatedOpacity(
+                  opacity: _validationActivated ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 200),
+                  child: Text(
+                    _feedback,
+                    key: const Key('feedback'),
+                    style: const TextStyle(color: Colors.green),
+                  ),
+                ),
           const SizedBox(height: 25),
           ElevatedButton(
               key: const Key('saveFarmButton'),
@@ -164,5 +211,17 @@ class _MyFarmState extends State<MyFarm> {
                 fixedSize: const Size(150, 50),
               ))
         ]));
+  }
+}
+
+class FarmModel {
+  String _id = '';
+  String name;
+  String address;
+
+  FarmModel({required this.name, required this.address});
+
+  Map<String, dynamic> toMap() {
+    return {"name": name, "address": address};
   }
 }
