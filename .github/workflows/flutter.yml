@@ -39,3 +39,8 @@ jobs:
 
       - name: Analyze project source
         run: flutter analyze
+
+      - name: Run app tests
+        run: cd app && flutter test
+      - name: Run web tests
+        run: cd web && flutter test
