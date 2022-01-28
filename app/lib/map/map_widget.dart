@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:developer';
+import 'dart:async';
 
 import 'map_utils.dart' as map_utils;
 
@@ -19,13 +20,28 @@ class _NorgesKartState extends State<NorgesKart> {
   MapController _mapController = MapController();
   Marker _currentPositionMarker =
       map_utils.getDevicePositionMarker(LatLng(0, 0));
+  Timer? timer;
 
   Future<void> _setPosition() async {
     LatLng pos = await map_utils.getDevicePosition();
+    log(pos.toString());
     setState(() {
       _mapController.move(pos, 13);
       _currentPositionMarker = map_utils.getDevicePositionMarker(pos);
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    timer =
+        Timer.periodic(const Duration(seconds: 5), (Timer t) => _setPosition());
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   @override
