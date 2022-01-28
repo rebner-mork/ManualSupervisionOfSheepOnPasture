@@ -39,25 +39,25 @@ void main() {
 
       // No input
       await pressLoginButton(tester, loginButton);
-      expect(find.text('Skriv inn e-post'), findsOneWidget);
-      expect(find.text('Skriv inn passord'), findsOneWidget);
+      expect(find.text('Skriv e-post'), findsOneWidget);
+      expect(find.text('Skriv passord'), findsOneWidget);
 
       // One empty input at a time
       await tester.enterText(emailField, 'test@gmail.com');
       await pressLoginButton(tester, loginButton);
-      expect(find.text('Skriv inn e-post'), findsNothing);
-      expect(find.text('Skriv inn passord'), findsOneWidget);
+      expect(find.text('Skriv e-post'), findsNothing);
+      expect(find.text('Skriv passord'), findsOneWidget);
 
       await tester.enterText(emailField, '');
       await tester.enterText(passwordField, '12345678');
       await pressLoginButton(tester, loginButton);
-      expect(find.text('Skriv inn e-post'), findsOneWidget);
-      expect(find.text('Skriv inn passord'), findsNothing);
+      expect(find.text('Skriv e-post'), findsOneWidget);
+      expect(find.text('Skriv passord'), findsNothing);
 
       await tester.enterText(emailField, '');
       await pressLoginButton(tester, loginButton);
-      expect(find.text('Skriv inn e-post'), findsOneWidget);
-      expect(find.text('Skriv inn passord'), findsNothing);
+      expect(find.text('Skriv e-post'), findsOneWidget);
+      expect(find.text('Skriv passord'), findsNothing);
 
       // Short password
       await tester.enterText(passwordField, '12');
