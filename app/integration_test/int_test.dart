@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:app/login/login_page.dart';
 import 'package:app/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -13,7 +15,7 @@ void main() async {
   await Firebase.initializeApp();
 
   testWidgets('Integration test', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp(null));
+    await tester.pumpWidget(const MaterialApp(home: LoginPage(null)));
     String host = Platform.isAndroid ? '10.0.2.2' : 'localhost';
     FirebaseAuth.instance.useAuthEmulator(host, 9099);
 
