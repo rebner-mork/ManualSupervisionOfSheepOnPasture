@@ -27,10 +27,10 @@ jobs:
       - name: Flutter version
         run: flutter --version
 
-      #- name: Install app dependencies
-      #  run: cd app && flutter pub get
-      #- name: Install web dependencies
-      #  run: cd web && flutter pub get
+      - name: Install app dependencies
+        run: cd app && flutter pub get
+      - name: Install web dependencies
+        run: cd web && flutter pub get
 
       - name: Verify app formatting
         run: cd app && flutter format --output=none --set-exit-if-changed .
