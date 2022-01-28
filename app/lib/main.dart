@@ -28,10 +28,10 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       theme: ThemeData(
           colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green)),
-      initialRoute: 'map',
+      initialRoute: NorgesKart.route,
       routes: {
-        'login': (context) => LoginPage(widget.key),
-        'map': (context) => const Material(child: NorgesKart()),
+        LoginPage.route: (context) => LoginPage(widget.key),
+        NorgesKart.route: (context) => const Material(child: NorgesKart()),
       },
     );
   }

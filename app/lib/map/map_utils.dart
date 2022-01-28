@@ -38,7 +38,7 @@ Marker getDevicePositionMarker(LatLng pos) {
       height: size,
       width: size,
       builder: (context) => const Icon(
-            Icons.where_to_vote,
+            Icons.gps_fixed,
             color: Colors.pink,
             size: size,
           ));

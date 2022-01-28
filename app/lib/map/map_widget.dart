@@ -8,6 +8,8 @@ import 'map_utils.dart' as map_utils;
 class NorgesKart extends StatefulWidget {
   const NorgesKart({Key? key}) : super(key: key);
 
+  static const String route = 'map';
+
   @override
   State<NorgesKart> createState() => _NorgesKartState();
 }
@@ -37,6 +39,7 @@ class _NorgesKartState extends State<NorgesKart> {
             _setPosition();
           },
           zoom: 13,
+          minZoom: 5,
           maxZoom: 18,
         ),
         layers: [
