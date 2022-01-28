@@ -12,25 +12,13 @@ defaults:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: 16.x
-      - name: Cache node modules
-        id: cacheStep
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-build${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
 
       - uses: subosito/flutter-action@v2
         with:
@@ -39,34 +27,15 @@ jobs:
       - name: Flutter version
         run: flutter --version
 
-      - name: Install Firebase
-        if: steps.cacheStep.outputs.cache-hit != 'true'
-        run: npm install -g firebase-tools
+      #- name: Install app dependencies
+      #  run: cd app && flutter pub get
+      #- name: Install web dependencies
+      #  run: cd web && flutter pub get
 
-      - name: Install app dependencies
-        run: cd app && flutter pub get
-      - name: Install web dependencies
-        run: cd web && flutter pub get
+      - name: Verify app formatting
+        run: cd app && flutter format --output=none --set-exit-if-changed .
+      - name: Verify web formatting
+        run: cd web && flutter format --output=none --set-exit-if-changed .
 
-      #- name: Verify app formatting
-      #  run: cd app && flutter format --output=none --set-exit-if-changed .
-      #- name: Verify web formatting
-      #  run: cd web && flutter format --output=none --set-exit-if-changed .
-
-      #- name: Analyze project source
-      #  run: flutter analyze
-
-      #- name: Run app tests
-      #  run: cd app && flutter test
-      #- name: Run web tests
-      #  run: cd web && flutter test
-
-      # Integration test, can only run on macos-latest (not ubuntu or Windows)
-      - name: Run integration tests #on Android emulator
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: true
-          script: cd app && firebase emulators:exec 'flutter test ./integration_test/int_test.dart' && cd ../web && firebase emulators:exec 'flutter test ./integration_test/int_test.dart'
+      - name: Analyze project source
+        run: flutter analyze
