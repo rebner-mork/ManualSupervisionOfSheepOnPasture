@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'dart:developer';
 import 'dart:async';
 
 import 'map_utils.dart' as map_utils;
@@ -24,9 +23,8 @@ class _NorgesKartState extends State<NorgesKart> {
 
   Future<void> _setPosition() async {
     LatLng pos = await map_utils.getDevicePosition();
-    log(pos.toString());
     setState(() {
-      _mapController.move(pos, 13);
+      _mapController.move(pos, 18);
       _currentPositionMarker = map_utils.getDevicePositionMarker(pos);
     });
   }
@@ -34,8 +32,8 @@ class _NorgesKartState extends State<NorgesKart> {
   @override
   void initState() {
     super.initState();
-    timer =
-        Timer.periodic(const Duration(seconds: 5), (Timer t) => _setPosition());
+    timer = Timer.periodic(
+        const Duration(seconds: 15), (Timer t) => _setPosition());
   }
 
   @override
@@ -54,7 +52,6 @@ class _NorgesKartState extends State<NorgesKart> {
             _mapController = c;
             _setPosition();
           },
-          zoom: 13,
           minZoom: 5,
           maxZoom: 18,
         ),
