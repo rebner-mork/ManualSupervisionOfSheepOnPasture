@@ -1,6 +1,8 @@
 import 'dart:developer';
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:flutter_map/flutter_map.dart';
 
 Future<LatLng> getDevicePosition() async {
   bool serviceEnabled;
@@ -26,7 +28,18 @@ Future<LatLng> getDevicePosition() async {
 
   Position position = await Geolocator.getCurrentPosition();
 
-  log(position.toString());
-
   return LatLng(position.latitude, position.longitude);
+}
+
+Marker getDevicePositionMarker(LatLng pos) {
+  const double size = 40;
+  return Marker(
+      point: pos,
+      height: size,
+      width: size,
+      builder: (context) => const Icon(
+            Icons.where_to_vote,
+            color: Colors.pink,
+            size: size,
+          ));
 }

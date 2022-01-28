@@ -15,12 +15,14 @@ class NorgesKart extends StatefulWidget {
 class _NorgesKartState extends State<NorgesKart> {
   final String mapType = 'topo4';
   MapController _mapController = MapController();
+  Marker _currentPositionMarker =
+      map_utils.getDevicePositionMarker(LatLng(0, 0));
 
   Future<void> _setPosition() async {
-    var pos = await map_utils.getDevicePosition();
-    log(pos.toString());
+    LatLng pos = await map_utils.getDevicePosition();
     setState(() {
       _mapController.move(pos, 13);
+      _currentPositionMarker = map_utils.getDevicePositionMarker(pos);
     });
   }
 
@@ -34,8 +36,8 @@ class _NorgesKartState extends State<NorgesKart> {
             _mapController = c;
             _setPosition();
           },
-          zoom: 13.0,
-          // TODO fin max and min zoom levels
+          zoom: 13,
+          maxZoom: 18,
         ),
         layers: [
           TileLayerOptions(
@@ -49,6 +51,7 @@ class _NorgesKartState extends State<NorgesKart> {
               );
             },
           ),
+          MarkerLayerOptions(markers: [_currentPositionMarker], rotate: true),
         ],
       ),
     );
