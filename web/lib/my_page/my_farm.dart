@@ -140,7 +140,9 @@ class _MyFarmState extends State<MyFarm> {
 
   void getFarmInfo() async {
     await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: 'test@gmail.com', password: '12345678'); // TODO: remove
+        email: 'test@gmail.com',
+        password:
+            '12345678'); // TODO: remove when PR complete (make web-login home)
     String? currentUser = FirebaseAuth.instance.currentUser!.uid;
 
     CollectionReference farmCollection =

@@ -45,20 +45,3 @@ class _MainState extends State<MainPage> {
 }
 
 const TextStyle tabTextStyle = TextStyle(fontSize: 18);
-
-/* Tab divider (not quite correcty placed)
-Container(
-                        padding: EdgeInsets.all(0),
-                        width: double.infinity,
-                        decoration: const BoxDecoration(
-                            border: Border(
-                                right: BorderSide(
-                                    color: Colors.red,
-                                    width: 1,
-                                    style: BorderStyle.solid))),
-                        child: const Tab(
-                            child: Text(
-                          'Årsrapporter',
-                          style: TextStyle(fontSize: 16),
-                        ))),
-*/
