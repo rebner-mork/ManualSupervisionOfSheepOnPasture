@@ -8,18 +8,19 @@ import 'package:web/main/main_page.dart';
 
 void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp();
   FirebaseAuth.instance.useAuthEmulator('10.0.2.2', 9099);
   FirebaseFirestore.instance.useFirestoreEmulator('100.2.2', 8080);
 
-  testWidgets('INTEGRATION', (WidgetTester tester) async {
-    // Create user
+  testWidgets('Iintial layout and content', (WidgetTester tester) async {
+    await tester.pumpWidget(const MaterialApp(home: MainPage()));
+
     await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: 'test@gmail.com', password: '12345678');
     await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: 'test@gmail.com', password: '12345678');
 
-    await tester.pumpWidget(const MaterialApp(home: MainPage()));
     expect(find.text('Årsrapporter'), findsOneWidget);
     expect(find.text('Oppsynsturer'), findsOneWidget);
     expect(find.text('Min side'), findsOneWidget);

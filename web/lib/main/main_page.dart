@@ -6,6 +6,8 @@ class MainPage extends StatefulWidget {
 
   @override
   State<MainPage> createState() => _MainState();
+
+  static const String route = 'main-page';
 }
 
 class _MainState extends State<MainPage> {

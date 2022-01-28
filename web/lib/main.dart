@@ -29,8 +29,8 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       theme: ThemeData(
           colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green)),
-      initialRoute: 'main',
-      routes: {'main': (context) => const MainPage()},
+      initialRoute: MainPage.route,
+      routes: {MainPage.route: (context) => const MainPage()},
     );
   }
 }

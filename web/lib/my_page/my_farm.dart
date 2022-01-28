@@ -8,6 +8,8 @@ class MyFarm extends StatefulWidget {
 
   @override
   State<MyFarm> createState() => _MyFarmState();
+
+  static const String route = 'my-farm';
 }
 
 class _MyFarmState extends State<MyFarm> {
@@ -139,34 +141,31 @@ class _MyFarmState extends State<MyFarm> {
   }
 
   void getFarmInfo() async {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: 'test@gmail.com',
-        password:
-            '12345678'); // TODO: remove when PR complete (make web-login home)
-    String? currentUser = FirebaseAuth.instance.currentUser!.uid;
+    if (FirebaseAuth.instance.currentUser != null) {
+      String? currentUser = FirebaseAuth.instance.currentUser!.uid;
+      CollectionReference farmCollection =
+          FirebaseFirestore.instance.collection('farm');
+      DocumentReference farmDoc = farmCollection.doc(currentUser);
 
-    CollectionReference farmCollection =
-        FirebaseFirestore.instance.collection('farm');
-    DocumentReference farmDoc = farmCollection.doc(currentUser);
-
-    await farmDoc.get().then((doc) => {
-          if (doc.exists)
-            {
-              debugPrint('Dokument eksisterer'),
-              debugPrint("print: " + doc.data().toString()),
-              _farmName = doc.get('name'),
-              _farmAddress = doc.get('address'),
-              farmNameController.text = _farmName,
-              farmAddressController.text = _farmAddress
-            }
-          else
-            {
-              debugPrint('Dokument eksisterer ikke'),
-            },
-        });
-    setState(() {
-      _loadingData = false;
-    });
+      await farmDoc.get().then((doc) => {
+            if (doc.exists)
+              {
+                debugPrint('Dokument eksisterer'),
+                debugPrint("print: " + doc.data().toString()),
+                _farmName = doc.get('name'),
+                _farmAddress = doc.get('address'),
+                farmNameController.text = _farmName,
+                farmAddressController.text = _farmAddress
+              }
+            else
+              {
+                debugPrint('Dokument eksisterer ikke'),
+              },
+          });
+      setState(() {
+        _loadingData = false;
+      });
+    }
   }
 
   void _saveFarm() async {
