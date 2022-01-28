@@ -6,6 +6,8 @@ class RegisterUserPage extends StatefulWidget {
 
   @override
   State<RegisterUserPage> createState() => _RegisterUserState();
+
+  static const String route = 'register-user';
 }
 
 class _RegisterUserState extends State<RegisterUserPage> {

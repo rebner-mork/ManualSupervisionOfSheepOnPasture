@@ -31,10 +31,10 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
         theme: ThemeData(
             colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green)),
-        initialRoute: 'login',
+        initialRoute: LoginPage.route,
         routes: {
-          'login': (context) => const LoginPage(),
-          'register': (context) => const RegisterUserPage()
+          LoginPage.route: (context) => const LoginPage(),
+          RegisterUserPage.route: (context) => const RegisterUserPage()
         });
   }
 }
