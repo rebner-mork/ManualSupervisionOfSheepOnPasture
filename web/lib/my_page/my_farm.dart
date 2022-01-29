@@ -103,7 +103,7 @@ class _MyFarmState extends State<MyFarm> {
                           key: const Key('inputFarmAddress'),
                           controller: farmAddressController,
                           validator: (input) =>
-                              validateLength(input, 'Skriv adresse'),
+                              validateLength(input, 'Skriv gårdsadresse'),
                           onSaved: (input) => _farmAddress = input.toString(),
                           onChanged: (_) {
                             _onFieldChanged();
@@ -171,21 +171,19 @@ class _MyFarmState extends State<MyFarm> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       try {
-        String? currentUser = FirebaseAuth.instance.currentUser!.uid;
+        String idToken = await FirebaseAuth.instance.currentUser!.getIdToken();
 
         CollectionReference farmCollection =
             FirebaseFirestore.instance.collection('farm');
-        DocumentReference farmDoc = farmCollection.doc(currentUser);
+        DocumentReference farmDoc = farmCollection.doc(idToken);
 
         await farmDoc.get().then((doc) => {
               if (doc.exists)
                 {
-                  debugPrint('Dokument eksisterer'),
                   farmDoc.update({'name': _farmName, 'address': _farmAddress})
                 }
               else
                 {
-                  debugPrint('Dokument eksisterer ikke'),
                   farmDoc.set({'name': _farmName, 'address': _farmAddress})
                 },
             });
