@@ -141,28 +141,24 @@ class _MyFarmState extends State<MyFarm> {
   }
 
   void getFarmInfo() async {
-    String? currentUser = FirebaseAuth.instance.currentUser!.uid;
+    String idToken = await FirebaseAuth.instance.currentUser!.getIdToken();
+
     CollectionReference farmCollection =
         FirebaseFirestore.instance.collection('farm');
-    DocumentReference farmDoc = farmCollection.doc(currentUser);
+    DocumentReference farmDoc = farmCollection.doc(idToken);
 
     await farmDoc.get().then((doc) => {
           if (doc.exists)
             {
-              debugPrint('Dokument eksisterer'),
-              debugPrint("print: " + doc.data().toString()),
               _farmName = doc.get('name'),
               _farmAddress = doc.get('address'),
               farmNameController.text = _farmName,
               farmAddressController.text = _farmAddress
             }
-          else
-            {
-              debugPrint('Dokument eksisterer ikke'),
-            },
         });
     setState(() {
       _loadingData = false;
+      debugPrint('setState');
     });
   }
 

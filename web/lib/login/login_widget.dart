@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web/main/main_page.dart';
 import 'package:web/utils/authenticiation.dart' as authentication;
 import '../utils/validation.dart' as validation;
 
@@ -30,12 +31,13 @@ class _LoginFormState extends State<LoginForm> {
     });
     if (_formKey.currentState!.validate()) {
       tmp = await authentication.signIn(_email, _password);
-      if (_loginMessage.isEmpty) {
-        //TODO Navigator.pushNamed(context, 'home_widget_something');
+      if (tmp == '') {
+        Navigator.pushNamed(context, MainPage.route);
+      } else {
+        setState(() {
+          _loginMessage = tmp;
+        });
       }
-      setState(() {
-        _loginMessage = tmp;
-      });
     }
   }
 
@@ -65,6 +67,9 @@ class _LoginFormState extends State<LoginForm> {
             validator: (input) => validation.validateEmail(input),
             onChanged: _onFieldChange,
             onSaved: (input) => _email = input.toString(),
+            onFieldSubmitted: (_) {
+              _logIn();
+            },
             decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.mail),
                 hintText: "E-post",
@@ -80,6 +85,9 @@ class _LoginFormState extends State<LoginForm> {
               obscureText: _visiblePassword,
               onChanged: _onFieldChange,
               onSaved: (input) => _password = input.toString(),
+              onFieldSubmitted: (_) {
+                _logIn();
+              },
               decoration: InputDecoration(
                   prefixIcon: const Icon(Icons.lock),
                   hintText: "Passord",

@@ -1,5 +1,6 @@
 import 'package:web/main/main_page.dart';
 import 'package:web/utils/authentication.dart';
+import 'package:web/utils/authenticiation.dart';
 import 'package:web/utils/validation.dart';
 import 'package:web/utils/custom_widgets.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +60,7 @@ class _RegisterUserWidgetState extends State<RegisterUserWidget> {
                       _onFieldChanged();
                     },
                     textInputAction: TextInputAction.go,
-                    onFieldSubmitted: (value) => _createUser(),
+                    onFieldSubmitted: (value) => _createUserAndSignIn(),
                     decoration: customInputDecoration('E-post', Icons.mail)),
                 inputFieldSpacer(),
                 TextFormField(
@@ -71,7 +72,7 @@ class _RegisterUserWidgetState extends State<RegisterUserWidget> {
                       _onFieldChanged();
                     },
                     textInputAction: TextInputAction.go,
-                    onFieldSubmitted: (value) => _createUser(),
+                    onFieldSubmitted: (value) => _createUserAndSignIn(),
                     obscureText: !_visiblePassword,
                     decoration: customInputDecoration('Passord', Icons.lock,
                         passwordField: true,
@@ -86,7 +87,7 @@ class _RegisterUserWidgetState extends State<RegisterUserWidget> {
                       _onFieldChanged();
                     },
                     textInputAction: TextInputAction.go,
-                    onFieldSubmitted: (value) => _createUser(),
+                    onFieldSubmitted: (value) => _createUserAndSignIn(),
                     obscureText: !_visiblePassword,
                     decoration: customInputDecoration(
                         'Gjenta passord', Icons.lock,
@@ -102,7 +103,7 @@ class _RegisterUserWidgetState extends State<RegisterUserWidget> {
                       _onFieldChanged();
                     },
                     textInputAction: TextInputAction.go,
-                    onFieldSubmitted: (value) => _createUser(),
+                    onFieldSubmitted: (value) => _createUserAndSignIn(),
                     decoration: customInputDecoration('Telefon', Icons.phone)),
                 inputFieldSpacer(),
                 AnimatedOpacity(
@@ -116,7 +117,7 @@ class _RegisterUserWidgetState extends State<RegisterUserWidget> {
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
-                    onPressed: _createUser,
+                    onPressed: _createUserAndSignIn,
                     child: const Text('Opprett bruker',
                         style: TextStyle(fontSize: 20)),
                     style: ElevatedButton.styleFrom(
@@ -125,7 +126,7 @@ class _RegisterUserWidgetState extends State<RegisterUserWidget> {
             )));
   }
 
-  void _createUser() async {
+  void _createUserAndSignIn() async {
     final formState = _formKey.currentState;
 
     setState(() {
@@ -141,11 +142,12 @@ class _RegisterUserWidgetState extends State<RegisterUserWidget> {
           _registerFailed = response == null ? false : true;
           _feedback = response ?? '';
         });
-
-        Navigator.pushNamed(context, MainPage.route);
+        response = await signIn(_email, _password);
+        if (response == '') {
+          Navigator.pushNamed(context, MainPage.route);
+        }
       } catch (e) {
         _feedback = 'Kunne ikke opprette bruker';
-        debugPrint(e.toString());
         setState(() {
           _validationActivated = true;
           _registerFailed = true;
