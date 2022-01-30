@@ -12,7 +12,7 @@ defaults:
 
 jobs:
   build:
-    runs-on: self-hosted #macos-latest
+    runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v2
@@ -20,13 +20,13 @@ jobs:
         with:
           node-version: 16.x
 
-      #- name: Gradle cache
-      #  uses: actions/cache@v2
-      #  with:
-      #    path: |
-      #      ~/.gradle/caches
-      #      ~/.gradle/wrapper
-      #    key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/buildSrc/**/*.kt') }}
+      - name: Gradle cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/buildSrc/**/*.kt') }}
 
       - uses: subosito/flutter-action@v2
         with:
@@ -43,16 +43,11 @@ jobs:
       - name: Install web dependencies
         run: cd web && flutter pub get
 
-      - name: Run app integration tests
-        run: cd app && firebase emulators:exec 'flutter test ./integration_test'
-
-      - name: Run web integration tests
-        run: cd ../web && firebase emulators:exec 'flutter test ./integration_test'
-      #- name: Run integration tests
-      #  uses: reactivecircus/android-emulator-runner@v2
-      #  with:
-      #    api-level: 29
-      #    force-avd-creation: false
-      #    emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-      #    disable-animations: true
-      #    script: cd app && firebase emulators:exec 'flutter test ./integration_test/int_test.dart' && cd ../web && firebase emulators:exec 'flutter test ./integration_test/int_test.dart'
+      - name: Run integration tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: cd app && firebase emulators:exec 'flutter test ./integration_test/int_test.dart' && cd ../web && firebase emulators:exec 'flutter test ./integration_test/int_test.dart'
