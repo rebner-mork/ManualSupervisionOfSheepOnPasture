@@ -28,6 +28,12 @@ jobs:
             ~/.gradle/wrapper
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/buildSrc/**/*.kt') }}
 
+      - name: Cache firebase emulators
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/firebase/emulators
+          key: ${{ runner.os }}-firebase-emulators-${{ hashFiles('~/.cache/firebase/emulators/**') }}
+
       - uses: subosito/flutter-action@v2
         with:
           channel: "stable" # or: 'beta', 'dev' or 'master'
@@ -50,4 +56,4 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: cd app && firebase emulators:exec 'flutter test ./integration_test/int_test.dart' && cd ../web && firebase emulators:exec 'flutter test ./integration_test/int_test.dart'
+          script: cd app && firebase emulators:exec 'flutter test ./integration_test' && cd ../web && firebase emulators:exec 'flutter test ./integration_test'
