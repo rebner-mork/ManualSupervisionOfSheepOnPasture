@@ -16,6 +16,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - uses: pocket-apps/action-setup-firebase@v2
       - uses: actions/setup-node@v2
         with:
           node-version: 16.x
@@ -56,4 +57,4 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: cd app && firebase emulators:exec 'flutter test ./integration_test' && cd ../web && firebase emulators:exec 'flutter test ./integration_test'
+          script: cd app && firebase emulators:exec 'flutter test integration_test' && cd ../web && firebase emulators:exec 'flutter test integration_test'
