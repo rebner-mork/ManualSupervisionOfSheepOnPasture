@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:web/register/register_user_page.dart';
 import 'login_widget.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
+
+  static const String route = 'login-page';
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +17,7 @@ class LoginPage extends StatelessWidget {
           flex: 60,
           child: Center(
               child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 150),
+            margin: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: const [
                 Spacer(flex: 5),
@@ -52,7 +55,7 @@ class CreateUserButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
         child: const Text("Oprett brukerkonto"),
-        onPressed: () => {Navigator.pushNamed(context, 'register')},
+        onPressed: () => {Navigator.pushNamed(context, RegisterUserPage.route)},
         style: ElevatedButton.styleFrom(
             fixedSize: const Size(300, 60),
             textStyle: const TextStyle(fontSize: 30)));

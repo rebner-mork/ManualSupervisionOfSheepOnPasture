@@ -133,11 +133,12 @@ class _RegisterUserWidgetState extends State<RegisterUserWidget> {
         });
       } catch (e) {
         _feedback = 'Kunne ikke opprette bruker';
-        debugPrint(e.toString());
-        setState(() {
-          _validationActivated = true;
-          _registerFailed = true;
-        });
+        if (mounted) {
+          setState(() {
+            _validationActivated = true;
+            _registerFailed = true;
+          });
+        }
       }
     }
   }

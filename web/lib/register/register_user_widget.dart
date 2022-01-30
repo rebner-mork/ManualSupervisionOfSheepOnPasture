@@ -1,6 +1,5 @@
-import 'package:web/main/main_page.dart';
+import 'package:web/main_page/main_page.dart';
 import 'package:web/utils/authentication.dart';
-import 'package:web/utils/authenticiation.dart';
 import 'package:web/utils/validation.dart';
 import 'package:web/utils/custom_widgets.dart';
 import 'package:flutter/material.dart';
@@ -142,16 +141,17 @@ class _RegisterUserWidgetState extends State<RegisterUserWidget> {
           _registerFailed = response == null ? false : true;
           _feedback = response ?? '';
         });
-        response = await signIn(_email, _password);
-        if (response == '') {
+        if (response == null) {
           Navigator.pushNamed(context, MainPage.route);
         }
       } catch (e) {
         _feedback = 'Kunne ikke opprette bruker';
-        setState(() {
-          _validationActivated = true;
-          _registerFailed = true;
-        });
+        if (mounted) {
+          setState(() {
+            _validationActivated = true;
+            _registerFailed = true;
+          });
+        }
       }
     }
   }

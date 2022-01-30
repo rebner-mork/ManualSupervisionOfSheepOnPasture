@@ -3,12 +3,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:web/my_page/my_farm.dart';
 
-import 'firebaseSetup.dart';
+import 'firebase_setup.dart';
 
 void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  await firebaseSetup();
+  await firebaseSetup(createUser: true, signIn: true);
 
   String farmName = 'testFarmName';
   String farmAddress = 'testFarmAddress';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:web/main/main_page.dart';
+import 'package:web/main_page/main_page.dart';
 import 'package:web/utils/authenticiation.dart' as authentication;
 import '../utils/validation.dart' as validation;
 
@@ -30,6 +30,7 @@ class _LoginFormState extends State<LoginForm> {
       _validationActivated = true;
     });
     if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
       tmp = await authentication.signIn(_email, _password);
       if (tmp == '') {
         Navigator.pushNamed(context, MainPage.route);
@@ -60,44 +61,48 @@ class _LoginFormState extends State<LoginForm> {
           const SizedBox(
             height: 15,
           ),
-          TextFormField(
-            key: const Key('inputEmail'),
-            autofocus: true,
-            textAlign: TextAlign.left,
-            validator: (input) => validation.validateEmail(input),
-            onChanged: _onFieldChange,
-            onSaved: (input) => _email = input.toString(),
-            onFieldSubmitted: (_) {
-              _logIn();
-            },
-            decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.mail),
-                hintText: "E-post",
-                border: OutlineInputBorder()),
-          ),
+          Container(
+              constraints: const BoxConstraints(maxWidth: 400),
+              child: TextFormField(
+                key: const Key('inputEmail'),
+                autofocus: true,
+                textAlign: TextAlign.left,
+                validator: (input) => validation.validateEmail(input),
+                onChanged: _onFieldChange,
+                onSaved: (input) => _email = input.toString(),
+                onFieldSubmitted: (_) {
+                  _logIn();
+                },
+                decoration: const InputDecoration(
+                    prefixIcon: Icon(Icons.mail),
+                    hintText: "E-post",
+                    border: OutlineInputBorder()),
+              )),
           const SizedBox(
             height: 10,
           ),
-          TextFormField(
-              key: const Key('inputPassword'),
-              textAlign: TextAlign.left,
-              validator: (input) => validation.validatePassword(input),
-              obscureText: _visiblePassword,
-              onChanged: _onFieldChange,
-              onSaved: (input) => _password = input.toString(),
-              onFieldSubmitted: (_) {
-                _logIn();
-              },
-              decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.lock),
-                  hintText: "Passord",
-                  suffixIcon: IconButton(
-                      icon: Icon(_visiblePassword
-                          ? Icons.visibility_off
-                          : Icons.visibility),
-                      onPressed: _toggleVisiblePassword,
-                      color: _visiblePassword ? Colors.grey : Colors.green),
-                  border: const OutlineInputBorder())),
+          Container(
+              constraints: const BoxConstraints(maxWidth: 400),
+              child: TextFormField(
+                  key: const Key('inputPassword'),
+                  textAlign: TextAlign.left,
+                  validator: (input) => validation.validatePassword(input),
+                  obscureText: _visiblePassword,
+                  onChanged: _onFieldChange,
+                  onSaved: (input) => _password = input.toString(),
+                  onFieldSubmitted: (_) {
+                    _logIn();
+                  },
+                  decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.lock),
+                      hintText: "Passord",
+                      suffixIcon: IconButton(
+                          icon: Icon(_visiblePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility),
+                          onPressed: _toggleVisiblePassword,
+                          color: _visiblePassword ? Colors.grey : Colors.green),
+                      border: const OutlineInputBorder()))),
           const SizedBox(
             height: 5,
           ),
@@ -109,9 +114,7 @@ class _LoginFormState extends State<LoginForm> {
             height: 25,
           ),
           ElevatedButton(
-            onPressed: () {
-              _logIn();
-            },
+            onPressed: _logIn,
             child: const Text("Logg inn"),
             style: ElevatedButton.styleFrom(
               fixedSize: const Size(300, 60),
