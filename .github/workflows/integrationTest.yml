@@ -2,9 +2,9 @@ name: App
 
 on:
   push:
-    branches: [never]
+    branches: [main]
   pull_request:
-    branches: [never]
+    branches: [main]
 
 defaults:
   run:
@@ -12,7 +12,7 @@ defaults:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: self-hosted #macos-latest
 
     steps:
       - uses: actions/checkout@v2
@@ -20,23 +20,23 @@ jobs:
         with:
           node-version: 16.x
 
-      - name: Gradle cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/buildSrc/**/*.kt') }}
+      #- name: Gradle cache
+      #  uses: actions/cache@v2
+      #  with:
+      #    path: |
+      #      ~/.gradle/caches
+      #      ~/.gradle/wrapper
+      #    key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/buildSrc/**/*.kt') }}
 
-      - name: Cache firebase emulators
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache/firebase/emulators
-          key: ${{ runner.os }}-firebase-emulators-${{ hashFiles('~/.cache/firebase/emulators/**') }}
+      #- name: Cache firebase emulators
+      #  uses: actions/cache@v2
+      #  with:
+      #    path: ~/.cache/firebase/emulators
+      #    key: ${{ runner.os }}-firebase-emulators-${{ hashFiles('~/.cache/firebase/emulators/**') }}
 
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: "stable" # or: 'beta', 'dev' or 'master'
+      #- uses: subosito/flutter-action@v2
+      #  with:
+      #    channel: "stable" # or: 'beta', 'dev' or 'master'
 
       - name: Flutter version
         run: flutter --version
