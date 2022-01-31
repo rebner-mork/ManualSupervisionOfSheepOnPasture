@@ -30,7 +30,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
                   child: Center(
                       child: Column(children: [
                 const SizedBox(height: 10),
-                customInputHeadline('Antall'),
+                inputDividerWithHeadline('Antall'),
 
                 customInputRow('Sauer'),
                 inputFieldSpacer(),
@@ -43,7 +43,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
                 customInputRow('Svart hode'),
                 const SizedBox(height: 5),
 
-                customInputHeadline('Slips'),
+                inputDividerWithHeadline('Slips'),
 
                 // TODO: Conditional basert på mulige farger
                 customInputRow('Røde'),
@@ -53,7 +53,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
                 customInputRow('Gule'),
                 // TODO: Conditional basert på mulige farger
 
-                customInputHeadline('Øremerker'),
+                inputDividerWithHeadline('Øremerker'),
 
                 customInputRow('Røde'),
                 inputFieldSpacer(),
@@ -73,7 +73,7 @@ FractionallySizedBox customDivider() {
       ));
 }
 
-Column customInputHeadline(String headline) {
+Column inputDividerWithHeadline(String headline) {
   return Column(children: [
     const SizedBox(height: 5),
     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
