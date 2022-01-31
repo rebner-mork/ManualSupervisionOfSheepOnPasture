@@ -26,14 +26,12 @@ class _RegisterSheepState extends State<RegisterSheep> {
                 leading:
                     BackButton(onPressed: () => Navigator.of(context).pop()),
               ),
-              body: Center(
-                  child: Column(children: [
+              body: SingleChildScrollView(
+                  child: Center(
+                      child: Column(children: [
                 const SizedBox(height: 10),
-                const Text(
-                  'Antall',
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 5),
+                customInputHeadline('Antall'),
+
                 customInputRow('Sauer'),
                 inputFieldSpacer(),
                 customInputRow('Lam'),
@@ -44,18 +42,9 @@ class _RegisterSheepState extends State<RegisterSheep> {
                 inputFieldSpacer(),
                 customInputRow('Svart hode'),
                 const SizedBox(height: 5),
-                const FractionallySizedBox(
-                    widthFactor: 0.4,
-                    child: Divider(
-                      thickness: 5,
-                      color: Colors.amber,
-                    )),
-                const SizedBox(height: 5),
-                const Text(
-                  'Slips',
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 5),
+
+                customInputHeadline('Slips'),
+
                 // TODO: Conditional basert på mulige farger
                 customInputRow('Røde'),
                 inputFieldSpacer(),
@@ -63,7 +52,50 @@ class _RegisterSheepState extends State<RegisterSheep> {
                 inputFieldSpacer(),
                 customInputRow('Gule'),
                 // TODO: Conditional basert på mulige farger
-              ])),
+
+                customInputHeadline('Øremerker'),
+
+                customInputRow('Røde'),
+                inputFieldSpacer(),
+                customInputRow('Blå'),
+                const SizedBox(height: 10),
+              ]))),
             )));
   }
+}
+
+FractionallySizedBox customDivider() {
+  return const FractionallySizedBox(
+      widthFactor: 0.4,
+      child: Divider(
+        thickness: 5,
+        color: Colors.amber,
+      ));
+}
+
+Column customInputHeadline(String headline) {
+  return Column(children: [
+    const SizedBox(height: 5),
+    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      const Flexible(
+          child: Divider(
+        thickness: 5,
+        color: Colors.amber,
+        endIndent: 5,
+      )),
+      Flexible(
+          flex: 5,
+          child: Text(
+            headline,
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+          )),
+      const Flexible(
+          child: Divider(
+        thickness: 5,
+        color: Colors.amber,
+        indent: 5,
+      ))
+    ]),
+    const SizedBox(height: 5),
+  ]);
 }
