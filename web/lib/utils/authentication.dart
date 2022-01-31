@@ -26,3 +26,15 @@ Future<String?> createUser(String email, String password, String phone) async {
 
   return null;
 }
+
+Future<String> signIn(String email, String password) async {
+  try {
+    await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: password);
+    return '';
+  } on FirebaseAuthException {
+    return "Passord og/eller e-post er ugyldig";
+  } catch (e) {
+    return "Noe gikk galt";
+  }
+}

@@ -5,6 +5,8 @@ import 'package:latlong2/latlong.dart';
 class NorgesKart extends StatelessWidget {
   const NorgesKart({Key? key}) : super(key: key);
 
+  static const String route = 'map';
+
   final String mapType = 'topo4';
 
   @override
