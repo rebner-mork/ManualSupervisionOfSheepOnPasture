@@ -5,16 +5,16 @@ import 'dart:async';
 
 import '../utils/map_utils.dart' as map_utils;
 
-class NorgesKart extends StatefulWidget {
-  const NorgesKart({Key? key}) : super(key: key);
+class Map extends StatefulWidget {
+  const Map({Key? key}) : super(key: key);
 
   static const String route = 'map';
 
   @override
-  State<NorgesKart> createState() => _NorgesKartState();
+  State<Map> createState() => _MapState();
 }
 
-class _NorgesKartState extends State<NorgesKart> {
+class _MapState extends State<Map> {
   final String mapType = 'topo4';
   MapController _mapController = MapController();
   Marker _currentPositionMarker =

@@ -32,7 +32,7 @@ class _MyAppState extends State<MyApp> {
       routes: {
         LoginPage.route: (context) => const LoginPage(),
         RegisterUserPage.route: (context) => const RegisterUserPage(),
-        NorgesKart.route: (context) => const Material(child: NorgesKart()),
+        Map.route: (context) => const Material(child: Map()),
       },
     );
   }
