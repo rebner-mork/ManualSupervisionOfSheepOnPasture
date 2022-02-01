@@ -2,9 +2,9 @@ name: Flutter
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
 defaults:
   run:
@@ -16,13 +16,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
       - uses: subosito/flutter-action@v2
         with:
-          channel: "stable" # or: 'beta', 'dev' or 'master'
-
+          channel: 'stable' # or: 'beta', 'dev' or 'master'
+      
       - name: Flutter version
         run: flutter --version
+
+      #- name: Install Firebase
+      #  run: npm install -g firebase-tools
 
       - name: Install app dependencies
         run: cd app && flutter pub get
@@ -34,13 +39,20 @@ jobs:
       - name: Verify web formatting
         run: cd web && flutter format --output=none --set-exit-if-changed .
 
-      # Consider passing '--fatal-infos' for slightly stricter analysis.
-      - name: Analyze app source
-        run: cd app && flutter analyze
-      - name: Analyze web source
-        run: cd web && flutter analyze
+      - name: Analyze project source
+        run: flutter analyze
 
-      - name: Run app tests
+      - name: Run tests
         run: cd app && flutter test
       - name: Run web tests
         run: cd web && flutter test
+
+      # Integration test, can only run on ubuntu-latest (not macOS or Windows)
+      #- name: Run integration tests on Android emulator
+      #  uses: reactivecircus/android-emulator-runner@v2
+      #  with:
+      #    api-level: 29
+      #    force-avd-creation: false
+      #    emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+      #    disable-animations: true
+      #    script: cd app; pwd; ls; firebase emulators:exec --only auth 'flutter test ./integration_test/int_test.dart'
