@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web/main_tabs/main_tabs.dart';
-import 'package:web/utils/authenticiation.dart' as authentication;
+import 'package:web/utils/authentication.dart' as authentication;
 import '../utils/validation.dart' as validation;
 
 class LoginForm extends StatefulWidget {
