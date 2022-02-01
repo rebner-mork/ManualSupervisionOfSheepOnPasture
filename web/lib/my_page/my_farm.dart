@@ -173,7 +173,7 @@ class _MyFarmState extends State<MyFarm> {
         String uid = FirebaseAuth.instance.currentUser!.uid;
 
         CollectionReference farmCollection =
-            FirebaseFirestore.instance.collection('farm');
+            FirebaseFirestore.instance.collection('farms');
         DocumentReference farmDoc = farmCollection.doc(uid);
 
         await farmDoc.get().then((doc) => {
