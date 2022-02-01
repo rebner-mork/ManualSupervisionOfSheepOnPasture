@@ -17,7 +17,6 @@ class _MyFarmState extends State<MyFarm> {
   _MyFarmState();
 
   final _formKey = GlobalKey<FormState>();
-  late String _farmName, _farmAddress;
   String _feedback = '';
   bool _validationActivated = false;
   bool _loadingData = true;
@@ -38,7 +37,6 @@ class _MyFarmState extends State<MyFarm> {
       _feedback = '';
     });
     if (_validationActivated) {
-      _formKey.currentState!.save();
       _formKey.currentState!.validate();
     }
   }
@@ -68,7 +66,6 @@ class _MyFarmState extends State<MyFarm> {
                           controller: farmNameController,
                           validator: (input) =>
                               validateLength(input, 2, 'Skriv gårdsnavn'),
-                          onSaved: (input) => _farmName = input.toString(),
                           onChanged: (_) {
                             _onFieldChanged();
                           },
@@ -98,7 +95,6 @@ class _MyFarmState extends State<MyFarm> {
                           controller: farmAddressController,
                           validator: (input) =>
                               validateLength(input, 2, 'Skriv gårdsadresse'),
-                          onSaved: (input) => _farmAddress = input.toString(),
                           onChanged: (_) {
                             _onFieldChanged();
                           },
@@ -144,10 +140,8 @@ class _MyFarmState extends State<MyFarm> {
     await farmDoc.get().then((doc) => {
           if (doc.exists)
             {
-              _farmName = doc.get('name'),
-              _farmAddress = doc.get('address'),
-              farmNameController.text = _farmName,
-              farmAddressController.text = _farmAddress
+              farmNameController.text = doc.get('name'),
+              farmAddressController.text = doc.get('address'),
             }
         });
     setState(() {
@@ -162,7 +156,6 @@ class _MyFarmState extends State<MyFarm> {
     });
 
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
       try {
         String uid = FirebaseAuth.instance.currentUser!.uid;
 
@@ -173,11 +166,17 @@ class _MyFarmState extends State<MyFarm> {
         await farmDoc.get().then((doc) => {
               if (doc.exists)
                 {
-                  farmDoc.update({'name': _farmName, 'address': _farmAddress})
+                  farmDoc.update({
+                    'name': farmNameController.text,
+                    'address': farmAddressController.text
+                  })
                 }
               else
                 {
-                  farmDoc.set({'name': _farmName, 'address': _farmAddress})
+                  farmDoc.set({
+                    'name': farmNameController.text,
+                    'address': farmAddressController.text
+                  })
                 },
             });
         setState(() {
