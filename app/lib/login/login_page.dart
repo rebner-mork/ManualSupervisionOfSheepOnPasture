@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
+  static const String route = 'login';
+
   @override
   State<LoginPage> createState() => _LoginPageState();
-
-  static const String route = 'login';
 }
 
 class _LoginPageState extends State<LoginPage> {
