@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web/my_page/my_farm.dart';
+import 'package:fluttericon/font_awesome5_icons.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({Key? key}) : super(key: key);
@@ -41,9 +42,9 @@ class _MyPageState extends State<MyPage> {
               ),
               selectedIcon: Icon(Icons.local_offer_outlined)),
           NavigationRailDestination(
-              icon: Icon(Icons.filter_alt),
+              icon: Icon(FontAwesome5.black_tie),
               label: Text('Slips', style: natigationTextStyle),
-              selectedIcon: Icon(Icons.filter_alt)),
+              selectedIcon: Icon(FontAwesome5.black_tie)),
           NavigationRailDestination(
               icon: Icon(Icons.groups_outlined),
               label: Text('Oppsynspersonell', style: natigationTextStyle),
