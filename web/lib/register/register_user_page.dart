@@ -1,17 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:web/register/register_user_widget.dart';
 
-class RegisterUserPage extends StatefulWidget {
+class RegisterUserPage extends StatelessWidget {
   const RegisterUserPage({Key? key}) : super(key: key);
 
-  @override
-  State<RegisterUserPage> createState() => _RegisterUserState();
-
-  static const String route = 'register-user';
-}
-
-class _RegisterUserState extends State<RegisterUserPage> {
-  _RegisterUserState();
+  static const String route = 'register-user-page';
 
   @override
   Widget build(BuildContext context) {

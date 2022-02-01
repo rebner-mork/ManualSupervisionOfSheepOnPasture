@@ -22,10 +22,7 @@ class DefaultFirebaseOptions {
     // ignore: missing_enum_constant_in_switch
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for android - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return android;
       case TargetPlatform.iOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for ios - '
@@ -43,8 +40,7 @@ class DefaultFirebaseOptions {
     );
   }
 
-  //https://firebase.google.com/docs/projects/learn-more
-  static FirebaseOptions web = const FirebaseOptions(
+  static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyAfuDTlmRtxnYyy6UNY4b31IU2adokhjB0',
     appId: '1:867330479261:web:223a6baec61b5da03c3074',
     messagingSenderId: '867330479261',
@@ -52,5 +48,13 @@ class DefaultFirebaseOptions {
     authDomain: 'master-backend-93896.firebaseapp.com',
     storageBucket: 'master-backend-93896.appspot.com',
     measurementId: 'G-04J5DY3HPY',
+  );
+
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyCRxlk2vXTO0z8FYNGEyt9wNE_yWc8M5c0',
+    appId: '1:867330479261:android:a2909a54354bcec03c3074',
+    messagingSenderId: '867330479261',
+    projectId: 'master-backend-93896',
+    storageBucket: 'master-backend-93896.appspot.com',
   );
 }

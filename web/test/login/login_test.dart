@@ -11,7 +11,7 @@ void main() {
       expect(find.text('Logg inn'), findsOneWidget);
       expect(find.text('E-post'), findsOneWidget);
       expect(find.text('Passord'), findsOneWidget);
-      expect(find.text('Oprett brukerkonto'), findsOneWidget);
+      expect(find.text('Opprett brukerkonto'), findsOneWidget);
 
       // Icons
       expect(find.byIcon(Icons.account_circle), findsOneWidget);
