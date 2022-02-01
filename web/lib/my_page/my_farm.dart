@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:web/utils/custom_widgets.dart';
+import 'package:web/utils/validation.dart';
 
 class MyFarm extends StatefulWidget {
   const MyFarm({Key? key}) : super(key: key);
@@ -23,13 +24,6 @@ class _MyFarmState extends State<MyFarm> {
 
   var farmNameController = TextEditingController();
   var farmAddressController = TextEditingController();
-
-  String? validateLength(String? input, String feedback) {
-    if (input!.isEmpty) {
-      return feedback;
-    }
-    return null;
-  }
 
   @override
   void initState() {
@@ -73,7 +67,7 @@ class _MyFarmState extends State<MyFarm> {
                           key: const Key('inputFarmName'),
                           controller: farmNameController,
                           validator: (input) =>
-                              validateLength(input, 'Skriv gårdsnavn'),
+                              validateLength(input, 2, 'Skriv gårdsnavn'),
                           onSaved: (input) => _farmName = input.toString(),
                           onChanged: (_) {
                             _onFieldChanged();
@@ -103,7 +97,7 @@ class _MyFarmState extends State<MyFarm> {
                           key: const Key('inputFarmAddress'),
                           controller: farmAddressController,
                           validator: (input) =>
-                              validateLength(input, 'Skriv gårdsadresse'),
+                              validateLength(input, 2, 'Skriv gårdsadresse'),
                           onSaved: (input) => _farmAddress = input.toString(),
                           onChanged: (_) {
                             _onFieldChanged();
