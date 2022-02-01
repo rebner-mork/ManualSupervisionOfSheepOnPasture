@@ -3,7 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:async';
 
-import 'map_utils.dart' as map_utils;
+import '../utils/map_utils.dart' as map_utils;
 
 class NorgesKart extends StatefulWidget {
   const NorgesKart({Key? key}) : super(key: key);
@@ -19,9 +19,9 @@ class _NorgesKartState extends State<NorgesKart> {
   MapController _mapController = MapController();
   Marker _currentPositionMarker =
       map_utils.getDevicePositionMarker(LatLng(0, 0));
-  Timer? timer;
+  late Timer timer;
 
-  Future<void> _setPosition() async {
+  Future<void> _updateUserPosition() async {
     LatLng pos = await map_utils.getDevicePosition();
     setState(() {
       _mapController.move(pos, 18);
@@ -33,12 +33,12 @@ class _NorgesKartState extends State<NorgesKart> {
   void initState() {
     super.initState();
     timer = Timer.periodic(
-        const Duration(seconds: 15), (Timer t) => _setPosition());
+        const Duration(seconds: 15), (_) => _updateUserPosition());
   }
 
   @override
   void dispose() {
-    timer?.cancel();
+    timer.cancel();
     super.dispose();
   }
 
@@ -50,7 +50,7 @@ class _NorgesKartState extends State<NorgesKart> {
         options: MapOptions(
           onMapCreated: (c) {
             _mapController = c;
-            _setPosition();
+            _updateUserPosition();
           },
           minZoom: 5,
           maxZoom: 18,
