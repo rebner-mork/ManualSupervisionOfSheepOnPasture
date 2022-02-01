@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:web/login/login_page.dart';
-import 'package:web/main_page/main_page.dart';
+import 'package:web/main_tabs/main_tabs.dart';
 
 import 'firebase_setup.dart';
 
@@ -14,7 +14,7 @@ void main() async {
   testWidgets('Integration test login', (WidgetTester tester) async {
     await tester.pumpWidget(MaterialApp(
         home: const LoginPage(),
-        routes: {MainPage.route: (context) => const MainPage()}));
+        routes: {MainTabs.route: (context) => const MainTabs()}));
 
     var emailField = find.byKey(const Key('inputEmail'));
     var passwordField = find.byKey(const Key('inputPassword'));

@@ -1,4 +1,4 @@
-import 'package:web/main_page/main_page.dart';
+import 'package:web/main_tabs/main_tabs.dart';
 import 'package:web/utils/authentication.dart';
 import 'package:web/utils/validation.dart';
 import 'package:web/utils/custom_widgets.dart';
@@ -142,7 +142,7 @@ class _RegisterUserWidgetState extends State<RegisterUserWidget> {
           _feedback = response ?? '';
         });
         if (response == null) {
-          Navigator.pushNamed(context, MainPage.route);
+          Navigator.pushNamed(context, MainTabs.route);
         }
       } catch (e) {
         _feedback = 'Kunne ikke opprette bruker';

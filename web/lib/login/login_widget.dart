@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:web/main_page/main_page.dart';
+import 'package:web/main_tabs/main_tabs.dart';
 import 'package:web/utils/authenticiation.dart' as authentication;
 import '../utils/validation.dart' as validation;
 
@@ -33,7 +33,7 @@ class _LoginFormState extends State<LoginForm> {
       _formKey.currentState!.save();
       tmp = await authentication.signIn(_email, _password);
       if (tmp == '') {
-        Navigator.pushNamed(context, MainPage.route);
+        Navigator.pushNamed(context, MainTabs.route);
       } else {
         setState(() {
           _loginMessage = tmp;
