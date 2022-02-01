@@ -54,7 +54,7 @@ class CreateUserButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-        child: const Text("Oprett brukerkonto"),
+        child: const Text("Opprett brukerkonto"),
         onPressed: () => {Navigator.pushNamed(context, RegisterUserPage.route)},
         style: ElevatedButton.styleFrom(
             fixedSize: const Size(300, 60),
