@@ -20,20 +20,21 @@ class _MapState extends State<Map> {
   Marker _currentPositionMarker =
       map_utils.getDevicePositionMarker(LatLng(0, 0));
   late Timer timer;
+  final List<LatLng> _movementPoints = [];
 
-  Future<void> _updateUserPosition() async {
+  Future<void> _updateMap() async {
     LatLng pos = await map_utils.getDevicePosition();
     setState(() {
-      _mapController.move(pos, 18);
+      _mapController.move(pos, _mapController.zoom);
       _currentPositionMarker = map_utils.getDevicePositionMarker(pos);
+      _movementPoints.add(pos);
     });
   }
 
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(
-        const Duration(seconds: 15), (_) => _updateUserPosition());
+    timer = Timer.periodic(const Duration(seconds: 15), (_) => _updateMap());
   }
 
   @override
@@ -50,7 +51,7 @@ class _MapState extends State<Map> {
         options: MapOptions(
           onMapCreated: (c) {
             _mapController = c;
-            _updateUserPosition();
+            _updateMap();
           },
           minZoom: 5,
           maxZoom: 18,
@@ -68,6 +69,13 @@ class _MapState extends State<Map> {
             },
           ),
           MarkerLayerOptions(markers: [_currentPositionMarker], rotate: true),
+          PolylineLayerOptions(polylines: [
+            Polyline(
+                points: _movementPoints,
+                color: Colors.red,
+                isDotted: true,
+                strokeWidth: 10.0)
+          ])
         ],
       ),
     );
