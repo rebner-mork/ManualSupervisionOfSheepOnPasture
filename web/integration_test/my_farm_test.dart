@@ -12,7 +12,7 @@ void main() async {
 
   String farmName = 'testFarmName';
   String farmAddress = 'testFarmAddress';
-  Duration waitDuration = const Duration(seconds: 5);
+  Duration waitDuration = const Duration(seconds: 2);
 
   testWidgets('Initial layout and content', (WidgetTester tester) async {
     await tester.pumpWidget(MaterialApp(
@@ -20,7 +20,7 @@ void main() async {
             Material(child: Row(children: const [Expanded(child: MyFarm())]))));
 
     expect(find.text('Laster data...'), findsOneWidget);
-    await tester.pumpAndSettle(waitDuration);
+    await tester.pump(const Duration(seconds: 5));
     expect(find.text('Laster data...'), findsNothing);
 
     expect(find.text('Gårdsnavn'), findsOneWidget);
@@ -36,7 +36,7 @@ void main() async {
     await tester.pumpWidget(MaterialApp(
         home:
             Material(child: Row(children: const [Expanded(child: MyFarm())]))));
-    await tester.pumpAndSettle(waitDuration);
+    await tester.pump(waitDuration);
 
     // No input
     await tester.tap(find.text('Lagre'));
@@ -71,7 +71,7 @@ void main() async {
     await tester.enterText(
         find.byKey(const Key('inputFarmAddress')), farmAddress);
     await tester.tap(find.text('Lagre'));
-    await tester.pumpAndSettle(waitDuration);
+    await tester.pump(waitDuration);
 
     expect(find.text('Gårdsinfo lagret'), findsOneWidget);
   });
@@ -80,7 +80,7 @@ void main() async {
     await tester.pumpWidget(MaterialApp(
         home:
             Material(child: Row(children: const [Expanded(child: MyFarm())]))));
-    await tester.pumpAndSettle(waitDuration);
+    await tester.pump(waitDuration);
 
     expect(find.text('Laster data...'), findsNothing);
     expect(find.text(farmName), findsOneWidget);

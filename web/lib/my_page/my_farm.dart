@@ -141,11 +141,11 @@ class _MyFarmState extends State<MyFarm> {
   }
 
   void getFarmInfo() async {
-    String idToken = await FirebaseAuth.instance.currentUser!.getIdToken();
+    String uid = FirebaseAuth.instance.currentUser!.uid;
 
     CollectionReference farmCollection =
-        FirebaseFirestore.instance.collection('farm');
-    DocumentReference farmDoc = farmCollection.doc(idToken);
+        FirebaseFirestore.instance.collection('farms');
+    DocumentReference farmDoc = farmCollection.doc(uid);
 
     await farmDoc.get().then((doc) => {
           if (doc.exists)
@@ -158,7 +158,6 @@ class _MyFarmState extends State<MyFarm> {
         });
     setState(() {
       _loadingData = false;
-      debugPrint('setState');
     });
   }
 
@@ -171,11 +170,11 @@ class _MyFarmState extends State<MyFarm> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       try {
-        String idToken = await FirebaseAuth.instance.currentUser!.getIdToken();
+        String uid = FirebaseAuth.instance.currentUser!.uid;
 
         CollectionReference farmCollection =
             FirebaseFirestore.instance.collection('farm');
-        DocumentReference farmDoc = farmCollection.doc(idToken);
+        DocumentReference farmDoc = farmCollection.doc(uid);
 
         await farmDoc.get().then((doc) => {
               if (doc.exists)
