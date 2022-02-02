@@ -23,33 +23,35 @@ SizedBox inputFieldSpacer() {
 }
 
 Row customInputRow(String text, TextEditingController controller,
-    {Color color = Colors.transparent}) {
+    IconData iconData, Color color) {
   return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
     Flexible(
         flex: 5,
         child: Icon(
-          Icons.stop,
+          iconData,
           color: color,
+          size: 28,
         )),
+    const Spacer(),
     Flexible(
-        flex: 8,
+        flex: 10,
         child: Container(
-            constraints: const BoxConstraints(minWidth: 78),
+            constraints: const BoxConstraints(minWidth: 100),
             child: Text(
               text,
-              style: const TextStyle(fontSize: 15),
+              style: const TextStyle(fontSize: 19),
             ))),
     const Spacer(),
     Flexible(
         flex: 20,
         child: Container(
-            constraints: const BoxConstraints(maxWidth: 60),
+            constraints: const BoxConstraints(maxWidth: 70),
             child: TextFormField(
               textAlign: TextAlign.center,
               keyboardType: TextInputType.number,
+              textInputAction: TextInputAction.none,
               controller: controller,
               decoration: const InputDecoration(
-                //labelText: '0',
                 hintText: '0',
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.fromLTRB(15, 0, 15, 0),
