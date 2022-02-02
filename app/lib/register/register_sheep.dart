@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:app/utils/custom_widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -26,6 +28,15 @@ class _RegisterSheepState extends State<RegisterSheep> {
       _redEarController = TextEditingController(),
       _blueEarController = TextEditingController();
 
+  /*AlertDialog alert = AlertDialog(
+    title: const Text("Avbryte registrering?"),
+    content: const Text('Data i denne registreringen vil gå tapt.'),
+    actions: [
+      TextButton(onPressed: () {}, child: Text('Ja, avbryt')),
+      TextButton(onPressed: () {}, child: Text('Nei, fortsett'))
+    ],
+  );*/
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -35,15 +46,43 @@ class _RegisterSheepState extends State<RegisterSheep> {
                 appBar: AppBar(
                   title: const Text('Registrer sau'),
                   leading: BackButton(
-                      onPressed: () => Navigator.of(context)
-                          .pop()), // TODO: Popup sikker? Bare hvis noe er fylt ut
+                      onPressed: () => {
+                            //Navigator.of(context).pop()
+                            showDialog(
+                                context: context,
+                                builder: (_) => BackdropFilter(
+                                    filter:
+                                        ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+                                    child: AlertDialog(
+                                      title:
+                                          const Text("Avbryte registrering?"),
+                                      content: const Text(
+                                          'Data i registreringen vil gå tapt.'),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context)
+                                                  .pop('dialog');
+                                              if (Navigator.canPop(context))
+                                                Navigator.of(context).pop();
+                                            },
+                                            child: Text('Ja, avbryt')),
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context)
+                                                  .pop('dialog');
+                                            },
+                                            child: Text('Nei, fortsett'))
+                                      ],
+                                    )))
+                          }), // TODO: Popup sikker? Bare hvis noe er fylt ut
                 ),
                 body: SingleChildScrollView(
                     child: Center(
                         child: Column(children: [
                   const SizedBox(height: 10),
                   inputDividerWithHeadline('Antall'),
-                  customInputRow('Sauer', _sheepController),
+                  customInputRow('Sauer', _sheepController), // Større tekst
                   inputFieldSpacer(),
                   customInputRow('Lam', _lambsController),
                   inputFieldSpacer(),
@@ -60,7 +99,8 @@ class _RegisterSheepState extends State<RegisterSheep> {
                   inputDividerWithHeadline('Slips'),
 
                   // TODO: Conditional basert på mulige farger
-                  customInputRow('Røde', _redTieController, color: Colors.red),
+                  customInputRow('Røde', _redTieController,
+                      color: Colors.red), // TODO: fargede slips
                   inputFieldSpacer(),
                   customInputRow('Blå', _blueTieController, color: Colors.blue),
                   inputFieldSpacer(),
@@ -75,19 +115,17 @@ class _RegisterSheepState extends State<RegisterSheep> {
                   customInputRow('Blå', _blueEarController, color: Colors.blue),
                   const SizedBox(height: 80),
                 ]))),
-                floatingActionButton: MediaQuery.of(context)
-                            .viewInsets
-                            .bottom ==
-                        0
-                    ? FloatingActionButton.extended(
-                        onPressed: () {}, label: const Text('Registrer'))
-                    : null /* FloatingActionButton(
-                            onPressed: () {}, child: const Icon(Icons.add))*/
-                ,
+                floatingActionButton: // Større kart
+                    MediaQuery.of(context).viewInsets.bottom == 0
+                        ? FloatingActionButton.extended(
+                            onPressed: () {},
+                            label: const Text('Fullfør registrering'))
+                        : FloatingActionButton(
+                            onPressed: () {}, child: const Icon(Icons.add)),
                 floatingActionButtonLocation:
                     MediaQuery.of(context).viewInsets.bottom == 0
                         ? FloatingActionButtonLocation.centerFloat
-                        : FloatingActionButtonLocation.centerFloat)));
+                        : FloatingActionButtonLocation.endFloat)));
   }
 }
 
@@ -106,7 +144,7 @@ Column inputDividerWithHeadline(String headline) {
     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       const Flexible(
           child: Divider(
-        thickness: 5,
+        thickness: 3,
         color: Colors.grey, //Colors.amber,
         endIndent: 5,
       )),
@@ -118,7 +156,7 @@ Column inputDividerWithHeadline(String headline) {
           )),
       const Flexible(
           child: Divider(
-        thickness: 5,
+        thickness: 3,
         color: Colors.grey, //Colors.amber,
         indent: 5,
       ))
