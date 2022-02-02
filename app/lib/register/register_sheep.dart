@@ -1,12 +1,16 @@
-import 'dart:ui';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:app/utils/custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/rpg_awesome_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:path_provider/path_provider.dart';
 
 class RegisterSheep extends StatefulWidget {
-  const RegisterSheep({Key? key}) : super(key: key);
+  const RegisterSheep(this.fileName, {Key? key}) : super(key: key);
+
+  final String fileName;
 
   @override
   State<RegisterSheep> createState() => _RegisterSheepState();
@@ -31,6 +35,12 @@ class _RegisterSheepState extends State<RegisterSheep> {
       _blueEarController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    _readSheep();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Material(
         child: Form(
@@ -42,44 +52,21 @@ class _RegisterSheepState extends State<RegisterSheep> {
                       onPressed: () => {
                             showDialog(
                                 context: context,
-                                builder: (_) => BackdropFilter(
-                                    filter:
-                                        ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-                                    child: AlertDialog(
-                                      title:
-                                          const Text("Avbryte registrering?"),
-                                      content: const Text(
-                                          'Data i registreringen vil gå tapt.'),
-                                      actions: [
-                                        TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context)
-                                                  .pop('dialog');
-                                              if (Navigator.canPop(context)) {
-                                                Navigator.of(context).pop();
-                                              }
-                                            },
-                                            child: const Text('Ja, avbryt')),
-                                        TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context)
-                                                  .pop('dialog');
-                                            },
-                                            child: const Text('Nei, fortsett'))
-                                      ],
-                                    )))
+                                builder: (_) =>
+                                    customCancelRegistrationDialog(context))
                           }),
                 ),
                 body: SingleChildScrollView(
                     child: Center(
                         child: Column(children: [
                   const SizedBox(height: 10),
-                  inputDividerWithHeadline('Antall'),
-                  customInputRow('Sauer', _sheepController, RpgAwesome.sheep,
-                      Colors.grey), // Større tekst
+                  customInputDividerWithHeadline('Antall'),
+                  customInputRow(
+                      'Sauer', _sheepController, RpgAwesome.sheep, Colors.grey),
                   inputFieldSpacer(),
                   customInputRow(
-                      'Lam', _lambsController, RpgAwesome.sheep, Colors.grey),
+                      'Lam', _lambsController, RpgAwesome.sheep, Colors.grey,
+                      iconSize: 24),
                   inputFieldSpacer(),
                   customInputRow('Hvite', _whiteController, RpgAwesome.sheep,
                       Colors.white),
@@ -90,14 +77,11 @@ class _RegisterSheepState extends State<RegisterSheep> {
                   customInputRow('Svart hode', _blackHeadController,
                       RpgAwesome.sheep, Colors.black),
 
-                  inputDividerWithHeadline('Slips'),
+                  customInputDividerWithHeadline('Slips'),
 
                   // TODO: Conditional basert på mulige farger
-                  customInputRow(
-                      'Røde',
-                      _redTieController,
-                      FontAwesome5.black_tie,
-                      Colors.red), // TODO: fargede slips
+                  customInputRow('Røde', _redTieController,
+                      FontAwesome5.black_tie, Colors.red),
                   inputFieldSpacer(),
                   customInputRow('Blå', _blueTieController,
                       FontAwesome5.black_tie, Colors.blue),
@@ -106,7 +90,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
                       FontAwesome5.black_tie, Colors.yellow),
                   // TODO: Conditional basert på mulige farger
 
-                  inputDividerWithHeadline('Øremerker'),
+                  customInputDividerWithHeadline('Øremerker'),
 
                   customInputRow(
                       'Røde', _redEarController, Icons.local_offer, Colors.red),
@@ -118,49 +102,75 @@ class _RegisterSheepState extends State<RegisterSheep> {
                 floatingActionButton: // Større kart
                     MediaQuery.of(context).viewInsets.bottom == 0
                         ? FloatingActionButton.extended(
-                            onPressed: () {},
-                            label: const Text('Fullfør registrering'))
+                            onPressed: _registerSheep,
+                            label: const Text('Fullfør registrering',
+                                style: TextStyle(fontSize: 19)))
                         : FloatingActionButton(
-                            onPressed: () {}, child: const Icon(Icons.check)),
+                            onPressed: _registerSheep,
+                            child: const Icon(
+                              Icons.check,
+                              size: 35,
+                            )),
                 floatingActionButtonLocation:
                     MediaQuery.of(context).viewInsets.bottom == 0
                         ? FloatingActionButtonLocation.centerFloat
                         : FloatingActionButtonLocation.endFloat)));
   }
-}
 
-FractionallySizedBox customDivider() {
-  return const FractionallySizedBox(
-      widthFactor: 0.4,
-      child: Divider(
-        thickness: 5,
-        color: Colors.amber,
-      ));
-}
+  // TODO:keyboadrd next + focus
+  _registerSheep() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final path = directory.path;
 
-Column inputDividerWithHeadline(String headline) {
-  return Column(children: [
-    const SizedBox(height: 10),
-    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      const Flexible(
-          child: Divider(
-        thickness: 3,
-        color: Colors.grey, //Colors.amber,
-        endIndent: 5,
-      )),
-      Flexible(
-          flex: 5,
-          child: Text(
-            headline,
-            style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
-          )),
-      const Flexible(
-          child: Divider(
-        thickness: 3,
-        color: Colors.grey, //Colors.amber,
-        indent: 5,
-      ))
-    ]),
-    const SizedBox(height: 10),
-  ]);
+    File file = File('$path/${widget.fileName}.json');
+
+    // TODO: dynamic --> int?
+    Map data = <String, int>{
+      'sheep':
+          _sheepController.text.isEmpty ? 0 : int.parse(_sheepController.text),
+      'lambs':
+          _lambsController.text.isEmpty ? 0 : int.parse(_lambsController.text),
+      'white':
+          _whiteController.text.isEmpty ? 0 : int.parse(_whiteController.text),
+      'black':
+          _blackController.text.isEmpty ? 0 : int.parse(_blackController.text),
+      'blackHead': _blackHeadController.text.isEmpty
+          ? 0
+          : int.parse(_blackHeadController.text),
+      'redTie': _redTieController.text.isEmpty
+          ? 0
+          : int.parse(_redTieController.text),
+      'blueTie': _blueTieController.text.isEmpty
+          ? 0
+          : int.parse(_blueTieController.text),
+      'yellowTie': _yellowTieController.text.isEmpty
+          ? 0
+          : int.parse(_yellowTieController.text),
+      'redEar': _redEarController.text.isEmpty
+          ? 0
+          : int.parse(_redEarController.text),
+      'blueEar': _blueEarController.text.isEmpty
+          ? 0
+          : int.parse(_blueEarController.text),
+    };
+
+    file.writeAsString(json.encode(data));
+    debugPrint("Skrev til fil");
+  }
+
+  _readSheep() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final path = directory.path;
+
+    File file = File('$path/${widget.fileName}.json');
+
+    final contents = await file.readAsString();
+
+    debugPrint("string: " + contents);
+
+    final decoded = json.decode(contents);
+
+    file.delete();
+    debugPrint("slettet fil");
+  }
 }

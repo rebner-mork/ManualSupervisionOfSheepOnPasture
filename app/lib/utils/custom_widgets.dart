@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 InputDecoration customInputDecoration(String labelText, IconData icon,
@@ -22,16 +24,24 @@ SizedBox inputFieldSpacer() {
   return const SizedBox(height: 18);
 }
 
+const double defaultIconSize = 30;
+
 Row customInputRow(String text, TextEditingController controller,
-    IconData iconData, Color color) {
+    IconData iconData, Color color,
+    {double iconSize = defaultIconSize}) {
   return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
     Flexible(
         flex: 5,
-        child: Icon(
-          iconData,
-          color: color,
-          size: 28,
-        )),
+        child: Container(
+            width: defaultIconSize + 3,
+            color: color == Colors.white
+                ? Colors.grey.shade600
+                : Colors.transparent,
+            child: Icon(
+              iconData,
+              color: color,
+              size: iconSize,
+            ))),
     const Spacer(),
     Flexible(
         flex: 10,
@@ -58,4 +68,55 @@ Row customInputRow(String text, TextEditingController controller,
               ),
             )))
   ]);
+}
+
+Column customInputDividerWithHeadline(String headline) {
+  return Column(children: [
+    const SizedBox(height: 10),
+    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      const Flexible(
+          child: Divider(
+        thickness: 3,
+        color: Colors.grey,
+        endIndent: 5,
+      )),
+      Flexible(
+          flex: 5,
+          child: Text(
+            headline,
+            style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+          )),
+      const Flexible(
+          child: Divider(
+        thickness: 3,
+        color: Colors.grey,
+        indent: 5,
+      ))
+    ]),
+    const SizedBox(height: 10),
+  ]);
+}
+
+BackdropFilter customCancelRegistrationDialog(dynamic context) {
+  return BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+      child: AlertDialog(
+        title: const Text("Avbryte registrering?"),
+        content: const Text('Data i registreringen vil gå tapt.'),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Navigator.of(context).pop('dialog');
+                if (Navigator.canPop(context)) {
+                  Navigator.of(context).pop();
+                }
+              },
+              child: const Text('Ja, avbryt')),
+          TextButton(
+              onPressed: () {
+                Navigator.of(context).pop('dialog');
+              },
+              child: const Text('Nei, fortsett'))
+        ],
+      ));
 }

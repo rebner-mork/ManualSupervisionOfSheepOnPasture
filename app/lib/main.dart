@@ -34,7 +34,7 @@ class _MyAppState extends State<MyApp> {
         'login': (context) => const LoginPage(),
         'register': (context) => const RegisterUserPage(),
         'map': (context) => const Material(child: NorgesKart()),
-        RegisterSheep.route: (context) => const RegisterSheep(),
+        RegisterSheep.route: (context) => const RegisterSheep('fileName'),
       },
     );
   }
