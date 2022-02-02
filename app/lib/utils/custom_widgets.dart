@@ -22,8 +22,14 @@ SizedBox inputFieldSpacer() {
   return const SizedBox(height: 18);
 }
 
-Row customInputRow(String text) {
+Row customInputRow(String text, {Color color = Colors.transparent}) {
   return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+    Flexible(
+        flex: 5,
+        child: Icon(
+          Icons.stop,
+          color: color,
+        )),
     Flexible(
         flex: 8,
         child: Container(
@@ -34,7 +40,7 @@ Row customInputRow(String text) {
             ))),
     const Spacer(),
     Flexible(
-        flex: 10,
+        flex: 20,
         child: Container(
             constraints: const BoxConstraints(maxWidth: 60),
             child: TextFormField(

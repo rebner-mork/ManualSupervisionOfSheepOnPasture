@@ -23,8 +23,9 @@ class _RegisterSheepState extends State<RegisterSheep> {
             child: Scaffold(
               appBar: AppBar(
                 title: const Text('Registrer sau'),
-                leading:
-                    BackButton(onPressed: () => Navigator.of(context).pop()),
+                leading: BackButton(
+                    onPressed: () => Navigator.of(context)
+                        .pop()), // TODO: Popup sikker? Bare hvis noe er fylt ut
               ),
               body: SingleChildScrollView(
                   child: Center(
@@ -36,28 +37,28 @@ class _RegisterSheepState extends State<RegisterSheep> {
                 inputFieldSpacer(),
                 customInputRow('Lam'),
                 inputFieldSpacer(),
-                customInputRow('Hvite'),
+                customInputRow('Hvite', color: Colors.white),
                 inputFieldSpacer(),
-                customInputRow('Svarte'),
+                customInputRow('Svarte', color: Colors.black),
                 inputFieldSpacer(),
-                customInputRow('Svart hode'),
+                customInputRow('Svart hode', color: Colors.black),
                 const SizedBox(height: 5),
 
                 inputDividerWithHeadline('Slips'),
 
                 // TODO: Conditional basert på mulige farger
-                customInputRow('Røde'),
+                customInputRow('Røde', color: Colors.red),
                 inputFieldSpacer(),
-                customInputRow('Blå'),
+                customInputRow('Blå', color: Colors.blue),
                 inputFieldSpacer(),
-                customInputRow('Gule'),
+                customInputRow('Gule', color: Colors.yellow),
                 // TODO: Conditional basert på mulige farger
 
                 inputDividerWithHeadline('Øremerker'),
 
-                customInputRow('Røde'),
+                customInputRow('Røde', color: Colors.red),
                 inputFieldSpacer(),
-                customInputRow('Blå'),
+                customInputRow('Blå', color: Colors.blue),
                 const SizedBox(height: 10),
               ]))),
             )));
@@ -80,7 +81,7 @@ Column inputDividerWithHeadline(String headline) {
       const Flexible(
           child: Divider(
         thickness: 5,
-        color: Colors.amber,
+        color: Colors.grey, //Colors.amber,
         endIndent: 5,
       )),
       Flexible(
@@ -92,7 +93,7 @@ Column inputDividerWithHeadline(String headline) {
       const Flexible(
           child: Divider(
         thickness: 5,
-        color: Colors.amber,
+        color: Colors.grey, //Colors.amber,
         indent: 5,
       ))
     ]),
