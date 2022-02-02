@@ -15,53 +15,79 @@ class _RegisterSheepState extends State<RegisterSheep> {
 
   final _formKey = GlobalKey<FormState>();
 
+  final TextEditingController _sheepController = TextEditingController(),
+      _lambsController = TextEditingController(),
+      _blackController = TextEditingController(),
+      _whiteController = TextEditingController(),
+      _blackHeadController = TextEditingController(),
+      _redTieController = TextEditingController(),
+      _blueTieController = TextEditingController(),
+      _yellowTieController = TextEditingController(),
+      _redEarController = TextEditingController(),
+      _blueEarController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Material(
         child: Form(
             key: _formKey,
             child: Scaffold(
-              appBar: AppBar(
-                title: const Text('Registrer sau'),
-                leading: BackButton(
-                    onPressed: () => Navigator.of(context)
-                        .pop()), // TODO: Popup sikker? Bare hvis noe er fylt ut
-              ),
-              body: SingleChildScrollView(
-                  child: Center(
-                      child: Column(children: [
-                const SizedBox(height: 10),
-                inputDividerWithHeadline('Antall'),
+                appBar: AppBar(
+                  title: const Text('Registrer sau'),
+                  leading: BackButton(
+                      onPressed: () => Navigator.of(context)
+                          .pop()), // TODO: Popup sikker? Bare hvis noe er fylt ut
+                ),
+                body: SingleChildScrollView(
+                    child: Center(
+                        child: Column(children: [
+                  const SizedBox(height: 10),
+                  inputDividerWithHeadline('Antall'),
+                  customInputRow('Sauer', _sheepController),
+                  inputFieldSpacer(),
+                  customInputRow('Lam', _lambsController),
+                  inputFieldSpacer(),
+                  customInputRow('Hvite', _whiteController,
+                      color: Colors.white),
+                  inputFieldSpacer(),
+                  customInputRow('Svarte', _blackController,
+                      color: Colors.black),
+                  inputFieldSpacer(),
+                  customInputRow('Svart hode', _blackHeadController,
+                      color: Colors.black),
+                  const SizedBox(height: 5),
 
-                customInputRow('Sauer'),
-                inputFieldSpacer(),
-                customInputRow('Lam'),
-                inputFieldSpacer(),
-                customInputRow('Hvite', color: Colors.white),
-                inputFieldSpacer(),
-                customInputRow('Svarte', color: Colors.black),
-                inputFieldSpacer(),
-                customInputRow('Svart hode', color: Colors.black),
-                const SizedBox(height: 5),
+                  inputDividerWithHeadline('Slips'),
 
-                inputDividerWithHeadline('Slips'),
+                  // TODO: Conditional basert på mulige farger
+                  customInputRow('Røde', _redTieController, color: Colors.red),
+                  inputFieldSpacer(),
+                  customInputRow('Blå', _blueTieController, color: Colors.blue),
+                  inputFieldSpacer(),
+                  customInputRow('Gule', _yellowTieController,
+                      color: Colors.yellow),
+                  // TODO: Conditional basert på mulige farger
 
-                // TODO: Conditional basert på mulige farger
-                customInputRow('Røde', color: Colors.red),
-                inputFieldSpacer(),
-                customInputRow('Blå', color: Colors.blue),
-                inputFieldSpacer(),
-                customInputRow('Gule', color: Colors.yellow),
-                // TODO: Conditional basert på mulige farger
+                  inputDividerWithHeadline('Øremerker'),
 
-                inputDividerWithHeadline('Øremerker'),
-
-                customInputRow('Røde', color: Colors.red),
-                inputFieldSpacer(),
-                customInputRow('Blå', color: Colors.blue),
-                const SizedBox(height: 10),
-              ]))),
-            )));
+                  customInputRow('Røde', _redEarController, color: Colors.red),
+                  inputFieldSpacer(),
+                  customInputRow('Blå', _blueEarController, color: Colors.blue),
+                  const SizedBox(height: 80),
+                ]))),
+                floatingActionButton: MediaQuery.of(context)
+                            .viewInsets
+                            .bottom ==
+                        0
+                    ? FloatingActionButton.extended(
+                        onPressed: () {}, label: const Text('Registrer'))
+                    : null /* FloatingActionButton(
+                            onPressed: () {}, child: const Icon(Icons.add))*/
+                ,
+                floatingActionButtonLocation:
+                    MediaQuery.of(context).viewInsets.bottom == 0
+                        ? FloatingActionButtonLocation.centerFloat
+                        : FloatingActionButtonLocation.centerFloat)));
   }
 }
 

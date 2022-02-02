@@ -22,7 +22,8 @@ SizedBox inputFieldSpacer() {
   return const SizedBox(height: 18);
 }
 
-Row customInputRow(String text, {Color color = Colors.transparent}) {
+Row customInputRow(String text, TextEditingController controller,
+    {Color color = Colors.transparent}) {
   return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
     Flexible(
         flex: 5,
@@ -33,7 +34,7 @@ Row customInputRow(String text, {Color color = Colors.transparent}) {
     Flexible(
         flex: 8,
         child: Container(
-            constraints: const BoxConstraints(minWidth: 70),
+            constraints: const BoxConstraints(minWidth: 78),
             child: Text(
               text,
               style: const TextStyle(fontSize: 15),
@@ -46,11 +47,13 @@ Row customInputRow(String text, {Color color = Colors.transparent}) {
             child: TextFormField(
               textAlign: TextAlign.center,
               keyboardType: TextInputType.number,
+              controller: controller,
               decoration: const InputDecoration(
-                  //labelText: '0',
-                  hintText: '0',
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.fromLTRB(15, 0, 15, 0)),
+                //labelText: '0',
+                hintText: '0',
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+              ),
             )))
   ]);
 }
