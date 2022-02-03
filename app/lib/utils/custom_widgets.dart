@@ -1,6 +1,6 @@
-import 'dart:async';
 import 'dart:ui';
 
+import 'package:app/utils/other.dart';
 import 'package:flutter/material.dart';
 
 InputDecoration customInputDecoration(String labelText, IconData icon,
@@ -31,15 +31,15 @@ Row customInputRow(String text, TextEditingController controller,
     IconData iconData, Color color,
     {double iconSize = defaultIconSize,
     int fieldAmount = 1,
-    scrollController = null,
-    key = null}) {
+    ScrollController? scrollController,
+    GlobalKey? key}) {
   return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
     Flexible(
         flex: 5,
         child: Container(
             width: defaultIconSize + 3,
             color: color == Colors.white
-                ? Colors.grey.shade600
+                ? Colors.grey.shade400
                 : Colors.transparent,
             child: Icon(
               iconData,
@@ -66,22 +66,8 @@ Row customInputRow(String text, TextEditingController controller,
               textInputAction: TextInputAction.next,
               controller: controller,
               onFieldSubmitted: (_) => {
-                if (scrollController != null &&
-                    scrollController is ScrollController)
-                  {
-                    debugPrint("Scroller"),
-                    scroll(scrollController, key)
-                    //await Scrollable.ensureVisible(key.currentContext!)
-                    // Timer to render widgets not currently on screen
-                    /*Timer(Duration(milliseconds: 100), () {
-                      scrollController.animateTo(
-                          scrollController.position.pixels + (73 * fieldAmount),
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.ease);
-                    })*/
-                    /*scrollController.jumpTo(
-                        scrollController.position.pixels + (45 * fieldAmount))*/
-                  },
+                if (scrollController != null && key != null)
+                  scrollToKey(scrollController, key),
               },
               decoration: const InputDecoration(
                 hintText: '0',
@@ -92,25 +78,8 @@ Row customInputRow(String text, TextEditingController controller,
   ]);
 }
 
-void scroll(ScrollController scrollController, GlobalKey key) async {
-  RenderBox box = key.currentContext!.findRenderObject() as RenderBox;
-  Offset position = box.localToGlobal(Offset.zero); //this is global position
-  double y = position.dy;
-  debugPrint("Slipspos: " + y.toString());
-  var appBarHeight = AppBar().preferredSize.height;
-  debugPrint("Scroller");
-  Timer(Duration(milliseconds: 100), () {
-    scrollController.animateTo(
-        scrollController.position.pixels + y - appBarHeight - 30,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.ease);
-  });
-  /*await Scrollable.ensureVisible(key.currentContext!,
-      duration: const Duration(milliseconds: 50));*/
-}
-
-Column customInputDividerWithHeadline(String headline) {
-  return Column(children: [
+Column customInputDividerWithHeadline(String headline, [GlobalKey? key]) {
+  return Column(key: key, children: [
     const SizedBox(height: 10),
     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       const Flexible(
@@ -136,7 +105,7 @@ Column customInputDividerWithHeadline(String headline) {
   ]);
 }
 
-BackdropFilter customCancelRegistrationDialog(dynamic context) {
+BackdropFilter customCancelRegistrationDialog(BuildContext context) {
   return BackdropFilter(
       filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
       child: AlertDialog(

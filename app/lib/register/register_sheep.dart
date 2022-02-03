@@ -21,8 +21,8 @@ class _RegisterSheepState extends State<RegisterSheep> {
   _RegisterSheepState();
 
   final scrollController = ScrollController();
-  final itemKeyOne = GlobalKey();
-  final itemKeyTwo = GlobalKey();
+  final headlineTwoKey = GlobalKey();
+  final headlineThreeKey = GlobalKey();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -36,8 +36,6 @@ class _RegisterSheepState extends State<RegisterSheep> {
       _yellowTieController = TextEditingController(),
       _redEarController = TextEditingController(),
       _blueEarController = TextEditingController();
-
-  Widget rad = customInputDividerWithHeadline('HEI');
 
   @override
   Widget build(BuildContext context) {
@@ -87,19 +85,17 @@ class _RegisterSheepState extends State<RegisterSheep> {
                           RpgAwesome.sheep, Colors.black,
                           scrollController: scrollController,
                           fieldAmount: 5,
-                          key: itemKeyOne),
+                          key: headlineTwoKey),
 
-                      customInputDividerWithHeadline('Slips'),
+                      customInputDividerWithHeadline('Slips', headlineTwoKey),
 
                       // TODO: Conditional basert på mulige farger
-                      Container(
-                          key: itemKeyOne,
-                          child: customInputRow(
-                            'Røde',
-                            _redTieController,
-                            FontAwesome5.black_tie,
-                            Colors.red,
-                          )),
+                      customInputRow(
+                        'Røde',
+                        _redTieController,
+                        FontAwesome5.black_tie,
+                        Colors.red,
+                      ),
                       inputFieldSpacer(),
                       customInputRow(
                         'Blå',
@@ -112,60 +108,24 @@ class _RegisterSheepState extends State<RegisterSheep> {
                           FontAwesome5.black_tie, Colors.yellow,
                           scrollController: scrollController,
                           fieldAmount: 3,
-                          key: itemKeyTwo),
+                          key: headlineThreeKey),
                       // TODO: Conditional basert på mulige farger
 
-                      customInputDividerWithHeadline('Øremerker'),
+                      customInputDividerWithHeadline(
+                          'Øremerker', headlineThreeKey),
 
-                      Container(
-                          key: itemKeyTwo,
-                          child: customInputRow(
-                            'Røde',
-                            _redEarController,
-                            Icons.local_offer,
-                            Colors.red,
-                          )),
+                      customInputRow(
+                        'Røde',
+                        _redEarController,
+                        Icons.local_offer,
+                        Colors.red,
+                      ),
                       inputFieldSpacer(),
                       customInputRow(
                         'Blå',
                         _blueEarController,
                         Icons.local_offer,
                         Colors.blue,
-                      ),
-                      inputFieldSpacer(),
-                      customInputRow(
-                        'Røde',
-                        _redEarController,
-                        Icons.local_offer,
-                        Colors.red,
-                      ),
-                      inputFieldSpacer(),
-                      customInputRow(
-                        'Røde',
-                        _redEarController,
-                        Icons.local_offer,
-                        Colors.red,
-                      ),
-                      inputFieldSpacer(),
-                      customInputRow(
-                        'Røde',
-                        _redEarController,
-                        Icons.local_offer,
-                        Colors.red,
-                      ),
-                      inputFieldSpacer(),
-                      customInputRow(
-                        'Røde',
-                        _redEarController,
-                        Icons.local_offer,
-                        Colors.red,
-                      ),
-                      inputFieldSpacer(),
-                      customInputRow(
-                        'Røde',
-                        _redEarController,
-                        Icons.local_offer,
-                        Colors.red,
                       ),
                       inputFieldSpacer(),
                       const SizedBox(height: 80),
@@ -193,12 +153,12 @@ class _RegisterSheepState extends State<RegisterSheep> {
     final String path = directory.path;
 
     final File file = File('$path/${widget.fileName}.json');
-    final Map data = gatherData();
+    final Map data = _gatherData();
 
     file.writeAsString(json.encode(data));
   }
 
-  Map gatherData() {
+  Map _gatherData() {
     return <String, int>{
       'sheep':
           _sheepController.text.isEmpty ? 0 : int.parse(_sheepController.text),
