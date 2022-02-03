@@ -130,7 +130,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
                       inputFieldSpacer(),
                       const SizedBox(height: 80),
                     ]))),
-                floatingActionButton: // Større kart
+                floatingActionButton:
                     MediaQuery.of(context).viewInsets.bottom == 0
                         ? FloatingActionButton.extended(
                             onPressed: _registerSheep,

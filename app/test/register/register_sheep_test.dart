@@ -22,11 +22,28 @@ void main() {
 
       expect(find.text('Øremerker'), findsOneWidget);
       expect(find.byIcon(Icons.local_offer), findsWidgets);
+
+      expect(find.text('Fullfør registrering'), findsOneWidget);
+      expect(find.byType(FloatingActionButton), findsOneWidget);
     });
 
-    testWidgets('', (WidgetTester tester) async {
+    testWidgets('Alert-dialog on back button', (WidgetTester tester) async {
       await tester
           .pumpWidget(const MaterialApp(home: RegisterSheep('testFile')));
+
+      expect(find.byType(AlertDialog), findsNothing);
+
+      await tester.tap(find.byType(BackButton));
+      await tester.pump();
+
+      expect(find.byType(AlertDialog), findsOneWidget);
+      expect(find.textContaining('Ja'), findsOneWidget);
+      expect(find.textContaining('Nei'), findsOneWidget);
+
+      await tester.tap(find.textContaining('Ja'));
+      await tester.pump();
+
+      expect(find.byType(AlertDialog), findsNothing);
     });
   });
 }
