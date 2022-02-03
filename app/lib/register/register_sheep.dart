@@ -11,11 +11,10 @@ class RegisterSheep extends StatefulWidget {
   const RegisterSheep(this.fileName, {Key? key}) : super(key: key);
 
   final String fileName;
+  static const String route = 'register-sheep';
 
   @override
   State<RegisterSheep> createState() => _RegisterSheepState();
-
-  static const String route = 'register-sheep';
 }
 
 class _RegisterSheepState extends State<RegisterSheep> {
@@ -33,12 +32,6 @@ class _RegisterSheepState extends State<RegisterSheep> {
       _yellowTieController = TextEditingController(),
       _redEarController = TextEditingController(),
       _blueEarController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _readSheep();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,15 +110,18 @@ class _RegisterSheepState extends State<RegisterSheep> {
                         : FloatingActionButtonLocation.endFloat)));
   }
 
-  // TODO:keyboadrd next + focus
   _registerSheep() async {
-    final directory = await getApplicationDocumentsDirectory();
-    final path = directory.path;
+    final Directory directory = await getApplicationDocumentsDirectory();
+    final String path = directory.path;
 
-    File file = File('$path/${widget.fileName}.json');
+    final File file = File('$path/${widget.fileName}.json');
+    final Map data = gatherData();
 
-    // TODO: dynamic --> int?
-    Map data = <String, int>{
+    file.writeAsString(json.encode(data));
+  }
+
+  Map gatherData() {
+    return <String, int>{
       'sheep':
           _sheepController.text.isEmpty ? 0 : int.parse(_sheepController.text),
       'lambs':
@@ -153,24 +149,5 @@ class _RegisterSheepState extends State<RegisterSheep> {
           ? 0
           : int.parse(_blueEarController.text),
     };
-
-    file.writeAsString(json.encode(data));
-    debugPrint("Skrev til fil");
-  }
-
-  _readSheep() async {
-    final directory = await getApplicationDocumentsDirectory();
-    final path = directory.path;
-
-    File file = File('$path/${widget.fileName}.json');
-
-    final contents = await file.readAsString();
-
-    debugPrint("string: " + contents);
-
-    final decoded = json.decode(contents);
-
-    file.delete();
-    debugPrint("slettet fil");
   }
 }

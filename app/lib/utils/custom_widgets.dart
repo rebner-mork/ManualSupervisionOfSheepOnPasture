@@ -59,7 +59,7 @@ Row customInputRow(String text, TextEditingController controller,
             child: TextFormField(
               textAlign: TextAlign.center,
               keyboardType: TextInputType.number,
-              textInputAction: TextInputAction.none,
+              textInputAction: TextInputAction.next,
               controller: controller,
               decoration: const InputDecoration(
                 hintText: '0',
