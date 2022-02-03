@@ -42,3 +42,10 @@ String? validatePhone(String? phone) {
 
   return null;
 }
+
+String? validateLength(String? input, int minLength, String feedback) {
+  if (input!.isEmpty || input.length < minLength) {
+    return feedback;
+  }
+  return null;
+}

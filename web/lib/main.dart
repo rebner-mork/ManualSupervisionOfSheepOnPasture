@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:web/main_tabs/main_tabs.dart';
 import 'firebase_options.dart';
 import 'package:web/register/register_user_page.dart';
 import 'package:web/firebase_options.dart';
@@ -31,10 +32,14 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
         theme: ThemeData(
             colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green)),
-        initialRoute: 'login',
+        initialRoute: LoginPage.route,
         routes: {
-          'login': (context) => const LoginPage(),
-          'register': (context) => const RegisterUserPage()
-        });
+          LoginPage.route: (context) => const LoginPage(),
+          RegisterUserPage.route: (context) => const RegisterUserPage(),
+          MainTabs.route: (context) => const MainTabs()
+        },
+        onUnknownRoute: (settings) => MaterialPageRoute(
+            builder: (context) =>
+                const Material(child: Text('Unknown route'))));
   }
 }

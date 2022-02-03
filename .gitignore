@@ -20,9 +20,6 @@ doc/api/
 *.js.deps
 *.js.map
 
-# Firebase
-app/android/app/google-services.json
-
 # Editor specific files
 *.vscode
 

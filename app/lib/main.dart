@@ -29,11 +29,11 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       theme: ThemeData(
           colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green)),
-      initialRoute: RegisterSheep.route, // 'login', TODO
+      initialRoute: LoginPage.route,
       routes: {
-        'login': (context) => const LoginPage(),
-        'register': (context) => const RegisterUserPage(),
-        'map': (context) => const Material(child: NorgesKart()),
+        LoginPage.route: (context) => const LoginPage(),
+        RegisterUserPage.route: (context) => const RegisterUserPage(),
+        Map.route: (context) => const Material(child: Map()),
         RegisterSheep.route: (context) => const RegisterSheep('fileName'),
       },
     );

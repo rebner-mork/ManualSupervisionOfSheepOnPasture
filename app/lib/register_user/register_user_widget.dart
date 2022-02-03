@@ -131,13 +131,17 @@ class _RegisterUserWidgetState extends State<RegisterUserWidget> {
           _registerFailed = response == null ? false : true;
           _feedback = response ?? '';
         });
+        if (response == null) {
+          // TODO: Navigator.pushNamed(context, X.route);
+        }
       } catch (e) {
         _feedback = 'Kunne ikke opprette bruker';
-        debugPrint(e.toString());
-        setState(() {
-          _validationActivated = true;
-          _registerFailed = true;
-        });
+        if (mounted) {
+          setState(() {
+            _validationActivated = true;
+            _registerFailed = true;
+          });
+        }
       }
     }
   }
