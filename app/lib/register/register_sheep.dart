@@ -20,6 +20,8 @@ class RegisterSheep extends StatefulWidget {
 class _RegisterSheepState extends State<RegisterSheep> {
   _RegisterSheepState();
 
+  final scrollController = ScrollController();
+
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _sheepController = TextEditingController(),
@@ -32,6 +34,8 @@ class _RegisterSheepState extends State<RegisterSheep> {
       _yellowTieController = TextEditingController(),
       _redEarController = TextEditingController(),
       _blueEarController = TextEditingController();
+
+  Widget rad = customInputDividerWithHeadline('HEI');
 
   @override
   Widget build(BuildContext context) {
@@ -50,48 +54,112 @@ class _RegisterSheepState extends State<RegisterSheep> {
                           }),
                 ),
                 body: SingleChildScrollView(
+                    controller: scrollController,
                     child: Center(
                         child: Column(children: [
-                  const SizedBox(height: 10),
-                  customInputDividerWithHeadline('Antall'),
-                  customInputRow(
-                      'Sauer', _sheepController, RpgAwesome.sheep, Colors.grey),
-                  inputFieldSpacer(),
-                  customInputRow(
-                      'Lam', _lambsController, RpgAwesome.sheep, Colors.grey,
-                      iconSize: 24),
-                  inputFieldSpacer(),
-                  customInputRow('Hvite', _whiteController, RpgAwesome.sheep,
-                      Colors.white),
-                  inputFieldSpacer(),
-                  customInputRow('Svarte', _blackController, RpgAwesome.sheep,
-                      Colors.black),
-                  inputFieldSpacer(),
-                  customInputRow('Svart hode', _blackHeadController,
-                      RpgAwesome.sheep, Colors.black),
+                      const SizedBox(height: 10),
+                      customInputDividerWithHeadline('Antall'),
+                      customInputRow('Sauer', _sheepController,
+                          RpgAwesome.sheep, Colors.grey),
+                      inputFieldSpacer(),
+                      customInputRow('Lam', _lambsController, RpgAwesome.sheep,
+                          Colors.grey,
+                          iconSize: 24),
+                      inputFieldSpacer(),
 
-                  customInputDividerWithHeadline('Slips'),
+                      customInputRow(
+                        'Hvite',
+                        _whiteController,
+                        RpgAwesome.sheep,
+                        Colors.white,
+                      ),
+                      inputFieldSpacer(),
+                      customInputRow(
+                        'Svarte',
+                        _blackController,
+                        RpgAwesome.sheep,
+                        Colors.black,
+                      ),
+                      inputFieldSpacer(),
+                      customInputRow('Svart hode', _blackHeadController,
+                          RpgAwesome.sheep, Colors.black,
+                          scrollController: scrollController, fieldAmount: 5),
 
-                  // TODO: Conditional basert på mulige farger
-                  customInputRow('Røde', _redTieController,
-                      FontAwesome5.black_tie, Colors.red),
-                  inputFieldSpacer(),
-                  customInputRow('Blå', _blueTieController,
-                      FontAwesome5.black_tie, Colors.blue),
-                  inputFieldSpacer(),
-                  customInputRow('Gule', _yellowTieController,
-                      FontAwesome5.black_tie, Colors.yellow),
-                  // TODO: Conditional basert på mulige farger
+                      customInputDividerWithHeadline('Slips'),
 
-                  customInputDividerWithHeadline('Øremerker'),
+                      // TODO: Conditional basert på mulige farger
+                      customInputRow(
+                        'Røde',
+                        _redTieController,
+                        FontAwesome5.black_tie,
+                        Colors.red,
+                      ),
+                      inputFieldSpacer(),
+                      customInputRow(
+                        'Blå',
+                        _blueTieController,
+                        FontAwesome5.black_tie,
+                        Colors.blue,
+                      ),
+                      inputFieldSpacer(),
+                      customInputRow('Gule', _yellowTieController,
+                          FontAwesome5.black_tie, Colors.yellow,
+                          scrollController: scrollController, fieldAmount: 3),
+                      // TODO: Conditional basert på mulige farger
 
-                  customInputRow(
-                      'Røde', _redEarController, Icons.local_offer, Colors.red),
-                  inputFieldSpacer(),
-                  customInputRow('Blå', _blueEarController, Icons.local_offer,
-                      Colors.blue),
-                  const SizedBox(height: 80),
-                ]))),
+                      customInputDividerWithHeadline('Øremerker'),
+
+                      customInputRow(
+                        'Røde',
+                        _redEarController,
+                        Icons.local_offer,
+                        Colors.red,
+                      ),
+                      inputFieldSpacer(),
+                      customInputRow(
+                        'Blå',
+                        _blueEarController,
+                        Icons.local_offer,
+                        Colors.blue,
+                      ),
+                      inputFieldSpacer(),
+                      customInputRow(
+                        'Røde',
+                        _redEarController,
+                        Icons.local_offer,
+                        Colors.red,
+                      ),
+                      inputFieldSpacer(),
+                      customInputRow(
+                        'Røde',
+                        _redEarController,
+                        Icons.local_offer,
+                        Colors.red,
+                      ),
+                      inputFieldSpacer(),
+                      customInputRow(
+                        'Røde',
+                        _redEarController,
+                        Icons.local_offer,
+                        Colors.red,
+                      ),
+                      inputFieldSpacer(),
+                      customInputRow(
+                        'Røde',
+                        _redEarController,
+                        Icons.local_offer,
+                        Colors.red,
+                      ),
+                      inputFieldSpacer(),
+                      customInputRow(
+                        'Røde',
+                        _redEarController,
+                        Icons.local_offer,
+                        Colors.red,
+                      ),
+                      inputFieldSpacer(),
+                      const SizedBox(height: 80),
+                    ]))),
                 floatingActionButton: // Større kart
                     MediaQuery.of(context).viewInsets.bottom == 0
                         ? FloatingActionButton.extended(

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -28,7 +29,9 @@ const double defaultIconSize = 30;
 
 Row customInputRow(String text, TextEditingController controller,
     IconData iconData, Color color,
-    {double iconSize = defaultIconSize}) {
+    {double iconSize = defaultIconSize,
+    int fieldAmount = 1,
+    scrollController = null}) {
   return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
     Flexible(
         flex: 5,
@@ -61,6 +64,22 @@ Row customInputRow(String text, TextEditingController controller,
               keyboardType: TextInputType.number,
               textInputAction: TextInputAction.next,
               controller: controller,
+              onFieldSubmitted: (_) => {
+                if (scrollController != null &&
+                    scrollController is ScrollController)
+                  {
+                    debugPrint("Scroller"),
+                    // Timer to render widgets not currently on screen
+                    Timer(Duration(milliseconds: 100), () {
+                      scrollController.animateTo(
+                          scrollController.position.pixels + (73 * fieldAmount),
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.ease);
+                    })
+                    /*scrollController.jumpTo(
+                        scrollController.position.pixels + (45 * fieldAmount))*/
+                  },
+              },
               decoration: const InputDecoration(
                 hintText: '0',
                 border: OutlineInputBorder(),
