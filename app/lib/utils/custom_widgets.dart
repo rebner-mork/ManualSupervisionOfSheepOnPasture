@@ -31,7 +31,8 @@ Row customInputRow(String text, TextEditingController controller,
     IconData iconData, Color color,
     {double iconSize = defaultIconSize,
     int fieldAmount = 1,
-    scrollController = null}) {
+    scrollController = null,
+    key = null}) {
   return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
     Flexible(
         flex: 5,
@@ -69,13 +70,15 @@ Row customInputRow(String text, TextEditingController controller,
                     scrollController is ScrollController)
                   {
                     debugPrint("Scroller"),
+                    scroll(scrollController, key)
+                    //await Scrollable.ensureVisible(key.currentContext!)
                     // Timer to render widgets not currently on screen
-                    Timer(Duration(milliseconds: 100), () {
+                    /*Timer(Duration(milliseconds: 100), () {
                       scrollController.animateTo(
                           scrollController.position.pixels + (73 * fieldAmount),
                           duration: const Duration(milliseconds: 500),
                           curve: Curves.ease);
-                    })
+                    })*/
                     /*scrollController.jumpTo(
                         scrollController.position.pixels + (45 * fieldAmount))*/
                   },
@@ -87,6 +90,23 @@ Row customInputRow(String text, TextEditingController controller,
               ),
             )))
   ]);
+}
+
+void scroll(ScrollController scrollController, GlobalKey key) async {
+  RenderBox box = key.currentContext!.findRenderObject() as RenderBox;
+  Offset position = box.localToGlobal(Offset.zero); //this is global position
+  double y = position.dy;
+  debugPrint("Slipspos: " + y.toString());
+  var appBarHeight = AppBar().preferredSize.height;
+  debugPrint("Scroller");
+  Timer(Duration(milliseconds: 100), () {
+    scrollController.animateTo(
+        scrollController.position.pixels + y - appBarHeight - 30,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.ease);
+  });
+  /*await Scrollable.ensureVisible(key.currentContext!,
+      duration: const Duration(milliseconds: 50));*/
 }
 
 Column customInputDividerWithHeadline(String headline) {

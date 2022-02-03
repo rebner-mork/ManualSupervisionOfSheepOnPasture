@@ -21,6 +21,8 @@ class _RegisterSheepState extends State<RegisterSheep> {
   _RegisterSheepState();
 
   final scrollController = ScrollController();
+  final itemKeyOne = GlobalKey();
+  final itemKeyTwo = GlobalKey();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -83,17 +85,21 @@ class _RegisterSheepState extends State<RegisterSheep> {
                       inputFieldSpacer(),
                       customInputRow('Svart hode', _blackHeadController,
                           RpgAwesome.sheep, Colors.black,
-                          scrollController: scrollController, fieldAmount: 5),
+                          scrollController: scrollController,
+                          fieldAmount: 5,
+                          key: itemKeyOne),
 
                       customInputDividerWithHeadline('Slips'),
 
                       // TODO: Conditional basert på mulige farger
-                      customInputRow(
-                        'Røde',
-                        _redTieController,
-                        FontAwesome5.black_tie,
-                        Colors.red,
-                      ),
+                      Container(
+                          key: itemKeyOne,
+                          child: customInputRow(
+                            'Røde',
+                            _redTieController,
+                            FontAwesome5.black_tie,
+                            Colors.red,
+                          )),
                       inputFieldSpacer(),
                       customInputRow(
                         'Blå',
@@ -104,17 +110,21 @@ class _RegisterSheepState extends State<RegisterSheep> {
                       inputFieldSpacer(),
                       customInputRow('Gule', _yellowTieController,
                           FontAwesome5.black_tie, Colors.yellow,
-                          scrollController: scrollController, fieldAmount: 3),
+                          scrollController: scrollController,
+                          fieldAmount: 3,
+                          key: itemKeyTwo),
                       // TODO: Conditional basert på mulige farger
 
                       customInputDividerWithHeadline('Øremerker'),
 
-                      customInputRow(
-                        'Røde',
-                        _redEarController,
-                        Icons.local_offer,
-                        Colors.red,
-                      ),
+                      Container(
+                          key: itemKeyTwo,
+                          child: customInputRow(
+                            'Røde',
+                            _redEarController,
+                            Icons.local_offer,
+                            Colors.red,
+                          )),
                       inputFieldSpacer(),
                       customInputRow(
                         'Blå',
