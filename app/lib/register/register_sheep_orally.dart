@@ -1,4 +1,4 @@
-import 'package:app/utils/questionSets.dart';
+import 'package:app/utils/question_sets.dart';
 import 'package:app/utils/speech_input_filters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -41,6 +41,9 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
 
   bool _speechEnabled = false;
   String _lastWords = '';
+
+  /*QuestionSet questionSet =
+      QuestionSet(allSheepQuestions, allSheepQuestionsContexts);*/
 
   @override
   void initState() {
@@ -150,12 +153,17 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
     debugPrint('Stemmer: ${voices.toString()}');
   }
 
-  void _startDialog() async {
+  void _startDialog(
+      List<String> questions, List<QuestionContext> questionContexts) async {
+    questions.asMap().forEach((index, value) {
+      debugPrint(index.toString() + ' ' + value);
+    });
+    /*
     for (String question in allSheepQuestions) {
       await _speak(question);
       _listen();
       await _speak(_lastWords);
-    }
+    }*/
   }
 
   @override
@@ -168,7 +176,9 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
             body: Column(
               children: [
                 ElevatedButton(
-                    onPressed: _startDialog, child: const Text('Spytt ut')),
+                    onPressed: () => _startDialog(
+                        allSheepQuestions, allSheepQuestionsContexts),
+                    child: const Text('Spytt ut')),
                 Text("Ikke-filtrert: ${nonFilteredAnswers.toString()}"),
                 Text("Filtrert:      ${filteredAnswers.toString()}"),
                 /*ElevatedButton(
