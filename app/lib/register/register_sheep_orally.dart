@@ -1,3 +1,5 @@
+import 'package:app/utils/questionSets.dart';
+import 'package:app/utils/speech_input_filters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
@@ -23,6 +25,8 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
 
   late FlutterTts _tts;
   late TtsState ttsState;
+  List<String> nonFilteredAnswers = [];
+  List<String> filteredAnswers = [];
 
   static const double volume = 0.5;
   static const double pitch = 1.0;
@@ -47,23 +51,32 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
 
   void _initSpeechToText() async {
     _stt = SpeechToText();
+
     _speechEnabled = await _stt.initialize();
     debugPrint('Speech enabled: $_speechEnabled');
+    // TODO: Si ifra, gi tips og gå til vanlig registrering
+
     setState(() {});
   }
 
-  void _listen() async {
-    //_printSttInfo();
+  void _listen(QuestionContext questionContext) async {
+    // TODO: Sjekke nettvergstilgang OG om vi faktisk har tilgang videre (Se notat https://pub.dev/packages/connectivity_plus/example)
+    // Mange options, se example
     await _stt.listen(
-        onResult: _onSpeechResult,
+        onResult: (result) => _onSpeechResult(result, questionContext),
         //localeId: 'en_US',
-        onDevice: true); //en_GB // Mange options, se example
+        onDevice: true,
+        listenFor: const Duration(seconds: 5)); // listenFor is max - NOT min
   }
 
-  void _onSpeechResult(SpeechRecognitionResult result) {
-    debugPrint(result.toString());
+  // Final flag?
+  // TODO: support "previous"
+  void _onSpeechResult(
+      SpeechRecognitionResult result, QuestionContext questionContext) async {
     setState(() {
       _lastWords = result.recognizedWords;
+      nonFilteredAnswers.add(_lastWords);
+      filteredAnswers.add(filterAnswer(_lastWords, questionContext)); // TODO
     });
   }
 
@@ -119,16 +132,14 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
     });
   }
 
-  Future _speak() async {
+  // TODO: setup i init og speak der det brukes (med mindre settings skal endre seg)
+  Future _speak(String text) async {
     await _tts.setVolume(volume);
     await _tts.setSpeechRate(rate);
     await _tts.setPitch(pitch);
-
     await _tts.setLanguage('nb-NO');
 
-    //debugPrint('speaking');
-    await _tts.speak('Hei, mitt navn er Anders Android');
-    //debugPrint('not speaking');
+    await _tts.speak(text);
   }
 
   void _printTtsInfo() async {
@@ -137,6 +148,14 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
 
     var voices = await _tts.getVoices;
     debugPrint('Stemmer: ${voices.toString()}');
+  }
+
+  void _startDialog() async {
+    for (String question in allSheepQuestions) {
+      await _speak(question);
+      _listen();
+      await _speak(_lastWords);
+    }
   }
 
   @override
@@ -149,10 +168,11 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
             body: Column(
               children: [
                 ElevatedButton(
-                    onPressed: _speak, child: const Text('Spytt ut')),
-                ElevatedButton(
-                    onPressed: _listen, child: const Text('Spytt inn')),
-                Text(_lastWords),
+                    onPressed: _startDialog, child: const Text('Spytt ut')),
+                Text("Ikke-filtrert: ${nonFilteredAnswers.toString()}"),
+                Text("Filtrert:      ${filteredAnswers.toString()}"),
+                /*ElevatedButton(
+                    onPressed: _listen, child: const Text('Spytt inn')),*/
               ],
             )));
   }
