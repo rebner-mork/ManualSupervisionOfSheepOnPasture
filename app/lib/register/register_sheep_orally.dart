@@ -23,6 +23,9 @@ enum SttState { listening, notListening }
 class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
   _RegisterSheepOrallyState();
 
+  int maxIndex = 2;
+  int index = 0;
+
   late FlutterTts _tts;
   late TtsState ttsState;
   List<String> nonFilteredAnswers = [];
@@ -42,9 +45,6 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
   bool _speechEnabled = false;
   String _lastWords = '';
 
-  /*QuestionSet questionSet =
-      QuestionSet(allSheepQuestions, allSheepQuestionsContexts);*/
-
   @override
   void initState() {
     super.initState();
@@ -62,25 +62,67 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
     setState(() {});
   }
 
-  void _listen(QuestionContext questionContext) async {
+  /*
+    questions.asMap().forEach((index, value) {
+      debugPrint(index.toString() + ' ' + value);
+    });*/
+  /*
+    for (String question in allSheepQuestions) {
+      await _speak(question);
+      _listen();
+      await _speak(_lastWords);
+    }*/
+
+  void _startDialog(List<String> questions,
+      List<QuestionContext> questionContexts, int index) async {
+    await _speak(questions[0]);
+
+    await _listen(questionContexts[0], index);
+
+    /*await Future.delayed(const Duration(seconds: 5), () async {
+      await _speak("finished");
+    });*/
+  }
+
+  Future _listen(QuestionContext questionContext, int index) async {
     // TODO: Sjekke nettvergstilgang OG om vi faktisk har tilgang videre (Se notat https://pub.dev/packages/connectivity_plus/example)
     // Mange options, se example
+    _lastWords = '';
     await _stt.listen(
-        onResult: (result) => _onSpeechResult(result, questionContext),
-        //localeId: 'en_US',
-        onDevice: true,
-        listenFor: const Duration(seconds: 5)); // listenFor is max - NOT min
+      partialResults: false,
+      onResult: (result) => _onSpeechResult(result, questionContext, index),
+    ); // listenFor is max - NOT min
+    //localeId: 'en_US',
+    /*  onDevice: true,
+        listenFor: const Duration(seconds: 5)*/
   }
 
   // Final flag?
   // TODO: support "previous"
-  void _onSpeechResult(
-      SpeechRecognitionResult result, QuestionContext questionContext) async {
-    setState(() {
+  void _onSpeechResult(SpeechRecognitionResult result,
+      QuestionContext questionContext, int index) async {
+    debugPrint('funk');
+    if (result.finalResult) {
+      setState(() {
+        debugPrint('final result');
+        _lastWords = result.recognizedWords;
+        nonFilteredAnswers.add(_lastWords);
+        //Future.delayed(const Duration(seconds: 1), {});
+      });
+      await _speak(_lastWords);
+      index++;
+      if (index < allSheepQuestions.length) {
+        await _speak(allSheepQuestions[index]);
+        await _listen(QuestionContext.numbers, index);
+      }
+    } else {
+      debugPrint('IKKE final result');
+    }
+    /*setState(() {
       _lastWords = result.recognizedWords;
       nonFilteredAnswers.add(_lastWords);
       filteredAnswers.add(filterAnswer(_lastWords, questionContext)); // TODO
-    });
+    });*/
   }
 
   void _printSttInfo() async {
@@ -153,19 +195,6 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
     debugPrint('Stemmer: ${voices.toString()}');
   }
 
-  void _startDialog(
-      List<String> questions, List<QuestionContext> questionContexts) async {
-    questions.asMap().forEach((index, value) {
-      debugPrint(index.toString() + ' ' + value);
-    });
-    /*
-    for (String question in allSheepQuestions) {
-      await _speak(question);
-      _listen();
-      await _speak(_lastWords);
-    }*/
-  }
-
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -177,7 +206,7 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
               children: [
                 ElevatedButton(
                     onPressed: () => _startDialog(
-                        allSheepQuestions, allSheepQuestionsContexts),
+                        allSheepQuestions, allSheepQuestionsContexts, 0),
                     child: const Text('Spytt ut')),
                 Text("Ikke-filtrert: ${nonFilteredAnswers.toString()}"),
                 Text("Filtrert:      ${filteredAnswers.toString()}"),
