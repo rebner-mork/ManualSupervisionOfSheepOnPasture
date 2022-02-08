@@ -27,8 +27,8 @@ SizedBox inputFieldSpacer() {
 
 const double defaultIconSize = 30;
 
-Row customInputRow(String text, TextEditingController controller,
-    IconData iconData, Color color,
+Row inputRow(String text, TextEditingController controller, IconData iconData,
+    Color color,
     {double iconSize = defaultIconSize,
     int fieldAmount = 1,
     ScrollController? scrollController,
@@ -78,7 +78,7 @@ Row customInputRow(String text, TextEditingController controller,
   ]);
 }
 
-Column customInputDividerWithHeadline(String headline, [GlobalKey? key]) {
+Column inputDividerWithHeadline(String headline, [GlobalKey? key]) {
   return Column(key: key, children: [
     const SizedBox(height: 10),
     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -105,7 +105,7 @@ Column customInputDividerWithHeadline(String headline, [GlobalKey? key]) {
   ]);
 }
 
-BackdropFilter customCancelRegistrationDialog(BuildContext context) {
+BackdropFilter cancelRegistrationDialog(BuildContext context) {
   return BackdropFilter(
       filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
       child: AlertDialog(

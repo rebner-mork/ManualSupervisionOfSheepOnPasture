@@ -52,7 +52,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
                             showDialog(
                                 context: context,
                                 builder: (_) =>
-                                    customCancelRegistrationDialog(context))
+                                    cancelRegistrationDialog(context))
                           }),
                 ),
                 body: SingleChildScrollView(
@@ -60,73 +60,69 @@ class _RegisterSheepState extends State<RegisterSheep> {
                     child: Center(
                         child: Column(children: [
                       const SizedBox(height: 10),
-                      customInputDividerWithHeadline('Antall'),
-                      customInputRow('Sauer', _textControllers['sheep']!,
+                      inputDividerWithHeadline('Antall'),
+                      inputRow('Sauer', _textControllers['sheep']!,
                           RpgAwesome.sheep, Colors.grey),
                       inputFieldSpacer(),
-                      customInputRow('Lam', _textControllers['lambs']!,
+                      inputRow('Lam', _textControllers['lambs']!,
                           RpgAwesome.sheep, Colors.grey,
                           iconSize: 24),
                       inputFieldSpacer(),
 
-                      customInputRow(
+                      inputRow(
                         'Hvite',
                         _textControllers['white']!,
                         RpgAwesome.sheep,
                         Colors.white,
                       ),
                       inputFieldSpacer(),
-                      customInputRow(
+                      inputRow(
                         'Svarte',
                         _textControllers['black']!,
                         RpgAwesome.sheep,
                         Colors.black,
                       ),
                       inputFieldSpacer(),
-                      customInputRow(
-                          'Svart hode',
-                          _textControllers['blackHead']!,
-                          RpgAwesome.sheep,
-                          Colors.black,
+                      inputRow('Svart hode', _textControllers['blackHead']!,
+                          RpgAwesome.sheep, Colors.black,
                           scrollController: scrollController,
                           fieldAmount: 5,
                           key: headlineTwoKey),
 
-                      customInputDividerWithHeadline('Slips', headlineTwoKey),
+                      inputDividerWithHeadline('Slips', headlineTwoKey),
 
                       // TODO: Conditional basert på mulige farger
-                      customInputRow(
+                      inputRow(
                         'Røde',
                         _textControllers['redTie']!,
                         FontAwesome5.black_tie,
                         Colors.red,
                       ),
                       inputFieldSpacer(),
-                      customInputRow(
+                      inputRow(
                         'Blå',
                         _textControllers['blueTie']!,
                         FontAwesome5.black_tie,
                         Colors.blue,
                       ),
                       inputFieldSpacer(),
-                      customInputRow('Gule', _textControllers['yellowTie']!,
+                      inputRow('Gule', _textControllers['yellowTie']!,
                           FontAwesome5.black_tie, Colors.yellow,
                           scrollController: scrollController,
                           fieldAmount: 3,
                           key: headlineThreeKey),
                       // TODO: Conditional basert på mulige farger
 
-                      customInputDividerWithHeadline(
-                          'Øremerker', headlineThreeKey),
+                      inputDividerWithHeadline('Øremerker', headlineThreeKey),
 
-                      customInputRow(
+                      inputRow(
                         'Røde',
                         _textControllers['redEar']!,
                         Icons.local_offer,
                         Colors.red,
                       ),
                       inputFieldSpacer(),
-                      customInputRow(
+                      inputRow(
                         'Blå',
                         _textControllers['blueEar']!,
                         Icons.local_offer,
