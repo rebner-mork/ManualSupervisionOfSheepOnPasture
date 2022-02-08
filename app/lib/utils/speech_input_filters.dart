@@ -1,6 +1,5 @@
 enum QuestionContext { numbers, colors }
 
-// TODO: support "previous"
 String correctErroneousInput(String input, QuestionContext questionContext) {
   String correctedInput = '';
 
@@ -23,7 +22,7 @@ String correctErroneousInput(String input, QuestionContext questionContext) {
     }
   }
 
-  return (correctedInput == '') ? input : correctedInput;
+  return correctedInput;
 }
 
 final List<String> numbers = [

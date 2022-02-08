@@ -79,43 +79,69 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
     //localeId: 'en_US',
     /*  onDevice: true,
         listenFor: const Duration(seconds: 5)*/
+    /*if (index != maxIndex) {
+      String response = "Jeg forstod ikke.";
+      await _speak(response);
+      await _speak(allSheepQuestions[index]);
+      await _listen(allSheepQuestionsContexts[index]);
+    }*/
   }
 
   // TODO: support "previous"
   void _onSpeechResult(
       SpeechRecognitionResult result, QuestionContext questionContext) async {
+    // Always true when 'partialResults: false'
     if (result.finalResult) {
       debugPrint('final result');
       String spokenWord = result.recognizedWords;
 
-      if (questionContext == QuestionContext.numbers &&
-          !numbers.contains(spokenWord)) {
-        spokenWord = correctErroneousInput(spokenWord, questionContext);
-      } else if (questionContext == QuestionContext.colors &&
-          !colors.contains(spokenWord)) {
-        spokenWord = correctErroneousInput(spokenWord, questionContext);
-      }
+      if (spokenWord == 'previous' || spokenWord == 'back') {
+        if (index > 0) {
+          index--;
+        }
+        setState(() {
+          if (nonFilteredAnswers.isNotEmpty) {
+            nonFilteredAnswers.removeAt(index);
+          }
+          if (filteredAnswers.isNotEmpty) {
+            filteredAnswers.removeAt(index);
+          }
+        });
 
-      // Final flag?
-      //if (spokenWord == '')
-
-      await _speak(spokenWord, language: 'en-US');
-
-      setState(() {
-        nonFilteredAnswers.add(result.recognizedWords);
-        filteredAnswers.add(spokenWord);
-      });
-
-      index++;
-
-      if (index < allSheepQuestions.length) {
         await _speak(allSheepQuestions[index]);
         await _listen(allSheepQuestionsContexts[index]);
       } else {
-        index = 0;
+        if (questionContext == QuestionContext.numbers &&
+            !numbers.contains(spokenWord)) {
+          spokenWord = correctErroneousInput(spokenWord, questionContext);
+        } else if (questionContext == QuestionContext.colors &&
+            !colors.contains(spokenWord)) {
+          spokenWord = correctErroneousInput(spokenWord, questionContext);
+        }
+
+        if (spokenWord == '') {
+          String response = "Jeg forstod ikke. " + allSheepQuestions[index];
+          await _speak(response);
+          await _listen(allSheepQuestionsContexts[index]);
+        } else {
+          await _speak(spokenWord, language: 'en-US');
+
+          setState(() {
+            nonFilteredAnswers.insert(
+                index, result.recognizedWords); //add(result.recognizedWords);
+            filteredAnswers.insert(index, spokenWord);
+          });
+
+          index++;
+
+          if (index < allSheepQuestions.length) {
+            await _speak(allSheepQuestions[index]);
+            await _listen(allSheepQuestionsContexts[index]);
+          } else {
+            index = 0;
+          }
+        }
       }
-    } else {
-      debugPrint('IKKE final result');
     }
   }
 
