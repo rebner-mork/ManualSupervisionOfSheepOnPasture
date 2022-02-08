@@ -2,7 +2,28 @@ enum QuestionContext { numbers, colors }
 
 // TODO: support "previous"
 String correctErroneousInput(String input, QuestionContext questionContext) {
-  return '';
+  String correctedInput = '';
+
+  input = input.toLowerCase();
+
+  if (questionContext == QuestionContext.numbers) {
+    for (List<String> numberFilter in numbersFilter) {
+      if (numberFilter.contains(input)) {
+        int index = numbersFilter.indexOf(numberFilter);
+        correctedInput = numbers[index];
+        break;
+      }
+    }
+  } else {
+    for (List<String> colorFilter in colorsFilter) {
+      if (colorFilter.contains(input)) {
+        int index = colorsFilter.indexOf(colorFilter);
+        correctedInput = colors[index];
+      }
+    }
+  }
+
+  return (correctedInput == '') ? input : correctedInput;
 }
 
 final List<String> numbers = [
@@ -21,7 +42,7 @@ final List<String> numbers = [
   '12'
 ];
 
-final List<List<String>> numberFilter = [
+final List<List<String>> numbersFilter = [
   [
     'zero',
     'see row',
@@ -62,7 +83,7 @@ final List<String> colors = [
   'orange'
 ];
 
-final List<List<String>> colorFilter = [
+final List<List<String>> colorsFilter = [
   ['what', 'light', 'whites'],
   ['lack', 'block', 'black', 'blacks'],
   [

@@ -81,7 +81,6 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
         listenFor: const Duration(seconds: 5)*/
   }
 
-  // Final flag?
   // TODO: support "previous"
   void _onSpeechResult(
       SpeechRecognitionResult result, QuestionContext questionContext) async {
@@ -96,6 +95,9 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
           !colors.contains(spokenWord)) {
         spokenWord = correctErroneousInput(spokenWord, questionContext);
       }
+
+      // Final flag?
+      //if (spokenWord == '')
 
       await _speak(spokenWord, language: 'en-US');
 
