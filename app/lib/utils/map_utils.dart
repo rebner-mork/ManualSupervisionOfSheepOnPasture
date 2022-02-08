@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:latlong2/latlong.dart';
@@ -42,4 +43,22 @@ Marker getDevicePositionMarker(LatLng pos) {
             color: Colors.pink,
             size: size,
           ));
+}
+
+int _xTileIndex(double longitude, int zoom) {
+  return (((longitude + 180) / 360) * pow(2, zoom)).floor();
+}
+
+int _yTileIndex(double latitude, int zoom) {
+  var latitudeInRadians = latitude * (pi / 180);
+  var y = ((1 -
+              ((log(tan(latitudeInRadians) + (1 / cos(latitudeInRadians)))) /
+                  pi)) *
+          pow(2, zoom - 1))
+      .floor();
+  return y;
+}
+
+Point getTileIndexes(double latitude, double longitude, int zoom) {
+  return Point(_xTileIndex(longitude, zoom), _yTileIndex(latitude, zoom));
 }
