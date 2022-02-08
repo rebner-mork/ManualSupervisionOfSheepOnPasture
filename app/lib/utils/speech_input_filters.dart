@@ -1,7 +1,7 @@
 enum QuestionContext { numbers, colors }
 
 // TODO: support "previous"
-String filterAnswer(String input, QuestionContext questionContext) {
+String correctErroneousInput(String input, QuestionContext questionContext) {
   return '';
 }
 
@@ -16,7 +16,9 @@ final List<String> numbers = [
   '7',
   '8',
   '9',
-  '10'
+  '10',
+  '11',
+  '12'
 ];
 
 final List<List<String>> numberFilter = [

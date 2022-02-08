@@ -1,9 +1,6 @@
 import 'package:app/login/login_page.dart';
-<<<<<<< HEAD
 import 'package:app/register/register_sheep_orally.dart';
-=======
 import 'package:app/register/register_sheep.dart';
->>>>>>> main
 import 'package:app/register_user/register_user_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';

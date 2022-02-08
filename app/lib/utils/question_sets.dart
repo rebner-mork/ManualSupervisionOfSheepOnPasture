@@ -15,10 +15,3 @@ final List<QuestionContext> allSheepQuestionsContexts = [
   QuestionContext.numbers,
   QuestionContext.numbers
 ];
-
-/*class QuestionSet {
-  List<String> questions;
-  List<QuestionContext> questionContext;
-
-  QuestionSet(this.questions, this.questionContext);
-}*/

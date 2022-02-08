@@ -44,7 +44,6 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
   get isListening => sttState == SttState.listening;
 
   bool _speechEnabled = false;
-  String _lastWords = '';
 
   @override
   void initState() {
@@ -63,20 +62,19 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
     setState(() {});
   }
 
-  void _startDialog(List<String> questions,
-      List<QuestionContext> questionContexts, int index) async {
-    await _speak(questions[0]);
-
-    await _listen(questionContexts[0], index);
+  void _startDialog(
+      List<String> questions, List<QuestionContext> questionContexts) async {
+    await _speak(questions[index]);
+    await _listen(questionContexts[index]);
   }
 
-  Future _listen(QuestionContext questionContext, int index) async {
-    // TODO: Sjekke nettvergstilgang OG om vi faktisk har tilgang videre (Se notat https://pub.dev/packages/connectivity_plus/example)
+  // TODO: Sjekke nettvergstilgang OG om vi faktisk har tilgang videre (Se notat https://pub.dev/packages/connectivity_plus/example)
+  // edit: NEI, kjør uten nett hver gang, begrunnes med at vårt filter gir 90(?) i treffprosent akkurat som online-utgaven
+  Future _listen(QuestionContext questionContext) async {
     // Mange options, se example
-    _lastWords = '';
     await _stt.listen(
       partialResults: false,
-      onResult: (result) => _onSpeechResult(result, questionContext, index),
+      onResult: (result) => _onSpeechResult(result, questionContext),
     ); // listenFor is max - NOT min
     //localeId: 'en_US',
     /*  onDevice: true,
@@ -85,21 +83,34 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
 
   // Final flag?
   // TODO: support "previous"
-  void _onSpeechResult(SpeechRecognitionResult result,
-      QuestionContext questionContext, int index) async {
-    debugPrint('funk');
+  void _onSpeechResult(
+      SpeechRecognitionResult result, QuestionContext questionContext) async {
     if (result.finalResult) {
+      debugPrint('final result');
+      String spokenWord = result.recognizedWords;
+
+      if (questionContext == QuestionContext.numbers &&
+          !numbers.contains(spokenWord)) {
+        spokenWord = correctErroneousInput(spokenWord, questionContext);
+      } else if (questionContext == QuestionContext.colors &&
+          !colors.contains(spokenWord)) {
+        spokenWord = correctErroneousInput(spokenWord, questionContext);
+      }
+
+      await _speak(spokenWord, language: 'en-US');
+
       setState(() {
-        debugPrint('final result');
-        _lastWords = result.recognizedWords;
-        nonFilteredAnswers.add(_lastWords);
-        // filteredAnswers.add(filterAnswer(_lastWords, questionContext));
+        nonFilteredAnswers.add(result.recognizedWords);
+        filteredAnswers.add(spokenWord);
       });
-      await _speak(_lastWords);
+
       index++;
+
       if (index < allSheepQuestions.length) {
         await _speak(allSheepQuestions[index]);
-        await _listen(QuestionContext.numbers, index);
+        await _listen(allSheepQuestionsContexts[index]);
+      } else {
+        index = 0;
       }
     } else {
       debugPrint('IKKE final result');
@@ -159,11 +170,11 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
   }
 
   // TODO: setup i init og speak der det brukes (med mindre settings skal endre seg)
-  Future _speak(String text) async {
+  Future _speak(String text, {String language = 'nb-NO'}) async {
     await _tts.setVolume(volume);
     await _tts.setSpeechRate(rate);
     await _tts.setPitch(pitch);
-    await _tts.setLanguage('nb-NO');
+    await _tts.setLanguage(language);
 
     await _tts.speak(text);
   }
@@ -187,7 +198,7 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
               children: [
                 ElevatedButton(
                     onPressed: () => _startDialog(
-                        allSheepQuestions, allSheepQuestionsContexts, 0),
+                        allSheepQuestions, allSheepQuestionsContexts),
                     child: const Text('Spytt ut')),
                 Text("Ikke-filtrert: ${nonFilteredAnswers.toString()}"),
                 Text("Filtrert:      ${filteredAnswers.toString()}"),
