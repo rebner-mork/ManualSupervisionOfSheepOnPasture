@@ -26,16 +26,18 @@ class _RegisterSheepState extends State<RegisterSheep> {
 
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _sheepController = TextEditingController(),
-      _lambsController = TextEditingController(),
-      _blackController = TextEditingController(),
-      _whiteController = TextEditingController(),
-      _blackHeadController = TextEditingController(),
-      _redTieController = TextEditingController(),
-      _blueTieController = TextEditingController(),
-      _yellowTieController = TextEditingController(),
-      _redEarController = TextEditingController(),
-      _blueEarController = TextEditingController();
+  final _textControllers = <String, TextEditingController>{
+    'sheep': TextEditingController(),
+    'lambs': TextEditingController(),
+    'black': TextEditingController(),
+    'white': TextEditingController(),
+    'blackHead': TextEditingController(),
+    'redTie': TextEditingController(),
+    'blueTie': TextEditingController(),
+    'yellowTie': TextEditingController(),
+    'redEar': TextEditingController(),
+    'blueEar': TextEditingController(),
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -59,30 +61,33 @@ class _RegisterSheepState extends State<RegisterSheep> {
                         child: Column(children: [
                       const SizedBox(height: 10),
                       customInputDividerWithHeadline('Antall'),
-                      customInputRow('Sauer', _sheepController,
+                      customInputRow('Sauer', _textControllers['sheep']!,
                           RpgAwesome.sheep, Colors.grey),
                       inputFieldSpacer(),
-                      customInputRow('Lam', _lambsController, RpgAwesome.sheep,
-                          Colors.grey,
+                      customInputRow('Lam', _textControllers['lambs']!,
+                          RpgAwesome.sheep, Colors.grey,
                           iconSize: 24),
                       inputFieldSpacer(),
 
                       customInputRow(
                         'Hvite',
-                        _whiteController,
+                        _textControllers['white']!,
                         RpgAwesome.sheep,
                         Colors.white,
                       ),
                       inputFieldSpacer(),
                       customInputRow(
                         'Svarte',
-                        _blackController,
+                        _textControllers['black']!,
                         RpgAwesome.sheep,
                         Colors.black,
                       ),
                       inputFieldSpacer(),
-                      customInputRow('Svart hode', _blackHeadController,
-                          RpgAwesome.sheep, Colors.black,
+                      customInputRow(
+                          'Svart hode',
+                          _textControllers['blackHead']!,
+                          RpgAwesome.sheep,
+                          Colors.black,
                           scrollController: scrollController,
                           fieldAmount: 5,
                           key: headlineTwoKey),
@@ -92,19 +97,19 @@ class _RegisterSheepState extends State<RegisterSheep> {
                       // TODO: Conditional basert på mulige farger
                       customInputRow(
                         'Røde',
-                        _redTieController,
+                        _textControllers['redTie']!,
                         FontAwesome5.black_tie,
                         Colors.red,
                       ),
                       inputFieldSpacer(),
                       customInputRow(
                         'Blå',
-                        _blueTieController,
+                        _textControllers['blueTie']!,
                         FontAwesome5.black_tie,
                         Colors.blue,
                       ),
                       inputFieldSpacer(),
-                      customInputRow('Gule', _yellowTieController,
+                      customInputRow('Gule', _textControllers['yellowTie']!,
                           FontAwesome5.black_tie, Colors.yellow,
                           scrollController: scrollController,
                           fieldAmount: 3,
@@ -116,14 +121,14 @@ class _RegisterSheepState extends State<RegisterSheep> {
 
                       customInputRow(
                         'Røde',
-                        _redEarController,
+                        _textControllers['redEar']!,
                         Icons.local_offer,
                         Colors.red,
                       ),
                       inputFieldSpacer(),
                       customInputRow(
                         'Blå',
-                        _blueEarController,
+                        _textControllers['blueEar']!,
                         Icons.local_offer,
                         Colors.blue,
                       ),
@@ -160,32 +165,36 @@ class _RegisterSheepState extends State<RegisterSheep> {
 
   Map _gatherData() {
     return <String, int>{
-      'sheep':
-          _sheepController.text.isEmpty ? 0 : int.parse(_sheepController.text),
-      'lambs':
-          _lambsController.text.isEmpty ? 0 : int.parse(_lambsController.text),
-      'white':
-          _whiteController.text.isEmpty ? 0 : int.parse(_whiteController.text),
-      'black':
-          _blackController.text.isEmpty ? 0 : int.parse(_blackController.text),
-      'blackHead': _blackHeadController.text.isEmpty
+      'sheep': _textControllers['sheep']!.text.isEmpty
           ? 0
-          : int.parse(_blackHeadController.text),
-      'redTie': _redTieController.text.isEmpty
+          : int.parse(_textControllers['sheep']!.text),
+      'lambs': _textControllers['lambs']!.text.isEmpty
           ? 0
-          : int.parse(_redTieController.text),
-      'blueTie': _blueTieController.text.isEmpty
+          : int.parse(_textControllers['lambs']!.text),
+      'white': _textControllers['white']!.text.isEmpty
           ? 0
-          : int.parse(_blueTieController.text),
-      'yellowTie': _yellowTieController.text.isEmpty
+          : int.parse(_textControllers['white']!.text),
+      'black': _textControllers['black']!.text.isEmpty
           ? 0
-          : int.parse(_yellowTieController.text),
-      'redEar': _redEarController.text.isEmpty
+          : int.parse(_textControllers['black']!.text),
+      'blackHead': _textControllers['blackHead']!.text.isEmpty
           ? 0
-          : int.parse(_redEarController.text),
-      'blueEar': _blueEarController.text.isEmpty
+          : int.parse(_textControllers['blackHead']!.text),
+      'redTie': _textControllers['redTie']!.text.isEmpty
           ? 0
-          : int.parse(_blueEarController.text),
+          : int.parse(_textControllers['redTie']!.text),
+      'blueTie': _textControllers['blueTie']!.text.isEmpty
+          ? 0
+          : int.parse(_textControllers['blueTie']!.text),
+      'yellowTie': _textControllers['yellowTie']!.text.isEmpty
+          ? 0
+          : int.parse(_textControllers['yellowTie']!.text),
+      'redEar': _textControllers['redEar']!.text.isEmpty
+          ? 0
+          : int.parse(_textControllers['redEar']!.text),
+      'blueEar': _textControllers['blueEar']!.text.isEmpty
+          ? 0
+          : int.parse(_textControllers['blueEar']!.text),
     };
   }
 }
