@@ -6,8 +6,9 @@ import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 class RegisterSheepOrallyWidget extends StatefulWidget {
-  const RegisterSheepOrallyWidget({Key? key}) : super(key: key);
+  const RegisterSheepOrallyWidget(this.fileName, {Key? key}) : super(key: key);
 
+  final String fileName;
   static const String route = 'register-sheep-orally';
 
   @override

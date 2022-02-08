@@ -1,5 +1,9 @@
 import 'package:app/login/login_page.dart';
+<<<<<<< HEAD
 import 'package:app/register/register_sheep_orally.dart';
+=======
+import 'package:app/register/register_sheep.dart';
+>>>>>>> main
 import 'package:app/register_user/register_user_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +39,8 @@ class _MyAppState extends State<MyApp> {
         RegisterUserPage.route: (context) => const RegisterUserPage(),
         Map.route: (context) => const Material(child: Map()),
         RegisterSheepOrallyWidget.route: (context) =>
-            const RegisterSheepOrallyWidget(),
+            const RegisterSheepOrallyWidget('filename'),
+        RegisterSheep.route: (context) => const RegisterSheep('fileName'),
       },
     );
   }
