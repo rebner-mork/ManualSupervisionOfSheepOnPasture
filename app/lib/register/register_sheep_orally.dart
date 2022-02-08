@@ -77,9 +77,10 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
     super.initState();
     _initTextToSpeech();
     _initSpeechToText();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    // TODO
+    /*WidgetsBinding.instance!.addPostFrameCallback((_) {
       _startDialog(allSheepQuestions, allSheepQuestionsContexts);
-    });
+    });*/
   }
 
   void _initSpeechToText() async {
@@ -103,12 +104,12 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
   Future _listen(QuestionContext questionContext) async {
     // Mange options, se example
     await _stt.listen(
-        partialResults: false,
-        onResult: (result) => _onSpeechResult(result, questionContext),
-        localeId: 'en_US',
-        onDevice: true,
-        listenFor: const Duration(seconds: 5) // listenFor is max - NOT min
-        );
+      partialResults: false,
+      onResult: (result) => _onSpeechResult(result, questionContext),
+      //localeId: 'en_US',
+      //onDevice: true,
+      //listenFor: const Duration(seconds: 5) // listenFor is max - NOT min
+    );
   }
 
   void _onSpeechResult(
@@ -123,12 +124,13 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
           index--;
         }
         setState(() {
-          if (nonFilteredAnswers.isNotEmpty) {
+          _textControllers.values.elementAt(index).text = '';
+          /*if (nonFilteredAnswers.isNotEmpty) {
             nonFilteredAnswers.removeAt(index);
           }
           if (filteredAnswers.isNotEmpty) {
             filteredAnswers.removeAt(index);
-          }
+          }*/
         });
 
         await _speak(allSheepQuestions[index]);
@@ -150,7 +152,8 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
           await _speak(spokenWord, language: 'en-US');
 
           setState(() {
-            _textControllers[index]!.text = spokenWord;
+            _textControllers.values.elementAt(index).text = spokenWord;
+            // TODO: submit field
             //nonFilteredAnswers.insert(index, result.recognizedWords);
             //filteredAnswers.insert(index, spokenWord);
           });
@@ -239,13 +242,14 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
   }
 
   _registerSheep() async {
-    final Directory directory = await getApplicationDocumentsDirectory();
+    _startDialog(allSheepQuestions, allSheepQuestionsContexts);
+    /*final Directory directory = await getApplicationDocumentsDirectory();
     final String path = directory.path;
 
     final File file = File('$path/${widget.fileName}.json');
     final Map data = _gatherData();
 
-    file.writeAsString(json.encode(data));
+    file.writeAsString(json.encode(data));*/
   }
 
   Map _gatherData() {

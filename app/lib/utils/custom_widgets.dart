@@ -65,6 +65,11 @@ Row inputRow(String text, TextEditingController controller, IconData iconData,
               keyboardType: TextInputType.number,
               textInputAction: TextInputAction.next,
               controller: controller,
+              /*onChanged: (value) => (_) => {
+                    // TODO: if isDialog
+                    if (scrollController != null && key != null)
+                      scrollToKey(scrollController, key),
+                  },*/
               onFieldSubmitted: (_) => {
                 if (scrollController != null && key != null)
                   scrollToKey(scrollController, key),
