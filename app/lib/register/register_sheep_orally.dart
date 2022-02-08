@@ -62,26 +62,11 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
     setState(() {});
   }
 
-  /*
-    questions.asMap().forEach((index, value) {
-      debugPrint(index.toString() + ' ' + value);
-    });*/
-  /*
-    for (String question in allSheepQuestions) {
-      await _speak(question);
-      _listen();
-      await _speak(_lastWords);
-    }*/
-
   void _startDialog(List<String> questions,
       List<QuestionContext> questionContexts, int index) async {
     await _speak(questions[0]);
 
     await _listen(questionContexts[0], index);
-
-    /*await Future.delayed(const Duration(seconds: 5), () async {
-      await _speak("finished");
-    });*/
   }
 
   Future _listen(QuestionContext questionContext, int index) async {
@@ -107,7 +92,7 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
         debugPrint('final result');
         _lastWords = result.recognizedWords;
         nonFilteredAnswers.add(_lastWords);
-        //Future.delayed(const Duration(seconds: 1), {});
+        // filteredAnswers.add(filterAnswer(_lastWords, questionContext));
       });
       await _speak(_lastWords);
       index++;
@@ -118,11 +103,6 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
     } else {
       debugPrint('IKKE final result');
     }
-    /*setState(() {
-      _lastWords = result.recognizedWords;
-      nonFilteredAnswers.add(_lastWords);
-      filteredAnswers.add(filterAnswer(_lastWords, questionContext)); // TODO
-    });*/
   }
 
   void _printSttInfo() async {
