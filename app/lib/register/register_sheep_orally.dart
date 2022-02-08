@@ -37,8 +37,6 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
 
   late FlutterTts _tts;
   late TtsState ttsState;
-  List<String> nonFilteredAnswers = [];
-  List<String> filteredAnswers = [];
 
   static const double volume = 0.5;
   static const double pitch = 1.0;
@@ -77,7 +75,7 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
     super.initState();
     _initTextToSpeech();
     _initSpeechToText();
-    // TODO
+    // TODO: (evt. start-knapp?)
     /*WidgetsBinding.instance!.addPostFrameCallback((_) {
       _startDialog(allSheepQuestions, allSheepQuestionsContexts);
     });*/
@@ -116,7 +114,6 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
       SpeechRecognitionResult result, QuestionContext questionContext) async {
     // Always true when 'partialResults: false'
     if (result.finalResult) {
-      debugPrint('final result');
       String spokenWord = result.recognizedWords;
 
       if (spokenWord == 'previous' || spokenWord == 'back') {
@@ -125,12 +122,6 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
         }
         setState(() {
           _textControllers.values.elementAt(index).text = '';
-          /*if (nonFilteredAnswers.isNotEmpty) {
-            nonFilteredAnswers.removeAt(index);
-          }
-          if (filteredAnswers.isNotEmpty) {
-            filteredAnswers.removeAt(index);
-          }*/
         });
 
         await _speak(allSheepQuestions[index]);
@@ -153,9 +144,7 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
 
           setState(() {
             _textControllers.values.elementAt(index).text = spokenWord;
-            // TODO: submit field
-            //nonFilteredAnswers.insert(index, result.recognizedWords);
-            //filteredAnswers.insert(index, spokenWord);
+            // TODO: få textfield sin onChanged eller onSubmitted til å kjøre
           });
 
           index++;
@@ -242,7 +231,8 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
   }
 
   _registerSheep() async {
-    _startDialog(allSheepQuestions, allSheepQuestionsContexts);
+    _startDialog(allSheepQuestions,
+        allSheepQuestionsContexts); // TODO: start dialog somewhere else
     /*final Directory directory = await getApplicationDocumentsDirectory();
     final String path = directory.path;
 
@@ -395,24 +385,9 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
                               Icons.check,
                               size: 35,
                             )),
-                floatingActionButtonLocation: MediaQuery.of(context)
-                            .viewInsets
-                            .bottom ==
-                        0
-                    ? FloatingActionButtonLocation.centerFloat
-                    : FloatingActionButtonLocation
-                        .endFloat) /*Column(
-                  children: [
-                    ElevatedButton(
-                        onPressed: () => _startDialog(
-                            allSheepQuestions, allSheepQuestionsContexts),
-                        child: const Text('Spytt ut')),
-                    Text("Ikke-filtrert: ${nonFilteredAnswers.toString()}"),
-                    Text("Filtrert:      ${filteredAnswers.toString()}"),
-                    /*ElevatedButton(
-                    onPressed: _listen, child: const Text('Spytt inn')),*/
-                  ],
-                ))*/
-            ));
+                floatingActionButtonLocation:
+                    MediaQuery.of(context).viewInsets.bottom == 0
+                        ? FloatingActionButtonLocation.centerFloat
+                        : FloatingActionButtonLocation.endFloat)));
   }
 }

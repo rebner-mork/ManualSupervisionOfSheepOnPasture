@@ -84,7 +84,7 @@ final List<String> colors = [
 
 final List<List<String>> colorsFilter = [
   ['what', 'light', 'whites'],
-  ['lack', 'block', 'black', 'blacks'],
+  ['lack', 'block', 'blacks'],
   [
     'rent',
     'rat',

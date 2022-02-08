@@ -66,7 +66,7 @@ Row inputRow(String text, TextEditingController controller, IconData iconData,
               textInputAction: TextInputAction.next,
               controller: controller,
               /*onChanged: (value) => (_) => {
-                    // TODO: if isDialog
+                    // TODO: if isDialog (kanskje denne vil aktiveres når tekst settes fra controller)
                     if (scrollController != null && key != null)
                       scrollToKey(scrollController, key),
                   },*/
