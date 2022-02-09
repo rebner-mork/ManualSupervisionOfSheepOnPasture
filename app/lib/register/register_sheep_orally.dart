@@ -39,7 +39,7 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
   late FlutterTts _tts;
   late TtsState ttsState;
 
-  static const double volume = 0.5;
+  static const double volume = 1.0;
   static const double pitch = 1.0;
   static const double rate = 0.5;
 
@@ -77,6 +77,7 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
     super.initState();
     _initTextToSpeech();
     _initSpeechToText();
+
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _startDialog(allSheepQuestions, allSheepQuestionsContexts);
     });
@@ -88,9 +89,7 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
 
     _speechEnabled = await _stt.initialize(onError: _sttError);
     debugPrint('Speech enabled: $_speechEnabled');
-    // TODO: Si ifra, gi tips og gå til vanlig registrering
-
-    setState(() {});
+    // TODO: Si ifra, gi tips (gå til vanlig registrering?)
   }
 
   void _sttError(SpeechRecognitionError error) {
@@ -102,6 +101,9 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
 
   void _startDialog(
       List<String> questions, List<QuestionContext> questionContexts) async {
+    setState(() {
+      ongoingDialog = true;
+    });
     await _speak(questions[index]);
     await _listen(questionContexts[index]);
   }
@@ -109,19 +111,17 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
   // TODO: Sjekke nettvergstilgang OG om vi faktisk har tilgang videre (Se notat https://pub.dev/packages/connectivity_plus/example)
   // edit: NEI, kjør uten nett hver gang, begrunnes med at vårt filter gir 90(?) i treffprosent akkurat som online-utgaven
   Future _listen(QuestionContext questionContext) async {
-    // Mange options, se example
     await _stt.listen(
-      partialResults: false,
-      onResult: (result) => _onSpeechResult(result, questionContext),
-      //localeId: 'en_US',
-      //onDevice: true,
-      //listenFor: const Duration(seconds: 5) // listenFor is max - NOT min
-    );
+        partialResults: false,
+        onResult: (result) => _onSpeechResult(result, questionContext),
+        localeId: 'en-US',
+        onDevice: true,
+        listenFor: const Duration(seconds: 5) // listenFor is max - NOT min
+        );
   }
 
   void _onSpeechResult(
       SpeechRecognitionResult result, QuestionContext questionContext) async {
-    debugPrint("HER");
     // Always true when 'partialResults: false'
     if (result.finalResult) {
       String spokenWord = result.recognizedWords;
@@ -183,8 +183,12 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
   void _initTextToSpeech() {
     ttsState = TtsState.notSpeaking;
     _tts = FlutterTts();
-    _setAwaitOptions();
 
+    _tts.setVolume(volume);
+    _tts.setSpeechRate(rate);
+    _tts.setPitch(pitch);
+
+    _setAwaitOptions();
     _setHandlers();
     _printTtsInfo();
   }
@@ -195,6 +199,7 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
     debugPrint(engine);
   }
 
+  // TODO: remove handlers? not in use by our code
   _setHandlers() {
     _tts.setStartHandler(() {
       debugPrint('Speaking');
@@ -227,11 +232,7 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
 
   // TODO: setup i init og speak der det brukes (med mindre settings skal endre seg)
   Future _speak(String text, {String language = 'nb-NO'}) async {
-    await _tts.setVolume(volume);
-    await _tts.setSpeechRate(rate);
-    await _tts.setPitch(pitch);
     await _tts.setLanguage(language);
-
     await _tts.speak(text);
   }
 
@@ -244,15 +245,13 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
   }
 
   _registerSheep() async {
-    _startDialog(allSheepQuestions,
-        allSheepQuestionsContexts); // TODO: start dialog somewhere else
-    /*final Directory directory = await getApplicationDocumentsDirectory();
+    final Directory directory = await getApplicationDocumentsDirectory();
     final String path = directory.path;
 
     final File file = File('$path/${widget.fileName}.json');
     final Map data = _gatherData();
 
-    file.writeAsString(json.encode(data));*/
+    file.writeAsString(json.encode(data));
   }
 
   Map _gatherData() {
@@ -390,39 +389,21 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
                 floatingActionButton: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: ongoingDialog
-                      ? <Widget>[completeRegistrationButton()]
+                      ? <Widget>[
+                          completeRegistrationButton(context, _registerSheep)
+                        ]
                       : <Widget>[
-                          startDialogButton(),
+                          startDialogButton(() => _startDialog(
+                              allSheepQuestions, allSheepQuestionsContexts)),
                           const SizedBox(
                             width: 20,
                           ),
-                          completeRegistrationButton()
+                          completeRegistrationButton(context, _registerSheep)
                         ],
                 ),
                 floatingActionButtonLocation:
                     MediaQuery.of(context).viewInsets.bottom == 0
                         ? FloatingActionButtonLocation.centerFloat
                         : FloatingActionButtonLocation.endFloat)));
-  }
-
-  FloatingActionButton completeRegistrationButton() {
-    return MediaQuery.of(context).viewInsets.bottom == 0
-        ? FloatingActionButton.extended(
-            onPressed: _registerSheep,
-            label: const Text('Fullfør registrering',
-                style: TextStyle(fontSize: 19)))
-        : FloatingActionButton(
-            onPressed: _registerSheep,
-            child: const Icon(
-              Icons.check,
-              size: 35,
-            ));
-  }
-
-  FloatingActionButton startDialogButton() {
-    return FloatingActionButton(
-      onPressed: () {},
-      child: const Icon(Icons.mic, size: 30),
-    );
   }
 }

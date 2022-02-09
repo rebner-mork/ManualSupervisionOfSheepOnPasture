@@ -128,3 +128,25 @@ BackdropFilter cancelRegistrationDialog(BuildContext context) {
         ],
       ));
 }
+
+FloatingActionButton completeRegistrationButton(
+    BuildContext context, void Function() onPressed) {
+  return MediaQuery.of(context).viewInsets.bottom == 0
+      ? FloatingActionButton.extended(
+          onPressed: onPressed,
+          label: const Text('Fullfør registrering',
+              style: TextStyle(fontSize: 19)))
+      : FloatingActionButton(
+          onPressed: onPressed,
+          child: const Icon(
+            Icons.check,
+            size: 35,
+          ));
+}
+
+FloatingActionButton startDialogButton(void Function() onPressed) {
+  return FloatingActionButton(
+    onPressed: onPressed,
+    child: const Icon(Icons.mic, size: 30),
+  );
+}
