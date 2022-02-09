@@ -50,6 +50,7 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
   get isListening => sttState == SttState.listening;
 
   bool _speechEnabled = false;
+  bool ongoingDialog = false;
 
   final scrollController = ScrollController();
   final headlineTwoKey = GlobalKey();
@@ -60,8 +61,8 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
   final _textControllers = <String, TextEditingController>{
     'sheep': TextEditingController(),
     'lambs': TextEditingController(),
-    'black': TextEditingController(),
     'white': TextEditingController(),
+    'black': TextEditingController(),
     'blackHead': TextEditingController(),
     'redTie': TextEditingController(),
     'blueTie': TextEditingController(),
@@ -75,14 +76,14 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
     super.initState();
     _initTextToSpeech();
     _initSpeechToText();
-    // TODO: (evt. start-knapp?)
-    /*WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       _startDialog(allSheepQuestions, allSheepQuestionsContexts);
-    });*/
+    });
   }
 
   void _initSpeechToText() async {
     _stt = SpeechToText();
+    sttState = SttState.notListening;
 
     _speechEnabled = await _stt.initialize();
     debugPrint('Speech enabled: $_speechEnabled');
@@ -93,6 +94,7 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
 
   void _startDialog(
       List<String> questions, List<QuestionContext> questionContexts) async {
+    ongoingDialog = true;
     await _speak(questions[index]);
     await _listen(questionContexts[index]);
   }
@@ -154,6 +156,7 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
             await _listen(allSheepQuestionsContexts[index]);
           } else {
             index = 0;
+            ongoingDialog = false;
           }
         }
       }
@@ -287,10 +290,9 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
                   title: const Text('Registrer sau muntlig'),
                   leading: BackButton(
                       onPressed: () => {
-                            if (isListening)
-                              {
-                                _stt.stop() // TODO: sjekk om fungerer
-                              },
+                            _stt.stop(),
+                            _tts.stop(),
+                            ongoingDialog = false,
                             showDialog(
                                 context: context,
                                 builder: (_) =>
@@ -373,21 +375,42 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
                       inputFieldSpacer(),
                       const SizedBox(height: 80),
                     ]))),
-                floatingActionButton:
-                    MediaQuery.of(context).viewInsets.bottom == 0
-                        ? FloatingActionButton.extended(
-                            onPressed: _registerSheep,
-                            label: const Text('Fullfør registrering',
-                                style: TextStyle(fontSize: 19)))
-                        : FloatingActionButton(
-                            onPressed: _registerSheep,
-                            child: const Icon(
-                              Icons.check,
-                              size: 35,
-                            )),
+                floatingActionButton: !ongoingDialog
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          startDialogButton(),
+                          completeRegistrationButton()
+                        ],
+                      )
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [completeRegistrationButton()],
+                      ),
                 floatingActionButtonLocation:
                     MediaQuery.of(context).viewInsets.bottom == 0
                         ? FloatingActionButtonLocation.centerFloat
                         : FloatingActionButtonLocation.endFloat)));
+  }
+
+  FloatingActionButton completeRegistrationButton() {
+    return MediaQuery.of(context).viewInsets.bottom == 0
+        ? FloatingActionButton.extended(
+            onPressed: _registerSheep,
+            label: const Text('Fullfør registrering',
+                style: TextStyle(fontSize: 19)))
+        : FloatingActionButton(
+            onPressed: _registerSheep,
+            child: const Icon(
+              Icons.check,
+              size: 35,
+            ));
+  }
+
+  FloatingActionButton startDialogButton() {
+    return FloatingActionButton(
+      onPressed: () {},
+      child: const Icon(Icons.mic, size: 30),
+    );
   }
 }
