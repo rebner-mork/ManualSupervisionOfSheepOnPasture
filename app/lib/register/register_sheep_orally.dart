@@ -7,6 +7,7 @@ import 'package:app/utils/speech_input_filters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:fluttericon/rpg_awesome_icons.dart';
@@ -50,7 +51,7 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
   get isListening => sttState == SttState.listening;
 
   bool _speechEnabled = false;
-  bool ongoingDialog = false;
+  bool ongoingDialog = true;
 
   final scrollController = ScrollController();
   final headlineTwoKey = GlobalKey();
@@ -85,16 +86,22 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
     _stt = SpeechToText();
     sttState = SttState.notListening;
 
-    _speechEnabled = await _stt.initialize();
+    _speechEnabled = await _stt.initialize(onError: _sttError);
     debugPrint('Speech enabled: $_speechEnabled');
     // TODO: Si ifra, gi tips og gå til vanlig registrering
 
     setState(() {});
   }
 
+  void _sttError(SpeechRecognitionError error) {
+    debugPrint(error.errorMsg);
+    setState(() {
+      ongoingDialog = false;
+    });
+  }
+
   void _startDialog(
       List<String> questions, List<QuestionContext> questionContexts) async {
-    ongoingDialog = true;
     await _speak(questions[index]);
     await _listen(questionContexts[index]);
   }
@@ -114,6 +121,7 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
 
   void _onSpeechResult(
       SpeechRecognitionResult result, QuestionContext questionContext) async {
+    debugPrint("HER");
     // Always true when 'partialResults: false'
     if (result.finalResult) {
       String spokenWord = result.recognizedWords;
@@ -156,7 +164,9 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
             await _listen(allSheepQuestionsContexts[index]);
           } else {
             index = 0;
-            ongoingDialog = false;
+            setState(() {
+              ongoingDialog = false;
+            });
           }
         }
       }
@@ -292,7 +302,9 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
                       onPressed: () => {
                             _stt.stop(),
                             _tts.stop(),
-                            ongoingDialog = false,
+                            setState(() {
+                              ongoingDialog = false;
+                            }),
                             showDialog(
                                 context: context,
                                 builder: (_) =>
@@ -375,18 +387,18 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
                       inputFieldSpacer(),
                       const SizedBox(height: 80),
                     ]))),
-                floatingActionButton: !ongoingDialog
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
+                floatingActionButton: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: ongoingDialog
+                      ? <Widget>[completeRegistrationButton()]
+                      : <Widget>[
                           startDialogButton(),
+                          const SizedBox(
+                            width: 20,
+                          ),
                           completeRegistrationButton()
                         ],
-                      )
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [completeRegistrationButton()],
-                      ),
+                ),
                 floatingActionButtonLocation:
                     MediaQuery.of(context).viewInsets.bottom == 0
                         ? FloatingActionButtonLocation.centerFloat
