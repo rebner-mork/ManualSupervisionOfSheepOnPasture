@@ -193,44 +193,9 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
     final String path = directory.path;
 
     final File file = File('$path/${widget.fileName}.json');
-    final Map data = _gatherData();
+    final Map data = gatherRegisteredData(_textControllers);
 
     file.writeAsString(json.encode(data));
-  }
-
-  Map _gatherData() {
-    return <String, int>{
-      'sheep': _textControllers['sheep']!.text.isEmpty
-          ? 0
-          : int.parse(_textControllers['sheep']!.text),
-      'lambs': _textControllers['lambs']!.text.isEmpty
-          ? 0
-          : int.parse(_textControllers['lambs']!.text),
-      'white': _textControllers['white']!.text.isEmpty
-          ? 0
-          : int.parse(_textControllers['white']!.text),
-      'black': _textControllers['black']!.text.isEmpty
-          ? 0
-          : int.parse(_textControllers['black']!.text),
-      'blackHead': _textControllers['blackHead']!.text.isEmpty
-          ? 0
-          : int.parse(_textControllers['blackHead']!.text),
-      'redTie': _textControllers['redTie']!.text.isEmpty
-          ? 0
-          : int.parse(_textControllers['redTie']!.text),
-      'blueTie': _textControllers['blueTie']!.text.isEmpty
-          ? 0
-          : int.parse(_textControllers['blueTie']!.text),
-      'yellowTie': _textControllers['yellowTie']!.text.isEmpty
-          ? 0
-          : int.parse(_textControllers['yellowTie']!.text),
-      'redEar': _textControllers['redEar']!.text.isEmpty
-          ? 0
-          : int.parse(_textControllers['redEar']!.text),
-      'blueEar': _textControllers['blueEar']!.text.isEmpty
-          ? 0
-          : int.parse(_textControllers['blueEar']!.text),
-    };
   }
 
   @override
