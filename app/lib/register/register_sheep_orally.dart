@@ -34,23 +34,14 @@ enum SttState { listening, notListening }
 class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
   _RegisterSheepOrallyState();
 
-  int maxIndex = 2;
-  int index = 0;
+  int questionIndex = 0;
 
   late FlutterTts _tts;
-  late TtsState ttsState;
-
   static const double volume = 1.0;
   static const double pitch = 1.0;
   static const double rate = 0.5;
 
-  get isSpeaking => ttsState == TtsState.speaking;
-
   late SpeechToText _stt;
-  late SttState sttState;
-
-  get isListening => sttState == SttState.listening;
-
   bool _speechEnabled = false;
   bool ongoingDialog = true;
 
@@ -82,7 +73,6 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
 
   void _initSpeechToTextAndStartDialog() async {
     _stt = SpeechToText();
-    sttState = SttState.notListening;
 
     _speechEnabled = await _stt.initialize(onError: _sttError);
 
@@ -111,12 +101,10 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
     setState(() {
       ongoingDialog = true;
     });
-    await _speak(questions[index]);
-    await _listen(questionContexts[index]);
+    await _speak(questions[questionIndex]);
+    await _listen(questionContexts[questionIndex]);
   }
 
-  // TODO: Sjekke nettvergstilgang OG om vi faktisk har tilgang videre (Se notat https://pub.dev/packages/connectivity_plus/example)
-  // edit: NEI, kjør uten nett hver gang, begrunnes med at vårt filter gir 90(?) i treffprosent akkurat som online-utgaven
   Future _listen(QuestionContext questionContext) async {
     await _stt.listen(
         partialResults: false,
@@ -134,15 +122,15 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
       String spokenWord = result.recognizedWords;
 
       if (spokenWord == 'previous' || spokenWord == 'back') {
-        if (index > 0) {
-          index--;
+        if (questionIndex > 0) {
+          questionIndex--;
         }
         setState(() {
-          _textControllers.values.elementAt(index).text = '';
+          _textControllers.values.elementAt(questionIndex).text = '';
         });
 
-        await _speak(allSheepQuestions[index]);
-        await _listen(allSheepQuestionsContexts[index]);
+        await _speak(allSheepQuestions[questionIndex]);
+        await _listen(allSheepQuestionsContexts[questionIndex]);
       } else {
         if (questionContext == QuestionContext.numbers &&
             !numbers.contains(spokenWord)) {
@@ -153,24 +141,25 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
         }
 
         if (spokenWord == '') {
-          String response = "Jeg forstod ikke. " + allSheepQuestions[index];
+          String response =
+              "Jeg forstod ikke. " + allSheepQuestions[questionIndex];
           await _speak(response);
-          await _listen(allSheepQuestionsContexts[index]);
+          await _listen(allSheepQuestionsContexts[questionIndex]);
         } else {
           await _speak(spokenWord, language: 'en-US');
 
           setState(() {
-            _textControllers.values.elementAt(index).text = spokenWord;
+            _textControllers.values.elementAt(questionIndex).text = spokenWord;
             // TODO: få textfield sin onChanged eller onSubmitted til å kjøre
           });
 
-          index++;
+          questionIndex++;
 
-          if (index < allSheepQuestions.length) {
-            await _speak(allSheepQuestions[index]);
-            await _listen(allSheepQuestionsContexts[index]);
+          if (questionIndex < allSheepQuestions.length) {
+            await _speak(allSheepQuestions[questionIndex]);
+            await _listen(allSheepQuestionsContexts[questionIndex]);
           } else {
-            index = 0;
+            questionIndex = 0;
             setState(() {
               ongoingDialog = false;
             });
@@ -180,15 +169,7 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
     }
   }
 
-  void _printSttInfo() async {
-    var locales = await _stt.locales();
-    for (LocaleName locale in locales) {
-      debugPrint(locale.name + ', ' + locale.localeId);
-    }
-  }
-
   void _initTextToSpeech() {
-    ttsState = TtsState.notSpeaking;
     _tts = FlutterTts();
 
     _tts.setVolume(volume);
@@ -196,8 +177,6 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
     _tts.setPitch(pitch);
 
     _setAwaitOptions();
-    _setHandlers();
-    _printTtsInfo();
   }
 
   Future _setAwaitOptions() async {
@@ -206,49 +185,9 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
     debugPrint(engine);
   }
 
-  // TODO: remove handlers? not in use by our code
-  _setHandlers() {
-    _tts.setStartHandler(() {
-      debugPrint('Speaking');
-      setState(() {
-        ttsState = TtsState.speaking;
-      });
-    });
-
-    _tts.setCompletionHandler(() {
-      debugPrint('Not speaking');
-      setState(() {
-        ttsState = TtsState.notSpeaking;
-      });
-    });
-
-    _tts.setCancelHandler(() {
-      debugPrint('Canceled');
-      setState(() {
-        ttsState = TtsState.notSpeaking;
-      });
-    });
-
-    _tts.setErrorHandler((message) {
-      debugPrint('Error: $message');
-      setState(() {
-        ttsState = TtsState.notSpeaking;
-      });
-    });
-  }
-
-  // TODO: setup i init og speak der det brukes (med mindre settings skal endre seg)
   Future _speak(String text, {String language = 'nb-NO'}) async {
     await _tts.setLanguage(language);
     await _tts.speak(text);
-  }
-
-  void _printTtsInfo() async {
-    var languages = await _tts.getLanguages;
-    debugPrint('Språk: ${languages.toString()}');
-
-    var voices = await _tts.getVoices;
-    debugPrint('Stemmer: ${voices.toString()}');
   }
 
   _registerSheep() async {
@@ -294,6 +233,15 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
           ? 0
           : int.parse(_textControllers['blueEar']!.text),
     };
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    _textControllers.forEach((_, controller) {
+      controller.dispose();
+    });
+    super.dispose();
   }
 
   @override
