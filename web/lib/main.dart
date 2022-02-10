@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:web/define_map/define_map.dart';
 import 'package:web/main_tabs/main_tabs.dart';
 import 'firebase_options.dart';
 import 'package:web/register/register_user_page.dart';
@@ -32,11 +33,12 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
         theme: ThemeData(
             colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green)),
-        initialRoute: LoginPage.route,
+        initialRoute: DefineMap.route, //LoginPage.route, TODO
         routes: {
           LoginPage.route: (context) => const LoginPage(),
           RegisterUserPage.route: (context) => const RegisterUserPage(),
-          MainTabs.route: (context) => const MainTabs()
+          MainTabs.route: (context) => const MainTabs(),
+          DefineMap.route: (context) => const DefineMap()
         },
         onUnknownRoute: (settings) => MaterialPageRoute(
             builder: (context) =>
