@@ -37,7 +37,7 @@ class _MyAppState extends State<MyApp> {
         Map.route: (context) => const Material(child: Map()),
         RegisterSheepOrallyWidget.route: (context) =>
             const RegisterSheepOrallyWidget('filename'),
-        RegisterSheep.route: (context) => const RegisterSheep('fileName'),
+        RegisterSheep.route: (context) => const RegisterSheep('filename'),
       },
     );
   }

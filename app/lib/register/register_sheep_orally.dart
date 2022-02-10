@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:app/register/register_sheep.dart';
 import 'package:app/utils/custom_widgets.dart';
+import 'package:app/utils/other.dart';
 import 'package:app/utils/question_sets.dart';
 import 'package:app/utils/speech_input_filters.dart';
 import 'package:flutter/material.dart';
@@ -24,10 +25,6 @@ class RegisterSheepOrallyWidget extends StatefulWidget {
   State<RegisterSheepOrallyWidget> createState() => _RegisterSheepOrallyState();
 }
 
-// TODO: Bare én instanse av STT per applikasjon, dvs. at den
-// muligens må passes inn i denne widgeten(?)
-// https://pub.dev/packages/speech_to_text#initialize-once
-
 enum TtsState { speaking, notSpeaking }
 enum SttState { listening, notListening }
 
@@ -45,11 +42,12 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
   bool _speechEnabled = false;
   bool ongoingDialog = true;
 
-  final scrollController = ScrollController();
-  final headlineTwoKey = GlobalKey();
-  final headlineThreeKey = GlobalKey();
-
   final _formKey = GlobalKey<FormState>();
+
+  final scrollController = ScrollController();
+  final List<GlobalKey> firstHeadlineFieldKeys = [GlobalKey(), GlobalKey()];
+  final List<int> firstHeadlineFieldIndexes = [5, 8];
+  int currentHeadlineIndex = 0;
 
   final _textControllers = <String, TextEditingController>{
     'sheep': TextEditingController(),
@@ -89,11 +87,9 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
 
   void _sttError(SpeechRecognitionError error) {
     debugPrint(error.errorMsg);
-    if (mounted) {
-      setState(() {
-        ongoingDialog = false;
-      });
-    }
+    setState(() {
+      ongoingDialog = false;
+    });
   }
 
   void _startDialog(
@@ -107,17 +103,14 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
 
   Future _listen(QuestionContext questionContext) async {
     await _stt.listen(
-        partialResults: false,
         onResult: (result) => _onSpeechResult(result, questionContext),
         localeId: 'en-US',
         onDevice: true,
-        listenFor: const Duration(seconds: 5) // listenFor is max - NOT min
-        );
+        listenFor: const Duration(seconds: 5));
   }
 
   void _onSpeechResult(
       SpeechRecognitionResult result, QuestionContext questionContext) async {
-    // Always true when 'partialResults: false'
     if (result.finalResult) {
       String spokenWord = result.recognizedWords;
 
@@ -150,16 +143,21 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
 
           setState(() {
             _textControllers.values.elementAt(questionIndex).text = spokenWord;
-            // TODO: få textfield sin onChanged eller onSubmitted til å kjøre
           });
 
           questionIndex++;
 
           if (questionIndex < allSheepQuestions.length) {
+            if (firstHeadlineFieldIndexes.contains(questionIndex)) {
+              scrollToKey(scrollController,
+                  firstHeadlineFieldKeys[currentHeadlineIndex++]);
+            }
+
             await _speak(allSheepQuestions[questionIndex]);
             await _listen(allSheepQuestionsContexts[questionIndex]);
           } else {
             questionIndex = 0;
+            currentHeadlineIndex = 0;
             setState(() {
               ongoingDialog = false;
             });
@@ -297,9 +295,10 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
                           RpgAwesome.sheep, Colors.black,
                           scrollController: scrollController,
                           fieldAmount: 5,
-                          key: headlineTwoKey),
+                          key: firstHeadlineFieldKeys[0]),
 
-                      inputDividerWithHeadline('Slips', headlineTwoKey),
+                      inputDividerWithHeadline(
+                          'Slips', firstHeadlineFieldKeys[0]),
 
                       // TODO: Conditional basert på mulige farger
                       inputRow(
@@ -320,10 +319,11 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
                           FontAwesome5.black_tie, Colors.yellow,
                           scrollController: scrollController,
                           fieldAmount: 3,
-                          key: headlineThreeKey),
+                          key: firstHeadlineFieldKeys[1]),
                       // TODO: Conditional basert på mulige farger
 
-                      inputDividerWithHeadline('Øremerker', headlineThreeKey),
+                      inputDividerWithHeadline(
+                          'Øremerker', firstHeadlineFieldKeys[1]),
 
                       inputRow(
                         'Røde',
