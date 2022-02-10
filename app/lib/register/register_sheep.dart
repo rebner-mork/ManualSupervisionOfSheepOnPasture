@@ -132,17 +132,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
                       const SizedBox(height: 80),
                     ]))),
                 floatingActionButton:
-                    MediaQuery.of(context).viewInsets.bottom == 0
-                        ? FloatingActionButton.extended(
-                            onPressed: _registerSheep,
-                            label: const Text('Fullfør registrering',
-                                style: TextStyle(fontSize: 19)))
-                        : FloatingActionButton(
-                            onPressed: _registerSheep,
-                            child: const Icon(
-                              Icons.check,
-                              size: 35,
-                            )),
+                    completeRegistrationButton(context, _registerSheep),
                 floatingActionButtonLocation:
                     MediaQuery.of(context).viewInsets.bottom == 0
                         ? FloatingActionButtonLocation.centerFloat
