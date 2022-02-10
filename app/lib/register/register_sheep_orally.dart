@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:app/register/register_sheep.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/question_sets.dart';
 import 'package:app/utils/speech_input_filters.dart';
@@ -76,27 +77,33 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
   void initState() {
     super.initState();
     _initTextToSpeech();
-    _initSpeechToText();
-
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      _startDialog(allSheepQuestions, allSheepQuestionsContexts);
-    });
+    _initSpeechToTextAndStartDialog();
   }
 
-  void _initSpeechToText() async {
+  void _initSpeechToTextAndStartDialog() async {
     _stt = SpeechToText();
     sttState = SttState.notListening;
 
     _speechEnabled = await _stt.initialize(onError: _sttError);
-    debugPrint('Speech enabled: $_speechEnabled');
-    // TODO: Si ifra, gi tips (gå til vanlig registrering?)
+
+    if (_speechEnabled) {
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
+        _startDialog(allSheepQuestions, allSheepQuestionsContexts);
+      });
+    } else {
+      showDialog(
+          context: context,
+          builder: (_) => speechNotEnabledDialog(context, RegisterSheep.route));
+    }
   }
 
   void _sttError(SpeechRecognitionError error) {
     debugPrint(error.errorMsg);
-    setState(() {
-      ongoingDialog = false;
-    });
+    if (mounted) {
+      setState(() {
+        ongoingDialog = false;
+      });
+    }
   }
 
   void _startDialog(

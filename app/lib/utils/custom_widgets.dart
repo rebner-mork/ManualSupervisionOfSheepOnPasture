@@ -129,6 +129,24 @@ BackdropFilter cancelRegistrationDialog(BuildContext context) {
       ));
 }
 
+BackdropFilter speechNotEnabledDialog(BuildContext context, String route) {
+  return BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+      child: AlertDialog(
+        title: const Text("Taleregistrering kan ikke brukes"),
+        content: const Text(
+            'Enheten er ikke satt opp til å bruke taleregistrering.'),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Navigator.of(context).pop('dialog');
+                Navigator.of(context).pushReplacementNamed(route);
+              },
+              child: const Text('Til manuell registrering')),
+        ],
+      ));
+}
+
 FloatingActionButton completeRegistrationButton(
     BuildContext context, void Function() onPressed) {
   return MediaQuery.of(context).viewInsets.bottom == 0
