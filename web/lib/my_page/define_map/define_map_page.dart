@@ -32,7 +32,8 @@ class _DefineMapPageState extends State<DefineMapPage> {
         color: Colors.blue,
         child: Column(children: [
           Flexible(
-              flex: 1,
+              flex: 2,
+              fit: FlexFit.tight,
               child: SingleChildScrollView(
                   child: DataTable(
                       //border: TableBorder.all(),
@@ -51,7 +52,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
                                     ')'))
                               ]))
                           .toList()))),
-          const Flexible(flex: 1, child: DefineMap())
+          const Flexible(flex: 5, child: DefineMap())
         ]));
   }
 }
