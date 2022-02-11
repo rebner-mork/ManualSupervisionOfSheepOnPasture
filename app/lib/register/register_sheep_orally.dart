@@ -99,6 +99,7 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
       List<String> questions, List<QuestionContext> questionContexts) async {
     setState(() {
       ongoingDialog = true;
+      FocusManager.instance.primaryFocus?.unfocus();
     });
     await _speak(questions[questionIndex]);
     await _listen(questionContexts[questionIndex]);
@@ -310,7 +311,10 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
                       const SizedBox(height: 80),
                     ]))),
                 floatingActionButton: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment:
+                      MediaQuery.of(context).viewInsets.bottom == 0
+                          ? MainAxisAlignment.center
+                          : MainAxisAlignment.spaceAround,
                   children: ongoingDialog
                       ? <Widget>[
                           completeRegistrationButton(context, _registerSheep)
@@ -318,15 +322,15 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
                       : <Widget>[
                           startDialogButton(() => _startDialog(
                               allSheepQuestions, allSheepQuestionsContexts)),
-                          const SizedBox(
-                            width: 20,
-                          ),
+                          MediaQuery.of(context).viewInsets.bottom == 0
+                              ? const SizedBox(
+                                  width: 20,
+                                )
+                              : const Spacer(),
                           completeRegistrationButton(context, _registerSheep)
                         ],
                 ),
                 floatingActionButtonLocation:
-                    MediaQuery.of(context).viewInsets.bottom == 0
-                        ? FloatingActionButtonLocation.centerFloat
-                        : FloatingActionButtonLocation.endFloat)));
+                    FloatingActionButtonLocation.centerFloat)));
   }
 }
