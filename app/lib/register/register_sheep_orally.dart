@@ -7,6 +7,7 @@ import 'package:app/utils/other.dart';
 import 'package:app/utils/question_sets.dart';
 import 'package:app/utils/speech_input_filters.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
@@ -72,7 +73,9 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
   void _initSpeechToTextAndStartDialog() async {
     _stt = SpeechToText();
 
-    _speechEnabled = await _stt.initialize(onError: _sttError);
+    try {
+      _speechEnabled = await _stt.initialize(onError: _sttError);
+    } catch (_) {}
 
     if (_speechEnabled) {
       WidgetsBinding.instance!.addPostFrameCallback((_) {
