@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
-import '../utils/map_utils.dart' as map_utils;
+import '../../utils/map_utils.dart' as map_utils;
 
 class DefineMap extends StatefulWidget {
   const DefineMap({Key? key}) : super(key: key);
@@ -10,7 +10,7 @@ class DefineMap extends StatefulWidget {
   @override
   State<DefineMap> createState() => _DefineMapState();
 
-  static const String route = 'define-map';
+  static const String route = 'define-map-widget';
 }
 
 class _DefineMapState extends State<DefineMap> {
@@ -47,7 +47,7 @@ class _DefineMapState extends State<DefineMap> {
           minZoom: 5,
           maxZoom: 18,
           onLongPress: (tapPosition, point) {
-            if (_markers.length < 3) {
+            if (_markers.length < 2) {
               setState(() {
                 _markers.add(
                     map_utils.getCornerMarker(point, _markers.length == 1));
