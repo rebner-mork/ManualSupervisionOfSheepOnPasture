@@ -7,7 +7,6 @@ import 'package:app/utils/other.dart';
 import 'package:app/utils/question_sets.dart';
 import 'package:app/utils/speech_input_filters.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
@@ -16,20 +15,20 @@ import 'package:speech_to_text/speech_to_text.dart';
 import 'package:fluttericon/rpg_awesome_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 
-class RegisterSheepOrallyWidget extends StatefulWidget {
-  const RegisterSheepOrallyWidget(this.fileName, {Key? key}) : super(key: key);
+class RegisterSheepOrally extends StatefulWidget {
+  const RegisterSheepOrally(this.fileName, {Key? key}) : super(key: key);
 
   final String fileName;
   static const String route = 'register-sheep-orally';
 
   @override
-  State<RegisterSheepOrallyWidget> createState() => _RegisterSheepOrallyState();
+  State<RegisterSheepOrally> createState() => _RegisterSheepOrallyState();
 }
 
 enum TtsState { speaking, notSpeaking }
 enum SttState { listening, notListening }
 
-class _RegisterSheepOrallyState extends State<RegisterSheepOrallyWidget> {
+class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
   _RegisterSheepOrallyState();
 
   int questionIndex = 0;

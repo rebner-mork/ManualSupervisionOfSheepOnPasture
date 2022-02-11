@@ -30,13 +30,13 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       theme: ThemeData(
           colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green)),
-      initialRoute: LoginPage.route,
+      initialRoute: RegisterSheep.route,
       routes: {
         LoginPage.route: (context) => const LoginPage(),
         RegisterUserPage.route: (context) => const RegisterUserPage(),
         Map.route: (context) => const Material(child: Map()),
-        RegisterSheepOrallyWidget.route: (context) =>
-            const RegisterSheepOrallyWidget('filename'),
+        RegisterSheepOrally.route: (context) =>
+            const RegisterSheepOrally('filename'),
         RegisterSheep.route: (context) => const RegisterSheep('filename'),
       },
     );
