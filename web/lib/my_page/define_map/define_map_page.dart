@@ -53,7 +53,8 @@ class _DefineMapPageState extends State<DefineMapPage> {
   String helpTextSave =
       "Klikk på lagre-knappen når du har skrevet inn navn på kartområdet";
 
-  String newCoordinates = "(?, ?), (?, ?)";
+  late String newCoordinates;
+  String coordinatesPlaceholder = "(?, ?), (?, ?)";
 
   List<LatLng> newPoints = [];
 
@@ -61,11 +62,17 @@ class _DefineMapPageState extends State<DefineMapPage> {
 
   String selectedRowKey = '';
 
+  final TextStyle columnNameStyle =
+      const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
+
+  final TextStyle buttonTextStyle = const TextStyle(fontSize: 18);
+
   @override
   void initState() {
     super.initState();
 
     helpText = helpTextNorthWest;
+    newCoordinates = coordinatesPlaceholder;
 
     _mapNames.forEach((String mapName) {
       TextEditingController controller = TextEditingController();
@@ -92,27 +99,39 @@ class _DefineMapPageState extends State<DefineMapPage> {
         child: Column(children: [
       Flexible(
           flex: 2,
-          fit: FlexFit.tight,
+          //fit: FlexFit.tight,
           child: SingleChildScrollView(
               child: DataTable(
                   // TODO: increase text size, add image of map?
                   border: TableBorder.symmetric(),
                   showCheckboxColumn: false,
-                  columns: const [
-                    DataColumn(label: Text("Kartnavn")),
-                    DataColumn(label: Text("Koordinater (NV), (NØ)")),
-                    DataColumn(label: Text('')),
+                  columns: [
+                    DataColumn(
+                        label: Text(
+                      'Kartnavn',
+                      style: columnNameStyle,
+                    )),
+                    DataColumn(
+                        label: Row(children: [
+                      Text(
+                        'Koordinater',
+                        style: columnNameStyle,
+                      ),
+                      const Text(
+                        ' (NV), (NØ)',
+                      )
+                    ])),
+                    const DataColumn(
+                      label: Text(''),
+                    ),
                   ],
                   rows: _mapNames
                           .asMap()
                           .entries
                           .map((MapEntry<int, String> data) => DataRow(cells: [
                                 DataCell(
-                                    //Text(data.key)
-
                                     TextField(
-                                      controller: _mapNameControllers[
-                                          data.key], //_controllers[data.key],
+                                      controller: _mapNameControllers[data.key],
                                       onChanged: (_) {
                                         setState(() {
                                           _showDeleteIcon[data.key] = false;
@@ -125,23 +144,19 @@ class _DefineMapPageState extends State<DefineMapPage> {
                                       _mapCoordinates[data.key][0]
                                           .latitude
                                           .toString() +
-                                      //data.value[0].latitude.toString() +
                                       ', ' +
                                       _mapCoordinates[data.key][0]
                                           .longitude
                                           .toString() +
-                                      //data.value[0].longitude.toString() +
                                       ')' +
                                       ', (' +
                                       _mapCoordinates[data.key][1]
                                           .latitude
                                           .toString() +
-                                      //data.value[1].latitude.toString() +
                                       ', ' +
                                       _mapCoordinates[data.key][1]
                                           .longitude
                                           .toString() +
-                                      //data.value[1].longitude.toString() +
                                       ')'),
                                 ),
                                 DataCell(_showDeleteIcon[data.key]
@@ -149,37 +164,36 @@ class _DefineMapPageState extends State<DefineMapPage> {
                                         icon: Icon(
                                           Icons.delete,
                                           color: Colors.grey.shade800,
+                                          size: 26,
                                         ),
+                                        splashRadius: 22,
+                                        hoverColor: Colors.red,
                                         onPressed: () {
+                                          // TODO: sikker? slett lokalt og i db
                                           setState(() {
                                             _mapNames.removeAt(data.key);
                                             _mapCoordinates.removeAt(data.key);
                                             _mapNameControllers
                                                 .removeAt(data.key);
-                                            //mapData.remove(data);
                                           });
                                         })
                                     : ElevatedButton(
-                                        child: const Text("Lagre"),
+                                        child: const Text(
+                                          "Lagre",
+                                          style: TextStyle(fontSize: 18),
+                                        ),
                                         onPressed: () {
                                           String? newName =
                                               _mapNameControllers[data.key]
                                                   .text;
-                                          //_controllers[data.key]?.text;
                                           if (newName.isNotEmpty) {
                                             // TODO: save to db
-                                            /*int index = mapData.indexOf(data);
-                                            mapData[index] =
-                                                MapEntry(newName, data.value);*/
-
-                                            //_controllers
                                             setState(() {
                                               _showDeleteIcon[data.key] = true;
                                             });
-                                            // Husk alle
                                           }
-                                        }, // TODO
-                                      )) // TODO: sikker? slett lokalt og i db
+                                        },
+                                      ))
                               ]))
                           .toList() +
                       [
@@ -197,68 +211,132 @@ class _DefineMapPageState extends State<DefineMapPage> {
                                   : Container()),
                               DataCell(
                                   showMap ? Text(newCoordinates) : Container()),
-                              DataCell(showMap
-                                  ? ElevatedButton(
-                                      child: const Text('Lagre'),
-                                      onPressed: () {
-                                        // TODO: sjekk at koordinater er lagt til og at navn er unikt. annet sted: er hjørnene riktig?
-                                        debugPrint(newPoints.length.toString());
-                                        if (newPoints.length == 2) {
-                                          if (newNameController
-                                              .text.isNotEmpty) {
+                              DataCell(
+                                showMap
+                                    ? Row(children: [
+                                        ElevatedButton(
+                                          style: ButtonStyle(
+                                              fixedSize:
+                                                  MaterialStateProperty.all(
+                                                      const Size.fromHeight(
+                                                          35))),
+                                          child: Text('Lagre',
+                                              style: buttonTextStyle),
+                                          onPressed: () {
+                                            // TODO: sjekk at koordinater er lagt til og at navn er unikt. annet sted: er hjørnene riktig?
                                             debugPrint(
-                                                "HER: " + newPoints.toString());
-                                            setState(() {
-                                              _mapNames
-                                                  .add(newNameController.text);
-                                              _mapCoordinates.add(newPoints);
-                                              _mapNameControllers
-                                                  .add(newNameController);
-                                              _showDeleteIcon.add(true);
+                                                newPoints.length.toString());
+                                            if (newPoints.length == 2) {
+                                              if (newNameController
+                                                  .text.isNotEmpty) {
+                                                debugPrint("HER: " +
+                                                    newPoints.toString());
+                                                setState(() {
+                                                  _mapNames.add(
+                                                      newNameController.text);
+                                                  _mapCoordinates
+                                                      .add(newPoints);
+                                                  _mapNameControllers
+                                                      .add(newNameController);
+                                                  _showDeleteIcon.add(true);
 
-                                              /*mapData.add(MapEntry(
-                                                newNameController.text,
-                                                newPoints));*/
-                                              showMap = false;
-                                              newCoordinates = '(?, ?), (?, ?)';
-                                              newNameController =
-                                                  TextEditingController();
-                                            });
-                                          } else {
+                                                  showMap = false;
+                                                  newCoordinates =
+                                                      '(?, ?), (?, ?)';
+                                                  newNameController =
+                                                      TextEditingController();
+                                                });
+                                              } else {
+                                                setState(() {
+                                                  helpText =
+                                                      'Skriv inn kartnavn';
+                                                });
+                                              }
+                                            }
+                                          },
+                                        ),
+                                        const SizedBox(width: 10),
+                                        ElevatedButton(
+                                          style: ButtonStyle(
+                                              fixedSize:
+                                                  MaterialStateProperty.all(
+                                                      const Size.fromHeight(
+                                                          35)),
+                                              textStyle:
+                                                  MaterialStateProperty.all(
+                                                      buttonTextStyle),
+                                              backgroundColor:
+                                                  MaterialStateProperty.all(
+                                                      Colors.red)),
+                                          child: const Text("Avbryt"),
+                                          onPressed: () {
                                             setState(() {
-                                              helpText = 'Skriv inn kartnavn';
+                                              showMap = false;
+                                              newCoordinates =
+                                                  coordinatesPlaceholder;
+                                              newNameController.clear();
                                             });
-                                          }
-                                        }
-                                      },
-                                    )
-                                  : ElevatedButton(
-                                      child: const Text("Legg til"),
-                                      onPressed: () {
-                                        setState(() {
-                                          showMap = true;
-                                        });
-                                      },
-                                    ))
+                                          },
+                                        )
+                                      ])
+                                    : ElevatedButton(
+                                        style: ButtonStyle(
+                                            fixedSize:
+                                                MaterialStateProperty.all(
+                                                    const Size.fromHeight(35))),
+                                        child: Text("Legg til",
+                                            style: buttonTextStyle),
+                                        onPressed: () {
+                                          setState(() {
+                                            showMap = true;
+                                          });
+                                        },
+                                      ),
+                              )
                             ])
                       ]))),
-      if (showMap) Text(helpText),
-      if (showMap) Flexible(flex: 5, child: DefineMap(onCornerMarked))
+      if (showMap) const SizedBox(height: 10),
+      if (showMap)
+        (helpText == helpTextNorthWest || helpText == helpTextSouthEast)
+            ? Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Text(
+                  helpText.substring(0, 14),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  helpText.substring(14, 38),
+                  style: const TextStyle(fontSize: 16),
+                ),
+                Text(
+                  helpText.substring(38, 57),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  helpText.substring(57),
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ])
+            : Text(
+                helpText,
+                style: const TextStyle(fontSize: 16),
+              ),
+      if (showMap) const SizedBox(height: 10),
+      if (showMap)
+        Flexible(flex: 5, fit: FlexFit.tight, child: DefineMap(onCornerMarked))
     ]));
   }
 
   void onCornerMarked(List<LatLng> points) {
     // TODO: limit map area?
     setState(() {
-      helpText = points.length == 1 ? helpTextSouthEast : helpTextSave;
-
       if (points.length == 1) {
         helpText = helpTextSouthEast;
         setState(() {
           newCoordinates = '(${points[0].latitude}, ${points[0].longitude})';
         });
       } else {
-        // TODO: legg inn koordinatene
         setState(() {
           helpText = helpTextSave;
           newCoordinates =
