@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:web/my_page/define_map/define_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -146,6 +148,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
                                           style: TextStyle(fontSize: 18),
                                         ),
                                         onPressed: () {
+                                          // TODO: Sjekk at navn er unikt
                                           String? newName =
                                               _mapNameControllers[data.key]
                                                   .text;
@@ -186,15 +189,13 @@ class _DefineMapPageState extends State<DefineMapPage> {
                                                           35))),
                                           child: Text('Lagre',
                                               style: buttonTextStyle),
-                                          onPressed: () {
-                                            // TODO: sjekk at koordinater er lagt til og at navn er unikt. annet sted: er hjørnene riktig?
-                                            debugPrint(_newCoordinates.length
-                                                .toString());
+                                          onPressed: () async {
+                                            // TODO: Sjekk at navn er unikt. annet sted: er hjørnene riktig?
                                             if (_newCoordinates.length == 2) {
                                               if (_newMapNameController
                                                   .text.isNotEmpty) {
-                                                debugPrint("HER: " +
-                                                    _newCoordinates.toString());
+                                                // TODO: Oppdater/skriv til DB
+
                                                 setState(() {
                                                   _mapNames.add(
                                                       _newMapNameController
@@ -207,10 +208,81 @@ class _DefineMapPageState extends State<DefineMapPage> {
 
                                                   showMap = false;
                                                   _newCoordinatesText =
-                                                      '(?, ?), (?, ?)';
+                                                      coordinatesPlaceholder;
                                                   _newMapNameController =
                                                       TextEditingController();
                                                 });
+// TODO: 'nw', 'se'
+                                                Map dataMap = <
+                                                    String,
+                                                    Map<String,
+                                                        List<double>>>{};
+                                                for (int i = 0;
+                                                    i < _mapNames.length;
+                                                    i++) {
+                                                  dataMap[_mapNames[i]] =
+                                                      <String, List<double>>{
+                                                    'nw': [
+                                                      _mapCoordinates[i][0]
+                                                          .latitude,
+                                                      _mapCoordinates[i][0]
+                                                          .longitude
+                                                    ],
+                                                    'se': [
+                                                      _mapCoordinates[i][1]
+                                                          .latitude,
+                                                      _mapCoordinates[i][1]
+                                                          .longitude
+                                                    ]
+                                                  };
+                                                }
+
+                                                /* <String,
+                                                    List<List<double>>>{};
+                                                for (int i = 0;
+                                                    i < _mapNames.length;
+                                                    i++) {
+                                                  dataMap[_mapNames[i]] = [
+                                                    [
+                                                      _mapCoordinates[i][0]
+                                                          .latitude,
+                                                      _mapCoordinates[i][0]
+                                                          .longitude
+                                                    ],
+                                                    [
+                                                      _mapCoordinates[i][1]
+                                                          .latitude,
+                                                      _mapCoordinates[i][1]
+                                                          .longitude
+                                                    ]
+                                                  ];
+                                                }*/
+                                                debugPrint(dataMap.toString());
+
+                                                String uid = FirebaseAuth
+                                                    .instance.currentUser!.uid;
+
+                                                CollectionReference
+                                                    farmCollection =
+                                                    FirebaseFirestore.instance
+                                                        .collection('farms');
+                                                DocumentReference farmDoc =
+                                                    farmCollection.doc(uid);
+
+                                                await farmDoc
+                                                    .get()
+                                                    .then((doc) => {
+                                                          if (doc.exists)
+                                                            {
+                                                              farmDoc.update({
+                                                                'maps': dataMap
+                                                              })
+                                                            }
+                                                          else
+                                                            {
+                                                              // TODO: feedback (kanskje ikke vise denne widgeten dersom farm ikke er lagt til?)
+                                                            },
+                                                        });
                                               } else {
                                                 setState(() {
                                                   _helpText =

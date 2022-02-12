@@ -57,7 +57,7 @@ class _MyPageState extends State<MyPage> {
         ],
       ),
       const VerticalDivider(thickness: 1, width: 1),
-      //if (_selectedIndex == 0) const Expanded(child: MyFarm()) TODO
+      if (_selectedIndex == 0) const Expanded(child: MyFarm()),
       if (_selectedIndex == 1) const Expanded(child: DefineMapPage())
     ]));
   }

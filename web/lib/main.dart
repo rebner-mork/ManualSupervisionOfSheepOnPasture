@@ -33,14 +33,12 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
         theme: ThemeData(
             colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green)),
-        initialRoute:
-            MainTabs.route, //DefineMapPage.route, //LoginPage.route, TODO
+        initialRoute: LoginPage.route,
         routes: {
           LoginPage.route: (context) => const LoginPage(),
           RegisterUserPage.route: (context) => const RegisterUserPage(),
           MainTabs.route: (context) => const MainTabs(),
           DefineMapPage.route: (context) => const DefineMapPage()
-          //DefineMap.route: (context) => const DefineMap()
         },
         onUnknownRoute: (settings) => MaterialPageRoute(
             builder: (context) =>
