@@ -20,12 +20,12 @@ class _DefineMapPageState extends State<DefineMapPage> {
     "Strindamarka": LatLng(20, 20)
   };*/
 
-  List<MapEntry<String, LatLng>> mapDataTwo = [
-    MapEntry("Bymarka", LatLng(10, 10)),
-    MapEntry("Strindamarka", LatLng(20, 20))
+  List<MapEntry<String, List<LatLng>>> mapData = [
+    MapEntry("Bymarka", [LatLng(10, 10), LatLng(20, 20)]),
+    MapEntry("Strindamarka", [LatLng(20, 20), LatLng(30, 30)])
   ]; // TODO: les fra db
 
-  late final Map<String, TextEditingController> _controllers = {};
+  //late final Map<String, TextEditingController> _controllers = {};
 
   bool showMap = false;
   String newButtonText = "Legg til";
@@ -38,13 +38,19 @@ class _DefineMapPageState extends State<DefineMapPage> {
   String helpTextSave =
       "Klikk på lagre-knappen når du har skrevet inn navn på kartområdet";
 
+  String newCoordinates = "(?, ?), (?, ?)";
+
+  List<LatLng> newPoints = [];
+
+  TextEditingController newNameController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
 
     helpText = helpTextNorthWest;
 
-    for (MapEntry<String, LatLng> element in mapDataTwo) {
+    /*for (MapEntry<String, List<LatLng>> element in mapData) {
       TextEditingController controller = TextEditingController();
       controller.text = element.key.toString();
 
@@ -52,6 +58,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
     }
 
     debugPrint(_controllers.toString());
+    */
 
     /*_controllers = mapDataTwo
         .map((MapEntry<String, LatLng> element) => MapEntry(
@@ -76,29 +83,39 @@ class _DefineMapPageState extends State<DefineMapPage> {
                   border: TableBorder.symmetric(),
                   columns: const [
                     DataColumn(label: Text("Kartnavn")),
-                    DataColumn(label: Text("Koordinater")),
+                    DataColumn(label: Text("Koordinater (NV), (NØ)")),
                     DataColumn(label: Text('')),
                   ],
-                  rows: mapDataTwo
-                          .map((MapEntry<String, LatLng> element) => DataRow(
+                  rows: mapData
+                          .map((MapEntry<String, List<LatLng>> element) =>
+                              DataRow(
                                   //selected: true,
                                   //onSelectChanged: (bool? selected) {},
                                   cells: [
-                                    DataCell(TextField(
+                                    DataCell(Text(element.key)
+
+                                        /*TextField(
                                       controller: _controllers[element.key],
                                       onChanged: (_) {
                                         // Todo: change keys
                                         debugPrint("NÅ");
                                       },
-                                    )
+                                    )*/
                                         //Text(element.key),
                                         /*showEditIcon: true */ /*,placeholder: true*/
                                         ),
                                     DataCell(
                                       Text('(' +
-                                          element.value.latitude.toString() +
+                                          element.value[0].latitude.toString() +
                                           ', ' +
-                                          element.value.longitude.toString() +
+                                          element.value[0].longitude
+                                              .toString() +
+                                          ')' +
+                                          ', (' +
+                                          element.value[1].latitude.toString() +
+                                          ', ' +
+                                          element.value[1].longitude
+                                              .toString() +
                                           ')'),
                                     ),
                                     DataCell(IconButton(
@@ -111,34 +128,70 @@ class _DefineMapPageState extends State<DefineMapPage> {
                                   ]))
                           .toList() +
                       [
-                        DataRow(cells: [
-                          DataCell(showMap
-                              ? const TextField(
-                                  decoration:
-                                      InputDecoration(hintText: 'Skriv navn'))
-                              : Container()),
-                          DataCell(
-                              showMap ? const Text("(?, ?)") : Container()),
-                          DataCell(ElevatedButton(
-                            child: Text(newButtonText),
-                            onPressed: () {
-                              setState(() {
-                                showMap = true;
-                                newButtonText = "Lagre";
-                              });
-                            },
-                          ))
-                        ])
+                        DataRow(
+                            color: showMap
+                                ? MaterialStateProperty.all(
+                                    Colors.yellow.shade300)
+                                : null,
+                            cells: [
+                              DataCell(showMap
+                                  ? TextField(
+                                      controller: newNameController,
+                                      decoration: const InputDecoration(
+                                          hintText: 'Skriv navn'))
+                                  : Container()),
+                              DataCell(
+                                  showMap ? Text(newCoordinates) : Container()),
+                              DataCell(showMap
+                                  ? ElevatedButton(
+                                      child: const Text("Lagre"),
+                                      onPressed: () {
+                                        // TODO: Sjekk at navn er skrevet inn, sjekk at koordinater er lagt til
+                                        if (newNameController.text.isNotEmpty) {
+                                          debugPrint("JA");
+                                          setState(() {
+                                            showMap = false;
+                                            mapData.add(MapEntry(
+                                                newNameController.text,
+                                                newPoints));
+                                            newPoints.clear();
+                                            newNameController =
+                                                TextEditingController();
+                                          });
+                                        }
+                                      },
+                                    )
+                                  : ElevatedButton(
+                                      child: const Text("Legg til"),
+                                      onPressed: () {
+                                        setState(() {
+                                          showMap = true;
+                                        });
+                                      },
+                                    ))
+                            ])
                       ]))),
       if (showMap) Text(helpText),
       if (showMap) Flexible(flex: 5, child: DefineMap(onCornerMarked))
     ]));
   }
 
-  void onCornerMarked(int cornerAmount) {
+  void onCornerMarked(List<LatLng> points) {
     // TODO: limit map area?
     setState(() {
-      helpText = cornerAmount == 1 ? helpTextSouthEast : helpTextSave;
+      helpText = points.length == 1 ? helpTextSouthEast : helpTextSave;
+
+      if (points.length == 1) {
+        helpText = helpTextSouthEast;
+      } else {
+        // TODO: legg inn koordinatene
+        setState(() {
+          helpText = helpTextSave;
+          newCoordinates =
+              '(${points[0].latitude}, ${points[0].longitude}), (${points[1].latitude}, ${points[0].longitude})';
+        });
+        newPoints = points;
+      }
     });
   }
 }

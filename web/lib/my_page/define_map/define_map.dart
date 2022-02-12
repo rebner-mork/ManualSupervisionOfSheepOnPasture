@@ -11,7 +11,7 @@ class DefineMap extends StatefulWidget {
   State<DefineMap> createState() => _DefineMapState();
 
   static const String route = 'define-map-widget';
-  final Function(int cornerAmount) onCornerMarked;
+  final Function(List<LatLng> points) onCornerMarked;
 }
 
 class _DefineMapState extends State<DefineMap> {
@@ -43,7 +43,6 @@ class _DefineMapState extends State<DefineMap> {
         options: MapOptions(
           onMapCreated: (c) {
             _mapController = c;
-            //_moveToStartArea();
           },
           zoom: 5,
           minZoom: 5,
@@ -55,7 +54,7 @@ class _DefineMapState extends State<DefineMap> {
                 _markers.add(
                     map_utils.getCornerMarker(point, _markers.length == 1));
               });
-              widget.onCornerMarked(_markers.length);
+              widget.onCornerMarked([_markers[0].point]);
             }
             if (_markers.length == 2 && !_rectangleDrawn) {
               Future.delayed(const Duration(milliseconds: 500), () {
@@ -63,6 +62,7 @@ class _DefineMapState extends State<DefineMap> {
                   _rectangleDrawn = true;
                 });
               });
+              widget.onCornerMarked([_markers[0].point, _markers[1].point]);
             }
           },
         ),
