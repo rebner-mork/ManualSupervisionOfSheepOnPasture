@@ -14,83 +14,47 @@ class DefineMapPage extends StatefulWidget {
 class _DefineMapPageState extends State<DefineMapPage> {
   _DefineMapPageState();
 
-/*  List<String> maps = ["Bymarka", "Område 2"];
-  Map mapData = <String, LatLng>{
-    "Bymarka": LatLng(10, 10),
-    "Strindamarka": LatLng(20, 20)
-  };*/
-
-  // TODO: GJØRE OM ALT TIL LISTER OG BRUKE INDEXOF?
-
-  /*List<MapEntry<String, List<LatLng>>> mapData = [
-    MapEntry("Bymarka", [LatLng(10, 10), LatLng(20, 20)]),
-    MapEntry("Strindamarka", [LatLng(20, 20), LatLng(30, 30)])
-  ]; // TODO: les fra db*/
-
-  //final Map<String, TextEditingController> _controllers = {};
-
-  //final Map<String, bool> _showDeleteIcon = {};
-
   final List<String> _mapNames = ["Bymarka", "Strindamarka"];
-
   final List<List<LatLng>> _mapCoordinates = [
     [LatLng(10, 10), LatLng(20, 20)],
     [LatLng(20, 20), LatLng(30, 30)]
   ];
-
   final List<TextEditingController> _mapNameControllers = [];
-
   final List<bool> _showDeleteIcon = [];
 
   bool showMap = false;
-  String newButtonText = "Legg til";
 
-  late String helpText;
-  String helpTextNorthWest =
+  late String _newCoordinatesText;
+  List<LatLng> _newCoordinates = [];
+  TextEditingController _newMapNameController = TextEditingController();
+
+  late String _helpText;
+  static const String helpTextNorthWest =
       "Klikk og hold på kartet for å markere nordvestlig hjørne av beiteområdet";
-  String helpTextSouthEast =
+  static const String helpTextSouthEast =
       "Klikk og hold på kartet for å markere sørøstlig hjørne av beiteområdet";
-  String helpTextSave =
+  static const String helpTextSave =
       "Klikk på lagre-knappen når du har skrevet inn navn på kartområdet";
-
-  late String newCoordinates;
-  String coordinatesPlaceholder = "(?, ?), (?, ?)";
-
-  List<LatLng> newPoints = [];
-
-  TextEditingController newNameController = TextEditingController();
-
-  String selectedRowKey = '';
-
-  final TextStyle columnNameStyle =
-      const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
+  static const String coordinatesPlaceholder = "(?, ?), (?, ?)";
 
   final TextStyle buttonTextStyle = const TextStyle(fontSize: 18);
+  final TextStyle columnNameStyle =
+      const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
 
   @override
   void initState() {
     super.initState();
 
-    helpText = helpTextNorthWest;
-    newCoordinates = coordinatesPlaceholder;
+    _helpText = helpTextNorthWest;
+    _newCoordinatesText = coordinatesPlaceholder;
 
-    _mapNames.forEach((String mapName) {
+    for (String mapName in _mapNames) {
       TextEditingController controller = TextEditingController();
       controller.text = mapName;
       _mapNameControllers.add(controller);
 
       _showDeleteIcon.add(true);
-    });
-
-    /*
-    for (MapEntry<String, List<LatLng>> element in mapData) {
-      TextEditingController controller = TextEditingController();
-      controller.text = element.key.toString();
-      _controllers[element.key] = controller;
-
-      _showDeleteIcon[element.key] = true;
     }
-    debugPrint(_controllers.toString());*/
   }
 
   @override
@@ -99,10 +63,9 @@ class _DefineMapPageState extends State<DefineMapPage> {
         child: Column(children: [
       Flexible(
           flex: 2,
-          //fit: FlexFit.tight,
           child: SingleChildScrollView(
               child: DataTable(
-                  // TODO: increase text size, add image of map?
+                  // TODO: Add image of map?
                   border: TableBorder.symmetric(),
                   showCheckboxColumn: false,
                   columns: [
@@ -205,12 +168,13 @@ class _DefineMapPageState extends State<DefineMapPage> {
                             cells: [
                               DataCell(showMap
                                   ? TextField(
-                                      controller: newNameController,
+                                      controller: _newMapNameController,
                                       decoration: const InputDecoration(
                                           hintText: 'Skriv navn'))
                                   : Container()),
-                              DataCell(
-                                  showMap ? Text(newCoordinates) : Container()),
+                              DataCell(showMap
+                                  ? Text(_newCoordinatesText)
+                                  : Container()),
                               DataCell(
                                 showMap
                                     ? Row(children: [
@@ -224,31 +188,32 @@ class _DefineMapPageState extends State<DefineMapPage> {
                                               style: buttonTextStyle),
                                           onPressed: () {
                                             // TODO: sjekk at koordinater er lagt til og at navn er unikt. annet sted: er hjørnene riktig?
-                                            debugPrint(
-                                                newPoints.length.toString());
-                                            if (newPoints.length == 2) {
-                                              if (newNameController
+                                            debugPrint(_newCoordinates.length
+                                                .toString());
+                                            if (_newCoordinates.length == 2) {
+                                              if (_newMapNameController
                                                   .text.isNotEmpty) {
                                                 debugPrint("HER: " +
-                                                    newPoints.toString());
+                                                    _newCoordinates.toString());
                                                 setState(() {
                                                   _mapNames.add(
-                                                      newNameController.text);
+                                                      _newMapNameController
+                                                          .text);
                                                   _mapCoordinates
-                                                      .add(newPoints);
-                                                  _mapNameControllers
-                                                      .add(newNameController);
+                                                      .add(_newCoordinates);
+                                                  _mapNameControllers.add(
+                                                      _newMapNameController);
                                                   _showDeleteIcon.add(true);
 
                                                   showMap = false;
-                                                  newCoordinates =
+                                                  _newCoordinatesText =
                                                       '(?, ?), (?, ?)';
-                                                  newNameController =
+                                                  _newMapNameController =
                                                       TextEditingController();
                                                 });
                                               } else {
                                                 setState(() {
-                                                  helpText =
+                                                  _helpText =
                                                       'Skriv inn kartnavn';
                                                 });
                                               }
@@ -272,9 +237,9 @@ class _DefineMapPageState extends State<DefineMapPage> {
                                           onPressed: () {
                                             setState(() {
                                               showMap = false;
-                                              newCoordinates =
+                                              _newCoordinatesText =
                                                   coordinatesPlaceholder;
-                                              newNameController.clear();
+                                              _newMapNameController.clear();
                                             });
                                           },
                                         )
@@ -297,29 +262,29 @@ class _DefineMapPageState extends State<DefineMapPage> {
                       ]))),
       if (showMap) const SizedBox(height: 10),
       if (showMap)
-        (helpText == helpTextNorthWest || helpText == helpTextSouthEast)
+        (_helpText == helpTextNorthWest || _helpText == helpTextSouthEast)
             ? Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text(
-                  helpText.substring(0, 14),
+                  _helpText.substring(0, 14),
                   style: const TextStyle(
                       fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  helpText.substring(14, 38),
+                  _helpText.substring(14, 38),
                   style: const TextStyle(fontSize: 16),
                 ),
                 Text(
-                  helpText.substring(38, 57),
+                  _helpText.substring(38, 57),
                   style: const TextStyle(
                       fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  helpText.substring(57),
+                  _helpText.substring(57),
                   style: const TextStyle(fontSize: 16),
                 ),
               ])
             : Text(
-                helpText,
+                _helpText,
                 style: const TextStyle(fontSize: 16),
               ),
       if (showMap) const SizedBox(height: 10),
@@ -332,16 +297,17 @@ class _DefineMapPageState extends State<DefineMapPage> {
     // TODO: limit map area?
     setState(() {
       if (points.length == 1) {
-        helpText = helpTextSouthEast;
+        _helpText = helpTextSouthEast;
         setState(() {
-          newCoordinates = '(${points[0].latitude}, ${points[0].longitude})';
+          _newCoordinatesText =
+              '(${points[0].latitude}, ${points[0].longitude})';
         });
       } else {
         setState(() {
-          helpText = helpTextSave;
-          newCoordinates =
+          _helpText = helpTextSave;
+          _newCoordinatesText =
               '(${points[0].latitude}, ${points[0].longitude}), (${points[1].latitude}, ${points[0].longitude})';
-          newPoints = points;
+          _newCoordinates = points;
         });
       }
     });
@@ -349,7 +315,10 @@ class _DefineMapPageState extends State<DefineMapPage> {
 
   @override
   void dispose() {
-    newNameController.dispose();
+    _newMapNameController.dispose();
+    for (TextEditingController controller in _mapNameControllers) {
+      controller.dispose();
+    }
     super.dispose();
   }
 }
