@@ -21,11 +21,13 @@ class _DefineMapPageState extends State<DefineMapPage> {
   };*/
 
   List<MapEntry<String, List<LatLng>>> mapData = [
-    /*MapEntry("Bymarka", [LatLng(10, 10), LatLng(20, 20)]),
-    MapEntry("Strindamarka", [LatLng(20, 20), LatLng(30, 30)])*/
+    MapEntry("Bymarka", [LatLng(10, 10), LatLng(20, 20)]),
+    MapEntry("Strindamarka", [LatLng(20, 20), LatLng(30, 30)])
   ]; // TODO: les fra db
 
-  //late final Map<String, TextEditingController> _controllers = {};
+  final Map<String, TextEditingController> _controllers = {};
+
+  final Map<String, bool> _showDeleteIcon = {};
 
   bool showMap = false;
   String newButtonText = "Legg til";
@@ -44,21 +46,22 @@ class _DefineMapPageState extends State<DefineMapPage> {
 
   TextEditingController newNameController = TextEditingController();
 
+  String selectedRowKey = '';
+
   @override
   void initState() {
     super.initState();
 
     helpText = helpTextNorthWest;
 
-    /*for (MapEntry<String, List<LatLng>> element in mapData) {
+    for (MapEntry<String, List<LatLng>> element in mapData) {
       TextEditingController controller = TextEditingController();
       controller.text = element.key.toString();
-
       _controllers[element.key] = controller;
-    }
 
+      _showDeleteIcon[element.key] = true;
+    }
     debugPrint(_controllers.toString());
-    */
 
     /*_controllers = mapDataTwo
         .map((MapEntry<String, LatLng> element) => MapEntry(
@@ -79,49 +82,72 @@ class _DefineMapPageState extends State<DefineMapPage> {
           fit: FlexFit.tight,
           child: SingleChildScrollView(
               child: DataTable(
-                  // TODO: increase text size
+                  // TODO: increase text size, add image of map?
                   border: TableBorder.symmetric(),
+                  showCheckboxColumn: false,
                   columns: const [
                     DataColumn(label: Text("Kartnavn")),
                     DataColumn(label: Text("Koordinater (NV), (NØ)")),
                     DataColumn(label: Text('')),
                   ],
                   rows: mapData
-                          .map((MapEntry<String, List<LatLng>> data) => DataRow(
-                                  //selected: true,
-                                  //onSelectChanged: (bool? selected) {},
-                                  cells: [
-                                    DataCell(Text(data.key)
+                          .map((MapEntry<String, List<LatLng>> data) =>
+                              DataRow(cells: [
+                                DataCell(
+                                    //Text(data.key)
 
-                                        /*TextField(
-                                      controller: _controllers[element.key],
+                                    TextField(
+                                      controller: _controllers[data.key],
                                       onChanged: (_) {
-                                        // Todo: change keys
-                                        debugPrint("NÅ");
+                                        setState(() {
+                                          _showDeleteIcon[data.key] = false;
+                                        });
                                       },
-                                    )*/
-                                        //Text(element.key),
-                                        ),
-                                    DataCell(
-                                      Text('(' +
-                                          data.value[0].latitude.toString() +
-                                          ', ' +
-                                          data.value[0].longitude.toString() +
-                                          ')' +
-                                          ', (' +
-                                          data.value[1].latitude.toString() +
-                                          ', ' +
-                                          data.value[1].longitude.toString() +
-                                          ')'),
                                     ),
-                                    DataCell(IconButton(
+                                    showEditIcon: true),
+                                DataCell(
+                                  Text('(' +
+                                      data.value[0].latitude.toString() +
+                                      ', ' +
+                                      data.value[0].longitude.toString() +
+                                      ')' +
+                                      ', (' +
+                                      data.value[1].latitude.toString() +
+                                      ', ' +
+                                      data.value[1].longitude.toString() +
+                                      ')'),
+                                ),
+                                DataCell(_showDeleteIcon[data.key]!
+                                    ? IconButton(
                                         icon: Icon(
                                           Icons.delete,
                                           color: Colors.grey.shade800,
                                         ),
-                                        onPressed:
-                                            () {})) // TODO: sikker? slett lokalt og i db
-                                  ]))
+                                        onPressed: () {
+                                          setState(() {
+                                            mapData.remove(data);
+                                          });
+                                        })
+                                    : ElevatedButton(
+                                        child: const Text("Lagre"),
+                                        onPressed: () {
+                                          String? newName =
+                                              _controllers[data.key]?.text;
+                                          if (newName != null &&
+                                              newName.isNotEmpty) {
+                                            /*int index = mapData.indexOf(data);
+                                            mapData[index] =
+                                                MapEntry(newName, data.value);*/
+
+                                            //_controllers
+                                            setState(() {
+                                              _showDeleteIcon[data.key] = true;
+                                            });
+                                            // Husk alle
+                                          }
+                                        }, // TODO
+                                      )) // TODO: sikker? slett lokalt og i db
+                              ]))
                           .toList() +
                       [
                         DataRow(
