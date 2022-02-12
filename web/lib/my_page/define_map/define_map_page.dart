@@ -20,14 +20,27 @@ class _DefineMapPageState extends State<DefineMapPage> {
     "Strindamarka": LatLng(20, 20)
   };*/
 
-  List<MapEntry<String, List<LatLng>>> mapData = [
+  // TODO: GJØRE OM ALT TIL LISTER OG BRUKE INDEXOF?
+
+  /*List<MapEntry<String, List<LatLng>>> mapData = [
     MapEntry("Bymarka", [LatLng(10, 10), LatLng(20, 20)]),
     MapEntry("Strindamarka", [LatLng(20, 20), LatLng(30, 30)])
-  ]; // TODO: les fra db
+  ]; // TODO: les fra db*/
 
-  final Map<String, TextEditingController> _controllers = {};
+  //final Map<String, TextEditingController> _controllers = {};
 
-  final Map<String, bool> _showDeleteIcon = {};
+  //final Map<String, bool> _showDeleteIcon = {};
+
+  final List<String> _mapNames = ["Bymarka", "Strindamarka"];
+
+  final List<List<LatLng>> _mapCoordinates = [
+    [LatLng(10, 10), LatLng(20, 20)],
+    [LatLng(20, 20), LatLng(30, 30)]
+  ];
+
+  final List<TextEditingController> _mapNameControllers = [];
+
+  final List<bool> _showDeleteIcon = [];
 
   bool showMap = false;
   String newButtonText = "Legg til";
@@ -54,6 +67,15 @@ class _DefineMapPageState extends State<DefineMapPage> {
 
     helpText = helpTextNorthWest;
 
+    _mapNames.forEach((String mapName) {
+      TextEditingController controller = TextEditingController();
+      controller.text = mapName;
+      _mapNameControllers.add(controller);
+
+      _showDeleteIcon.add(true);
+    });
+
+    /*
     for (MapEntry<String, List<LatLng>> element in mapData) {
       TextEditingController controller = TextEditingController();
       controller.text = element.key.toString();
@@ -61,15 +83,6 @@ class _DefineMapPageState extends State<DefineMapPage> {
 
       _showDeleteIcon[element.key] = true;
     }
-    debugPrint(_controllers.toString());
-
-    /*_controllers = mapDataTwo
-        .map((MapEntry<String, LatLng> element) => MapEntry(
-            element.key,
-            TextEditingController.fromValue(
-                TextEditingValue(text: element.key))))
-        .toList();
-    debugPrint(_controllers.runtimeType.toString());
     debugPrint(_controllers.toString());*/
   }
 
@@ -90,14 +103,16 @@ class _DefineMapPageState extends State<DefineMapPage> {
                     DataColumn(label: Text("Koordinater (NV), (NØ)")),
                     DataColumn(label: Text('')),
                   ],
-                  rows: mapData
-                          .map((MapEntry<String, List<LatLng>> data) =>
-                              DataRow(cells: [
+                  rows: _mapNames
+                          .asMap()
+                          .entries
+                          .map((MapEntry<int, String> data) => DataRow(cells: [
                                 DataCell(
                                     //Text(data.key)
 
                                     TextField(
-                                      controller: _controllers[data.key],
+                                      controller: _mapNameControllers[
+                                          data.key], //_controllers[data.key],
                                       onChanged: (_) {
                                         setState(() {
                                           _showDeleteIcon[data.key] = false;
@@ -107,17 +122,29 @@ class _DefineMapPageState extends State<DefineMapPage> {
                                     showEditIcon: true),
                                 DataCell(
                                   Text('(' +
-                                      data.value[0].latitude.toString() +
+                                      _mapCoordinates[data.key][0]
+                                          .latitude
+                                          .toString() +
+                                      //data.value[0].latitude.toString() +
                                       ', ' +
-                                      data.value[0].longitude.toString() +
+                                      _mapCoordinates[data.key][0]
+                                          .longitude
+                                          .toString() +
+                                      //data.value[0].longitude.toString() +
                                       ')' +
                                       ', (' +
-                                      data.value[1].latitude.toString() +
+                                      _mapCoordinates[data.key][1]
+                                          .latitude
+                                          .toString() +
+                                      //data.value[1].latitude.toString() +
                                       ', ' +
-                                      data.value[1].longitude.toString() +
+                                      _mapCoordinates[data.key][1]
+                                          .longitude
+                                          .toString() +
+                                      //data.value[1].longitude.toString() +
                                       ')'),
                                 ),
-                                DataCell(_showDeleteIcon[data.key]!
+                                DataCell(_showDeleteIcon[data.key]
                                     ? IconButton(
                                         icon: Icon(
                                           Icons.delete,
@@ -125,16 +152,22 @@ class _DefineMapPageState extends State<DefineMapPage> {
                                         ),
                                         onPressed: () {
                                           setState(() {
-                                            mapData.remove(data);
+                                            _mapNames.removeAt(data.key);
+                                            _mapCoordinates.removeAt(data.key);
+                                            _mapNameControllers
+                                                .removeAt(data.key);
+                                            //mapData.remove(data);
                                           });
                                         })
                                     : ElevatedButton(
                                         child: const Text("Lagre"),
                                         onPressed: () {
                                           String? newName =
-                                              _controllers[data.key]?.text;
-                                          if (newName != null &&
-                                              newName.isNotEmpty) {
+                                              _mapNameControllers[data.key]
+                                                  .text;
+                                          //_controllers[data.key]?.text;
+                                          if (newName.isNotEmpty) {
+                                            // TODO: save to db
                                             /*int index = mapData.indexOf(data);
                                             mapData[index] =
                                                 MapEntry(newName, data.value);*/
@@ -169,22 +202,33 @@ class _DefineMapPageState extends State<DefineMapPage> {
                                       child: const Text('Lagre'),
                                       onPressed: () {
                                         // TODO: sjekk at koordinater er lagt til og at navn er unikt. annet sted: er hjørnene riktig?
-                                        if (newNameController.text.isNotEmpty) {
-                                          debugPrint(
-                                              "HER: " + newPoints.toString());
-                                          setState(() {
-                                            mapData.add(MapEntry(
+                                        debugPrint(newPoints.length.toString());
+                                        if (newPoints.length == 2) {
+                                          if (newNameController
+                                              .text.isNotEmpty) {
+                                            debugPrint(
+                                                "HER: " + newPoints.toString());
+                                            setState(() {
+                                              _mapNames
+                                                  .add(newNameController.text);
+                                              _mapCoordinates.add(newPoints);
+                                              _mapNameControllers
+                                                  .add(newNameController);
+                                              _showDeleteIcon.add(true);
+
+                                              /*mapData.add(MapEntry(
                                                 newNameController.text,
-                                                newPoints));
-                                            showMap = false;
-                                            newCoordinates = '(?, ?), (?, ?)';
-                                            newNameController =
-                                                TextEditingController();
-                                          });
-                                        } else {
-                                          setState(() {
-                                            helpText = 'Skriv inn kartnavn';
-                                          });
+                                                newPoints));*/
+                                              showMap = false;
+                                              newCoordinates = '(?, ?), (?, ?)';
+                                              newNameController =
+                                                  TextEditingController();
+                                            });
+                                          } else {
+                                            setState(() {
+                                              helpText = 'Skriv inn kartnavn';
+                                            });
+                                          }
                                         }
                                       },
                                     )
