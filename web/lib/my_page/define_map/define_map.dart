@@ -44,9 +44,12 @@ class _DefineMapState extends State<DefineMap> {
             _mapController = c;
             //_moveToStartArea();
           },
+          zoom: 5,
           minZoom: 5,
           maxZoom: 18,
+          center: LatLng(65, 13),
           onLongPress: (tapPosition, point) {
+            debugPrint(point.toString());
             if (_markers.length < 2) {
               setState(() {
                 _markers.add(
