@@ -21,8 +21,8 @@ class _DefineMapPageState extends State<DefineMapPage> {
   };*/
 
   List<MapEntry<String, List<LatLng>>> mapData = [
-    MapEntry("Bymarka", [LatLng(10, 10), LatLng(20, 20)]),
-    MapEntry("Strindamarka", [LatLng(20, 20), LatLng(30, 30)])
+    /*MapEntry("Bymarka", [LatLng(10, 10), LatLng(20, 20)]),
+    MapEntry("Strindamarka", [LatLng(20, 20), LatLng(30, 30)])*/
   ]; // TODO: les fra db
 
   //late final Map<String, TextEditingController> _controllers = {};
@@ -73,13 +73,13 @@ class _DefineMapPageState extends State<DefineMapPage> {
   @override
   Widget build(BuildContext context) {
     return Material(
-        //color: Colors.blue,
         child: Column(children: [
       Flexible(
           flex: 2,
           fit: FlexFit.tight,
           child: SingleChildScrollView(
               child: DataTable(
+                  // TODO: increase text size
                   border: TableBorder.symmetric(),
                   columns: const [
                     DataColumn(label: Text("Kartnavn")),
@@ -87,12 +87,11 @@ class _DefineMapPageState extends State<DefineMapPage> {
                     DataColumn(label: Text('')),
                   ],
                   rows: mapData
-                          .map((MapEntry<String, List<LatLng>> element) =>
-                              DataRow(
+                          .map((MapEntry<String, List<LatLng>> data) => DataRow(
                                   //selected: true,
                                   //onSelectChanged: (bool? selected) {},
                                   cells: [
-                                    DataCell(Text(element.key)
+                                    DataCell(Text(data.key)
 
                                         /*TextField(
                                       controller: _controllers[element.key],
@@ -102,20 +101,17 @@ class _DefineMapPageState extends State<DefineMapPage> {
                                       },
                                     )*/
                                         //Text(element.key),
-                                        /*showEditIcon: true */ /*,placeholder: true*/
                                         ),
                                     DataCell(
                                       Text('(' +
-                                          element.value[0].latitude.toString() +
+                                          data.value[0].latitude.toString() +
                                           ', ' +
-                                          element.value[0].longitude
-                                              .toString() +
+                                          data.value[0].longitude.toString() +
                                           ')' +
                                           ', (' +
-                                          element.value[1].latitude.toString() +
+                                          data.value[1].latitude.toString() +
                                           ', ' +
-                                          element.value[1].longitude
-                                              .toString() +
+                                          data.value[1].longitude.toString() +
                                           ')'),
                                     ),
                                     DataCell(IconButton(
@@ -144,19 +140,24 @@ class _DefineMapPageState extends State<DefineMapPage> {
                                   showMap ? Text(newCoordinates) : Container()),
                               DataCell(showMap
                                   ? ElevatedButton(
-                                      child: const Text("Lagre"),
+                                      child: const Text('Lagre'),
                                       onPressed: () {
-                                        // TODO: Sjekk at navn er skrevet inn, sjekk at koordinater er lagt til
+                                        // TODO: sjekk at koordinater er lagt til og at navn er unikt. annet sted: er hjørnene riktig?
                                         if (newNameController.text.isNotEmpty) {
-                                          debugPrint("JA");
+                                          debugPrint(
+                                              "HER: " + newPoints.toString());
                                           setState(() {
-                                            showMap = false;
                                             mapData.add(MapEntry(
                                                 newNameController.text,
                                                 newPoints));
-                                            newPoints.clear();
+                                            showMap = false;
+                                            newCoordinates = '(?, ?), (?, ?)';
                                             newNameController =
                                                 TextEditingController();
+                                          });
+                                        } else {
+                                          setState(() {
+                                            helpText = 'Skriv inn kartnavn';
                                           });
                                         }
                                       },
@@ -183,15 +184,24 @@ class _DefineMapPageState extends State<DefineMapPage> {
 
       if (points.length == 1) {
         helpText = helpTextSouthEast;
+        setState(() {
+          newCoordinates = '(${points[0].latitude}, ${points[0].longitude})';
+        });
       } else {
         // TODO: legg inn koordinatene
         setState(() {
           helpText = helpTextSave;
           newCoordinates =
               '(${points[0].latitude}, ${points[0].longitude}), (${points[1].latitude}, ${points[0].longitude})';
+          newPoints = points;
         });
-        newPoints = points;
       }
     });
+  }
+
+  @override
+  void dispose() {
+    newNameController.dispose();
+    super.dispose();
   }
 }
