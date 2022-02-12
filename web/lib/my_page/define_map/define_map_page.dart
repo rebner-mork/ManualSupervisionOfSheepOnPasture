@@ -30,9 +30,19 @@ class _DefineMapPageState extends State<DefineMapPage> {
   bool showMap = false;
   String newButtonText = "Legg til";
 
+  late String helpText;
+  String helpTextNorthWest =
+      "Klikk og hold på kartet for å markere nordvestlig hjørne av beiteområdet";
+  String helpTextSouthEast =
+      "Klikk og hold på kartet for å markere sørøstlig hjørne av beiteområdet";
+  String helpTextSave =
+      "Klikk på lagre-knappen når du har skrevet inn navn på kartområdet";
+
   @override
   void initState() {
     super.initState();
+
+    helpText = helpTextNorthWest;
 
     for (MapEntry<String, LatLng> element in mapDataTwo) {
       TextEditingController controller = TextEditingController();
@@ -120,7 +130,15 @@ class _DefineMapPageState extends State<DefineMapPage> {
                           ))
                         ])
                       ]))),
-      if (showMap) const Flexible(flex: 5, child: DefineMap())
+      if (showMap) Text(helpText),
+      if (showMap) Flexible(flex: 5, child: DefineMap(onCornerMarked))
     ]));
+  }
+
+  void onCornerMarked(int cornerAmount) {
+    // TODO: limit map area?
+    setState(() {
+      helpText = cornerAmount == 1 ? helpTextSouthEast : helpTextSave;
+    });
   }
 }

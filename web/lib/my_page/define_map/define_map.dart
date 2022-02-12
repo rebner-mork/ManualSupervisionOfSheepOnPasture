@@ -5,12 +5,13 @@ import 'package:latlong2/latlong.dart';
 import '../../utils/map_utils.dart' as map_utils;
 
 class DefineMap extends StatefulWidget {
-  const DefineMap({Key? key}) : super(key: key);
+  const DefineMap(this.onCornerMarked, {Key? key}) : super(key: key);
 
   @override
   State<DefineMap> createState() => _DefineMapState();
 
   static const String route = 'define-map-widget';
+  final Function(int cornerAmount) onCornerMarked;
 }
 
 class _DefineMapState extends State<DefineMap> {
@@ -49,15 +50,19 @@ class _DefineMapState extends State<DefineMap> {
           maxZoom: 18,
           center: LatLng(65, 13),
           onLongPress: (tapPosition, point) {
-            debugPrint(point.toString());
             if (_markers.length < 2) {
               setState(() {
                 _markers.add(
                     map_utils.getCornerMarker(point, _markers.length == 1));
               });
-            } else if (_markers.length == 3 && !_rectangleDrawn) {
-              // TODO: draw rectangle
-              _rectangleDrawn = true;
+              widget.onCornerMarked(_markers.length);
+            }
+            if (_markers.length == 2 && !_rectangleDrawn) {
+              Future.delayed(const Duration(milliseconds: 500), () {
+                setState(() {
+                  _rectangleDrawn = true;
+                });
+              });
             }
           },
         ),
@@ -73,16 +78,28 @@ class _DefineMapState extends State<DefineMap> {
               );
             },
           ),
-          MarkerLayerOptions(markers: _markers, rotate: true),
-          /*PolylineLayerOptions(polylines: [
-            Polyline(
-                points: _movementPoints,
-                color: Colors.red,
-                isDotted: true,
-                strokeWidth: 10.0)
-          ])*/
+          if (!_rectangleDrawn)
+            MarkerLayerOptions(markers: _markers, rotate: true),
+          if (_rectangleDrawn)
+            PolylineLayerOptions(polylines: [
+              Polyline(
+                  points: drawMapArea(),
+                  color: Colors.red,
+                  isDotted: false,
+                  strokeWidth: 3.0)
+            ])
         ],
       ),
     );
+  }
+
+  List<LatLng> drawMapArea() {
+    return [
+      _markers[0].point,
+      LatLng(_markers[1].point.latitude, _markers[0].point.longitude),
+      _markers[1].point,
+      LatLng(_markers[0].point.latitude, _markers[1].point.longitude),
+      _markers[0].point
+    ];
   }
 }
