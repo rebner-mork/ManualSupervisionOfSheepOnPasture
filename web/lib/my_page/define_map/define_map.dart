@@ -5,13 +5,16 @@ import 'package:latlong2/latlong.dart';
 import '../../utils/map_utils.dart' as map_utils;
 
 class DefineMap extends StatefulWidget {
-  const DefineMap(this.onCornerMarked, {Key? key}) : super(key: key);
+  const DefineMap(this.onCornerMarked, this.secondMarkerIncorrectlyPlaced,
+      {Key? key})
+      : super(key: key);
 
   @override
   State<DefineMap> createState() => _DefineMapState();
 
   static const String route = 'define-map-widget';
   final Function(List<LatLng> points) onCornerMarked;
+  final Function() secondMarkerIncorrectlyPlaced;
 }
 
 class _DefineMapState extends State<DefineMap> {
@@ -22,8 +25,7 @@ class _DefineMapState extends State<DefineMap> {
   //Marker _currentPositionMarker =
   //    map_utils.getDevicePositionMarker(LatLng(0, 0));
 
-  final List<Marker> _markers =
-      []; // = [_currentPositionMarker, _firstLongpressMarker];
+  final List<Marker> _markers = [];
 
   bool _rectangleDrawn = false;
 
@@ -49,20 +51,26 @@ class _DefineMapState extends State<DefineMap> {
           maxZoom: 18,
           center: LatLng(65, 13),
           onLongPress: (tapPosition, point) {
-            if (_markers.length < 2) {
+            debugPrint(point.toString());
+
+            if (_markers.isEmpty ||
+                (_markers.length == 1 &&
+                    _isSecondMarkerPlacedCorrectly(point))) {
               setState(() {
                 _markers.add(
                     map_utils.getCornerMarker(point, _markers.length == 1));
               });
               widget.onCornerMarked([_markers[0].point]);
-            }
-            if (_markers.length == 2 && !_rectangleDrawn) {
-              Future.delayed(const Duration(milliseconds: 500), () {
-                setState(() {
-                  _rectangleDrawn = true;
+              if (_markers.length == 2 && !_rectangleDrawn) {
+                Future.delayed(const Duration(milliseconds: 500), () {
+                  setState(() {
+                    _rectangleDrawn = true;
+                  });
                 });
-              });
-              widget.onCornerMarked([_markers[0].point, _markers[1].point]);
+                widget.onCornerMarked([_markers[0].point, _markers[1].point]);
+              }
+            } else {
+              widget.secondMarkerIncorrectlyPlaced();
             }
           },
         ),
@@ -101,5 +109,11 @@ class _DefineMapState extends State<DefineMap> {
       LatLng(_markers[0].point.latitude, _markers[1].point.longitude),
       _markers[0].point
     ];
+  }
+
+  bool _isSecondMarkerPlacedCorrectly(LatLng se) {
+    LatLng nw = _markers[0].point;
+
+    return (se.latitude < nw.latitude && se.longitude > nw.longitude);
   }
 }

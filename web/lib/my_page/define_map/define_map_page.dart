@@ -30,7 +30,6 @@ class _DefineMapPageState extends State<DefineMapPage> {
 
   bool showMap = false;
   bool _loadingData = true;
-  String _loadingText = 'Laster data..';
 
   String _helpText = '';
   static const String helpTextNorthWest =
@@ -39,6 +38,8 @@ class _DefineMapPageState extends State<DefineMapPage> {
       "Klikk og hold på kartet for å markere sørøstlig hjørne av beiteområdet";
   static const String helpTextSave =
       "Klikk på lagre-knappen når du har skrevet inn navn på kartområdet";
+  static const String secondMarkerIncorrectlyPlaced =
+      "Sørøstlig hjørne må være sørøst for nordvest-markøren. Klikk og hold på kartet på nytt for å markere sørøstlig hjørne av beiteområdet";
   static const String coordinatesPlaceholder = "(?, ?), (?, ?)";
 
   final TextStyle buttonTextStyle = const TextStyle(fontSize: 18);
@@ -65,7 +66,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
           flex: 2,
           child: _loadingData
               ? Text(
-                  _loadingText,
+                  'Laster data...',
                   style: buttonTextStyle,
                 )
               : SingleChildScrollView(
@@ -78,7 +79,10 @@ class _DefineMapPageState extends State<DefineMapPage> {
       _helpTextWidgets(),
       const SizedBox(height: 10),
       if (showMap)
-        Flexible(flex: 5, fit: FlexFit.tight, child: DefineMap(_onCornerMarked))
+        Flexible(
+            flex: 5,
+            fit: FlexFit.tight,
+            child: DefineMap(_onCornerMarked, _secondMarkerIncorrectlyPlaced))
     ]));
   }
 
@@ -102,6 +106,12 @@ class _DefineMapPageState extends State<DefineMapPage> {
     });
   }
 
+  void _secondMarkerIncorrectlyPlaced() {
+    setState(() {
+      _helpText = secondMarkerIncorrectlyPlaced;
+    });
+  }
+
   void _readMapData() async {
     String uid = FirebaseAuth.instance.currentUser!.uid;
 
@@ -110,50 +120,46 @@ class _DefineMapPageState extends State<DefineMapPage> {
     DocumentReference farmDoc = farmCollection.doc(uid);
     Map<String, Map<String, List<double>>> dataMap;
 
-    LinkedHashMap<String, dynamic> linkedHashMap;
+    LinkedHashMap<String, dynamic>? linkedHashMap;
     TextEditingController textController;
     List<List<double>> coordinates;
 
     await farmDoc.get().then((doc) => {
           if (doc.exists)
             {
-              linkedHashMap = doc.get('maps'), // TODO: check if field exists..
-              dataMap = linkedHashMap
-                  .map((key, value) =>
-                      MapEntry(key, value as Map<String, dynamic>))
-                  .map((key, value) => MapEntry(
-                      key,
-                      value.map((key, value) =>
-                          MapEntry(key, value as List<dynamic>))))
-                  .map((key, value) => MapEntry(
-                      key,
-                      value.map((key, value) => MapEntry(
-                          key, value.map((e) => e as double).toList())))),
-              for (MapEntry<String, Map<String, List<double>>> data
-                  in dataMap.entries)
+              linkedHashMap = doc.get('maps'),
+              if (linkedHashMap != null)
                 {
-                  _mapNames.add(data.key),
-                  textController = TextEditingController(),
-                  textController.text = data.key,
-                  _mapNameControllers.add(textController),
-                  coordinates = data.value.values.toList(),
-                  _mapCoordinates.add([
-                    LatLng(coordinates[0][0], coordinates[0][1]),
-                    LatLng(coordinates[1][0], coordinates[1][1])
-                  ]),
-                  _showDeleteIcon.add(true),
-                },
-              setState(() {
-                _loadingData = false;
-              })
-            }
-          else
-            {
-              setState(() {
-                _loadingText =
-                    '\nDu må lagre gårdens navn og adresse før du legger til kart.\nBytt til "Gård"-fanen til venstre';
-              })
-            }
+                  dataMap = linkedHashMap!
+                      .map((key, value) =>
+                          MapEntry(key, value as Map<String, dynamic>))
+                      .map((key, value) => MapEntry(
+                          key,
+                          value.map((key, value) =>
+                              MapEntry(key, value as List<dynamic>))))
+                      .map((key, value) => MapEntry(
+                          key,
+                          value.map((key, value) => MapEntry(
+                              key, value.map((e) => e as double).toList())))),
+                  for (MapEntry<String, Map<String, List<double>>> data
+                      in dataMap.entries)
+                    {
+                      _mapNames.add(data.key),
+                      textController = TextEditingController(),
+                      textController.text = data.key,
+                      _mapNameControllers.add(textController),
+                      coordinates = data.value.values.toList(),
+                      _mapCoordinates.add([
+                        LatLng(coordinates[0][0], coordinates[0][1]),
+                        LatLng(coordinates[1][0], coordinates[1][1])
+                      ]),
+                      _showDeleteIcon.add(true),
+                    },
+                }
+            },
+          setState(() {
+            _loadingData = false;
+          })
         });
   }
 
@@ -178,8 +184,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
             }
           else
             {
-              // TODO: feedback (kanskje ikke vise denne widgeten dersom farm ikke er lagt til?)
-              //farmDoc.set({'maps': dataMap})
+              farmDoc.set({'maps': dataMap, 'name': null, 'address': null})
             },
         });
   }
@@ -344,6 +349,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
                   showMap = false;
                   _newCoordinatesText = coordinatesPlaceholder;
                   _newMapNameController.clear();
+                  _helpText = '';
                 });
               },
             )
