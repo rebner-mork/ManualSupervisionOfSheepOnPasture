@@ -57,7 +57,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
     });
   }
 
-  // TODO: Add image of map?
+  // TODO: Add image of map
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -225,7 +225,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
             _newCoordinatesText = coordinatesPlaceholder;
             _newMapNameController = TextEditingController();
           });
-          _saveMapData(); // TODO: try catch and await?
+          _saveMapData();
         } else {
           setState(() {
             _helpText =
@@ -254,7 +254,6 @@ class _DefineMapPageState extends State<DefineMapPage> {
                     _mapCoordinates.removeAt(index);
                     _mapNameControllers.removeAt(index);
                   });
-                  // TODO: try catch?
                   _saveMapData();
                 },
                 child: const Text('Ja, slett')),

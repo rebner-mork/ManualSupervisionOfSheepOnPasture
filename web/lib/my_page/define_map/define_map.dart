@@ -17,13 +17,12 @@ class DefineMap extends StatefulWidget {
   final Function() secondMarkerIncorrectlyPlaced;
 }
 
+// TODO: Restrict marker-distance
 class _DefineMapState extends State<DefineMap> {
   _DefineMapState();
 
   final String mapType = 'topo4';
   MapController _mapController = MapController();
-  //Marker _currentPositionMarker =
-  //    map_utils.getDevicePositionMarker(LatLng(0, 0));
 
   final List<Marker> _markers = [];
 
@@ -33,7 +32,6 @@ class _DefineMapState extends State<DefineMap> {
     LatLng pos = await map_utils.getDevicePosition();
     setState(() {
       _mapController.move(pos, _mapController.zoom);
-      //_currentPositionMarker = map_utils.getDevicePositionMarker(pos);
     });
   }
 
