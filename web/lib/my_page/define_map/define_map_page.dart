@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +32,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
   List<LatLng> _newCoordinates = [];
   TextEditingController _newMapNameController = TextEditingController();
 
-  late String _helpText;
+  String _helpText = '';
   static const String helpTextNorthWest =
       "Klikk og hold på kartet for å markere nordvestlig hjørne av beiteområdet";
   static const String helpTextSouthEast =
@@ -47,7 +49,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
   void initState() {
     super.initState();
 
-    _helpText = helpTextNorthWest;
+    //_helpText = helpTextNorthWest;
     _newCoordinatesText = coordinatesPlaceholder;
 
     for (String mapName in _mapNames) {
@@ -97,7 +99,8 @@ class _DefineMapPageState extends State<DefineMapPage> {
                                 DataCell(
                                     TextField(
                                       controller: _mapNameControllers[data.key],
-                                      onChanged: (_) {
+                                      onChanged: (name) {
+                                        //_mapNames[data.key] = name;
                                         setState(() {
                                           _showDeleteIcon[data.key] = false;
                                         });
@@ -134,31 +137,23 @@ class _DefineMapPageState extends State<DefineMapPage> {
                                         splashRadius: 22,
                                         hoverColor: Colors.red,
                                         onPressed: () {
-                                          // TODO: sikker? slett lokalt og i db
-                                          setState(() {
-                                            _mapNames.removeAt(data.key);
-                                            _mapCoordinates.removeAt(data.key);
-                                            _mapNameControllers
-                                                .removeAt(data.key);
-                                          });
+                                          // TODO: sikker?
+                                          showDialog(
+                                              context: context,
+                                              builder: (_) => deleteMapDialog(
+                                                  context, data.key));
                                         })
                                     : ElevatedButton(
-                                        child: const Text(
+                                        style: ButtonStyle(
+                                            fixedSize:
+                                                MaterialStateProperty.all(
+                                                    const Size.fromHeight(35))),
+                                        child: Text(
                                           "Lagre",
-                                          style: TextStyle(fontSize: 18),
+                                          style: buttonTextStyle,
                                         ),
-                                        onPressed: () {
-                                          // TODO: Sjekk at navn er unikt
-                                          String? newName =
-                                              _mapNameControllers[data.key]
-                                                  .text;
-                                          if (newName.isNotEmpty) {
-                                            // TODO: save to db
-                                            setState(() {
-                                              _showDeleteIcon[data.key] = true;
-                                            });
-                                          }
-                                        },
+                                        onPressed: () =>
+                                            _saveChangedMap(data.key),
                                       ))
                               ]))
                           .toList() +
@@ -189,36 +184,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
                                                           35))),
                                           child: Text('Lagre',
                                               style: buttonTextStyle),
-                                          onPressed: () async {
-                                            // TODO: Sjekk at navn er unikt. annet sted: er hjørnene riktig?
-                                            if (_newCoordinates.length == 2) {
-                                              if (_newMapNameController
-                                                  .text.isNotEmpty) {
-                                                setState(() {
-                                                  _mapNames.add(
-                                                      _newMapNameController
-                                                          .text);
-                                                  _mapCoordinates
-                                                      .add(_newCoordinates);
-                                                  _mapNameControllers.add(
-                                                      _newMapNameController);
-                                                  _showDeleteIcon.add(true);
-
-                                                  showMap = false;
-                                                  _newCoordinatesText =
-                                                      coordinatesPlaceholder;
-                                                  _newMapNameController =
-                                                      TextEditingController();
-                                                });
-                                                saveMapData(); // TODO: try catch and await?
-                                              } else {
-                                                setState(() {
-                                                  _helpText =
-                                                      'Skriv inn kartnavn';
-                                                });
-                                              }
-                                            }
-                                          },
+                                          onPressed: () => _saveNewMap(),
                                         ),
                                         const SizedBox(width: 10),
                                         ElevatedButton(
@@ -254,46 +220,46 @@ class _DefineMapPageState extends State<DefineMapPage> {
                                         onPressed: () {
                                           setState(() {
                                             showMap = true;
+                                            _helpText = helpTextNorthWest;
                                           });
                                         },
                                       ),
                               )
                             ])
                       ]))),
-      if (showMap) const SizedBox(height: 10),
-      if (showMap)
-        (_helpText == helpTextNorthWest || _helpText == helpTextSouthEast)
-            ? Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text(
-                  _helpText.substring(0, 14),
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  _helpText.substring(14, 38),
-                  style: const TextStyle(fontSize: 16),
-                ),
-                Text(
-                  _helpText.substring(38, 57),
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  _helpText.substring(57),
-                  style: const TextStyle(fontSize: 16),
-                ),
-              ])
-            : Text(
-                _helpText,
+      const SizedBox(height: 10),
+      (_helpText == helpTextNorthWest || _helpText == helpTextSouthEast)
+          ? Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Text(
+                _helpText.substring(0, 14),
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                _helpText.substring(14, 38),
                 style: const TextStyle(fontSize: 16),
               ),
-      if (showMap) const SizedBox(height: 10),
+              Text(
+                _helpText.substring(38, 57),
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                _helpText.substring(57),
+                style: const TextStyle(fontSize: 16),
+              ),
+            ])
+          : Text(
+              _helpText,
+              style: const TextStyle(fontSize: 16),
+            ),
+      const SizedBox(height: 10),
       if (showMap)
-        Flexible(flex: 5, fit: FlexFit.tight, child: DefineMap(onCornerMarked))
+        Flexible(flex: 5, fit: FlexFit.tight, child: DefineMap(_onCornerMarked))
     ]));
   }
 
-  void onCornerMarked(List<LatLng> points) {
+  void _onCornerMarked(List<LatLng> points) {
     // TODO: limit map area?
     setState(() {
       if (points.length == 1) {
@@ -313,15 +279,16 @@ class _DefineMapPageState extends State<DefineMapPage> {
     });
   }
 
-  void readMapData() async {}
+  void _readMapData() async {}
 
-  void saveMapData() async {
+  void _saveMapData() async {
     Map dataMap = <String, Map<String, List<double>>>{};
     for (int i = 0; i < _mapNames.length; i++) {
       dataMap[_mapNames[i]] = <String, List<double>>{
         'nw': [_mapCoordinates[i][0].latitude, _mapCoordinates[i][0].longitude],
         'se': [_mapCoordinates[i][1].latitude, _mapCoordinates[i][1].longitude]
       };
+      //_showDeleteIcon[i] = true;
     }
 
     String uid = FirebaseAuth.instance.currentUser!.uid;
@@ -339,6 +306,85 @@ class _DefineMapPageState extends State<DefineMapPage> {
               // TODO: feedback (kanskje ikke vise denne widgeten dersom farm ikke er lagt til?)
             },
         });
+  }
+
+  void _saveChangedMap(int index) {
+    String? newName = _mapNameControllers[index].text;
+    if (newName.isNotEmpty) {
+      if (!_mapNames.contains(newName)) {
+        _mapNames[index] = newName;
+        _saveMapData();
+        setState(() {
+          _showDeleteIcon[index] = true;
+        });
+      } else {
+        setState(() {
+          _helpText = 'Kartnavnet $newName finnes allerede, skriv unikt navn';
+        });
+      }
+    } else {
+      setState(() {
+        _helpText = 'Kartet må ha et navn';
+      });
+    }
+  }
+
+  void _saveNewMap() {
+    if (_newCoordinates.length == 2) {
+      String newMapName = _newMapNameController.text;
+      if (newMapName.isNotEmpty) {
+        if (!_mapNames.contains(newMapName)) {
+          setState(() {
+            _mapNames.add(newMapName);
+            _mapCoordinates.add(_newCoordinates);
+            _mapNameControllers.add(_newMapNameController);
+            _showDeleteIcon.add(true);
+
+            showMap = false;
+            _newCoordinatesText = coordinatesPlaceholder;
+            _newMapNameController = TextEditingController();
+          });
+          _saveMapData(); // TODO: try catch and await?
+        } else {
+          setState(() {
+            _helpText =
+                'Kartnavnet $newMapName finnes allerede, skriv unikt navn';
+          });
+        }
+      } else {
+        setState(() {
+          _helpText = 'Skriv inn kartnavn';
+        });
+      }
+    }
+  }
+
+  BackdropFilter deleteMapDialog(BuildContext context, int index) {
+    return BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+        child: AlertDialog(
+          title: Text('Slette ${_mapNames[index]}?'),
+          //content: const Text('Det går ikke å angre sletting.'),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop('dialog');
+                  setState(() {
+                    _mapNames.removeAt(index);
+                    _mapCoordinates.removeAt(index);
+                    _mapNameControllers.removeAt(index);
+                  });
+                  // TODO: slett i db
+                  _saveMapData(); // TODO: fungerer det?
+                },
+                child: const Text('Ja, slett')),
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop('dialog');
+                },
+                child: const Text('Nei, ikke slett'))
+          ],
+        ));
   }
 
   @override
