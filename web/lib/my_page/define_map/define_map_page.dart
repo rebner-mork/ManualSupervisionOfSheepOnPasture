@@ -19,20 +19,18 @@ class DefineMapPage extends StatefulWidget {
 class _DefineMapPageState extends State<DefineMapPage> {
   _DefineMapPageState();
 
-  final List<String> _mapNames = []; // ["Bymarka", "Strindamarka"];
-  final List<List<LatLng>> _mapCoordinates =
-      []; /* [
-    [LatLng(10, 10), LatLng(20, 20)],
-    [LatLng(20, 20), LatLng(30, 30)]
-  ];*/
+  final List<String> _mapNames = [];
+  final List<List<LatLng>> _mapCoordinates = [];
   final List<TextEditingController> _mapNameControllers = [];
   final List<bool> _showDeleteIcon = [];
-
-  bool showMap = false;
 
   late String _newCoordinatesText;
   List<LatLng> _newCoordinates = [];
   TextEditingController _newMapNameController = TextEditingController();
+
+  bool showMap = false;
+  bool _loadingData = true;
+  String _loadingText = 'Laster data..';
 
   String _helpText = '';
   static const String helpTextNorthWest =
@@ -47,21 +45,11 @@ class _DefineMapPageState extends State<DefineMapPage> {
   final TextStyle columnNameStyle =
       const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
 
-  bool _loadingData = true;
-
   @override
   void initState() {
     super.initState();
 
     _newCoordinatesText = coordinatesPlaceholder;
-
-    /*for (String mapName in _mapNames) {
-      TextEditingController controller = TextEditingController();
-      controller.text = mapName;
-      _mapNameControllers.add(controller);
-
-      _showDeleteIcon.add(true);
-    }*/
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _readMapData();
@@ -76,7 +64,10 @@ class _DefineMapPageState extends State<DefineMapPage> {
       Flexible(
           flex: 2,
           child: _loadingData
-              ? const Text('Laster data..') // TODO: finere
+              ? Text(
+                  _loadingText,
+                  style: buttonTextStyle,
+                )
               : SingleChildScrollView(
                   child: DataTable(
                       border: TableBorder.symmetric(),
@@ -117,62 +108,53 @@ class _DefineMapPageState extends State<DefineMapPage> {
     CollectionReference farmCollection =
         FirebaseFirestore.instance.collection('farms');
     DocumentReference farmDoc = farmCollection.doc(uid);
+    Map<String, Map<String, List<double>>> dataMap;
 
-    Map<String, Map<String, dynamic>> en;
-    Map<String, Map<String, List<dynamic>>> to;
-    Map<String, Map<String, List<double>>> egen;
-
-    LinkedHashMap<String, dynamic> dataMap;
+    LinkedHashMap<String, dynamic> linkedHashMap;
     TextEditingController textController;
     List<List<double>> coordinates;
-    List<double> nw;
-    List<double> se;
 
     await farmDoc.get().then((doc) => {
           if (doc.exists)
             {
-              dataMap = doc.get('maps'),
-              debugPrint(dataMap.runtimeType.toString()),
-              debugPrint(dataMap.toString()),
-              en = dataMap.map(
-                  (key, value) => MapEntry(key, value as Map<String, dynamic>)),
-              debugPrint(en.runtimeType.toString()),
-              debugPrint(en.toString()),
-              to = en.map((key, value) => MapEntry(
-                  key,
-                  value.map(
-                      (key, value) => MapEntry(key, value as List<dynamic>)))),
-              debugPrint(to.runtimeType.toString()),
-              debugPrint(to.toString()),
-              egen = to.map((key, value) => MapEntry(
-                  key,
-                  value.map((key, value) =>
-                      MapEntry(key, value.map((e) => e as double).toList())))),
-              debugPrint(egen.runtimeType.toString()),
-              debugPrint(egen.toString()),
+              linkedHashMap = doc.get('maps'), // TODO: check if field exists..
+              dataMap = linkedHashMap
+                  .map((key, value) =>
+                      MapEntry(key, value as Map<String, dynamic>))
+                  .map((key, value) => MapEntry(
+                      key,
+                      value.map((key, value) =>
+                          MapEntry(key, value as List<dynamic>))))
+                  .map((key, value) => MapEntry(
+                      key,
+                      value.map((key, value) => MapEntry(
+                          key, value.map((e) => e as double).toList())))),
               for (MapEntry<String, Map<String, List<double>>> data
-                  in egen.entries)
+                  in dataMap.entries)
                 {
-                  setState(() {
-                    _mapNames.add(data.key);
-                    textController = TextEditingController();
-                    textController.text = data.key;
-                    _mapNameControllers.add(textController);
-                    coordinates = data.value.values.toList();
-                    debugPrint(coordinates.runtimeType.toString());
-                    debugPrint(coordinates.toString());
-                    _mapCoordinates.add([
-                      LatLng(coordinates[0][0], coordinates[0][1]),
-                      LatLng(coordinates[1][0], coordinates[1][1])
-                    ]);
-                    _showDeleteIcon.add(true);
-                  })
-                }
+                  _mapNames.add(data.key),
+                  textController = TextEditingController(),
+                  textController.text = data.key,
+                  _mapNameControllers.add(textController),
+                  coordinates = data.value.values.toList(),
+                  _mapCoordinates.add([
+                    LatLng(coordinates[0][0], coordinates[0][1]),
+                    LatLng(coordinates[1][0], coordinates[1][1])
+                  ]),
+                  _showDeleteIcon.add(true),
+                },
+              setState(() {
+                _loadingData = false;
+              })
+            }
+          else
+            {
+              setState(() {
+                _loadingText =
+                    '\nDu må lagre gårdens navn og adresse før du legger til kart.\nBytt til "Gård"-fanen til venstre';
+              })
             }
         });
-    setState(() {
-      _loadingData = false;
-    });
   }
 
   void _saveMapData() async {
@@ -182,7 +164,6 @@ class _DefineMapPageState extends State<DefineMapPage> {
         'nw': [_mapCoordinates[i][0].latitude, _mapCoordinates[i][0].longitude],
         'se': [_mapCoordinates[i][1].latitude, _mapCoordinates[i][1].longitude]
       };
-      //_showDeleteIcon[i] = true;
     }
 
     String uid = FirebaseAuth.instance.currentUser!.uid;
@@ -198,6 +179,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
           else
             {
               // TODO: feedback (kanskje ikke vise denne widgeten dersom farm ikke er lagt til?)
+              //farmDoc.set({'maps': dataMap})
             },
         });
   }
