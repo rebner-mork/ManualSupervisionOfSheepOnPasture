@@ -49,7 +49,6 @@ class _DefineMapPageState extends State<DefineMapPage> {
   void initState() {
     super.initState();
 
-    //_helpText = helpTextNorthWest;
     _newCoordinatesText = coordinatesPlaceholder;
 
     for (String mapName in _mapNames) {
@@ -61,6 +60,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
     }
   }
 
+  // TODO: Add image of map?
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -69,190 +69,12 @@ class _DefineMapPageState extends State<DefineMapPage> {
           flex: 2,
           child: SingleChildScrollView(
               child: DataTable(
-                  // TODO: Add image of map?
                   border: TableBorder.symmetric(),
                   showCheckboxColumn: false,
-                  columns: [
-                    DataColumn(
-                        label: Text(
-                      'Kartnavn',
-                      style: columnNameStyle,
-                    )),
-                    DataColumn(
-                        label: Row(children: [
-                      Text(
-                        'Koordinater',
-                        style: columnNameStyle,
-                      ),
-                      const Text(
-                        ' (NV), (NØ)',
-                      )
-                    ])),
-                    const DataColumn(
-                      label: Text(''),
-                    ),
-                  ],
-                  rows: _mapNames
-                          .asMap()
-                          .entries
-                          .map((MapEntry<int, String> data) => DataRow(cells: [
-                                DataCell(
-                                    TextField(
-                                      controller: _mapNameControllers[data.key],
-                                      onChanged: (name) {
-                                        //_mapNames[data.key] = name;
-                                        setState(() {
-                                          _showDeleteIcon[data.key] = false;
-                                        });
-                                      },
-                                    ),
-                                    showEditIcon: true),
-                                DataCell(
-                                  Text('(' +
-                                      _mapCoordinates[data.key][0]
-                                          .latitude
-                                          .toString() +
-                                      ', ' +
-                                      _mapCoordinates[data.key][0]
-                                          .longitude
-                                          .toString() +
-                                      ')' +
-                                      ', (' +
-                                      _mapCoordinates[data.key][1]
-                                          .latitude
-                                          .toString() +
-                                      ', ' +
-                                      _mapCoordinates[data.key][1]
-                                          .longitude
-                                          .toString() +
-                                      ')'),
-                                ),
-                                DataCell(_showDeleteIcon[data.key]
-                                    ? IconButton(
-                                        icon: Icon(
-                                          Icons.delete,
-                                          color: Colors.grey.shade800,
-                                          size: 26,
-                                        ),
-                                        splashRadius: 22,
-                                        hoverColor: Colors.red,
-                                        onPressed: () {
-                                          // TODO: sikker?
-                                          showDialog(
-                                              context: context,
-                                              builder: (_) => deleteMapDialog(
-                                                  context, data.key));
-                                        })
-                                    : ElevatedButton(
-                                        style: ButtonStyle(
-                                            fixedSize:
-                                                MaterialStateProperty.all(
-                                                    const Size.fromHeight(35))),
-                                        child: Text(
-                                          "Lagre",
-                                          style: buttonTextStyle,
-                                        ),
-                                        onPressed: () =>
-                                            _saveChangedMap(data.key),
-                                      ))
-                              ]))
-                          .toList() +
-                      [
-                        DataRow(
-                            color: showMap
-                                ? MaterialStateProperty.all(
-                                    Colors.yellow.shade300)
-                                : null,
-                            cells: [
-                              DataCell(showMap
-                                  ? TextField(
-                                      controller: _newMapNameController,
-                                      decoration: const InputDecoration(
-                                          hintText: 'Skriv navn'))
-                                  : Container()),
-                              DataCell(showMap
-                                  ? Text(_newCoordinatesText)
-                                  : Container()),
-                              DataCell(
-                                showMap
-                                    ? Row(children: [
-                                        ElevatedButton(
-                                          style: ButtonStyle(
-                                              fixedSize:
-                                                  MaterialStateProperty.all(
-                                                      const Size.fromHeight(
-                                                          35))),
-                                          child: Text('Lagre',
-                                              style: buttonTextStyle),
-                                          onPressed: () => _saveNewMap(),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        ElevatedButton(
-                                          style: ButtonStyle(
-                                              fixedSize:
-                                                  MaterialStateProperty.all(
-                                                      const Size.fromHeight(
-                                                          35)),
-                                              textStyle:
-                                                  MaterialStateProperty.all(
-                                                      buttonTextStyle),
-                                              backgroundColor:
-                                                  MaterialStateProperty.all(
-                                                      Colors.red)),
-                                          child: const Text("Avbryt"),
-                                          onPressed: () {
-                                            setState(() {
-                                              showMap = false;
-                                              _newCoordinatesText =
-                                                  coordinatesPlaceholder;
-                                              _newMapNameController.clear();
-                                            });
-                                          },
-                                        )
-                                      ])
-                                    : ElevatedButton(
-                                        style: ButtonStyle(
-                                            fixedSize:
-                                                MaterialStateProperty.all(
-                                                    const Size.fromHeight(35))),
-                                        child: Text("Legg til",
-                                            style: buttonTextStyle),
-                                        onPressed: () {
-                                          setState(() {
-                                            showMap = true;
-                                            _helpText = helpTextNorthWest;
-                                          });
-                                        },
-                                      ),
-                              )
-                            ])
-                      ]))),
+                  columns: _tableColumns(),
+                  rows: _existingMapRows() + [_newMapRow()]))),
       const SizedBox(height: 10),
-      (_helpText == helpTextNorthWest || _helpText == helpTextSouthEast)
-          ? Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Text(
-                _helpText.substring(0, 14),
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                _helpText.substring(14, 38),
-                style: const TextStyle(fontSize: 16),
-              ),
-              Text(
-                _helpText.substring(38, 57),
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                _helpText.substring(57),
-                style: const TextStyle(fontSize: 16),
-              ),
-            ])
-          : Text(
-              _helpText,
-              style: const TextStyle(fontSize: 16),
-            ),
+      _helpTextWidgets(),
       const SizedBox(height: 10),
       if (showMap)
         Flexible(flex: 5, fit: FlexFit.tight, child: DefineMap(_onCornerMarked))
@@ -364,7 +186,6 @@ class _DefineMapPageState extends State<DefineMapPage> {
         filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
         child: AlertDialog(
           title: Text('Slette ${_mapNames[index]}?'),
-          //content: const Text('Det går ikke å angre sletting.'),
           actions: [
             TextButton(
                 onPressed: () {
@@ -374,8 +195,8 @@ class _DefineMapPageState extends State<DefineMapPage> {
                     _mapCoordinates.removeAt(index);
                     _mapNameControllers.removeAt(index);
                   });
-                  // TODO: slett i db
-                  _saveMapData(); // TODO: fungerer det?
+                  // TODO: try catch?
+                  _saveMapData();
                 },
                 child: const Text('Ja, slett')),
             TextButton(
@@ -385,6 +206,189 @@ class _DefineMapPageState extends State<DefineMapPage> {
                 child: const Text('Nei, ikke slett'))
           ],
         ));
+  }
+
+  List<DataColumn> _tableColumns() {
+    return [
+      DataColumn(
+          label: Text(
+        'Kartnavn',
+        style: columnNameStyle,
+      )),
+      DataColumn(
+          label: Row(children: [
+        Text(
+          'Koordinater',
+          style: columnNameStyle,
+        ),
+        const Text(
+          ' (NV), (NØ)',
+        )
+      ])),
+      const DataColumn(
+        label: Text(''),
+      ),
+    ];
+  }
+
+  List<DataRow> _existingMapRows() {
+    return _mapNames
+        .asMap()
+        .entries
+        .map((MapEntry<int, String> data) => DataRow(cells: [
+              DataCell(
+                  TextField(
+                    controller: _mapNameControllers[data.key],
+                    onChanged: (name) {
+                      setState(() {
+                        _showDeleteIcon[data.key] = false;
+                      });
+                    },
+                  ),
+                  showEditIcon: true),
+              DataCell(_coordinatesCell(data.key)),
+              DataCell(_deleteOrRenameMapCell(data.key))
+            ]))
+        .toList();
+  }
+
+  DataRow _newMapRow() {
+    return DataRow(
+        color:
+            showMap ? MaterialStateProperty.all(Colors.yellow.shade300) : null,
+        cells: [
+          DataCell(showMap
+              ? TextField(
+                  controller: _newMapNameController,
+                  decoration: const InputDecoration(hintText: 'Skriv navn'))
+              : Container()),
+          DataCell(showMap ? Text(_newCoordinatesText) : Container()),
+          DataCell(_newMapCell())
+        ]);
+  }
+
+  _newMapCell() {
+    return showMap
+        ? Row(children: [
+            ElevatedButton(
+              style: ButtonStyle(
+                  fixedSize:
+                      MaterialStateProperty.all(const Size.fromHeight(35))),
+              child: Text('Lagre', style: buttonTextStyle),
+              onPressed: () => _saveNewMap(),
+            ),
+            const SizedBox(width: 10),
+            ElevatedButton(
+              style: ButtonStyle(
+                  fixedSize:
+                      MaterialStateProperty.all(const Size.fromHeight(35)),
+                  textStyle: MaterialStateProperty.all(buttonTextStyle),
+                  backgroundColor: MaterialStateProperty.all(Colors.red)),
+              child: const Text("Avbryt"),
+              onPressed: () {
+                setState(() {
+                  showMap = false;
+                  _newCoordinatesText = coordinatesPlaceholder;
+                  _newMapNameController.clear();
+                });
+              },
+            )
+          ])
+        : ElevatedButton(
+            style: ButtonStyle(
+                fixedSize:
+                    MaterialStateProperty.all(const Size.fromHeight(35))),
+            child: Text("Legg til", style: buttonTextStyle),
+            onPressed: () {
+              setState(() {
+                showMap = true;
+                _helpText = helpTextNorthWest;
+              });
+            },
+          );
+  }
+
+  Text _coordinatesCell(int index) {
+    return Text('(' +
+        _mapCoordinates[index][0].latitude.toString() +
+        ', ' +
+        _mapCoordinates[index][0].longitude.toString() +
+        ')' +
+        ', (' +
+        _mapCoordinates[index][1].latitude.toString() +
+        ', ' +
+        _mapCoordinates[index][1].longitude.toString() +
+        ')');
+  }
+
+  _deleteOrRenameMapCell(int index) {
+    return _showDeleteIcon[index]
+        ? IconButton(
+            icon: Icon(
+              Icons.delete,
+              color: Colors.grey.shade800,
+              size: 26,
+            ),
+            splashRadius: 22,
+            hoverColor: Colors.red,
+            onPressed: () => showDialog(
+                context: context,
+                builder: (_) => deleteMapDialog(context, index)))
+        : Row(children: [
+            ElevatedButton(
+              style: ButtonStyle(
+                  fixedSize:
+                      MaterialStateProperty.all(const Size.fromHeight(35))),
+              child: Text(
+                "Lagre",
+                style: buttonTextStyle,
+              ),
+              onPressed: () => _saveChangedMap(index),
+            ),
+            const SizedBox(width: 10),
+            ElevatedButton(
+              style: ButtonStyle(
+                  fixedSize:
+                      MaterialStateProperty.all(const Size.fromHeight(35)),
+                  backgroundColor: MaterialStateProperty.all(Colors.red)),
+              child: Text(
+                "Avbryt",
+                style: buttonTextStyle,
+              ),
+              onPressed: () => {
+                _mapNameControllers[index].text = _mapNames[index],
+                setState(() {
+                  _showDeleteIcon[index] = true;
+                })
+              },
+            ),
+          ]);
+  }
+
+  _helpTextWidgets() {
+    return (_helpText == helpTextNorthWest || _helpText == helpTextSouthEast)
+        ? Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Text(
+              _helpText.substring(0, 14),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              _helpText.substring(14, 38),
+              style: const TextStyle(fontSize: 16),
+            ),
+            Text(
+              _helpText.substring(38, 57),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              _helpText.substring(57),
+              style: const TextStyle(fontSize: 16),
+            ),
+          ])
+        : Text(
+            _helpText,
+            style: const TextStyle(fontSize: 16),
+          );
   }
 
   @override
