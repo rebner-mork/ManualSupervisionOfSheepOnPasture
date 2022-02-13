@@ -128,11 +128,6 @@ class _DefineMapPageState extends State<DefineMapPage> {
     List<double> nw;
     List<double> se;
 
-    List<List<LatLng>> _mapCoordinates = [
-      [LatLng(10, 10), LatLng(20, 20)],
-      [LatLng(20, 20), LatLng(30, 30)]
-    ];
-
     await farmDoc.get().then((doc) => {
           if (doc.exists)
             {
