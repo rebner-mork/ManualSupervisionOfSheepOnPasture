@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,11 +19,12 @@ class DefineMapPage extends StatefulWidget {
 class _DefineMapPageState extends State<DefineMapPage> {
   _DefineMapPageState();
 
-  final List<String> _mapNames = ["Bymarka", "Strindamarka"];
-  final List<List<LatLng>> _mapCoordinates = [
+  final List<String> _mapNames = []; // ["Bymarka", "Strindamarka"];
+  final List<List<LatLng>> _mapCoordinates =
+      []; /* [
     [LatLng(10, 10), LatLng(20, 20)],
     [LatLng(20, 20), LatLng(30, 30)]
-  ];
+  ];*/
   final List<TextEditingController> _mapNameControllers = [];
   final List<bool> _showDeleteIcon = [];
 
@@ -45,19 +47,25 @@ class _DefineMapPageState extends State<DefineMapPage> {
   final TextStyle columnNameStyle =
       const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
 
+  bool _loadingData = true;
+
   @override
   void initState() {
     super.initState();
 
     _newCoordinatesText = coordinatesPlaceholder;
 
-    for (String mapName in _mapNames) {
+    /*for (String mapName in _mapNames) {
       TextEditingController controller = TextEditingController();
       controller.text = mapName;
       _mapNameControllers.add(controller);
 
       _showDeleteIcon.add(true);
-    }
+    }*/
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _readMapData();
+    });
   }
 
   // TODO: Add image of map?
@@ -67,12 +75,14 @@ class _DefineMapPageState extends State<DefineMapPage> {
         child: Column(children: [
       Flexible(
           flex: 2,
-          child: SingleChildScrollView(
-              child: DataTable(
-                  border: TableBorder.symmetric(),
-                  showCheckboxColumn: false,
-                  columns: _tableColumns(),
-                  rows: _existingMapRows() + [_newMapRow()]))),
+          child: _loadingData
+              ? const Text('Laster data..') // TODO: finere
+              : SingleChildScrollView(
+                  child: DataTable(
+                      border: TableBorder.symmetric(),
+                      showCheckboxColumn: false,
+                      columns: _tableColumns(),
+                      rows: _existingMapRows() + [_newMapRow()]))),
       const SizedBox(height: 10),
       _helpTextWidgets(),
       const SizedBox(height: 10),
@@ -101,7 +111,74 @@ class _DefineMapPageState extends State<DefineMapPage> {
     });
   }
 
-  void _readMapData() async {}
+  void _readMapData() async {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+
+    CollectionReference farmCollection =
+        FirebaseFirestore.instance.collection('farms');
+    DocumentReference farmDoc = farmCollection.doc(uid);
+
+    Map<String, Map<String, dynamic>> en;
+    Map<String, Map<String, List<dynamic>>> to;
+    Map<String, Map<String, List<double>>> egen;
+
+    LinkedHashMap<String, dynamic> dataMap;
+    TextEditingController textController;
+    List<List<double>> coordinates;
+    List<double> nw;
+    List<double> se;
+
+    List<List<LatLng>> _mapCoordinates = [
+      [LatLng(10, 10), LatLng(20, 20)],
+      [LatLng(20, 20), LatLng(30, 30)]
+    ];
+
+    await farmDoc.get().then((doc) => {
+          if (doc.exists)
+            {
+              dataMap = doc.get('maps'),
+              debugPrint(dataMap.runtimeType.toString()),
+              debugPrint(dataMap.toString()),
+              en = dataMap.map(
+                  (key, value) => MapEntry(key, value as Map<String, dynamic>)),
+              debugPrint(en.runtimeType.toString()),
+              debugPrint(en.toString()),
+              to = en.map((key, value) => MapEntry(
+                  key,
+                  value.map(
+                      (key, value) => MapEntry(key, value as List<dynamic>)))),
+              debugPrint(to.runtimeType.toString()),
+              debugPrint(to.toString()),
+              egen = to.map((key, value) => MapEntry(
+                  key,
+                  value.map((key, value) =>
+                      MapEntry(key, value.map((e) => e as double).toList())))),
+              debugPrint(egen.runtimeType.toString()),
+              debugPrint(egen.toString()),
+              for (MapEntry<String, Map<String, List<double>>> data
+                  in egen.entries)
+                {
+                  setState(() {
+                    _mapNames.add(data.key);
+                    textController = TextEditingController();
+                    textController.text = data.key;
+                    _mapNameControllers.add(textController);
+                    coordinates = data.value.values.toList();
+                    debugPrint(coordinates.runtimeType.toString());
+                    debugPrint(coordinates.toString());
+                    _mapCoordinates.add([
+                      LatLng(coordinates[0][0], coordinates[0][1]),
+                      LatLng(coordinates[1][0], coordinates[1][1])
+                    ]);
+                    _showDeleteIcon.add(true);
+                  })
+                }
+            }
+        });
+    setState(() {
+      _loadingData = false;
+    });
+  }
 
   void _saveMapData() async {
     Map dataMap = <String, Map<String, List<double>>>{};
