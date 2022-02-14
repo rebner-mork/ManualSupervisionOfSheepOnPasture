@@ -87,7 +87,6 @@ class _DefineMapPageState extends State<DefineMapPage> {
   }
 
   void _onCornerMarked(List<LatLng> points) {
-    // TODO: limit map area?
     setState(() {
       if (points.length == 1) {
         _helpText = helpTextSouthEast;
@@ -197,6 +196,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
         _saveMapData();
         setState(() {
           _showDeleteIcon[index] = true;
+          _helpText = '';
         });
       } else {
         setState(() {
@@ -224,6 +224,8 @@ class _DefineMapPageState extends State<DefineMapPage> {
             showMap = false;
             _newCoordinatesText = coordinatesPlaceholder;
             _newMapNameController = TextEditingController();
+
+            _helpText = '';
           });
           _saveMapData();
         } else {
@@ -418,6 +420,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
                 _mapNameControllers[index].text = _mapNames[index],
                 setState(() {
                   _showDeleteIcon[index] = true;
+                  _helpText = '';
                 })
               },
             ),
