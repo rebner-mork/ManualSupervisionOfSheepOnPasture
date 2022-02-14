@@ -38,8 +38,6 @@ class _DefineMapState extends State<DefineMap> {
           maxZoom: 18,
           center: LatLng(65, 13),
           onLongPress: (tapPosition, point) {
-            debugPrint(point.toString());
-
             if (_markers.isEmpty ||
                 (_markers.length == 1 &&
                     _isSecondMarkerPlacedCorrectly(point))) {

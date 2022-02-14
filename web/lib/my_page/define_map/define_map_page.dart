@@ -42,7 +42,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
   static const String secondMarkerIncorrectlyPlaced =
       "Sørøstlig hjørne må være sørøst for nordvest-markøren. Klikk og hold på kartet på nytt for å markere sørøstlig hjørne av beiteområdet";
 
-  final TextStyle buttonTextStyle = const TextStyle(fontSize: 18);
+  final TextStyle largerTextStyle = const TextStyle(fontSize: 18);
   final TextStyle columnNameStyle =
       const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
 
@@ -66,7 +66,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
           child: _loadingData
               ? Text(
                   'Laster data...',
-                  style: buttonTextStyle,
+                  style: largerTextStyle,
                 )
               : SingleChildScrollView(
                   child: DataTable(
@@ -116,8 +116,8 @@ class _DefineMapPageState extends State<DefineMapPage> {
     CollectionReference farmCollection =
         FirebaseFirestore.instance.collection('farms');
     DocumentReference farmDoc = farmCollection.doc(uid);
-    Map<String, Map<String, List<double>>> dataMap;
 
+    Map<String, Map<String, List<double>>> dataMap;
     LinkedHashMap<String, dynamic>? linkedHashMap;
     TextEditingController textController;
     List<List<double>> coordinates;
@@ -128,17 +128,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
               linkedHashMap = doc.get('maps'),
               if (linkedHashMap != null)
                 {
-                  dataMap = linkedHashMap!
-                      .map((key, value) =>
-                          MapEntry(key, value as Map<String, dynamic>))
-                      .map((key, value) => MapEntry(
-                          key,
-                          value.map((key, value) =>
-                              MapEntry(key, value as List<dynamic>))))
-                      .map((key, value) => MapEntry(
-                          key,
-                          value.map((key, value) => MapEntry(
-                              key, value.map((e) => e as double).toList())))),
+                  dataMap = _castFromDynamic(linkedHashMap),
                   for (MapEntry<String, Map<String, List<double>>> data
                       in dataMap.entries)
                     {
@@ -185,6 +175,17 @@ class _DefineMapPageState extends State<DefineMapPage> {
               farmDoc.set({'maps': dataMap, 'name': null, 'address': null})
             },
         });
+  }
+
+  _castFromDynamic(LinkedHashMap<String, dynamic>? linkedHashMap) {
+    return linkedHashMap!
+        .map((key, value) => MapEntry(key, value as Map<String, dynamic>))
+        .map((key, value) => MapEntry(key,
+            value.map((key, value) => MapEntry(key, value as List<dynamic>))))
+        .map((key, value) => MapEntry(
+            key,
+            value.map((key, value) =>
+                MapEntry(key, value.map((e) => e as double).toList()))));
   }
 
   void _saveChangedMap(int index) {
@@ -335,7 +336,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
               style: ButtonStyle(
                   fixedSize:
                       MaterialStateProperty.all(const Size.fromHeight(35))),
-              child: Text('Lagre', style: buttonTextStyle),
+              child: Text('Lagre', style: largerTextStyle),
               onPressed: () => _saveNewMap(),
             ),
             const SizedBox(width: 10),
@@ -343,7 +344,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
               style: ButtonStyle(
                   fixedSize:
                       MaterialStateProperty.all(const Size.fromHeight(35)),
-                  textStyle: MaterialStateProperty.all(buttonTextStyle),
+                  textStyle: MaterialStateProperty.all(largerTextStyle),
                   backgroundColor: MaterialStateProperty.all(Colors.red)),
               child: const Text("Avbryt"),
               onPressed: () {
@@ -360,7 +361,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
             style: ButtonStyle(
                 fixedSize:
                     MaterialStateProperty.all(const Size.fromHeight(35))),
-            child: Text("Legg til", style: buttonTextStyle),
+            child: Text("Legg til", style: largerTextStyle),
             onPressed: () {
               setState(() {
                 showMap = true;
@@ -403,7 +404,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
                       MaterialStateProperty.all(const Size.fromHeight(35))),
               child: Text(
                 "Lagre",
-                style: buttonTextStyle,
+                style: largerTextStyle,
               ),
               onPressed: () => _saveChangedMap(index),
             ),
@@ -415,7 +416,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
                   backgroundColor: MaterialStateProperty.all(Colors.red)),
               child: Text(
                 "Avbryt",
-                style: buttonTextStyle,
+                style: largerTextStyle,
               ),
               onPressed: () => {
                 _mapNameControllers[index].text = _mapNames[index],
