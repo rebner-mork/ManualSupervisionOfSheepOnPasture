@@ -12,8 +12,6 @@ class DefineMapPage extends StatefulWidget {
 
   @override
   State<DefineMapPage> createState() => _DefineMapPageState();
-
-  static const String route = 'define-map';
 }
 
 class _DefineMapPageState extends State<DefineMapPage> {

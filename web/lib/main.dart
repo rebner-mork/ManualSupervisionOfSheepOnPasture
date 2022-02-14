@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:web/main_tabs/main_tabs.dart';
-import 'package:web/my_page/define_map/define_map_page.dart';
 import 'firebase_options.dart';
 import 'package:web/register/register_user_page.dart';
 import 'package:web/firebase_options.dart';
@@ -37,8 +36,7 @@ class _MyAppState extends State<MyApp> {
         routes: {
           LoginPage.route: (context) => const LoginPage(),
           RegisterUserPage.route: (context) => const RegisterUserPage(),
-          MainTabs.route: (context) => const MainTabs(),
-          DefineMapPage.route: (context) => const DefineMapPage()
+          MainTabs.route: (context) => const MainTabs()
         },
         onUnknownRoute: (settings) => MaterialPageRoute(
             builder: (context) =>
