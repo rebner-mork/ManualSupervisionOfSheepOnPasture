@@ -17,23 +17,12 @@ class DefineMap extends StatefulWidget {
   final Function() secondMarkerIncorrectlyPlaced;
 }
 
-// TODO: Restrict marker-distance
 class _DefineMapState extends State<DefineMap> {
   _DefineMapState();
 
-  final String mapType = 'topo4';
   MapController _mapController = MapController();
-
-  final List<Marker> _markers = [];
-
   bool _rectangleDrawn = false;
-
-  Future<void> _moveToStartArea() async {
-    LatLng pos = await map_utils.getDevicePosition();
-    setState(() {
-      _mapController.move(pos, _mapController.zoom);
-    });
-  }
+  final List<Marker> _markers = [];
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +64,7 @@ class _DefineMapState extends State<DefineMap> {
         layers: [
           TileLayerOptions(
             urlTemplate:
-                "https://opencache{s}.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=$mapType&zoom={z}&x={x}&y={y}",
+                "https://opencache{s}.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}",
             subdomains: ['', '2', '3'],
             attributionBuilder: (_) {
               return const Text(

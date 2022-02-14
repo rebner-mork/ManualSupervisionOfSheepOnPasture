@@ -24,9 +24,10 @@ class _DefineMapPageState extends State<DefineMapPage> {
   final List<TextEditingController> _mapNameControllers = [];
   final List<bool> _showDeleteIcon = [];
 
-  late String _newCoordinatesText;
-  List<LatLng> _newCoordinates = [];
   TextEditingController _newMapNameController = TextEditingController();
+  List<LatLng> _newCoordinates = [];
+  late String _newCoordinatesText;
+  static const String coordinatesPlaceholder = "(?, ?), (?, ?)";
 
   bool showMap = false;
   bool _loadingData = true;
@@ -40,7 +41,6 @@ class _DefineMapPageState extends State<DefineMapPage> {
       "Klikk på lagre-knappen når du har skrevet inn navn på kartområdet";
   static const String secondMarkerIncorrectlyPlaced =
       "Sørøstlig hjørne må være sørøst for nordvest-markøren. Klikk og hold på kartet på nytt for å markere sørøstlig hjørne av beiteområdet";
-  static const String coordinatesPlaceholder = "(?, ?), (?, ?)";
 
   final TextStyle buttonTextStyle = const TextStyle(fontSize: 18);
   final TextStyle columnNameStyle =
@@ -57,7 +57,6 @@ class _DefineMapPageState extends State<DefineMapPage> {
     });
   }
 
-  // TODO: Add image of map
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -315,13 +314,15 @@ class _DefineMapPageState extends State<DefineMapPage> {
   DataRow _newMapRow() {
     return DataRow(
         color:
-            showMap ? MaterialStateProperty.all(Colors.yellow.shade300) : null,
+            showMap ? MaterialStateProperty.all(Colors.yellow.shade200) : null,
         cells: [
-          DataCell(showMap
-              ? TextField(
-                  controller: _newMapNameController,
-                  decoration: const InputDecoration(hintText: 'Skriv navn'))
-              : Container()),
+          DataCell(
+              showMap
+                  ? TextField(
+                      controller: _newMapNameController,
+                      decoration: const InputDecoration(hintText: 'Skriv navn'))
+                  : Container(),
+              showEditIcon: showMap ? true : false),
           DataCell(showMap ? Text(_newCoordinatesText) : Container()),
           DataCell(_newMapCell())
         ]);
