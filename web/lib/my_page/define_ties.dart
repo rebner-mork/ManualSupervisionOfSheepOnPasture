@@ -43,11 +43,18 @@ class _MyTiesState extends State<MyTies> {
 
   TextStyle largerTextStyle = const TextStyle(fontSize: 16);
   TextStyle columnNameTextStyle =
-      const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
+      const TextStyle(fontSize: 19, fontWeight: FontWeight.bold);
 
   @override
   void initState() {
     super.initState();
+
+    debugPrint((icons[0] ==
+            Icon(
+              FontAwesome5.black_tie, // Icons.stop
+              color: Colors.red,
+            ))
+        .toString());
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       // TODO: les inn fra db istedenfor
@@ -62,6 +69,21 @@ class _MyTiesState extends State<MyTies> {
       });
     });
   }
+
+  final List<Color> standardColors = [
+    Colors.red,
+    Colors.blue,
+    Colors.yellow,
+    Colors.green,
+    //Colors.orange
+  ];
+
+  final List<Icon> icons = [
+    Icon(
+      FontAwesome5.black_tie, // Icons.stop
+      color: Colors.red,
+    )
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -91,6 +113,33 @@ class _MyTiesState extends State<MyTies> {
                           .entries
                           .map((MapEntry<int, Color> data) => DataRow(cells: [
                                 DataCell(Row(children: [
+                                  DropdownButton<Icon>(
+                                      value: icons[0]
+                                      /*null*/ /*Icon(
+                                        FontAwesome5.black_tie, // Icons.stop
+                                        color: data.value,
+                                      )*/
+                                      ,
+                                      items: standardColors
+                                          .map((Color color) =>
+                                              DropdownMenuItem<Icon>(
+                                                  value: Icon(
+                                                    FontAwesome5
+                                                        .black_tie, // Icons.stop
+                                                    color: color,
+                                                  ),
+                                                  child: Icon(
+                                                    FontAwesome5
+                                                        .black_tie, // Icons.stop
+                                                    color: color,
+                                                  )))
+                                          .toList(),
+                                      onChanged: (Icon? newIcon) {
+                                        debugPrint(newIcon!.color.toString());
+                                        setState(() {
+                                          _tieColors[data.key] = newIcon.color!;
+                                        });
+                                      }),
                                   Icon(
                                     FontAwesome5.black_tie, // Icons.stop
                                     color: data.value,
@@ -99,7 +148,7 @@ class _MyTiesState extends State<MyTies> {
                                   Text(
                                     colorToString[data.value].toString(),
                                     style: largerTextStyle,
-                                  )
+                                  ),
                                 ])),
                                 DataCell(Center(
                                     child: DropdownButton<int>(
@@ -107,7 +156,10 @@ class _MyTiesState extends State<MyTies> {
                                   items: <int>[0, 1, 2, 3, 4, 5, 6]
                                       .map((int value) => DropdownMenuItem<int>(
                                           value: value,
-                                          child: Text(value.toString())))
+                                          child: Text(
+                                            value.toString(),
+                                            style: largerTextStyle,
+                                          )))
                                       .toList(),
                                   onChanged: (int? newValue) {
                                     setState(() {
