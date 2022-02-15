@@ -67,37 +67,55 @@ Point getTileIndexes(double latitude, double longitude, int zoom) {
   return Point(_xTileIndex(longitude, zoom), _yTileIndex(latitude, zoom));
 }
 
-String _getTileUrl(String urlTemplate, int x, int y, int zoom) {
+String _getTileUrl(
+    String urlTemplate, int x, int y, int zoom, List<String> subdomains) {
+  var random = Random();
   return urlTemplate
       .replaceFirst("{z}", zoom.toString())
       .replaceFirst("{x}", x.toString())
-      .replaceFirst("{y}", y.toString());
+      .replaceFirst("{y}", y.toString())
+      .replaceFirst("{s}", subdomains[random.nextInt(subdomains.length)]);
 }
 
-Future<void> _downloadTile(int x, int y, int z, String urlTemplate) async {
-  Directory baseDir = await getApplicationSupportDirectory();
+Future<void> _downloadTile(
+    int x, int y, int z, String urlTemplate, List<String> subdomains,
+    [bool force = false]) async {
+  Directory baseDir = await getApplicationDocumentsDirectory();
   String basePath = baseDir.path;
   String subPath = "/maps/" + z.toString() + "/" + x.toString();
   await Directory(basePath + subPath).create(recursive: true);
   String fileName = "/" + y.toString() + ".png";
-  var response = await http.get(Uri.parse(_getTileUrl(urlTemplate, x, y, z)));
-  File(basePath + subPath + fileName).writeAsBytesSync(response.bodyBytes);
+
+  if (force || !File(basePath + subPath + fileName).existsSync()) {
+    var response = await http
+        .get(Uri.parse(_getTileUrl(urlTemplate, x, y, z, subdomains)));
+    File(basePath + subPath + fileName).writeAsBytesSync(response.bodyBytes);
+  }
 }
 
-// TODO ikke returnere future siden den bare skal suse i bakgrunnen???????????
+// TODO Should this return Future<void> or just void ???
 Future<void> downlaodTiles(
-    String urlTemplate, Point northWest, Point southEast, int zoom) async {
-  //TODO legge inn listeparameter for zoom slik at man kan ta mange tiles i en smekk
-  //TODO legge inn variasjon på subdomener
+    Point northWest, Point southEast, int minZoom, int maxZoom) async {
+  String urlTemplate =
+      "https://opencache{s}.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}";
+  final List<String> subdomains = ["", "2", "3"];
 
-  int west = _xTileIndex(northWest.y.toDouble(), zoom);
-  int east = _xTileIndex(southEast.y.toDouble(), zoom);
-  int north = _yTileIndex(northWest.x.toDouble(), zoom);
-  int south = _yTileIndex(southEast.x.toDouble(), zoom);
+  for (int zoom = minZoom; zoom <= maxZoom; zoom++) {
+    int west = _xTileIndex(northWest.y.toDouble(), zoom);
+    int east = _xTileIndex(southEast.y.toDouble(), zoom);
+    //-1 to compesate for rounding down when calculating tile indeces
+    int north = _yTileIndex(northWest.x.toDouble(), zoom) - 1;
+    int south = _yTileIndex(southEast.x.toDouble(), zoom);
 
-  for (int x = west; x <= east; x++) {
-    for (int y = north; y <= south; y++) {
-      await _downloadTile(x, y, zoom, urlTemplate);
+    for (int x = west; x <= east; x++) {
+      for (int y = north; y <= south; y++) {
+        await _downloadTile(x, y, zoom, urlTemplate, subdomains, true);
+      }
     }
   }
+}
+
+Future<String> getOffllineUrlTemplate() async {
+  Directory baseDir = await getApplicationDocumentsDirectory();
+  return baseDir.path + "/maps/{z}/{x}/{y}.png";
 }

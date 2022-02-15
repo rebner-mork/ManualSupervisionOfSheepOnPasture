@@ -1,26 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map/plugin_api.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:async';
 
 import '../utils/map_utils.dart' as map_utils;
 
 class Map extends StatefulWidget {
-  const Map({Key? key}) : super(key: key);
+  Map(this.southWest, this.northEast, this.urlTemplate, {Key? key})
+      : super(key: key);
 
   static const String route = 'map';
+  late String urlTemplate;
+  late LatLng southWest;
+  late LatLng northEast;
 
   @override
   State<Map> createState() => _MapState();
 }
 
 class _MapState extends State<Map> {
-  final String mapType = 'topo4';
   MapController _mapController = MapController();
   Marker _currentPositionMarker =
       map_utils.getDevicePositionMarker(LatLng(0, 0));
-  late Timer timer;
   final List<LatLng> _movementPoints = [];
+  late Timer timer;
 
   Future<void> _updateMap() async {
     LatLng pos = await map_utils.getDevicePosition();
@@ -51,20 +55,23 @@ class _MapState extends State<Map> {
         options: MapOptions(
           onMapCreated: (c) {
             _mapController = c;
-            _updateMap();
           },
-          minZoom: 5,
-          maxZoom: 18,
+          zoom: 15,
+          minZoom: 15,
+          maxZoom: 17,
+          swPanBoundary: widget.southWest,
+          nePanBoundary: widget.northEast,
+          center: LatLngBounds(widget.southWest, widget.northEast).center,
         ),
         layers: [
           TileLayerOptions(
-            urlTemplate:
-                "https://opencache{s}.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=$mapType&zoom={z}&x={x}&y={y}",
-            subdomains: ['', '2', '3'],
+            tileProvider: const FileTileProvider(),
+            urlTemplate: widget.urlTemplate,
+            errorImage: const AssetImage("images/stripes.png"),
             attributionBuilder: (_) {
               return const Text(
                 "Kartverket",
-                style: TextStyle(color: Colors.black, fontSize: 20),
+                style: TextStyle(color: Colors.black, fontSize: 10),
               );
             },
           ),
