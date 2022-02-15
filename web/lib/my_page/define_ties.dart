@@ -64,6 +64,11 @@ class _MyTiesState extends State<MyTies> {
   bool _equalValues = false;
   String _helpText = '';
 
+  final String nonUniqueColorFeedback =
+      'Slipsfarge må være unik'; // TODO: static
+  final String nonUniqueLambsFeedback =
+      'Antall lam må være unikt'; // TODO: static
+
   TextStyle largerTextStyle = const TextStyle(fontSize: 16);
   TextStyle columnNameTextStyle =
       const TextStyle(fontSize: 19, fontWeight: FontWeight.bold);
@@ -156,6 +161,9 @@ class _MyTiesState extends State<MyTies> {
                                                   _tieLambs.length) {
                                                 _helpText = '';
                                                 _equalValues = false;
+                                              } else {
+                                                _helpText =
+                                                    nonUniqueLambsFeedback;
                                               }
                                             });
                                           }
@@ -178,11 +186,25 @@ class _MyTiesState extends State<MyTies> {
                                         )))
                                     .toList(),
                                 onChanged: (int? newValue) {
-                                  // TODO: check if number of lambs already defined
-                                  setState(() {
-                                    _tieLambs[data.key] = newValue!;
-                                    _valuesChanged = true;
-                                  });
+                                  if (newValue! != _tieLambs[data.key]) {
+                                    debugPrint("JA");
+                                    setState(() {
+                                      _tieLambs[data.key] = newValue;
+                                      _valuesChanged = true;
+
+                                      if (_tieLambs.toSet().length <
+                                          _tieLambs.length) {
+                                        _helpText = 'Antall lam må være unikt';
+                                        _equalValues = true;
+                                      } else if (_tieColors.toSet().length ==
+                                          _tieColors.length) {
+                                        _helpText = '';
+                                        _equalValues = false;
+                                      } else {
+                                        _helpText = nonUniqueColorFeedback;
+                                      }
+                                    });
+                                  }
                                 },
                               ))),
                               DataCell(IconButton(
