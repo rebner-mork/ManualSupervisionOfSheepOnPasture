@@ -6,24 +6,19 @@ import 'package:flutter/services.dart';
 import 'map/map_widget.dart';
 import 'package:latlong2/latlong.dart';
 
-import 'dart:math';
-
 import "utils/map_utils.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  String localMapUrlTemplate = await getOffllineUrlTemplate();
   //TODO Temporary
-  await downlaodTiles(const Point(62.469501, 6.146955),
-      const Point(62.473164, 6.159678), 15, 17);
-  runApp(MyApp(localMapUrlTemplate));
+  await downlaodTiles(
+      LatLng(62.469501, 6.146955), LatLng(62.473164, 6.159678), 15, 17);
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  MyApp(this.mapUrlTemplate, {Key? key}) : super(key: key);
-
-  late String mapUrlTemplate;
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -44,8 +39,8 @@ class _MyAppState extends State<MyApp> {
         LoginPage.route: (context) => const LoginPage(),
         RegisterUserPage.route: (context) => const RegisterUserPage(),
         Map.route: (context) => Material(
-            child: Map(LatLng(62.469501, 6.146955), LatLng(62.473164, 6.159678),
-                widget.mapUrlTemplate)),
+            child:
+                Map(LatLng(62.469501, 6.146955), LatLng(62.473164, 6.159678))),
       },
     );
   }

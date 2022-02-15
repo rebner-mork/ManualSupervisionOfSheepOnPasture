@@ -6,12 +6,11 @@ import 'dart:async';
 
 import '../utils/map_utils.dart' as map_utils;
 
+// ignore: must_be_immutable
 class Map extends StatefulWidget {
-  Map(this.southWest, this.northEast, this.urlTemplate, {Key? key})
-      : super(key: key);
+  Map(this.southWest, this.northEast, {Key? key}) : super(key: key);
 
   static const String route = 'map';
-  late String urlTemplate;
   late LatLng southWest;
   late LatLng northEast;
 
@@ -25,6 +24,8 @@ class _MapState extends State<Map> {
       map_utils.getDevicePositionMarker(LatLng(0, 0));
   final List<LatLng> _movementPoints = [];
   late Timer timer;
+  late String urlTemplate;
+  bool urlTemplateLoaded = false;
 
   Future<void> _updateMap() async {
     LatLng pos = await map_utils.getDevicePosition();
@@ -35,10 +36,21 @@ class _MapState extends State<Map> {
     });
   }
 
+  Future<void> _loadUrlTemplate() async {
+    urlTemplate = await map_utils.getOffllineUrlTemplate();
+    setState(() {
+      urlTemplateLoaded = true;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     timer = Timer.periodic(const Duration(seconds: 15), (_) => _updateMap());
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _loadUrlTemplate();
+    });
   }
 
   @override
@@ -50,41 +62,44 @@ class _MapState extends State<Map> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      child: FlutterMap(
-        mapController: _mapController,
-        options: MapOptions(
-          onMapCreated: (c) {
-            _mapController = c;
-          },
-          zoom: 15,
-          minZoom: 15,
-          maxZoom: 17,
-          swPanBoundary: widget.southWest,
-          nePanBoundary: widget.northEast,
-          center: LatLngBounds(widget.southWest, widget.northEast).center,
-        ),
-        layers: [
-          TileLayerOptions(
-            tileProvider: const FileTileProvider(),
-            urlTemplate: widget.urlTemplate,
-            errorImage: const AssetImage("images/stripes.png"),
-            attributionBuilder: (_) {
-              return const Text(
-                "Kartverket",
-                style: TextStyle(color: Colors.black, fontSize: 10),
-              );
-            },
-          ),
-          MarkerLayerOptions(markers: [_currentPositionMarker], rotate: true),
-          PolylineLayerOptions(polylines: [
-            Polyline(
-                points: _movementPoints,
-                color: Colors.red,
-                isDotted: true,
-                strokeWidth: 10.0)
-          ])
-        ],
-      ),
+      child: urlTemplateLoaded
+          ? FlutterMap(
+              mapController: _mapController,
+              options: MapOptions(
+                onMapCreated: (c) {
+                  _mapController = c;
+                },
+                zoom: 15,
+                minZoom: 15,
+                maxZoom: 17,
+                swPanBoundary: widget.southWest,
+                nePanBoundary: widget.northEast,
+                center: LatLngBounds(widget.southWest, widget.northEast).center,
+              ),
+              layers: [
+                TileLayerOptions(
+                  tileProvider: const FileTileProvider(),
+                  urlTemplate: urlTemplate,
+                  errorImage: const AssetImage("images/stripes.png"),
+                  attributionBuilder: (_) {
+                    return const Text(
+                      "Kartverket",
+                      style: TextStyle(color: Colors.black, fontSize: 10),
+                    );
+                  },
+                ),
+                MarkerLayerOptions(
+                    markers: [_currentPositionMarker], rotate: true),
+                PolylineLayerOptions(polylines: [
+                  Polyline(
+                      points: _movementPoints,
+                      color: Colors.red,
+                      isDotted: true,
+                      strokeWidth: 10.0)
+                ])
+              ],
+            )
+          : const Center(child: Text("Laster inn")),
     );
   }
 }

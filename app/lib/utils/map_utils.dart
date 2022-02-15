@@ -48,11 +48,11 @@ Marker getDevicePositionMarker(LatLng pos) {
           ));
 }
 
-int _xTileIndex(double longitude, int zoom) {
+int getTileIndexX(double longitude, int zoom) {
   return (((longitude + 180) / 360) * pow(2, zoom)).floor();
 }
 
-int _yTileIndex(double latitude, int zoom) {
+int getTileIndexY(double latitude, int zoom) {
   var latitudeInRadians = latitude * (pi / 180);
   var y = ((1 -
               ((log(tan(latitudeInRadians) + (1 / cos(latitudeInRadians)))) /
@@ -60,11 +60,6 @@ int _yTileIndex(double latitude, int zoom) {
           pow(2, zoom - 1))
       .floor();
   return y;
-}
-
-//TODO brukes bare av testene
-Point getTileIndexes(double latitude, double longitude, int zoom) {
-  return Point(_xTileIndex(longitude, zoom), _yTileIndex(latitude, zoom));
 }
 
 String _getTileUrl(
@@ -95,17 +90,17 @@ Future<void> _downloadTile(
 
 // TODO Should this return Future<void> or just void ???
 Future<void> downlaodTiles(
-    Point northWest, Point southEast, int minZoom, int maxZoom) async {
+    LatLng northWest, LatLng southEast, int minZoom, int maxZoom) async {
   String urlTemplate =
       "https://opencache{s}.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}";
   final List<String> subdomains = ["", "2", "3"];
 
   for (int zoom = minZoom; zoom <= maxZoom; zoom++) {
-    int west = _xTileIndex(northWest.y.toDouble(), zoom);
-    int east = _xTileIndex(southEast.y.toDouble(), zoom);
+    int west = getTileIndexX(northWest.longitude, zoom);
+    int east = getTileIndexX(southEast.longitude, zoom);
     //-1 to compesate for rounding down when calculating tile indeces
-    int north = _yTileIndex(northWest.x.toDouble(), zoom) - 1;
-    int south = _yTileIndex(southEast.x.toDouble(), zoom);
+    int north = getTileIndexY(northWest.latitude, zoom) - 1;
+    int south = getTileIndexY(southEast.latitude, zoom);
 
     for (int x = west; x <= east; x++) {
       for (int y = north; y <= south; y++) {
