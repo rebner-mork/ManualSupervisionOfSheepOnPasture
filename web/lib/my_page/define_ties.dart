@@ -37,16 +37,8 @@ class _MyTiesState extends State<MyTies> {
   final Map<Color, int> defaultTieMap = <Color, int>{
     Colors.red: 0,
     Colors.blue: 1,
-    Colors.yellow: 2, // TODO: check if no tie
+    Colors.yellow: 2,
     Colors.green: 3
-  };
-
-  final Map<Color, String> colorToString = <Color, String>{
-    Colors.red: 'Rød',
-    Colors.blue: 'Blå',
-    Colors.yellow: 'Gul',
-    Colors.green: 'Grønn',
-    Colors.orange: 'Oransje'
   };
 
   final Map<Color, String> dialogColorToString = <Color, String>{
@@ -78,27 +70,13 @@ class _MyTiesState extends State<MyTies> {
   void initState() {
     super.initState();
 
-    /*debugPrint("Rød " + Colors.red.value.toString());
-    debugPrint("Blå " + Colors.blue.value.toString());
-    debugPrint("Gul " + Colors.yellow.value.toString());
-    debugPrint("Grønn " + Colors.green.value.toString());
-    debugPrint("Oransje" + Colors.orange.value.toString());
-    debugPrint("Rosa " + Colors.pink.value.toString());*/
-
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _readTieData();
     });
   }
 
-/*  final List<Color> standardColors = [
-    Colors.red,
-    Colors.blue,
-    Colors.yellow,
-    Colors.green,
-    Colors.orange
-  ];*/
-
 // TODO: legg til slips-knapp
+// TODO: sentrer laster data-tekst
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -132,8 +110,7 @@ class _MyTiesState extends State<MyTies> {
                                   child: Row(children: [
                                     DropdownButton<DropdownIcon>(
                                         value: DropdownIcon(data.value),
-                                        items: colorValueToColor.values
-                                            .toList()
+                                        items: possibleColors
                                             .map((Color color) =>
                                                 DropdownMenuItem<DropdownIcon>(
                                                     value: DropdownIcon(color),
@@ -141,6 +118,7 @@ class _MyTiesState extends State<MyTies> {
                                                         .icon))
                                             .toList(),
                                         onChanged: (DropdownIcon? newIcon) {
+                                          _helpText = '';
                                           Color newColor = newIcon!.icon.color!;
 
                                           if (newColor != data.value) {
@@ -168,7 +146,8 @@ class _MyTiesState extends State<MyTies> {
                                         }),
                                     const SizedBox(width: 8),
                                     Text(
-                                      colorToString[data.value].toString(),
+                                      colorValueToString[data.value.value]
+                                          .toString(),
                                       style: largerTextStyle,
                                     ),
                                   ]))),
@@ -184,6 +163,7 @@ class _MyTiesState extends State<MyTies> {
                                         )))
                                     .toList(),
                                 onChanged: (int? newValue) {
+                                  _helpText = '';
                                   if (newValue! != _tieLambs[data.key]) {
                                     setState(() {
                                       _tieLambs[data.key] = newValue;
@@ -250,7 +230,8 @@ class _MyTiesState extends State<MyTies> {
                                           _oldTieLambs = _tieLambs,
                                           setState(() {
                                             _valuesChanged = false;
-                                            // TODO: _helpText = 'Data er lagret' ellerno
+                                            _helpText =
+                                                'Data er lagret'; // TODO: fjern
                                           }),
                                           _saveTieData()
                                         }
@@ -319,24 +300,22 @@ class _MyTiesState extends State<MyTies> {
           if (doc.exists)
             {
               dataMap = doc.get('ties'),
-              debugPrint(dataMap.runtimeType.toString()),
               for (MapEntry<String, dynamic> data in dataMap.entries)
                 {
-                  _tieColors
-                      .add(colorValueToColor[int.parse(data.key, radix: 16)]!),
+                  _tieColors.add(Color(int.parse(data.key, radix: 16))),
                   _tieLambs.add(data.value as int)
                 },
-              debugPrint(_tieColors.toString()),
-              debugPrint(_tieLambs.toString()),
+              _tieColors.asMap().entries.map((MapEntry<int, Color> data) =>
+                  debugPrint(data.key.toString() + data.value.toString()))
             }
           else
             {
               for (MapEntry<Color, int> data in defaultTieMap.entries)
                 {_tieColors.add(data.key), _tieLambs.add(data.value)},
-            }, // Flere default init? bool f.eks
+            },
+          debugPrint(_tieColors.toString()),
           _oldTieColors = List.from(_tieColors),
           _oldTieLambs = List.from(_tieLambs),
-
           setState(() {
             _loadingData = false;
           })
