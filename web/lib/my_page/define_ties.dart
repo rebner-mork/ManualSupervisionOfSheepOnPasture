@@ -199,14 +199,14 @@ class _MyTiesState extends State<MyTies> {
                             ]))
                         .toList(),
                   ),
+                  const SizedBox(height: 10),
+                  Text(
+                    _helpText,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 10),
                   if (_valuesChanged)
                     Column(children: [
-                      const SizedBox(height: 10),
-                      Text(
-                        _helpText,
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 10),
                       Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -230,8 +230,7 @@ class _MyTiesState extends State<MyTies> {
                                           _oldTieLambs = _tieLambs,
                                           setState(() {
                                             _valuesChanged = false;
-                                            _helpText =
-                                                'Data er lagret'; // TODO: fjern
+                                            _helpText = 'Data er lagret';
                                           }),
                                           _saveTieData()
                                         }
@@ -252,6 +251,7 @@ class _MyTiesState extends State<MyTies> {
                                   _valuesChanged = false;
                                   _tieColors = List.from(_oldTieColors);
                                   _tieLambs = List.from(_oldTieLambs);
+                                  _helpText = '';
                                 })
                               },
                             ),
