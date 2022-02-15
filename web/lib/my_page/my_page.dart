@@ -54,8 +54,7 @@ class _MyPageState extends State<MyPage> {
       ),
       const VerticalDivider(thickness: 1, width: 1),
       if (_selectedIndex == 0) const Expanded(child: MyFarm()),
-      if (_selectedIndex == 2)
-        const Expanded(child: MyTies()) // TODO: check index
+      if (_selectedIndex == 2) const Expanded(child: MyTies())
     ]));
   }
 }

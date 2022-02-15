@@ -3,6 +3,21 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 
+class DropdownIcon {
+  DropdownIcon(Color iconColor) {
+    icon = Icon(FontAwesome5.black_tie, color: iconColor);
+  }
+
+  late Icon icon;
+
+  @override
+  bool operator ==(Object other) =>
+      other is DropdownIcon && other.icon.color == icon.color;
+
+  @override
+  int get hashCode => icon.hashCode;
+}
+
 class MyTies extends StatefulWidget {
   const MyTies({Key? key}) : super(key: key);
 
@@ -26,14 +41,16 @@ class _MyTiesState extends State<MyTies> {
     Colors.red: 'Rød',
     Colors.blue: 'Blå',
     Colors.yellow: 'Gul',
-    Colors.green: 'Grønn'
+    Colors.green: 'Grønn',
+    Colors.orange: 'Oransje'
   };
 
   final Map<Color, String> dialogColorToString = <Color, String>{
     Colors.red: 'rødt',
     Colors.blue: 'blått',
     Colors.yellow: 'gult',
-    Colors.green: 'grønt'
+    Colors.green: 'grønt',
+    Colors.orange: 'oransje'
   };
 
   //Map<Color, int> _tieMap = <Color, int>{};
@@ -48,13 +65,6 @@ class _MyTiesState extends State<MyTies> {
   @override
   void initState() {
     super.initState();
-
-    debugPrint((icons[0] ==
-            Icon(
-              FontAwesome5.black_tie, // Icons.stop
-              color: Colors.red,
-            ))
-        .toString());
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       // TODO: les inn fra db istedenfor
@@ -75,14 +85,7 @@ class _MyTiesState extends State<MyTies> {
     Colors.blue,
     Colors.yellow,
     Colors.green,
-    //Colors.orange
-  ];
-
-  final List<Icon> icons = [
-    Icon(
-      FontAwesome5.black_tie, // Icons.stop
-      color: Colors.red,
-    )
+    Colors.orange
   ];
 
   @override
@@ -112,44 +115,40 @@ class _MyTiesState extends State<MyTies> {
                           .asMap()
                           .entries
                           .map((MapEntry<int, Color> data) => DataRow(cells: [
-                                DataCell(Row(children: [
-                                  DropdownButton<Icon>(
-                                      value: icons[0]
-                                      /*null*/ /*Icon(
-                                        FontAwesome5.black_tie, // Icons.stop
-                                        color: data.value,
-                                      )*/
-                                      ,
-                                      items: standardColors
-                                          .map((Color color) =>
-                                              DropdownMenuItem<Icon>(
-                                                  value: Icon(
-                                                    FontAwesome5
-                                                        .black_tie, // Icons.stop
-                                                    color: color,
-                                                  ),
-                                                  child: Icon(
-                                                    FontAwesome5
-                                                        .black_tie, // Icons.stop
-                                                    color: color,
-                                                  )))
-                                          .toList(),
-                                      onChanged: (Icon? newIcon) {
-                                        debugPrint(newIcon!.color.toString());
-                                        setState(() {
-                                          _tieColors[data.key] = newIcon.color!;
-                                        });
-                                      }),
-                                  Icon(
-                                    FontAwesome5.black_tie, // Icons.stop
-                                    color: data.value,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    colorToString[data.value].toString(),
-                                    style: largerTextStyle,
-                                  ),
-                                ])),
+                                DataCell(Container(
+                                    constraints:
+                                        const BoxConstraints(minWidth: 115),
+                                    child: Row(children: [
+                                      DropdownButton<DropdownIcon>(
+                                          value: DropdownIcon(data.value),
+                                          items:
+                                              standardColors
+                                                  .map(
+                                                      (Color color) =>
+                                                          DropdownMenuItem<
+                                                                  DropdownIcon>(
+                                                              value:
+                                                                  DropdownIcon(
+                                                                      color),
+                                                              child:
+                                                                  DropdownIcon(
+                                                                          color)
+                                                                      .icon))
+                                                  .toList(),
+                                          onChanged: (DropdownIcon? newIcon) {
+                                            debugPrint(
+                                                newIcon!.icon.color.toString());
+                                            setState(() {
+                                              _tieColors[data.key] =
+                                                  newIcon.icon.color!;
+                                            });
+                                          }),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        colorToString[data.value].toString(),
+                                        style: largerTextStyle,
+                                      ),
+                                    ]))),
                                 DataCell(Center(
                                     child: DropdownButton<int>(
                                   value: _tieLambs[data.key],
