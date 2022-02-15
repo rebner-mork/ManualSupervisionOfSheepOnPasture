@@ -1,9 +1,11 @@
+import 'dart:collection';
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:web/utils/constants.dart';
 
 class DropdownIcon {
   DropdownIcon(Color iconColor) {
@@ -30,7 +32,7 @@ class MyTies extends StatefulWidget {
 class _MyTiesState extends State<MyTies> {
   _MyTiesState();
 
-  bool _loadingData = true; // TODO: false
+  bool _loadingData = true;
 
   final Map<Color, int> defaultTieMap = <Color, int>{
     Colors.red: 0,
@@ -76,31 +78,27 @@ class _MyTiesState extends State<MyTies> {
   void initState() {
     super.initState();
 
+    /*debugPrint("Rød " + Colors.red.value.toString());
+    debugPrint("Blå " + Colors.blue.value.toString());
+    debugPrint("Gul " + Colors.yellow.value.toString());
+    debugPrint("Grønn " + Colors.green.value.toString());
+    debugPrint("Oransje" + Colors.orange.value.toString());
+    debugPrint("Rosa " + Colors.pink.value.toString());*/
+
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      // TODO: les inn fra db istedenfor
-      for (MapEntry<Color, int> data in defaultTieMap.entries) {
-        _tieColors.add(data.key);
-        _tieLambs.add(data.value);
-      }
-
-      _oldTieColors = List.from(_tieColors);
-      _oldTieLambs = List.from(_tieLambs);
-
-      setState(() {
-        _loadingData = false;
-      });
+      _readTieData();
     });
   }
 
-  final List<Color> standardColors = [
+/*  final List<Color> standardColors = [
     Colors.red,
     Colors.blue,
     Colors.yellow,
     Colors.green,
     Colors.orange
-  ];
+  ];*/
 
-// TODO: legg til slips
+// TODO: legg til slips-knapp
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -134,7 +132,8 @@ class _MyTiesState extends State<MyTies> {
                                   child: Row(children: [
                                     DropdownButton<DropdownIcon>(
                                         value: DropdownIcon(data.value),
-                                        items: standardColors
+                                        items: colorValueToColor.values
+                                            .toList()
                                             .map((Color color) =>
                                                 DropdownMenuItem<DropdownIcon>(
                                                     value: DropdownIcon(color),
@@ -251,6 +250,7 @@ class _MyTiesState extends State<MyTies> {
                                           _oldTieLambs = _tieLambs,
                                           setState(() {
                                             _valuesChanged = false;
+                                            // TODO: _helpText = 'Data er lagret' ellerno
                                           }),
                                           _saveTieData()
                                         }
@@ -306,16 +306,49 @@ class _MyTiesState extends State<MyTies> {
         ));
   }
 
+// TODO: sort on no of lambs
+  void _readTieData() async {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    CollectionReference farmCollection =
+        FirebaseFirestore.instance.collection('farms');
+    DocumentReference farmDoc = farmCollection.doc(uid);
+
+    LinkedHashMap<String, dynamic> dataMap;
+
+    await farmDoc.get().then((doc) => {
+          if (doc.exists)
+            {
+              dataMap = doc.get('ties'),
+              debugPrint(dataMap.runtimeType.toString()),
+              for (MapEntry<String, dynamic> data in dataMap.entries)
+                {
+                  _tieColors
+                      .add(colorValueToColor[int.parse(data.key, radix: 16)]!),
+                  _tieLambs.add(data.value as int)
+                },
+              debugPrint(_tieColors.toString()),
+              debugPrint(_tieLambs.toString()),
+            }
+          else
+            {
+              for (MapEntry<Color, int> data in defaultTieMap.entries)
+                {_tieColors.add(data.key), _tieLambs.add(data.value)},
+            }, // Flere default init? bool f.eks
+          _oldTieColors = List.from(_tieColors),
+          _oldTieLambs = List.from(_tieLambs),
+
+          setState(() {
+            _loadingData = false;
+          })
+        });
+  }
+
   void _saveTieData() async {
     Map<String, int> dataMap = <String, int>{};
 
-    debugPrint(dataMap.toString());
-
     for (int i = 0; i < _tieColors.length; i++) {
-      dataMap[_tieColors[i].toString()] = _tieLambs[i];
+      dataMap[_tieColors[i].value.toRadixString(16)] = _tieLambs[i];
     }
-
-    debugPrint(dataMap.toString());
 
     String uid = FirebaseAuth.instance.currentUser!.uid;
     CollectionReference farmCollection =
