@@ -56,10 +56,13 @@ class _MyTiesState extends State<MyTies> {
   //Map<Color, int> _tieMap = <Color, int>{};
   List<Color> _tieColors = [];
   List<int> _tieLambs = [];
-  bool _valuesChanged = false;
 
   List<Color> _oldTieColors = [];
   List<int> _oldTieLambs = [];
+
+  bool _valuesChanged = false;
+  bool _equalValues = false;
+  String _helpText = '';
 
   TextStyle largerTextStyle = const TextStyle(fontSize: 16);
   TextStyle columnNameTextStyle =
@@ -134,15 +137,28 @@ class _MyTiesState extends State<MyTies> {
                                                         .icon))
                                             .toList(),
                                         onChanged: (DropdownIcon? newIcon) {
-                                          setState(() {
-                                            debugPrint(
-                                                _oldTieColors.toString());
-                                            _tieColors[data.key] =
-                                                newIcon!.icon.color!;
-                                            debugPrint(
-                                                _oldTieColors.toString());
-                                            _valuesChanged = true;
-                                          });
+                                          // TODO: check if color already defined
+                                          Color newColor = newIcon!.icon.color!;
+
+                                          if (newColor != data.value) {
+                                            setState(() {
+                                              _tieColors[data.key] = newColor;
+                                              _valuesChanged = true;
+
+                                              if (_tieColors.toSet().length <
+                                                  _tieColors.length) {
+                                                _helpText =
+                                                    'Slipsfarge må være unik'; // \n(${dialogColorToString[newColor]} slips er definert flere ganger)';
+                                                _equalValues = true;
+                                              } else if (_tieLambs
+                                                      .toSet()
+                                                      .length ==
+                                                  _tieLambs.length) {
+                                                _helpText = '';
+                                                _equalValues = false;
+                                              }
+                                            });
+                                          }
                                         }),
                                     const SizedBox(width: 8),
                                     Text(
@@ -162,6 +178,7 @@ class _MyTiesState extends State<MyTies> {
                                         )))
                                     .toList(),
                                 onChanged: (int? newValue) {
+                                  // TODO: check if number of lambs already defined
                                   setState(() {
                                     _tieLambs[data.key] = newValue!;
                                     _valuesChanged = true;
@@ -184,45 +201,65 @@ class _MyTiesState extends State<MyTies> {
                         .toList(),
                   ),
                   if (_valuesChanged)
-                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                      ElevatedButton(
-                          style: ButtonStyle(
-                              fixedSize: MaterialStateProperty.all(
-                                  const Size.fromHeight(35))),
-                          child: Text(
-                            "Lagre",
-                            style: largerTextStyle,
-                          ),
-                          onPressed: () => {
-                                _oldTieColors = _tieColors,
-                                _oldTieLambs = _tieLambs,
-                                //_saveChangedMap(index), TODO: save to db
-                                _valuesChanged = false
-                              }),
-                      const SizedBox(width: 10),
-                      ElevatedButton(
-                        style: ButtonStyle(
-                            fixedSize: MaterialStateProperty.all(
-                                const Size.fromHeight(35)),
-                            backgroundColor:
-                                MaterialStateProperty.all(Colors.red)),
-                        child: Text(
-                          "Avbryt",
-                          style: largerTextStyle,
-                        ),
-                        onPressed: () => {
-                          /*_mapNameControllers[index].text =
-                                                _mapNames[index],*/
-                          setState(() {
-                            _valuesChanged = false;
-                            // dette er referanseoverføring
-                            _tieColors = List.from(_oldTieColors);
-                            _tieLambs = List.from(_oldTieLambs);
-                            //_showDeleteIcon[index] = true;
-                            //_helpText = '';
-                          })
-                        },
+                    Column(children: [
+                      const SizedBox(height: 10),
+                      Text(
+                        _helpText,
+                        textAlign: TextAlign.center,
                       ),
+                      const SizedBox(height: 10),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                                style: ButtonStyle(
+                                    fixedSize: MaterialStateProperty.all(
+                                        const Size.fromHeight(35)),
+                                    backgroundColor: MaterialStateProperty.all(
+                                        _equalValues
+                                            ? Colors.grey
+                                            : Colors.green)),
+                                child: Text(
+                                  "Lagre",
+                                  style: largerTextStyle,
+                                  textAlign: TextAlign.center,
+                                ),
+                                onPressed: () => {
+                                      if (!_equalValues)
+                                        {
+                                          _oldTieColors = _tieColors,
+                                          _oldTieLambs = _tieLambs,
+                                          setState(() {
+                                            _valuesChanged = false;
+                                          }),
+                                          //_saveChangedMap(index), TODO: save to db
+                                        }
+                                    }),
+                            const SizedBox(width: 10),
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                  fixedSize: MaterialStateProperty.all(
+                                      const Size.fromHeight(35)),
+                                  backgroundColor:
+                                      MaterialStateProperty.all(Colors.red)),
+                              child: Text(
+                                "Avbryt",
+                                style: largerTextStyle,
+                              ),
+                              onPressed: () => {
+                                /*_mapNameControllers[index].text =
+                                                _mapNames[index],*/
+                                setState(() {
+                                  _valuesChanged = false;
+                                  // dette er referanseoverføring
+                                  _tieColors = List.from(_oldTieColors);
+                                  _tieLambs = List.from(_oldTieLambs);
+                                  //_showDeleteIcon[index] = true;
+                                  //_helpText = '';
+                                })
+                              },
+                            ),
+                          ])
                     ])
                 ])));
   }
@@ -252,4 +289,6 @@ class _MyTiesState extends State<MyTies> {
           ],
         ));
   }
+
+  void _saveTieData() async {}
 }
