@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 
@@ -53,7 +55,6 @@ class _MyTiesState extends State<MyTies> {
     Colors.orange: 'oransje'
   };
 
-  //Map<Color, int> _tieMap = <Color, int>{};
   List<Color> _tieColors = [];
   List<int> _tieLambs = [];
 
@@ -64,10 +65,8 @@ class _MyTiesState extends State<MyTies> {
   bool _equalValues = false;
   String _helpText = '';
 
-  final String nonUniqueColorFeedback =
-      'Slipsfarge må være unik'; // TODO: static
-  final String nonUniqueLambsFeedback =
-      'Antall lam må være unikt'; // TODO: static
+  static const String nonUniqueColorFeedback = 'Slipsfarge må være unik';
+  static const String nonUniqueLambsFeedback = 'Antall lam må være unikt';
 
   TextStyle largerTextStyle = const TextStyle(fontSize: 16);
   TextStyle columnNameTextStyle =
@@ -101,6 +100,7 @@ class _MyTiesState extends State<MyTies> {
     Colors.orange
   ];
 
+// TODO: legg til slips
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -142,7 +142,6 @@ class _MyTiesState extends State<MyTies> {
                                                         .icon))
                                             .toList(),
                                         onChanged: (DropdownIcon? newIcon) {
-                                          // TODO: check if color already defined
                                           Color newColor = newIcon!.icon.color!;
 
                                           if (newColor != data.value) {
@@ -153,7 +152,7 @@ class _MyTiesState extends State<MyTies> {
                                               if (_tieColors.toSet().length <
                                                   _tieColors.length) {
                                                 _helpText =
-                                                    'Slipsfarge må være unik'; // \n(${dialogColorToString[newColor]} slips er definert flere ganger)';
+                                                    'Slipsfarge må være unik';
                                                 _equalValues = true;
                                               } else if (_tieLambs
                                                       .toSet()
@@ -187,7 +186,6 @@ class _MyTiesState extends State<MyTies> {
                                     .toList(),
                                 onChanged: (int? newValue) {
                                   if (newValue! != _tieLambs[data.key]) {
-                                    debugPrint("JA");
                                     setState(() {
                                       _tieLambs[data.key] = newValue;
                                       _valuesChanged = true;
@@ -215,8 +213,8 @@ class _MyTiesState extends State<MyTies> {
                                 onPressed: () {
                                   showDialog(
                                       context: context,
-                                      builder: (_) => _deleteTieDialog(context,
-                                          data.key)); // Avbryt sletting? Nei, si at det ikke kan undoes
+                                      builder: (_) =>
+                                          _deleteTieDialog(context, data.key));
                                 },
                               ))
                             ]))
@@ -254,7 +252,7 @@ class _MyTiesState extends State<MyTies> {
                                           setState(() {
                                             _valuesChanged = false;
                                           }),
-                                          //_saveChangedMap(index), TODO: save to db
+                                          _saveTieData()
                                         }
                                     }),
                             const SizedBox(width: 10),
@@ -269,15 +267,10 @@ class _MyTiesState extends State<MyTies> {
                                 style: largerTextStyle,
                               ),
                               onPressed: () => {
-                                /*_mapNameControllers[index].text =
-                                                _mapNames[index],*/
                                 setState(() {
                                   _valuesChanged = false;
-                                  // dette er referanseoverføring
                                   _tieColors = List.from(_oldTieColors);
                                   _tieLambs = List.from(_oldTieLambs);
-                                  //_showDeleteIcon[index] = true;
-                                  //_helpText = '';
                                 })
                               },
                             ),
@@ -292,6 +285,7 @@ class _MyTiesState extends State<MyTies> {
         child: AlertDialog(
           title:
               Text('Slette ${dialogColorToString[_tieColors[index]]} slips?'),
+          content: const Text('Handlingen kan ikke angres'),
           actions: [
             TextButton(
                 onPressed: () {
@@ -300,7 +294,7 @@ class _MyTiesState extends State<MyTies> {
                     _tieColors.removeAt(index);
                     _tieLambs.removeAt(index);
                   });
-                  //_saveTieData(); TODO
+                  _saveTieData();
                 },
                 child: const Text('Ja, slett')),
             TextButton(
@@ -312,5 +306,36 @@ class _MyTiesState extends State<MyTies> {
         ));
   }
 
-  void _saveTieData() async {}
+  void _saveTieData() async {
+    Map<String, int> dataMap = <String, int>{};
+
+    debugPrint(dataMap.toString());
+
+    for (int i = 0; i < _tieColors.length; i++) {
+      dataMap[_tieColors[i].toString()] = _tieLambs[i];
+    }
+
+    debugPrint(dataMap.toString());
+
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    CollectionReference farmCollection =
+        FirebaseFirestore.instance.collection('farms');
+    DocumentReference farmDoc = farmCollection.doc(uid);
+
+    await farmDoc.get().then((doc) => {
+          if (doc.exists)
+            {
+              farmDoc.update({'ties': dataMap})
+            }
+          else
+            {
+              farmDoc.set({
+                'name': null,
+                'address': null,
+                'maps': null,
+                'ties': dataMap
+              })
+            }
+        });
+  }
 }
