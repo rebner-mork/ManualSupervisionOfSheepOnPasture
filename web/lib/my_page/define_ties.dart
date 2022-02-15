@@ -54,9 +54,12 @@ class _MyTiesState extends State<MyTies> {
   };
 
   //Map<Color, int> _tieMap = <Color, int>{};
-  final List<Color> _tieColors = [];
-  final List<int> _tieLambs = [];
-  final List<bool> _showDeleteIcon = [];
+  List<Color> _tieColors = [];
+  List<int> _tieLambs = [];
+  bool _valuesChanged = false;
+
+  List<Color> _oldTieColors = [];
+  List<int> _oldTieLambs = [];
 
   TextStyle largerTextStyle = const TextStyle(fontSize: 16);
   TextStyle columnNameTextStyle =
@@ -71,8 +74,10 @@ class _MyTiesState extends State<MyTies> {
       for (MapEntry<Color, int> data in defaultTieMap.entries) {
         _tieColors.add(data.key);
         _tieLambs.add(data.value);
-        _showDeleteIcon.add(true);
       }
+
+      _oldTieColors = List.from(_tieColors);
+      _oldTieLambs = List.from(_tieLambs);
 
       setState(() {
         _loadingData = false;
@@ -93,131 +98,133 @@ class _MyTiesState extends State<MyTies> {
     return Material(
         child: _loadingData
             ? const Text('Laster data...')
-            : Column(children: [
-                ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 600),
-                    child: DataTable(
-                      border: TableBorder.symmetric(),
-                      columns: [
-                        DataColumn(
-                            label: Text(
-                          'Slipsfarge',
-                          style: columnNameTextStyle,
-                        )),
-                        DataColumn(
-                            label: Text(
-                          'Antall lam',
-                          style: columnNameTextStyle,
-                        )),
-                        const DataColumn(label: Text('')),
-                      ],
-                      rows: _tieColors
-                          .asMap()
-                          .entries
-                          .map((MapEntry<int, Color> data) => DataRow(cells: [
-                                DataCell(Container(
-                                    constraints:
-                                        const BoxConstraints(minWidth: 115),
-                                    child: Row(children: [
-                                      DropdownButton<DropdownIcon>(
-                                          value: DropdownIcon(data.value),
-                                          items:
-                                              standardColors
-                                                  .map(
-                                                      (Color color) =>
-                                                          DropdownMenuItem<
-                                                                  DropdownIcon>(
-                                                              value:
-                                                                  DropdownIcon(
-                                                                      color),
-                                                              child:
-                                                                  DropdownIcon(
-                                                                          color)
-                                                                      .icon))
-                                                  .toList(),
-                                          onChanged: (DropdownIcon? newIcon) {
+            : ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 600),
+                child: Column(children: [
+                  DataTable(
+                    border: TableBorder.symmetric(),
+                    columns: [
+                      DataColumn(
+                          label: Text(
+                        'Slipsfarge',
+                        style: columnNameTextStyle,
+                      )),
+                      DataColumn(
+                          label: Text(
+                        'Antall lam',
+                        style: columnNameTextStyle,
+                      )),
+                      const DataColumn(label: Text('')),
+                    ],
+                    rows: _tieColors
+                        .asMap()
+                        .entries
+                        .map((MapEntry<int, Color> data) => DataRow(cells: [
+                              DataCell(Container(
+                                  constraints:
+                                      const BoxConstraints(minWidth: 115),
+                                  child: Row(children: [
+                                    DropdownButton<DropdownIcon>(
+                                        value: DropdownIcon(data.value),
+                                        items: standardColors
+                                            .map((Color color) =>
+                                                DropdownMenuItem<DropdownIcon>(
+                                                    value: DropdownIcon(color),
+                                                    child: DropdownIcon(color)
+                                                        .icon))
+                                            .toList(),
+                                        onChanged: (DropdownIcon? newIcon) {
+                                          setState(() {
                                             debugPrint(
-                                                newIcon!.icon.color.toString());
-                                            setState(() {
-                                              _tieColors[data.key] =
-                                                  newIcon.icon.color!;
-                                            });
-                                          }),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        colorToString[data.value].toString(),
-                                        style: largerTextStyle,
-                                      ),
-                                    ]))),
-                                DataCell(Center(
-                                    child: DropdownButton<int>(
-                                  value: _tieLambs[data.key],
-                                  items: <int>[0, 1, 2, 3, 4, 5, 6]
-                                      .map((int value) => DropdownMenuItem<int>(
-                                          value: value,
-                                          child: Text(
-                                            value.toString(),
-                                            style: largerTextStyle,
-                                          )))
-                                      .toList(),
-                                  onChanged: (int? newValue) {
-                                    setState(() {
-                                      _tieLambs[data.key] = newValue!;
-                                    });
-                                  },
-                                ))),
-                                DataCell(_showDeleteIcon[data.key]
-                                    ? IconButton(
-                                        icon: Icon(Icons.delete,
-                                            color: Colors.grey.shade800,
-                                            size: 26),
-                                        splashRadius: 22,
-                                        hoverColor: Colors.red,
-                                        onPressed: () {
-                                          showDialog(
-                                              context: context,
-                                              builder: (_) => _deleteTieDialog(
-                                                  context, data.key));
-                                        },
-                                      )
-                                    : _refactorRowCell(data.key))
-                              ]))
-                          .toList(),
-                    ))
-              ]));
-  }
-
-  Row _refactorRowCell(int index) {
-    return Row(children: [
-      ElevatedButton(
-          style: ButtonStyle(
-              fixedSize: MaterialStateProperty.all(const Size.fromHeight(35))),
-          child: Text(
-            "Lagre",
-            style: largerTextStyle,
-          ),
-          onPressed: () => {
-                //_saveChangedMap(index),
-              }),
-      const SizedBox(width: 10),
-      ElevatedButton(
-        style: ButtonStyle(
-            fixedSize: MaterialStateProperty.all(const Size.fromHeight(35)),
-            backgroundColor: MaterialStateProperty.all(Colors.red)),
-        child: Text(
-          "Avbryt",
-          style: largerTextStyle,
-        ),
-        onPressed: () => {
-          /*_mapNameControllers[index].text =
+                                                _oldTieColors.toString());
+                                            _tieColors[data.key] =
+                                                newIcon!.icon.color!;
+                                            debugPrint(
+                                                _oldTieColors.toString());
+                                            _valuesChanged = true;
+                                          });
+                                        }),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      colorToString[data.value].toString(),
+                                      style: largerTextStyle,
+                                    ),
+                                  ]))),
+                              DataCell(Center(
+                                  child: DropdownButton<int>(
+                                value: _tieLambs[data.key],
+                                items: <int>[0, 1, 2, 3, 4, 5, 6]
+                                    .map((int value) => DropdownMenuItem<int>(
+                                        value: value,
+                                        child: Text(
+                                          value.toString(),
+                                          style: largerTextStyle,
+                                        )))
+                                    .toList(),
+                                onChanged: (int? newValue) {
+                                  setState(() {
+                                    _tieLambs[data.key] = newValue!;
+                                    _valuesChanged = true;
+                                  });
+                                },
+                              ))),
+                              DataCell(IconButton(
+                                icon: Icon(Icons.delete,
+                                    color: Colors.grey.shade800, size: 26),
+                                splashRadius: 22,
+                                hoverColor: Colors.red,
+                                onPressed: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (_) => _deleteTieDialog(context,
+                                          data.key)); // Avbryt sletting? Nei, si at det ikke kan undoes
+                                },
+                              ))
+                            ]))
+                        .toList(),
+                  ),
+                  if (_valuesChanged)
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      ElevatedButton(
+                          style: ButtonStyle(
+                              fixedSize: MaterialStateProperty.all(
+                                  const Size.fromHeight(35))),
+                          child: Text(
+                            "Lagre",
+                            style: largerTextStyle,
+                          ),
+                          onPressed: () => {
+                                _oldTieColors = _tieColors,
+                                _oldTieLambs = _tieLambs,
+                                //_saveChangedMap(index), TODO: save to db
+                                _valuesChanged = false
+                              }),
+                      const SizedBox(width: 10),
+                      ElevatedButton(
+                        style: ButtonStyle(
+                            fixedSize: MaterialStateProperty.all(
+                                const Size.fromHeight(35)),
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.red)),
+                        child: Text(
+                          "Avbryt",
+                          style: largerTextStyle,
+                        ),
+                        onPressed: () => {
+                          /*_mapNameControllers[index].text =
                                                 _mapNames[index],*/
-          setState(() {
-            _showDeleteIcon[index] = true;
-            //_helpText = '';
-          })
-        },
-      ),
-    ]);
+                          setState(() {
+                            _valuesChanged = false;
+                            // dette er referanseoverføring
+                            _tieColors = List.from(_oldTieColors);
+                            _tieLambs = List.from(_oldTieLambs);
+                            //_showDeleteIcon[index] = true;
+                            //_helpText = '';
+                          })
+                        },
+                      ),
+                    ])
+                ])));
   }
 
   BackdropFilter _deleteTieDialog(BuildContext context, int index) {
@@ -233,7 +240,6 @@ class _MyTiesState extends State<MyTies> {
                   setState(() {
                     _tieColors.removeAt(index);
                     _tieLambs.removeAt(index);
-                    // _tieLambsControllers.removeAt(index); TODO
                   });
                   //_saveTieData(); TODO
                 },
