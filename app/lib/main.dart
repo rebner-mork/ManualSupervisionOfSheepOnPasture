@@ -1,4 +1,5 @@
 import 'package:app/login/login_page.dart';
+import 'package:app/register/register_sheep.dart';
 import 'package:app/register_user/register_user_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -38,9 +39,9 @@ class _MyAppState extends State<MyApp> {
       routes: {
         LoginPage.route: (context) => const LoginPage(),
         RegisterUserPage.route: (context) => const RegisterUserPage(),
-        Map.route: (context) => Material(
-            child:
-                Map(LatLng(62.469501, 6.146955), LatLng(62.473164, 6.159678))),
+        Map.route: (context) =>
+            Map(LatLng(62.469501, 6.146955), LatLng(62.473164, 6.159678)),
+        RegisterSheep.route: (context) => const RegisterSheep('fileName'),
       },
     );
   }
