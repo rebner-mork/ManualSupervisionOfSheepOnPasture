@@ -59,6 +59,7 @@ class _MyTiesState extends State<MyTies> {
 
   bool _valuesChanged = false;
   bool _equalValues = false;
+  bool _tiesAdded = false;
   bool _tiesDeleted = false;
   String _helpText = '';
 
@@ -110,9 +111,10 @@ class _MyTiesState extends State<MyTies> {
                               .map((MapEntry<int, Color> data) =>
                                   DataRow(cells: [
                                     DataCell(Container(
-                                        color: !_tiesDeleted &&
-                                                _tieColors[data.key] !=
-                                                    _oldTieColors[data.key]
+                                        color: _tieColors[data.key] !=
+                                                    _oldTieColors[data.key] &&
+                                                !_tiesAdded &&
+                                                !_tiesDeleted
                                             ? Colors.orange.shade100
                                             : null,
                                         constraints:
@@ -148,9 +150,10 @@ class _MyTiesState extends State<MyTies> {
                                           ),
                                         ]))),
                                     DataCell(Container(
-                                        color: !_tiesDeleted &&
-                                                _tieLambs[data.key] !=
-                                                    _oldTieLambs[data.key]
+                                        color: _tieLambs[data.key] !=
+                                                    _oldTieLambs[data.key] &&
+                                                !_tiesAdded &&
+                                                !_tiesDeleted
                                             ? Colors.orange.shade100
                                             : null,
                                         child: Center(
@@ -231,6 +234,7 @@ class _MyTiesState extends State<MyTies> {
                                     _valuesChanged = false;
                                     _helpText = 'Data er lagret';
                                     _tiesDeleted = false;
+                                    _tiesAdded = false;
                                   }),
                                   _saveTieData()
                                 }
@@ -311,11 +315,10 @@ class _MyTiesState extends State<MyTies> {
 
   void _onTieAdded() {
     setState(() {
-      _tieColors.add(possibleColors.last); // TODO: sjekk
-      _tieLambs.add(0); // TODO: sjekk-funksjon
-      _oldTieColors.add(null);
-      _oldTieLambs.add(null);
+      _tieColors.add(possibleColors.last);
+      _tieLambs.add(0);
       _valuesChanged = true;
+      _tiesAdded = true;
 
       _checkEqualColors();
       if (_helpText != '') {
@@ -337,12 +340,15 @@ class _MyTiesState extends State<MyTies> {
                   setState(() {
                     _tieColors.removeAt(index);
                     _tieLambs.removeAt(index);
-                    //_oldTieColors.removeAt(index);
-                    //_oldTieLambs.removeAt(index);
+
                     _valuesChanged = true;
                     _tiesDeleted = true;
+
+                    _checkEqualColors();
+                    if (_helpText != '') {
+                      _checkEqualLambAmount();
+                    }
                   });
-                  //_saveTieData();
                 },
                 child: const Text('Ja, slett')),
             TextButton(
