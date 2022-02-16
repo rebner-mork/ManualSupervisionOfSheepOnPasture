@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:web/utils/constants.dart';
+import 'package:web/utils/styles.dart';
 
 class DropdownIcon {
   DropdownIcon(Color iconColor) {
@@ -32,8 +33,6 @@ class MyTies extends StatefulWidget {
 class _MyTiesState extends State<MyTies> {
   _MyTiesState();
 
-  bool _loadingData = true;
-
   final Map<Color, int> defaultTieMap = <Color, int>{
     Colors.red: 0,
     Colors.blue: 1,
@@ -53,10 +52,10 @@ class _MyTiesState extends State<MyTies> {
 
   List<Color> _tieColors = [];
   List<int> _tieLambs = [];
-
   List<Color?> _oldTieColors = [];
   List<int?> _oldTieLambs = [];
 
+  bool _loadingData = true;
   bool _valuesChanged = false;
   bool _equalValues = false;
   bool _tiesAdded = false;
@@ -65,10 +64,6 @@ class _MyTiesState extends State<MyTies> {
 
   static const String nonUniqueColorFeedback = 'Slipsfarge må være unik';
   static const String nonUniqueLambsFeedback = 'Antall lam må være unikt';
-
-  TextStyle largerTextStyle = const TextStyle(fontSize: 16);
-  TextStyle columnNameTextStyle =
-      const TextStyle(fontSize: 19, fontWeight: FontWeight.bold);
 
   @override
   void initState() {
@@ -111,10 +106,10 @@ class _MyTiesState extends State<MyTies> {
                               .map((MapEntry<int, Color> data) =>
                                   DataRow(cells: [
                                     DataCell(Container(
-                                        color: _tieColors[data.key] !=
-                                                    _oldTieColors[data.key] &&
-                                                !_tiesAdded &&
-                                                !_tiesDeleted
+                                        color: !_tiesAdded &&
+                                                !_tiesDeleted &&
+                                                _tieColors[data.key] !=
+                                                    _oldTieColors[data.key]
                                             ? Colors.orange.shade100
                                             : null,
                                         constraints:
@@ -150,10 +145,10 @@ class _MyTiesState extends State<MyTies> {
                                           ),
                                         ]))),
                                     DataCell(Container(
-                                        color: _tieLambs[data.key] !=
-                                                    _oldTieLambs[data.key] &&
-                                                !_tiesAdded &&
-                                                !_tiesDeleted
+                                        color: !_tiesAdded &&
+                                                !_tiesDeleted &&
+                                                _tieLambs[data.key] !=
+                                                    _oldTieLambs[data.key]
                                             ? Colors.orange.shade100
                                             : null,
                                         child: Center(
@@ -189,8 +184,8 @@ class _MyTiesState extends State<MyTies> {
                               .toList() +
                           [
                             DataRow(cells: [
-                              const DataCell(Text('')),
-                              const DataCell(Text('')),
+                              DataCell.empty,
+                              DataCell.empty,
                               DataCell(FloatingActionButton(
                                 mini: true,
                                 child: const Icon(
@@ -256,6 +251,8 @@ class _MyTiesState extends State<MyTies> {
                           _tieColors = List.from(_oldTieColors);
                           _tieLambs = List.from(_oldTieLambs);
                           _helpText = '';
+                          _tiesAdded = false;
+                          _tiesDeleted = false;
                         })
                       },
                     ),
@@ -317,6 +314,7 @@ class _MyTiesState extends State<MyTies> {
     setState(() {
       _tieColors.add(possibleColors.last);
       _tieLambs.add(0);
+      // old.add
       _valuesChanged = true;
       _tiesAdded = true;
 
