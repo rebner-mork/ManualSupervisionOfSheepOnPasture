@@ -4,24 +4,9 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:web/utils/constants.dart';
+import 'package:web/utils/custom_widgets.dart';
 import 'package:web/utils/styles.dart';
-
-class DropdownIcon {
-  DropdownIcon(Color iconColor) {
-    icon = Icon(FontAwesome5.black_tie, color: iconColor);
-  }
-
-  late Icon icon;
-
-  @override
-  bool operator ==(Object other) =>
-      other is DropdownIcon && other.icon.color == icon.color;
-
-  @override
-  int get hashCode => icon.hashCode;
-}
 
 class MyTies extends StatefulWidget {
   const MyTies({Key? key}) : super(key: key);
@@ -32,23 +17,6 @@ class MyTies extends StatefulWidget {
 
 class _MyTiesState extends State<MyTies> {
   _MyTiesState();
-
-  final Map<Color, int> defaultTieMap = <Color, int>{
-    Colors.red: 0,
-    Colors.blue: 1,
-    Colors.yellow: 2,
-    Colors.green: 3
-  };
-
-  final Map<Color, String> dialogColorToString = <Color, String>{
-    const Color(0xFFF44336): 'rødt',
-    const Color(0xFF2196F3): 'blått',
-    const Color(0xFFFFEB3B): 'gult',
-    const Color(0xFF4CAF50): 'grønt',
-    const Color(0xFFFF9800): 'oransje',
-    const Color(0xFFE91E63): 'rosa',
-    const Color(0x00000000): '\'ingen\''
-  };
 
   List<Color> _tieColors = [];
   List<int> _tieLambs = [];
@@ -371,8 +339,6 @@ class _MyTiesState extends State<MyTies> {
                   _tieColors.add(Color(int.parse(data.key, radix: 16))),
                   _tieLambs.add(data.value as int)
                 },
-              _tieColors.asMap().entries.map((MapEntry<int, Color> data) =>
-                  debugPrint(data.key.toString() + data.value.toString()))
             }
           else
             {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttericon/font_awesome5_icons.dart';
 
 InputDecoration customInputDecoration(String labelText, IconData icon,
     {bool passwordField = false,
@@ -20,4 +21,19 @@ InputDecoration customInputDecoration(String labelText, IconData icon,
 
 SizedBox inputFieldSpacer() {
   return const SizedBox(height: 18);
+}
+
+class DropdownIcon {
+  DropdownIcon(Color iconColor) {
+    icon = Icon(FontAwesome5.black_tie, color: iconColor);
+  }
+
+  late Icon icon;
+
+  @override
+  bool operator ==(Object other) =>
+      other is DropdownIcon && other.icon.color == icon.color;
+
+  @override
+  int get hashCode => icon.hashCode;
 }
