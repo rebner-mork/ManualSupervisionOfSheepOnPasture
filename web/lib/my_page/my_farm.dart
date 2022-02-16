@@ -140,8 +140,8 @@ class _MyFarmState extends State<MyFarm> {
     await farmDoc.get().then((doc) => {
           if (doc.exists)
             {
-              farmNameController.text = doc.get('name'),
-              farmAddressController.text = doc.get('address'),
+              farmNameController.text = doc.get('name') ?? '',
+              farmAddressController.text = doc.get('address') ?? '',
             }
         });
     setState(() {

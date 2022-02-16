@@ -32,6 +32,7 @@ class _MyTiesState extends State<MyTies> {
 
   static const String nonUniqueColorFeedback = 'Slipsfarge må være unik';
   static const String nonUniqueLambsFeedback = 'Antall lam må være unikt';
+  static const String dataSavedFeedback = 'Data er lagret';
 
   @override
   void initState() {
@@ -75,11 +76,12 @@ class _MyTiesState extends State<MyTies> {
                 _helpText,
                 style: TextStyle(
                     fontSize: 17,
-                    color: _helpText == 'Data er lagret' ? Colors.green : null),
+                    color:
+                        _helpText == dataSavedFeedback ? Colors.green : null),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 10),
-              if (_valuesChanged) _saveOrDelete(),
+              if (_valuesChanged) _saveOrDeleteButtons(),
             ])));
   }
 
@@ -175,7 +177,7 @@ class _MyTiesState extends State<MyTies> {
     ));
   }
 
-  Column _saveOrDelete() {
+  Column _saveOrDeleteButtons() {
     return Column(children: [
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         ElevatedButton(
@@ -195,7 +197,7 @@ class _MyTiesState extends State<MyTies> {
                       _oldTieLambs = _tieLambs,
                       setState(() {
                         _valuesChanged = false;
-                        _helpText = 'Data er lagret';
+                        _helpText = dataSavedFeedback;
                         _tiesDeleted = false;
                         _tiesAdded = false;
                       }),
@@ -244,7 +246,7 @@ class _MyTiesState extends State<MyTies> {
                     _tiesDeleted = true;
 
                     _checkEqualColors();
-                    if (_helpText != '') {
+                    if (_helpText == '') {
                       _checkEqualLambAmount();
                     }
                   });
@@ -316,7 +318,7 @@ class _MyTiesState extends State<MyTies> {
       _tiesAdded = true;
 
       _checkEqualColors();
-      if (_helpText != '') {
+      if (_helpText == '') {
         _checkEqualLambAmount();
       }
     });
