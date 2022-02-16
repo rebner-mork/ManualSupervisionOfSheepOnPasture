@@ -42,11 +42,13 @@ class _MyTiesState extends State<MyTies> {
   };
 
   final Map<Color, String> dialogColorToString = <Color, String>{
-    Colors.red: 'rødt',
-    Colors.blue: 'blått',
-    Colors.yellow: 'gult',
-    Colors.green: 'grønt',
-    Colors.orange: 'oransje'
+    const Color(0xFFF44336): 'rødt',
+    const Color(0xFF2196F3): 'blått',
+    const Color(0xFFFFEB3B): 'gult',
+    const Color(0xFF4CAF50): 'grønt',
+    const Color(0xFFFF9800): 'oransje',
+    const Color(0xFFE91E63): 'rosa',
+    const Color(0x00000000): '\'ingen\''
   };
 
   List<Color> _tieColors = [];
@@ -57,6 +59,7 @@ class _MyTiesState extends State<MyTies> {
 
   bool _valuesChanged = false;
   bool _equalValues = false;
+  bool _tiesDeleted = false;
   String _helpText = '';
 
   static const String nonUniqueColorFeedback = 'Slipsfarge må være unik';
@@ -75,176 +78,186 @@ class _MyTiesState extends State<MyTies> {
     });
   }
 
-// TODO: legg til slips-knapp
-// TODO: sentrer laster data-tekst
   @override
   Widget build(BuildContext context) {
     return Material(
-        child: _loadingData
-            ? const Text('Laster data...')
-            : ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 600),
-                child: Column(children: [
-                  DataTable(
-                    border: TableBorder.symmetric(),
-                    columns: [
-                      DataColumn(
-                          label: Text(
-                        'Slipsfarge',
-                        style: columnNameTextStyle,
-                      )),
-                      DataColumn(
-                          label: Text(
-                        'Antall lam',
-                        style: columnNameTextStyle,
-                      )),
-                      const DataColumn(label: Text('')),
-                    ],
-                    rows: _tieColors
-                            .asMap()
-                            .entries
-                            .map((MapEntry<int, Color> data) => DataRow(cells: [
-                                  DataCell(Container(
-                                      color: _tieColors[data.key] !=
-                                              _oldTieColors[data.key]
-                                          ? Colors.orange.shade100
-                                          : null,
-                                      constraints:
-                                          const BoxConstraints(minWidth: 115),
-                                      child: Row(children: [
-                                        DropdownButton<DropdownIcon>(
-                                            value: DropdownIcon(data.value),
-                                            items: possibleColors
-                                                .map((Color color) =>
-                                                    DropdownMenuItem<DropdownIcon>(
-                                                        value:
-                                                            DropdownIcon(color),
-                                                        child:
-                                                            DropdownIcon(color)
-                                                                .icon))
-                                                .toList(),
-                                            onChanged: (DropdownIcon? newIcon) {
-                                              _onColorChanged(
-                                                  newIcon!.icon.color!,
-                                                  data.key,
-                                                  data.value);
-                                            }),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          colorValueToString[data.value.value]
-                                              .toString(),
-                                          style: largerTextStyle,
-                                        ),
-                                      ]))),
-                                  DataCell(Container(
-                                      color: _tieLambs[data.key] !=
-                                              _oldTieLambs[data.key]
-                                          ? Colors.orange.shade100
-                                          : null,
-                                      child: Center(
-                                          child: DropdownButton<int>(
-                                        value: _tieLambs[data.key],
-                                        items: <int>[0, 1, 2, 3, 4, 5, 6]
-                                            .map((int value) =>
-                                                DropdownMenuItem<int>(
-                                                    value: value,
-                                                    child: Text(
-                                                      value.toString(),
-                                                      style: largerTextStyle,
-                                                    )))
-                                            .toList(),
-                                        onChanged: (int? newValue) {
-                                          _onLambsChanged(newValue, data.key);
-                                        },
-                                      )))),
-                                  DataCell(IconButton(
-                                    icon: Icon(Icons.delete,
-                                        color: Colors.grey.shade800, size: 26),
-                                    splashRadius: 22,
-                                    hoverColor: Colors.red,
-                                    onPressed: () {
-                                      showDialog(
-                                          context: context,
-                                          builder: (_) => _deleteTieDialog(
-                                              context, data.key));
-                                    },
-                                  ))
-                                ]))
-                            .toList() +
-                        [
-                          DataRow(cells: [
-                            const DataCell(Text('')),
-                            const DataCell(Text('')),
-                            DataCell(FloatingActionButton(
-                              mini: true,
-                              child: const Icon(
-                                Icons.add,
-                                size: 26,
-                              ),
-                              onPressed: _onTieAdded,
-                            ))
-                          ])
-                        ],
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    _helpText,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 10),
-                  if (_valuesChanged)
-                    Column(children: [
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                                style: ButtonStyle(
-                                    fixedSize: MaterialStateProperty.all(
-                                        const Size.fromHeight(35)),
-                                    backgroundColor: MaterialStateProperty.all(
-                                        _equalValues
-                                            ? Colors.grey
-                                            : Colors.green)),
-                                child: Text(
-                                  "Lagre",
-                                  style: largerTextStyle,
-                                  textAlign: TextAlign.center,
+        child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: Column(children: [
+              _loadingData
+                  ? const Text(
+                      'Laster data...',
+                      style: TextStyle(fontSize: 18),
+                    )
+                  : DataTable(
+                      border: TableBorder.symmetric(),
+                      columns: [
+                        DataColumn(
+                            label: Text(
+                          'Slipsfarge',
+                          style: columnNameTextStyle,
+                        )),
+                        DataColumn(
+                            label: Text(
+                          'Antall lam',
+                          style: columnNameTextStyle,
+                        )),
+                        const DataColumn(label: Text('')),
+                      ],
+                      rows: _tieColors
+                              .asMap()
+                              .entries
+                              .map((MapEntry<int, Color> data) =>
+                                  DataRow(cells: [
+                                    DataCell(Container(
+                                        color: !_tiesDeleted &&
+                                                _tieColors[data.key] !=
+                                                    _oldTieColors[data.key]
+                                            ? Colors.orange.shade100
+                                            : null,
+                                        constraints:
+                                            const BoxConstraints(minWidth: 115),
+                                        child: Row(children: [
+                                          DropdownButton<DropdownIcon>(
+                                              value: DropdownIcon(data.value),
+                                              items: possibleColors
+                                                  .map(
+                                                      (Color color) =>
+                                                          DropdownMenuItem<
+                                                                  DropdownIcon>(
+                                                              value:
+                                                                  DropdownIcon(
+                                                                      color),
+                                                              child:
+                                                                  DropdownIcon(
+                                                                          color)
+                                                                      .icon))
+                                                  .toList(),
+                                              onChanged:
+                                                  (DropdownIcon? newIcon) {
+                                                _onColorChanged(
+                                                    newIcon!.icon.color!,
+                                                    data.key,
+                                                    data.value);
+                                              }),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            colorValueToString[data.value.value]
+                                                .toString(),
+                                            style: largerTextStyle,
+                                          ),
+                                        ]))),
+                                    DataCell(Container(
+                                        color: !_tiesDeleted &&
+                                                _tieLambs[data.key] !=
+                                                    _oldTieLambs[data.key]
+                                            ? Colors.orange.shade100
+                                            : null,
+                                        child: Center(
+                                            child: DropdownButton<int>(
+                                          value: _tieLambs[data.key],
+                                          items: <int>[0, 1, 2, 3, 4, 5, 6]
+                                              .map((int value) =>
+                                                  DropdownMenuItem<int>(
+                                                      value: value,
+                                                      child: Text(
+                                                        value.toString(),
+                                                        style: largerTextStyle,
+                                                      )))
+                                              .toList(),
+                                          onChanged: (int? newValue) {
+                                            _onLambsChanged(newValue, data.key);
+                                          },
+                                        )))),
+                                    DataCell(IconButton(
+                                      icon: Icon(Icons.delete,
+                                          color: Colors.grey.shade800,
+                                          size: 26),
+                                      splashRadius: 22,
+                                      hoverColor: Colors.red,
+                                      onPressed: () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (_) => _deleteTieDialog(
+                                                context, data.key));
+                                      },
+                                    ))
+                                  ]))
+                              .toList() +
+                          [
+                            DataRow(cells: [
+                              const DataCell(Text('')),
+                              const DataCell(Text('')),
+                              DataCell(FloatingActionButton(
+                                mini: true,
+                                child: const Icon(
+                                  Icons.add,
+                                  size: 26,
                                 ),
-                                onPressed: () => {
-                                      if (!_equalValues)
-                                        {
-                                          _oldTieColors = _tieColors,
-                                          _oldTieLambs = _tieLambs,
-                                          setState(() {
-                                            _valuesChanged = false;
-                                            _helpText = 'Data er lagret';
-                                          }),
-                                          _saveTieData()
-                                        }
-                                    }),
-                            const SizedBox(width: 10),
-                            ElevatedButton(
-                              style: ButtonStyle(
-                                  fixedSize: MaterialStateProperty.all(
-                                      const Size.fromHeight(35)),
-                                  backgroundColor:
-                                      MaterialStateProperty.all(Colors.red)),
-                              child: Text(
-                                "Avbryt",
-                                style: largerTextStyle,
-                              ),
-                              onPressed: () => {
-                                setState(() {
-                                  _valuesChanged = false;
-                                  _tieColors = List.from(_oldTieColors);
-                                  _tieLambs = List.from(_oldTieLambs);
-                                  _helpText = '';
-                                })
-                              },
-                            ),
-                          ])
-                    ])
-                ])));
+                                onPressed: _onTieAdded,
+                              ))
+                            ])
+                          ],
+                    ),
+              const SizedBox(height: 10),
+              Text(
+                _helpText,
+                style: TextStyle(
+                    fontSize: 17,
+                    color: _helpText == 'Data er lagret' ? Colors.green : null),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
+              if (_valuesChanged)
+                Column(children: [
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    ElevatedButton(
+                        style: ButtonStyle(
+                            fixedSize: MaterialStateProperty.all(
+                                const Size.fromHeight(35)),
+                            backgroundColor: MaterialStateProperty.all(
+                                _equalValues ? Colors.grey : Colors.green)),
+                        child: Text(
+                          "Lagre",
+                          style: largerTextStyle,
+                          textAlign: TextAlign.center,
+                        ),
+                        onPressed: () => {
+                              if (!_equalValues)
+                                {
+                                  _oldTieColors = _tieColors,
+                                  _oldTieLambs = _tieLambs,
+                                  setState(() {
+                                    _valuesChanged = false;
+                                    _helpText = 'Data er lagret';
+                                    _tiesDeleted = false;
+                                  }),
+                                  _saveTieData()
+                                }
+                            }),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      style: ButtonStyle(
+                          fixedSize: MaterialStateProperty.all(
+                              const Size.fromHeight(35)),
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.red)),
+                      child: Text(
+                        "Avbryt",
+                        style: largerTextStyle,
+                      ),
+                      onPressed: () => {
+                        setState(() {
+                          _valuesChanged = false;
+                          _tieColors = List.from(_oldTieColors);
+                          _tieLambs = List.from(_oldTieLambs);
+                          _helpText = '';
+                        })
+                      },
+                    ),
+                  ])
+                ])
+            ])));
   }
 
   void _onColorChanged(Color newColor, int index, Color ownColor) {
@@ -317,7 +330,6 @@ class _MyTiesState extends State<MyTies> {
         child: AlertDialog(
           title:
               Text('Slette ${dialogColorToString[_tieColors[index]]} slips?'),
-          content: const Text('Handlingen kan ikke angres'),
           actions: [
             TextButton(
                 onPressed: () {
@@ -325,8 +337,12 @@ class _MyTiesState extends State<MyTies> {
                   setState(() {
                     _tieColors.removeAt(index);
                     _tieLambs.removeAt(index);
+                    //_oldTieColors.removeAt(index);
+                    //_oldTieLambs.removeAt(index);
+                    _valuesChanged = true;
+                    _tiesDeleted = true;
                   });
-                  _saveTieData();
+                  //_saveTieData();
                 },
                 child: const Text('Ja, slett')),
             TextButton(
@@ -338,7 +354,6 @@ class _MyTiesState extends State<MyTies> {
         ));
   }
 
-// TODO: sort on no of lambs
   void _readTieData() async {
     String uid = FirebaseAuth.instance.currentUser!.uid;
     CollectionReference farmCollection =
