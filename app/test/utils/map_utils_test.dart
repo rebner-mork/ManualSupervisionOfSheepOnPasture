@@ -1,4 +1,4 @@
-@Timeout(Duration(seconds: 60))
+@Timeout(Duration(seconds: 180))
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
