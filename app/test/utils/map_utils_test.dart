@@ -1,3 +1,4 @@
+@Timeout(Duration(seconds: 60))
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
@@ -34,7 +35,6 @@ void main() {
       expect(135550, getTileIndexX(6.15, 18));
       expect(72386, getTileIndexY(62.47, 18));
     });
-
     test("Download tiles to app document directory", () async {
       List<String> acutalDirectoryListing = [];
       List<String> expectedDirectoryListing = [];
