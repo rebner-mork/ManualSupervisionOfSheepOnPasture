@@ -34,7 +34,9 @@ final Map<Color, String> colorToString = <Color, String>{
   Colors.blue: 'Blå',
   Colors.yellow: 'Gul',
   Colors.green: 'Grønn',
-  Colors.orange: 'Oransje'
+  Colors.orange: 'Oransje',
+  Colors.pink: 'Rosa',
+  Colors.transparent: 'Transparent'
 };
 
 final Map<Color, String> dialogColorToString = <Color, String>{
@@ -44,7 +46,7 @@ final Map<Color, String> dialogColorToString = <Color, String>{
   const Color(0xFF4CAF50): 'grønt',
   const Color(0xFFFF9800): 'oransje',
   const Color(0xFFE91E63): 'rosa',
-  const Color(0x00000000): '\'ingen\''
+  const Color(0x00000000): 'transparent'
 };
 
 final Map<Color, int> defaultTieMap = <Color, int>{
