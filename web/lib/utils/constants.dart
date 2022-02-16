@@ -6,7 +6,8 @@ const List<Color> possibleColors = [
   Color(0xFFFFEB3B), // Yellow
   Color(0xFF4CAF50), // Green
   Color(0xFFFF9800), // Orange
-  Color(0xFFE91E63) // Pink
+  Color(0xFFE91E63), // Pink
+  Color(0x00000000), // Transparent
 ];
 
 const Map<int, Color> colorValueToColor = {
@@ -19,12 +20,13 @@ const Map<int, Color> colorValueToColor = {
 };
 
 const Map<int, String> colorValueToString = {
-  4294198070: "Rød",
-  4280391411: "Blå",
-  4294961979: "Gul",
-  4283215696: "Grønn",
-  4294940672: "Oransje",
-  4293467747: "Rosa"
+  4294198070: 'Rød',
+  4280391411: 'Blå',
+  4294961979: 'Gul',
+  4283215696: 'Grønn',
+  4294940672: 'Oransje',
+  4293467747: 'Rosa',
+  0: 'Ingen'
 };
 
 final Map<Color, String> colorToString = <Color, String>{

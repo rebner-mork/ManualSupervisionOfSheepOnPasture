@@ -52,8 +52,8 @@ class _MyTiesState extends State<MyTies> {
   List<Color> _tieColors = [];
   List<int> _tieLambs = [];
 
-  List<Color> _oldTieColors = [];
-  List<int> _oldTieLambs = [];
+  List<Color?> _oldTieColors = [];
+  List<int?> _oldTieLambs = [];
 
   bool _valuesChanged = false;
   bool _equalValues = false;
@@ -101,103 +101,90 @@ class _MyTiesState extends State<MyTies> {
                       const DataColumn(label: Text('')),
                     ],
                     rows: _tieColors
-                        .asMap()
-                        .entries
-                        .map((MapEntry<int, Color> data) => DataRow(cells: [
-                              DataCell(Container(
-                                  constraints:
-                                      const BoxConstraints(minWidth: 115),
-                                  child: Row(children: [
-                                    DropdownButton<DropdownIcon>(
-                                        value: DropdownIcon(data.value),
-                                        items: possibleColors
-                                            .map((Color color) =>
-                                                DropdownMenuItem<DropdownIcon>(
-                                                    value: DropdownIcon(color),
-                                                    child: DropdownIcon(color)
-                                                        .icon))
-                                            .toList(),
-                                        onChanged: (DropdownIcon? newIcon) {
-                                          _helpText = '';
-                                          Color newColor = newIcon!.icon.color!;
-
-                                          if (newColor != data.value) {
-                                            setState(() {
-                                              _tieColors[data.key] = newColor;
-                                              _valuesChanged = true;
-
-                                              if (_tieColors.toSet().length <
-                                                  _tieColors.length) {
-                                                _helpText =
-                                                    'Slipsfarge må være unik';
-                                                _equalValues = true;
-                                              } else if (_tieLambs
-                                                      .toSet()
-                                                      .length ==
-                                                  _tieLambs.length) {
-                                                _helpText = '';
-                                                _equalValues = false;
-                                              } else {
-                                                _helpText =
-                                                    nonUniqueLambsFeedback;
-                                              }
-                                            });
-                                          }
-                                        }),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      colorValueToString[data.value.value]
-                                          .toString(),
-                                      style: largerTextStyle,
-                                    ),
-                                  ]))),
-                              DataCell(Center(
-                                  child: DropdownButton<int>(
-                                value: _tieLambs[data.key],
-                                items: <int>[0, 1, 2, 3, 4, 5, 6]
-                                    .map((int value) => DropdownMenuItem<int>(
-                                        value: value,
-                                        child: Text(
-                                          value.toString(),
+                            .asMap()
+                            .entries
+                            .map((MapEntry<int, Color> data) => DataRow(cells: [
+                                  DataCell(Container(
+                                      color: _tieColors[data.key] !=
+                                              _oldTieColors[data.key]
+                                          ? Colors.orange.shade100
+                                          : null,
+                                      constraints:
+                                          const BoxConstraints(minWidth: 115),
+                                      child: Row(children: [
+                                        DropdownButton<DropdownIcon>(
+                                            value: DropdownIcon(data.value),
+                                            items: possibleColors
+                                                .map((Color color) =>
+                                                    DropdownMenuItem<DropdownIcon>(
+                                                        value:
+                                                            DropdownIcon(color),
+                                                        child:
+                                                            DropdownIcon(color)
+                                                                .icon))
+                                                .toList(),
+                                            onChanged: (DropdownIcon? newIcon) {
+                                              _onColorChanged(
+                                                  newIcon!.icon.color!,
+                                                  data.key,
+                                                  data.value);
+                                            }),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          colorValueToString[data.value.value]
+                                              .toString(),
                                           style: largerTextStyle,
-                                        )))
-                                    .toList(),
-                                onChanged: (int? newValue) {
-                                  _helpText = '';
-                                  if (newValue! != _tieLambs[data.key]) {
-                                    setState(() {
-                                      _tieLambs[data.key] = newValue;
-                                      _valuesChanged = true;
-
-                                      if (_tieLambs.toSet().length <
-                                          _tieLambs.length) {
-                                        _helpText = 'Antall lam må være unikt';
-                                        _equalValues = true;
-                                      } else if (_tieColors.toSet().length ==
-                                          _tieColors.length) {
-                                        _helpText = '';
-                                        _equalValues = false;
-                                      } else {
-                                        _helpText = nonUniqueColorFeedback;
-                                      }
-                                    });
-                                  }
-                                },
-                              ))),
-                              DataCell(IconButton(
-                                icon: Icon(Icons.delete,
-                                    color: Colors.grey.shade800, size: 26),
-                                splashRadius: 22,
-                                hoverColor: Colors.red,
-                                onPressed: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (_) =>
-                                          _deleteTieDialog(context, data.key));
-                                },
-                              ))
-                            ]))
-                        .toList(),
+                                        ),
+                                      ]))),
+                                  DataCell(Container(
+                                      color: _tieLambs[data.key] !=
+                                              _oldTieLambs[data.key]
+                                          ? Colors.orange.shade100
+                                          : null,
+                                      child: Center(
+                                          child: DropdownButton<int>(
+                                        value: _tieLambs[data.key],
+                                        items: <int>[0, 1, 2, 3, 4, 5, 6]
+                                            .map((int value) =>
+                                                DropdownMenuItem<int>(
+                                                    value: value,
+                                                    child: Text(
+                                                      value.toString(),
+                                                      style: largerTextStyle,
+                                                    )))
+                                            .toList(),
+                                        onChanged: (int? newValue) {
+                                          _onLambsChanged(newValue, data.key);
+                                        },
+                                      )))),
+                                  DataCell(IconButton(
+                                    icon: Icon(Icons.delete,
+                                        color: Colors.grey.shade800, size: 26),
+                                    splashRadius: 22,
+                                    hoverColor: Colors.red,
+                                    onPressed: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (_) => _deleteTieDialog(
+                                              context, data.key));
+                                    },
+                                  ))
+                                ]))
+                            .toList() +
+                        [
+                          DataRow(cells: [
+                            const DataCell(Text('')),
+                            const DataCell(Text('')),
+                            DataCell(FloatingActionButton(
+                              mini: true,
+                              child: const Icon(
+                                Icons.add,
+                                size: 26,
+                              ),
+                              onPressed: _onTieAdded,
+                            ))
+                          ])
+                        ],
                   ),
                   const SizedBox(height: 10),
                   Text(
@@ -260,6 +247,70 @@ class _MyTiesState extends State<MyTies> {
                 ])));
   }
 
+  void _onColorChanged(Color newColor, int index, Color ownColor) {
+    _helpText = '';
+
+    if (newColor != ownColor) {
+      setState(() {
+        _tieColors[index] = newColor;
+        _valuesChanged = true;
+
+        _checkEqualColors();
+      });
+    }
+  }
+
+  void _checkEqualColors() {
+    if (_tieColors.toSet().length < _tieColors.length) {
+      _helpText = 'Slipsfarge må være unik';
+      _equalValues = true;
+    } else if (_tieLambs.toSet().length == _tieLambs.length) {
+      _helpText = '';
+      _equalValues = false;
+    } else {
+      _helpText = nonUniqueLambsFeedback;
+    }
+  }
+
+  void _onLambsChanged(int? newValue, int index) {
+    _helpText = '';
+    if (newValue! != _tieLambs[index]) {
+      setState(() {
+        _tieLambs[index] = newValue;
+        _valuesChanged = true;
+
+        _checkEqualLambAmount();
+      });
+    }
+  }
+
+  void _checkEqualLambAmount() {
+    if (_tieLambs.toSet().length < _tieLambs.length) {
+      _helpText = 'Antall lam må være unikt';
+      _equalValues = true;
+    } else if (_tieColors.toSet().length == _tieColors.length) {
+      _helpText = '';
+      _equalValues = false;
+    } else {
+      _helpText = nonUniqueColorFeedback;
+    }
+  }
+
+  void _onTieAdded() {
+    setState(() {
+      _tieColors.add(possibleColors.last); // TODO: sjekk
+      _tieLambs.add(0); // TODO: sjekk-funksjon
+      _oldTieColors.add(null);
+      _oldTieLambs.add(null);
+      _valuesChanged = true;
+
+      _checkEqualColors();
+      if (_helpText != '') {
+        _checkEqualLambAmount();
+      }
+    });
+  }
+
   BackdropFilter _deleteTieDialog(BuildContext context, int index) {
     return BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
@@ -313,7 +364,6 @@ class _MyTiesState extends State<MyTies> {
               for (MapEntry<Color, int> data in defaultTieMap.entries)
                 {_tieColors.add(data.key), _tieLambs.add(data.value)},
             },
-          debugPrint(_tieColors.toString()),
           _oldTieColors = List.from(_tieColors),
           _oldTieLambs = List.from(_tieLambs),
           setState(() {
