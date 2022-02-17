@@ -119,6 +119,10 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
 
       if (spokenWord == 'previous' || spokenWord == 'back') {
         if (questionIndex > 0) {
+          if (questionIndex == firstHeadlineFieldIndexes[0] ||
+              questionIndex == firstHeadlineFieldIndexes[1]) {
+            currentHeadlineIndex--;
+          }
           questionIndex--;
         }
         setState(() {
