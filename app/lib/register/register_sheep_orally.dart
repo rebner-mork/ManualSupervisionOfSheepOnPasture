@@ -309,16 +309,13 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
                       inputFieldSpacer(),
                       const SizedBox(height: 80),
                     ]))),
-                floatingActionButton: Row(
-                  mainAxisAlignment:
-                      MediaQuery.of(context).viewInsets.bottom == 0
-                          ? MainAxisAlignment.center
-                          : MainAxisAlignment.spaceAround,
-                  children: ongoingDialog
-                      ? <Widget>[
-                          completeRegistrationButton(context, _registerSheep)
-                        ]
-                      : <Widget>[
+                floatingActionButton: !ongoingDialog
+                    ? Row(
+                        mainAxisAlignment:
+                            MediaQuery.of(context).viewInsets.bottom == 0
+                                ? MainAxisAlignment.center
+                                : MainAxisAlignment.spaceAround,
+                        children: <Widget>[
                           startDialogButton(() => _startDialog(
                               allSheepQuestions, allSheepQuestionsContexts)),
                           MediaQuery.of(context).viewInsets.bottom == 0
@@ -328,7 +325,8 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
                               : const Spacer(),
                           completeRegistrationButton(context, _registerSheep)
                         ],
-                ),
+                      )
+                    : null,
                 floatingActionButtonLocation:
                     FloatingActionButtonLocation.centerFloat)));
   }
