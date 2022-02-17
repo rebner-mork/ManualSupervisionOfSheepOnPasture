@@ -16,3 +16,13 @@ void scrollToKey(ScrollController scrollController, GlobalKey key,
         duration: const Duration(milliseconds: 500), curve: Curves.ease);
   });
 }
+
+Map gatherRegisteredData(Map<String, TextEditingController> textControllers) {
+  final Map data = <String, int>{};
+
+  textControllers.forEach((String key, TextEditingController controller) {
+    data[key] = controller.text.isEmpty ? 0 : int.parse(controller.text);
+  });
+
+  return data;
+}
