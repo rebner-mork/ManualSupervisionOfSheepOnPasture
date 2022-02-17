@@ -104,7 +104,7 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
     await _listen(questionContexts[questionIndex]);
   }
 
-  Future _listen(QuestionContext questionContext) async {
+  Future<void> _listen(QuestionContext questionContext) async {
     await _stt.listen(
         onResult: (result) => _onSpeechResult(result, questionContext),
         localeId: 'en-US',
@@ -180,18 +180,18 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
     _setAwaitOptions();
   }
 
-  Future _setAwaitOptions() async {
+  Future<void> _setAwaitOptions() async {
     await _tts.awaitSpeakCompletion(true);
     var engine = await _tts.getDefaultEngine;
     debugPrint(engine);
   }
 
-  Future _speak(String text, {String language = 'nb-NO'}) async {
+  Future<void> _speak(String text, {String language = 'nb-NO'}) async {
     await _tts.setLanguage(language);
     await _tts.speak(text);
   }
 
-  _registerSheep() async {
+  void _registerSheep() async {
     final Directory directory = await getApplicationDocumentsDirectory();
     final String path = directory.path;
 
