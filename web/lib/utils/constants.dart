@@ -50,8 +50,8 @@ final Map<Color, String> dialogColorToString = <Color, String>{
 };
 
 final Map<Color, int> defaultTieMap = <Color, int>{
-  Colors.red: 0,
-  Colors.blue: 1,
-  Colors.yellow: 2,
-  Colors.green: 3
+  const Color(0xFFF44336): 0, // Red
+  const Color(0xFF2196F3): 1, // Blue
+  const Color(0xFFFFEB3B): 2, // Yellow
+  const Color(0xFF4CAF50): 3, // Green
 };

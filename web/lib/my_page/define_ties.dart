@@ -193,8 +193,8 @@ class _MyTiesState extends State<MyTies> {
             onPressed: () => {
                   if (!_equalValues)
                     {
-                      _oldTieColors = _tieColors,
-                      _oldTieLambs = _tieLambs,
+                      _oldTieColors = List.from(_tieColors),
+                      _oldTieLambs = List.from(_tieLambs),
                       setState(() {
                         _valuesChanged = false;
                         _helpText = dataSavedFeedback;
