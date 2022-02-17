@@ -1,27 +1,14 @@
 import 'package:app/utils/speech_input_filters.dart';
 
-final List<String> allSheepQuestions = [
-  'Hvor mange sauer?',
-  'Hvor mange lam?',
-  'Hvor mange hvite?',
-  'Hvor mange svarte?',
-  'Hvor mange med svart hode?',
-  'Hvor mange røde slips?',
-  'Hvor mange blå slips?',
-  'Hvor mange gule slips?',
-  'Hvor mange røde øremerker?',
-  'Hvor mange blå øremerker?'
-];
-
-final List<QuestionContext> allSheepQuestionsContexts = [
-  QuestionContext.numbers,
-  QuestionContext.numbers,
-  QuestionContext.numbers,
-  QuestionContext.numbers,
-  QuestionContext.numbers,
-  QuestionContext.numbers,
-  QuestionContext.numbers,
-  QuestionContext.numbers,
-  QuestionContext.numbers,
-  QuestionContext.numbers
-];
+Map<String, QuestionContext> allSheepQuestions = {
+  'Hvor mange sauer?': QuestionContext.numbers,
+  'Hvor mange lam?': QuestionContext.numbers,
+  'Hvor mange hvite?': QuestionContext.numbers,
+  'Hvor mange svarte?': QuestionContext.numbers,
+  'Hvor mange med svart hode?': QuestionContext.numbers,
+  'Hvor mange røde slips?': QuestionContext.numbers,
+  'Hvor mange blå slips?': QuestionContext.numbers,
+  'Hvor mange gule slips?': QuestionContext.numbers,
+  'Hvor mange røde øremerker?': QuestionContext.numbers,
+  'Hvor mange blå øremerker?': QuestionContext.numbers
+};

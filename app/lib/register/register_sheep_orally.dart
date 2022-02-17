@@ -62,6 +62,9 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
     'blueEar': TextEditingController(),
   };
 
+  List<String> questions = allSheepQuestions.keys.toList();
+  List<QuestionContext> questionContexts = allSheepQuestions.values.toList();
+
   @override
   void initState() {
     super.initState();
@@ -78,7 +81,7 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
 
     if (_speechEnabled) {
       WidgetsBinding.instance!.addPostFrameCallback((_) {
-        _startDialog(allSheepQuestions, allSheepQuestionsContexts);
+        _startDialog(questions, questionContexts);
       });
     } else {
       showDialog(
@@ -129,8 +132,8 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
           _textControllers.values.elementAt(questionIndex).text = '';
         });
 
-        await _speak(allSheepQuestions[questionIndex]);
-        await _listen(allSheepQuestionsContexts[questionIndex]);
+        await _speak(questions[questionIndex]);
+        await _listen(questionContexts[questionIndex]);
       } else {
         if (questionContext == QuestionContext.numbers &&
             !numbers.contains(spokenWord)) {
@@ -141,10 +144,9 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
         }
 
         if (spokenWord == '') {
-          String response =
-              "Jeg forstod ikke. " + allSheepQuestions[questionIndex];
+          String response = "Jeg forstod ikke. " + questions[questionIndex];
           await _speak(response);
-          await _listen(allSheepQuestionsContexts[questionIndex]);
+          await _listen(questionContexts[questionIndex]);
         } else {
           await _speak(spokenWord, language: 'en-US');
 
@@ -160,8 +162,8 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
                   firstHeadlineFieldKeys[currentHeadlineIndex++]);
             }
 
-            await _speak(allSheepQuestions[questionIndex]);
-            await _listen(allSheepQuestionsContexts[questionIndex]);
+            await _speak(questions[questionIndex]);
+            await _listen(questionContexts[questionIndex]);
           } else {
             questionIndex = 0;
             currentHeadlineIndex = 0;
@@ -320,8 +322,8 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
                                 ? MainAxisAlignment.center
                                 : MainAxisAlignment.spaceAround,
                         children: <Widget>[
-                          startDialogButton(() => _startDialog(
-                              allSheepQuestions, allSheepQuestionsContexts)),
+                          startDialogButton(
+                              () => _startDialog(questions, questionContexts)),
                           MediaQuery.of(context).viewInsets.bottom == 0
                               ? const SizedBox(
                                   width: 20,
