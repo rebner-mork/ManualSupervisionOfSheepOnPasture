@@ -69,7 +69,9 @@ class _MyTiesState extends State<MyTies> {
                         )),
                         const DataColumn(label: Text('')),
                       ],
-                      rows: _tieRows() + _newTieRow(),
+                      rows: _tieColors.length < possibleColors.length
+                          ? _tieRows() + _newTieRow()
+                          : _tieRows(),
                     ),
               const SizedBox(height: 10),
               Text(
