@@ -5,7 +5,6 @@ void main() {
   group('correctErroneousInput', () {
     test('Valid input', () {
       expect(correctErroneousInput('0', QuestionContext.numbers), '');
-      expect(correctErroneousInput('0', QuestionContext.numbers), '');
       expect(correctErroneousInput('white', QuestionContext.colors), '');
       expect(correctErroneousInput('black', QuestionContext.colors), '');
     });
