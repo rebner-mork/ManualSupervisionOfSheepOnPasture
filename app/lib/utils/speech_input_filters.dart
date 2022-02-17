@@ -6,18 +6,17 @@ String correctErroneousInput(String input, QuestionContext questionContext) {
   input = input.toLowerCase();
 
   if (questionContext == QuestionContext.numbers) {
-    for (List<String> numberFilter in numbersFilter) {
-      if (numberFilter.contains(input)) {
-        int index = numbersFilter.indexOf(numberFilter);
-        correctedInput = numbers[index];
+    for (MapEntry<String, List<String>> numberFilter in numbersFilter.entries) {
+      if (numberFilter.value.contains(input)) {
+        correctedInput = numberFilter.key;
         break;
       }
     }
   } else {
-    for (List<String> colorFilter in colorsFilter) {
-      if (colorFilter.contains(input)) {
-        int index = colorsFilter.indexOf(colorFilter);
-        correctedInput = colors[index];
+    for (MapEntry<String, List<String>?> colorFilter in colorsFilter.entries) {
+      if (colorFilter.value!.contains(input)) {
+        correctedInput = colorFilter.key;
+        break;
       }
     }
   }
@@ -25,24 +24,8 @@ String correctErroneousInput(String input, QuestionContext questionContext) {
   return correctedInput;
 }
 
-final List<String> numbers = [
-  '0',
-  '1',
-  '2',
-  '3',
-  '4',
-  '5',
-  '6',
-  '7',
-  '8',
-  '9',
-  '10',
-  '11',
-  '12'
-];
-
-final List<List<String>> numbersFilter = [
-  [
+final Map<String, List<String>> numbersFilter = {
+  '0': [
     'zero',
     'see row',
     'sierra',
@@ -55,37 +38,24 @@ final List<List<String>> numbersFilter = [
     'see road',
     'sarah'
   ],
-  ['one', 'won', 'want', 'who won', 'on', 'what', 'when', 'won\'t'],
-  ['two', 'too', 'to', 'to you', 'do'],
-  ['three', 'treat', 'tree', 'the'],
-  ['four', 'for', 'or', 'ford', 'full'],
-  ['five', 'hive', 'i\'ve', 'pipe'],
-  ['six', 'sex', 'sick', 'thanks', 'seats'],
-  ['seven', 'satin'],
-  ['eight', 'ate', 'aight', 'hate', 'hey'],
-  ['nine', 'mine', 'line', 'night'],
-  ['ten', 'time', 'tom', 'turn', 'and', 'pam', 'done', 'them'],
-  ['eleven', 'i love them'],
-  ['twelve', 'tyler', 'corral', 'to health'],
-];
+  '1': ['one', 'won', 'want', 'who won', 'on', 'what', 'when', 'won\'t'],
+  '2': ['two', 'too', 'to', 'to you', 'do'],
+  '3': ['three', 'treat', 'tree', 'the'],
+  '4': ['four', 'for', 'or', 'ford', 'full'],
+  '5': ['five', 'hive', 'i\'ve', 'pipe'],
+  '6': ['six', 'sex', 'sick', 'thanks', 'seats'],
+  '7': ['seven', 'satin'],
+  '8': ['eight', 'ate', 'aight', 'hate', 'hey'],
+  '9': ['nine', 'mine', 'line', 'night'],
+  '10': ['ten', 'time', 'tom', 'turn', 'and', 'pam', 'done', 'them'],
+  '11': ['eleven', 'i love them'],
+  '12': ['twelve', 'tyler', 'corral', 'to health']
+};
 
-final List<String> colors = [
-  'white',
-  'black',
-  'red',
-  'yellow',
-  'blue',
-  'green',
-  'purple',
-  'pink',
-  'grey',
-  'orange'
-];
-
-final List<List<String>> colorsFilter = [
-  ['what', 'light', 'whites'],
-  ['lack', 'block', 'blacks'],
-  [
+final Map<String, List<String>?> colorsFilter = {
+  'white': ['what', 'light', 'whites'],
+  'black': ['lack', 'block', 'blacks'],
+  'red': [
     'rent',
     'rat',
     'rad',
@@ -98,7 +68,11 @@ final List<List<String>> colorsFilter = [
     'ribs',
     'ready'
   ],
-  ['mellow', 'yeah love'],
-  ['glue', 'boo', 'play', 'flute', 'bleed', 'lou', 'luke'],
-  ['great', 'when'],
-];
+  'yellow': ['mellow', 'yeah love'],
+  'blue': ['glue', 'boo', 'play', 'flute', 'bleed', 'lou', 'luke'],
+  'green': ['great', 'when'],
+  'purple': null,
+  'pink': null,
+  'grey': null,
+  'orange': null
+};

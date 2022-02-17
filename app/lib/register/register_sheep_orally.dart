@@ -64,6 +64,8 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
 
   List<String> questions = allSheepQuestions.keys.toList();
   List<QuestionContext> questionContexts = allSheepQuestions.values.toList();
+  List<String> numbers = numbersFilter.keys.toList();
+  List<String> colors = colorsFilter.keys.toList();
 
   @override
   void initState() {
