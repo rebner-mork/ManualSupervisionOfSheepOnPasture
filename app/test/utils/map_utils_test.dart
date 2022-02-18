@@ -26,7 +26,7 @@ void main() {
       expect(0, getTileIndexX(6.151630, 0));
       expect(0, getTileIndexY(62.470818, 0));
 
-      // Unacurate coordinates - Norway
+      // Unaccurate coordinates - Norway
       expect(135550, getTileIndexX(6.15, 18));
       expect(72386, getTileIndexY(62.47, 18));
     });
