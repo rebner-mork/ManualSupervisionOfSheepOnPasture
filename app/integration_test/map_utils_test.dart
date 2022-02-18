@@ -65,7 +65,7 @@ void main() {
       expect(true, expectedDirectoryListingSet.contains(path));
     }
 
-    int oldLenght = acutalDirectoryListing.length;
+    int oldLength = acutalDirectoryListing.length;
 
     await downlaodTiles(northWest, southEast, minZoom, maxZoom);
 
