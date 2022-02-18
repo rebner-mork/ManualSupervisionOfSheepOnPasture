@@ -13,7 +13,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   //TODO Temporary
-  await downlaodTiles(
+  await downloadTiles(
       LatLng(62.469501, 6.146955), LatLng(62.473164, 6.159678), 15, 17);
   runApp(const MyApp());
 }
