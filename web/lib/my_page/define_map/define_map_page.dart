@@ -170,7 +170,13 @@ class _DefineMapPageState extends State<DefineMapPage> {
             }
           else
             {
-              farmDoc.set({'maps': dataMap, 'name': null, 'address': null})
+              farmDoc.set({
+                'maps': dataMap,
+                'name': null,
+                'address': null,
+                'ties': null,
+                'eartags': null
+              })
             },
         });
   }
