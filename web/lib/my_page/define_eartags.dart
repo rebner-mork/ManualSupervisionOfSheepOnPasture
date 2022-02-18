@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:web/utils/constants.dart';
 import 'package:web/utils/custom_widgets.dart';
@@ -20,7 +22,7 @@ class _MyEartagsState extends State<MyEartags> {
   List<Color?> _oldEartagColors = [];
   List<bool> _oldEartagOwners = [];
 
-  bool _loadingData = false; // TODO: true
+  bool _loadingData = true;
   bool _valuesChanged = false;
   bool _equalValues = false;
   bool _eartagsAdded = false;
@@ -34,9 +36,9 @@ class _MyEartagsState extends State<MyEartags> {
   void initState() {
     super.initState();
 
-    /*WidgetsBinding.instance!.addPostFrameCallback((_) {
-      _readEarTagData();
-    });*/
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _readEartagData();
+    });
   }
 
   @override
@@ -244,7 +246,7 @@ class _MyEartagsState extends State<MyEartags> {
                         _eartagsDeleted = false;
                         _eartagsAdded = false;
                       }),
-                      // _saveTieData() TODO
+                      _saveEartagData()
                     }
                 }),
         const SizedBox(width: 10),
@@ -299,5 +301,61 @@ class _MyEartagsState extends State<MyEartags> {
                 child: const Text('Nei, ikke slett'))
           ],
         ));
+  }
+
+  void _readEartagData() async {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    CollectionReference farmCollection =
+        FirebaseFirestore.instance.collection('farms');
+    DocumentReference farmDoc = farmCollection.doc(uid);
+
+    Map<String, dynamic> dataMap;
+
+    await farmDoc.get().then((doc) => {
+          if (doc.exists)
+            {
+              dataMap = doc.get('eartags'),
+              for (MapEntry<String, dynamic> data in dataMap.entries)
+                {
+                  _eartagColors.add(Color(int.parse(data.key, radix: 16))),
+                  _eartagOwners.add(data.value as bool)
+                },
+            },
+          _oldEartagColors = List.from(_eartagColors),
+          _oldEartagOwners = List.from(_eartagOwners),
+          setState(() {
+            _loadingData = false;
+          })
+        });
+  }
+
+  void _saveEartagData() async {
+    Map<String, bool> dataMap = {};
+
+    for (int i = 0; i < _eartagColors.length; i++) {
+      dataMap[_eartagColors[i].value.toRadixString(16)] = _eartagOwners[i];
+    }
+
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    CollectionReference farmCollection =
+        FirebaseFirestore.instance.collection('farms');
+    DocumentReference farmDoc = farmCollection.doc(uid);
+
+    await farmDoc.get().then((doc) => {
+          if (doc.exists)
+            {
+              farmDoc.update({'eartags': dataMap})
+            }
+          else
+            {
+              farmDoc.set({
+                'name': null,
+                'address': null,
+                'maps': null,
+                'ties': null,
+                'eartags': dataMap
+              })
+            }
+        });
   }
 }

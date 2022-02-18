@@ -18,7 +18,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
-  FirebaseFirestore.instance.useFirestoreEmulator('10.0.2.2', 8080);
+  FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
   runApp(const MyApp());
 }
 
