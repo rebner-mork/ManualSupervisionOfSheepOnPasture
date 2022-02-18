@@ -5,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 import 'dart:async';
 
 import '../utils/map_utils.dart' as map_utils;
+import '../utils/constants.dart';
 
 // ignore: must_be_immutable
 class Map extends StatefulWidget {
@@ -69,9 +70,9 @@ class _MapState extends State<Map> {
                 onMapCreated: (c) {
                   _mapController = c;
                 },
-                zoom: 15,
-                minZoom: 15,
-                maxZoom: 17,
+                zoom: OfflineZoomLevels.min,
+                minZoom: OfflineZoomLevels.min,
+                maxZoom: OfflineZoomLevels.max,
                 swPanBoundary: widget.southWest,
                 nePanBoundary: widget.northEast,
                 center: LatLngBounds(widget.southWest, widget.northEast).center,

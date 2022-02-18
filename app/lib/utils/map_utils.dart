@@ -89,12 +89,12 @@ Future<void> _downloadTile(
 
 // TODO Should this return Future<void> or just void ???
 Future<void> downloadTiles(
-    LatLng northWest, LatLng southEast, int minZoom, int maxZoom) async {
+    LatLng northWest, LatLng southEast, double minZoom, double maxZoom) async {
   String urlTemplate =
       "https://opencache{s}.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}";
   final List<String> subdomains = ["", "2", "3"];
 
-  for (int zoom = minZoom; zoom <= maxZoom; zoom++) {
+  for (int zoom = minZoom.toInt(); zoom <= maxZoom.toInt(); zoom++) {
     int west = getTileIndexX(northWest.longitude, zoom);
     int east = getTileIndexX(southEast.longitude, zoom);
     //-1 to compesate for rounding down when calculating tile indeces

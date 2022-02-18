@@ -13,8 +13,8 @@ void main() {
     List<String> expectedDirectoryListing = [];
     LatLng northWest = LatLng(63.419818, 10.397676);
     LatLng southEast = LatLng(63.415958, 10.408697);
-    int minZoom = 15;
-    int maxZoom = 16;
+    double minZoom = 15;
+    double maxZoom = 16;
     Directory baseDir = await getApplicationDocumentsDirectory();
     String basePath = baseDir.path + "${slash}maps";
 
@@ -25,7 +25,7 @@ void main() {
     }
 
     //Construct expected directory listing
-    for (int zoom = minZoom; zoom <= maxZoom; zoom++) {
+    for (int zoom = minZoom.toInt(); zoom <= maxZoom.toInt(); zoom++) {
       int west = getTileIndexX(northWest.longitude, zoom);
       int east = getTileIndexX(southEast.longitude, zoom);
       //-1 to compesate for rounding down when calculating tile indeces
