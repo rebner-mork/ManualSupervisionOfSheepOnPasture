@@ -19,7 +19,9 @@ class _MyEartagsState extends State<MyEartags> {
   _MyEartagsState();
 
   List<Color> _eartagColors = [];
+  List<bool> _eartagOwners = [];
   List<Color?> _oldEartagColors = [];
+  List<bool> _oldEartagOwners = [];
 
   bool _loadingData = false; // TODO: true
   bool _valuesChanged = false;
@@ -91,7 +93,7 @@ class _MyEartagsState extends State<MyEartags> {
         .entries
         .map((MapEntry<int, Color> data) => DataRow(cells: [
               _eartagCell(data.key, data.value),
-              DataCell.empty,
+              _ownerCell(data.key, _eartagOwners[data.key]),
               DataCell(IconButton(
                 icon: Icon(Icons.delete, color: Colors.grey.shade800, size: 26),
                 splashRadius: 22,
@@ -145,9 +147,51 @@ class _MyEartagsState extends State<MyEartags> {
         ])));
   }
 
+  DataCell _ownerCell(int index, bool isOwner) {
+    return DataCell(Row(
+      children: [
+        ChoiceChip(
+          label: Text(
+            'Meg',
+            style: isOwner ? largerBoldTextStyle : largerTextStyle,
+          ),
+          selected: isOwner,
+          selectedColor: Colors.green.shade400,
+          labelStyle: isOwner ? largerBoldTextStyle : null,
+          onSelected: (value) {
+            if (!isOwner) {
+              setState(() {
+                _eartagOwners[index] = true;
+                _valuesChanged = true;
+              });
+            }
+          },
+        ),
+        ChoiceChip(
+          label: Text(
+            'Annen',
+            style: !isOwner ? largerBoldTextStyle : largerTextStyle,
+          ),
+          selected: !isOwner,
+          selectedColor: Colors.orange.shade300,
+          labelStyle: !isOwner ? largerBoldTextStyle : null,
+          onSelected: (value) {
+            if (isOwner) {
+              setState(() {
+                _eartagOwners[index] = false;
+                _valuesChanged = true;
+              });
+            }
+          },
+        )
+      ],
+    ));
+  }
+
   void _onEartagAdded() {
     setState(() {
       _eartagColors.add(possibleEartagColors.first);
+      _eartagOwners.add(true);
       _valuesChanged = true;
       _eartagsAdded = true;
 
@@ -193,7 +237,7 @@ class _MyEartagsState extends State<MyEartags> {
                   if (!_equalValues)
                     {
                       _oldEartagColors = List.from(_eartagColors),
-                      //_oldTieLambs = List.from(_tieLambs),
+                      _oldEartagOwners = List.from(_eartagOwners),
                       setState(() {
                         _valuesChanged = false;
                         _helpText = dataSavedFeedback;
@@ -216,7 +260,7 @@ class _MyEartagsState extends State<MyEartags> {
             setState(() {
               _valuesChanged = false;
               _eartagColors = List.from(_oldEartagColors);
-              //_tieLambs = List.from(_oldTieLambs);
+              _eartagOwners = List.from(_oldEartagOwners);
               _helpText = '';
               _eartagsAdded = false;
               _eartagsDeleted = false;
@@ -239,7 +283,7 @@ class _MyEartagsState extends State<MyEartags> {
                   Navigator.of(context).pop('dialog');
                   setState(() {
                     _eartagColors.removeAt(index);
-                    //_eartagLambs.removeAt(index);
+                    _eartagOwners.removeAt(index);
 
                     _valuesChanged = true;
                     _eartagsDeleted = true;
