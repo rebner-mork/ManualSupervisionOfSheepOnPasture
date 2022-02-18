@@ -1,8 +1,5 @@
-import 'dart:collection';
 import 'dart:ui';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:web/utils/constants.dart';
 import 'package:web/utils/custom_widgets.dart';
@@ -31,7 +28,6 @@ class _MyEartagsState extends State<MyEartags> {
   String _helpText = '';
 
   static const String nonUniqueColorFeedback = 'Øremerkefarge må være unik';
-  //static const String nonUniqueLambsFeedback = 'Antall lam må være unikt';
   static const String dataSavedFeedback = 'Data er lagret';
 
   @override
@@ -46,45 +42,42 @@ class _MyEartagsState extends State<MyEartags> {
   @override
   Widget build(BuildContext context) {
     return Material(
-        child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 600),
-            child: Column(children: [
-              _loadingData
-                  ? const Text(
-                      'Laster data...',
-                      style: TextStyle(fontSize: 18),
-                    )
-                  : DataTable(
-                      border: TableBorder.symmetric(),
-                      columns: [
-                        DataColumn(
-                            label: Text(
-                          'Øremerke',
-                          style: columnNameTextStyle,
-                        )),
-                        DataColumn(
-                            label: Text(
-                          'Eier',
-                          style: columnNameTextStyle,
-                        )),
-                        const DataColumn(label: Text('')),
-                      ],
-                      rows: _eartagColors.length < possibleEartagColors.length
-                          ? _eartagRows() + [_newEartagRow()]
-                          : _eartagRows(),
-                    ),
-              const SizedBox(height: 10),
-              Text(
-                _helpText,
-                style: TextStyle(
-                    fontSize: 17,
-                    color:
-                        _helpText == dataSavedFeedback ? Colors.green : null),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 10),
-              if (_valuesChanged) _saveOrDeleteButtons(),
-            ])));
+        child: Column(children: [
+      _loadingData
+          ? const Text(
+              'Laster data...',
+              style: TextStyle(fontSize: 18),
+            )
+          : DataTable(
+              border: TableBorder.symmetric(),
+              columns: [
+                DataColumn(
+                    label: Text(
+                  'Øremerke',
+                  style: columnNameTextStyle,
+                )),
+                DataColumn(
+                    label: Text(
+                  'Eier',
+                  style: columnNameTextStyle,
+                )),
+                const DataColumn(label: Text('')),
+              ],
+              rows: _eartagColors.length < possibleEartagColors.length
+                  ? _eartagRows() + [_newEartagRow()]
+                  : _eartagRows(),
+            ),
+      const SizedBox(height: 10),
+      Text(
+        _helpText,
+        style: TextStyle(
+            fontSize: 17,
+            color: _helpText == dataSavedFeedback ? Colors.green : null),
+        textAlign: TextAlign.center,
+      ),
+      const SizedBox(height: 10),
+      if (_valuesChanged) _saveOrDeleteButtons(),
+    ]));
   }
 
   List<DataRow> _eartagRows() {
@@ -212,7 +205,7 @@ class _MyEartagsState extends State<MyEartags> {
 
   void _checkEqualColors() {
     if (_eartagColors.toSet().length < _eartagColors.length) {
-      _helpText = 'Slipsfarge må være unik';
+      _helpText = nonUniqueColorFeedback;
       _equalValues = true;
     } else {
       _helpText = '';
