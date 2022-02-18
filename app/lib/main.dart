@@ -17,6 +17,7 @@ void main() async {
   //TODO Temporary
   await downloadTiles(LatLng(62.469501, 6.146955), LatLng(62.473164, 6.159678),
       OfflineZoomLevels.min, OfflineZoomLevels.max);
+
   runApp(const MyApp());
 }
 

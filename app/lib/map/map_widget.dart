@@ -38,7 +38,7 @@ class _MapState extends State<Map> {
   }
 
   Future<void> _loadUrlTemplate() async {
-    urlTemplate = await map_utils.getOffllineUrlTemplate();
+    urlTemplate = await map_utils.getOfflineUrlTemplate();
     setState(() {
       urlTemplateLoaded = true;
     });

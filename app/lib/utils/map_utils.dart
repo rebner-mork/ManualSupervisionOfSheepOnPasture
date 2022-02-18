@@ -72,15 +72,14 @@ String _getTileUrl(
 }
 
 Future<void> _downloadTile(
-    int x, int y, int zoom, String urlTemplate, List<String> subdomains,
-    [bool force = false]) async {
+    int x, int y, int zoom, String urlTemplate, List<String> subdomains) async {
   Directory baseDir = await getApplicationDocumentsDirectory();
   String basePath = baseDir.path;
   String subPath = "/maps/" + zoom.toString() + "/" + x.toString();
   await Directory(basePath + subPath).create(recursive: true);
   String fileName = "/" + y.toString() + ".png";
 
-  if (force || !File(basePath + subPath + fileName).existsSync()) {
+  if (!File(basePath + subPath + fileName).existsSync()) {
     var response = await http
         .get(Uri.parse(_getTileUrl(urlTemplate, x, y, zoom, subdomains)));
     File(basePath + subPath + fileName).writeAsBytesSync(response.bodyBytes);
@@ -97,19 +96,18 @@ Future<void> downloadTiles(
   for (int zoom = minZoom.toInt(); zoom <= maxZoom.toInt(); zoom++) {
     int west = getTileIndexX(northWest.longitude, zoom);
     int east = getTileIndexX(southEast.longitude, zoom);
-    //-1 to compesate for rounding down when calculating tile indeces
-    int north = getTileIndexY(northWest.latitude, zoom) - 1;
+    int north = getTileIndexY(northWest.latitude, zoom);
     int south = getTileIndexY(southEast.latitude, zoom);
 
     for (int x = west; x <= east; x++) {
-      for (int y = north; y <= south; y++) {
+      for (int y = south; y <= north; y++) {
         await _downloadTile(x, y, zoom, urlTemplate, subdomains);
       }
     }
   }
 }
 
-Future<String> getOffllineUrlTemplate() async {
+Future<String> getOfflineUrlTemplate() async {
   Directory baseDir = await getApplicationDocumentsDirectory();
   return baseDir.path + "/maps/{z}/{x}/{y}.png";
 }
