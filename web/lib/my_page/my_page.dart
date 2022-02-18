@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web/my_page/define_eartag.dart';
 import 'package:web/my_page/my_farm.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 
@@ -12,7 +13,7 @@ class MyPage extends StatefulWidget {
 class _MyPageState extends State<MyPage> {
   _MyPageState();
 
-  int _selectedIndex = 0;
+  int _selectedIndex = 1; // TODO: 0
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +53,8 @@ class _MyPageState extends State<MyPage> {
         ],
       ),
       const VerticalDivider(thickness: 1, width: 1),
-      if (_selectedIndex == 0) const Expanded(child: MyFarm())
+      if (_selectedIndex == 0) const Expanded(child: MyFarm()),
+      if (_selectedIndex == 1) const Expanded(child: MyEartags())
     ]));
   }
 }

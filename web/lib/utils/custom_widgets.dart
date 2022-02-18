@@ -21,3 +21,18 @@ InputDecoration customInputDecoration(String labelText, IconData icon,
 SizedBox inputFieldSpacer() {
   return const SizedBox(height: 18);
 }
+
+class DropdownIcon {
+  DropdownIcon(Color iconColor) {
+    icon = Icon(Icons.local_offer, color: iconColor);
+  }
+
+  late Icon icon;
+
+  @override
+  bool operator ==(Object other) =>
+      other is DropdownIcon && other.icon.color == icon.color;
+
+  @override
+  int get hashCode => icon.hashCode;
+}
