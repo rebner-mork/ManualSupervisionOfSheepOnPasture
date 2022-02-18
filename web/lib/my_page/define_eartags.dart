@@ -30,7 +30,6 @@ class _MyEartagsState extends State<MyEartags> {
   String _helpText = '';
 
   static const String nonUniqueColorFeedback = 'Øremerkefarge må være unik';
-  static const String dataSavedFeedback = 'Data er lagret';
 
   @override
   void initState() {
@@ -261,11 +260,11 @@ class _MyEartagsState extends State<MyEartags> {
           onPressed: () => {
             setState(() {
               _valuesChanged = false;
+              _eartagsAdded = false;
+              _eartagsDeleted = false;
               _eartagColors = List.from(_oldEartagColors);
               _eartagOwners = List.from(_oldEartagOwners);
               _helpText = '';
-              _eartagsAdded = false;
-              _eartagsDeleted = false;
             })
           },
         ),
