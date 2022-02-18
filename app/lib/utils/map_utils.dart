@@ -89,7 +89,7 @@ Future<void> _downloadTile(
 }
 
 // TODO Should this return Future<void> or just void ???
-Future<void> downlaodTiles(
+Future<void> downloadTiles(
     LatLng northWest, LatLng southEast, int minZoom, int maxZoom) async {
   String urlTemplate =
       "https://opencache{s}.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}";
