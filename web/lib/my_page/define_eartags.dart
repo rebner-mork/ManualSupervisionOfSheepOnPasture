@@ -141,44 +141,51 @@ class _MyEartagsState extends State<MyEartags> {
   }
 
   DataCell _ownerCell(int index, bool isOwner) {
-    return DataCell(Row(
-      children: [
-        ChoiceChip(
-          label: Text(
-            'Meg',
-            style: isOwner ? largerBoldTextStyle : largerTextStyle,
-          ),
-          selected: isOwner,
-          selectedColor: Colors.green.shade400,
-          labelStyle: isOwner ? largerBoldTextStyle : null,
-          onSelected: (value) {
-            if (!isOwner) {
-              setState(() {
-                _eartagOwners[index] = true;
-                _valuesChanged = true;
-              });
-            }
-          },
-        ),
-        ChoiceChip(
-          label: Text(
-            'Annen',
-            style: !isOwner ? largerBoldTextStyle : largerTextStyle,
-          ),
-          selected: !isOwner,
-          selectedColor: Colors.orange.shade300,
-          labelStyle: !isOwner ? largerBoldTextStyle : null,
-          onSelected: (value) {
-            if (isOwner) {
-              setState(() {
-                _eartagOwners[index] = false;
-                _valuesChanged = true;
-              });
-            }
-          },
-        )
-      ],
-    ));
+    return DataCell(Container(
+        color: !_eartagsAdded &&
+                !_eartagsDeleted &&
+                _eartagOwners[index] != _oldEartagOwners[index]
+            ? Colors.orange.shade100
+            : null,
+        constraints: const BoxConstraints(minHeight: 50),
+        child: Row(
+          children: [
+            ChoiceChip(
+              label: Text(
+                'Meg',
+                style: isOwner ? largerBoldTextStyle : largerTextStyle,
+              ),
+              selected: isOwner,
+              selectedColor: Colors.green.shade400,
+              labelStyle: isOwner ? largerBoldTextStyle : null,
+              onSelected: (value) {
+                if (!isOwner) {
+                  setState(() {
+                    _eartagOwners[index] = true;
+                    _valuesChanged = true;
+                  });
+                }
+              },
+            ),
+            ChoiceChip(
+              label: Text(
+                'Annen',
+                style: !isOwner ? largerBoldTextStyle : largerTextStyle,
+              ),
+              selected: !isOwner,
+              selectedColor: Colors.orange.shade300,
+              labelStyle: !isOwner ? largerBoldTextStyle : null,
+              onSelected: (value) {
+                if (isOwner) {
+                  setState(() {
+                    _eartagOwners[index] = false;
+                    _valuesChanged = true;
+                  });
+                }
+              },
+            )
+          ],
+        )));
   }
 
   void _onEartagAdded() {

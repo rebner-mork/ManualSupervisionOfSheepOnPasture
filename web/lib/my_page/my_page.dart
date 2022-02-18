@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:web/my_page/define_eartag.dart';
+import 'package:web/my_page/define_eartags.dart';
 import 'package:web/my_page/my_farm.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 
