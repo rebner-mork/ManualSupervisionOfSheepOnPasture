@@ -30,7 +30,7 @@ class _MapState extends State<Map> {
   Future<void> _updateMap() async {
     LatLng pos = await map_utils.getDevicePosition();
     setState(() {
-      _mapController.move(pos, _mapController.zoom);
+      //_mapController.move(pos, _mapController.zoom);
       _currentPositionMarker = map_utils.getDevicePositionMarker(pos);
       _movementPoints.add(pos);
     });

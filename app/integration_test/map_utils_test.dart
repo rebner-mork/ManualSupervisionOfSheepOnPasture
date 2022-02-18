@@ -22,8 +22,6 @@ void main() {
       Directory(basePath).deleteSync(recursive: true);
     } on FileSystemException {
       log("Could not find directory, probably doesn't exist");
-    } catch (_) {
-      rethrow;
     }
 
     //Construct expected directory listing
@@ -48,7 +46,7 @@ void main() {
       }
     }
 
-    await downlaodTiles(northWest, southEast, minZoom, maxZoom);
+    await downloadTiles(northWest, southEast, minZoom, maxZoom);
 
     Directory mapDir = Directory(basePath);
     await for (var entity in mapDir.list(recursive: true, followLinks: false)) {
@@ -67,7 +65,7 @@ void main() {
 
     int oldLength = acutalDirectoryListing.length;
 
-    await downlaodTiles(northWest, southEast, minZoom, maxZoom);
+    await downloadTiles(northWest, southEast, minZoom, maxZoom);
 
     acutalDirectoryListing = [];
     await for (var entity in mapDir.list(recursive: true, followLinks: false)) {

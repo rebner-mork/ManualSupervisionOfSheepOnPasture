@@ -54,12 +54,11 @@ int getTileIndexX(double longitude, int zoom) {
 
 int getTileIndexY(double latitude, int zoom) {
   var latitudeInRadians = latitude * (pi / 180);
-  var y = ((1 -
+  return ((1 -
               ((log(tan(latitudeInRadians) + (1 / cos(latitudeInRadians)))) /
                   pi)) *
           pow(2, zoom - 1))
       .floor();
-  return y;
 }
 
 String _getTileUrl(
@@ -73,17 +72,17 @@ String _getTileUrl(
 }
 
 Future<void> _downloadTile(
-    int x, int y, int z, String urlTemplate, List<String> subdomains,
+    int x, int y, int zoom, String urlTemplate, List<String> subdomains,
     [bool force = false]) async {
   Directory baseDir = await getApplicationDocumentsDirectory();
   String basePath = baseDir.path;
-  String subPath = "/maps/" + z.toString() + "/" + x.toString();
+  String subPath = "/maps/" + zoom.toString() + "/" + x.toString();
   await Directory(basePath + subPath).create(recursive: true);
   String fileName = "/" + y.toString() + ".png";
 
   if (force || !File(basePath + subPath + fileName).existsSync()) {
     var response = await http
-        .get(Uri.parse(_getTileUrl(urlTemplate, x, y, z, subdomains)));
+        .get(Uri.parse(_getTileUrl(urlTemplate, x, y, zoom, subdomains)));
     File(basePath + subPath + fileName).writeAsBytesSync(response.bodyBytes);
   }
 }
@@ -104,7 +103,7 @@ Future<void> downloadTiles(
 
     for (int x = west; x <= east; x++) {
       for (int y = north; y <= south; y++) {
-        await _downloadTile(x, y, zoom, urlTemplate, subdomains, true);
+        await _downloadTile(x, y, zoom, urlTemplate, subdomains);
       }
     }
   }
