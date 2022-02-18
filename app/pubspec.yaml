@@ -33,6 +33,8 @@ dependencies:
   firebase_auth: ^3.3.5
   cloud_firestore: ^3.1.6
   email_validator: ^2.0.1
+  flutter_tts: ^3.3.3
+  speech_to_text: ^5.4.2
   fluttericon: ^2.0.0
   path_provider: ^2.0.8
 

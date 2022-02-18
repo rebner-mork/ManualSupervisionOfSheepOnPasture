@@ -1,4 +1,5 @@
 import 'package:app/login/login_page.dart';
+import 'package:app/register/register_sheep_orally.dart';
 import 'package:app/register/register_sheep.dart';
 import 'package:app/register_user/register_user_page.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -42,6 +43,8 @@ class _MyAppState extends State<MyApp> {
         Map.route: (context) =>
             Map(LatLng(62.469501, 6.146955), LatLng(62.473164, 6.159678)),
         RegisterSheep.route: (context) => const RegisterSheep('fileName'),
+        RegisterSheepOrally.route: (context) =>
+            const RegisterSheepOrally('filename'),
       },
     );
   }
