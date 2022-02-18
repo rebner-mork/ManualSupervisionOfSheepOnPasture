@@ -74,7 +74,7 @@ void main() {
       acutalDirectoryListing.add(entity.path);
     }
 
-    expect(oldLenght, acutalDirectoryListing.length);
+    expect(oldLength, acutalDirectoryListing.length);
 
     Directory(basePath).deleteSync(recursive: true);
   });
