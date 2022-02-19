@@ -46,45 +46,42 @@ class _MyTiesState extends State<MyTies> {
   @override
   Widget build(BuildContext context) {
     return Material(
-        child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 600),
-            child: Column(children: [
-              _loadingData
-                  ? const Text(
-                      'Laster data...',
-                      style: TextStyle(fontSize: 18),
-                    )
-                  : DataTable(
-                      border: TableBorder.symmetric(),
-                      columns: [
-                        DataColumn(
-                            label: Text(
-                          'Slipsfarge',
-                          style: columnNameTextStyle,
-                        )),
-                        DataColumn(
-                            label: Text(
-                          'Antall lam',
-                          style: columnNameTextStyle,
-                        )),
-                        const DataColumn(label: Text('')),
-                      ],
-                      rows: _tieColors.length < possibleColors.length
-                          ? _tieRows() + _newTieRow()
-                          : _tieRows(),
-                    ),
-              const SizedBox(height: 10),
-              Text(
-                _helpText,
-                style: TextStyle(
-                    fontSize: 17,
-                    color:
-                        _helpText == dataSavedFeedback ? Colors.green : null),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 10),
-              if (_valuesChanged) _saveOrDeleteButtons(),
-            ])));
+        child: Column(children: [
+      _loadingData
+          ? const Text(
+              'Laster data...',
+              style: TextStyle(fontSize: 18),
+            )
+          : DataTable(
+              border: TableBorder.symmetric(),
+              columns: [
+                DataColumn(
+                    label: Text(
+                  'Slipsfarge',
+                  style: columnNameTextStyle,
+                )),
+                DataColumn(
+                    label: Text(
+                  'Antall lam',
+                  style: columnNameTextStyle,
+                )),
+                const DataColumn(label: Text('')),
+              ],
+              rows: _tieColors.length < possibleColors.length
+                  ? _tieRows() + _newTieRow()
+                  : _tieRows(),
+            ),
+      const SizedBox(height: 10),
+      Text(
+        _helpText,
+        style: TextStyle(
+            fontSize: 17,
+            color: _helpText == dataSavedFeedback ? Colors.green : null),
+        textAlign: TextAlign.center,
+      ),
+      const SizedBox(height: 10),
+      if (_valuesChanged) _saveOrDeleteButtons(),
+    ]));
   }
 
   DataCell _tieCell(int index, Color color) {
@@ -380,6 +377,7 @@ class _MyTiesState extends State<MyTies> {
                 'name': null,
                 'address': null,
                 'maps': null,
+                'eartags': null,
                 'ties': dataMap
               })
             }
