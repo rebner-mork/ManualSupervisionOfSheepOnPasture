@@ -1,3 +1,7 @@
+import 'dart:math';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:latlong2/latlong.dart';
@@ -42,4 +46,68 @@ Marker getDevicePositionMarker(LatLng pos) {
             color: Colors.pink,
             size: size,
           ));
+}
+
+int getTileIndexX(double longitude, int zoom) {
+  return (((longitude + 180) / 360) * pow(2, zoom)).floor();
+}
+
+int getTileIndexY(double latitude, int zoom) {
+  var latitudeInRadians = latitude * (pi / 180);
+  return ((1 -
+              ((log(tan(latitudeInRadians) + (1 / cos(latitudeInRadians)))) /
+                  pi)) *
+          pow(2, zoom - 1))
+      .floor();
+}
+
+String _getTileUrl(
+    String urlTemplate, int x, int y, int zoom, List<String> subdomains) {
+  var random = Random();
+  return urlTemplate
+      .replaceFirst("{z}", zoom.toString())
+      .replaceFirst("{x}", x.toString())
+      .replaceFirst("{y}", y.toString())
+      .replaceFirst("{s}", subdomains[random.nextInt(subdomains.length)]);
+}
+
+Future<void> _downloadTile(
+    int x, int y, int zoom, String urlTemplate, List<String> subdomains) async {
+  Directory baseDir = await getApplicationDocumentsDirectory();
+  String basePath = baseDir.path;
+  String subPath = "/maps/" + zoom.toString() + "/" + x.toString();
+  await Directory(basePath + subPath).create(recursive: true);
+  String fileName = "/" + y.toString() + ".png";
+
+  if (!File(basePath + subPath + fileName).existsSync()) {
+    var response = await http
+        .get(Uri.parse(_getTileUrl(urlTemplate, x, y, zoom, subdomains)));
+    File(basePath + subPath + fileName).writeAsBytesSync(response.bodyBytes);
+  }
+}
+
+// TODO Should this return Future<void> or just void ???
+Future<void> downloadTiles(
+    LatLng northWest, LatLng southEast, double minZoom, double maxZoom) async {
+  String urlTemplate =
+      "https://opencache{s}.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}";
+  final List<String> subdomains = ["", "2", "3"];
+
+  for (int zoom = minZoom.toInt(); zoom <= maxZoom.toInt(); zoom++) {
+    int west = getTileIndexX(northWest.longitude, zoom);
+    int east = getTileIndexX(southEast.longitude, zoom);
+    int north = getTileIndexY(northWest.latitude, zoom);
+    int south = getTileIndexY(southEast.latitude, zoom);
+
+    for (int x = west; x <= east; x++) {
+      for (int y = south; y <= north; y++) {
+        await _downloadTile(x, y, zoom, urlTemplate, subdomains);
+      }
+    }
+  }
+}
+
+Future<String> getOfflineUrlTemplate() async {
+  Directory baseDir = await getApplicationDocumentsDirectory();
+  return baseDir.path + "/maps/{z}/{x}/{y}.png";
 }
