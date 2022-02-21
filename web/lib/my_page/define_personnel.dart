@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:web/utils/constants.dart';
 import 'package:web/utils/styles.dart';
@@ -26,19 +28,24 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
 
   int _invalidValueIndex = -1;
 
-  List<String> _personnel = ["hei"];
-  List<String> _oldPersonnel = ["hei"];
+  List<String> _personnel = [];
+  List<String> _oldPersonnel = [];
 
-  List<TextEditingController> _personnelControllers = [
-    TextEditingController(text: "hei")
-  ];
-  List<TextEditingController> _oldPersonnelControllers = [
-    TextEditingController(text: "hei")
-  ];
+  List<TextEditingController> _personnelControllers = [];
+  List<TextEditingController> _oldPersonnelControllers = [];
   TextEditingController _newPersonnelController = TextEditingController();
 
   String _helpText = '';
   final String nonUniqueEmail = 'E-post må være unik';
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _readPersonnelData();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,8 +76,6 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                               : null),
                       textAlign: TextAlign.center,
                     ),
-                    /*const SizedBox(height: 10),
-                    _saveOrDeleteButtons(),*/
                   ]));
   }
 
@@ -89,9 +94,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                         decoration:
                             const InputDecoration(hintText: 'Skriv e-post'),
                         onChanged: (email) {
-                          debugPrint("JA");
                           setState(() {
-                            //_personnel[data.key] = email;
                             _showDeleteIcon[data.key] =
                                 email == _oldPersonnel[data.key];
                           });
@@ -117,41 +120,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                               fixedSize: MaterialStateProperty.all(
                                   const Size.fromHeight(35))),
                           child: Text('Lagre', style: largerTextStyle),
-                          onPressed: () {
-                            String newEmail =
-                                _personnelControllers[data.key].text;
-
-                            setState(() {
-                              /*if (newMail == _oldPersonnel[data.key]) {
-                                _showDeleteIcon[data.key] = true;
-                              } else {*/
-                              if (newEmail.isNotEmpty) {
-                                if (!_personnel.contains(newEmail)) {
-                                  if (validateEmail(newEmail) == null) {
-                                    // TODO: saveMail (husk å legge til i _personnel og controller osv. også)
-                                    _helpText = '';
-                                    _showDeleteIcon[data.key] = true;
-                                    _invalidValues = false;
-                                    _invalidValueIndex = -1;
-                                  } else {
-                                    _helpText =
-                                        "'$newEmail' har ikke gyldig format";
-                                    _invalidValues = true;
-                                    _invalidValueIndex = data.key;
-                                  }
-                                } else {
-                                  _helpText = nonUniqueEmail;
-                                  _invalidValues = true;
-                                  _invalidValueIndex = data.key;
-                                }
-                              } else {
-                                _helpText = 'Skriv e-post';
-                                _invalidValues = true;
-                                _invalidValueIndex = data.key;
-                              }
-                              // }
-                            });
-                          }),
+                          onPressed: () => _saveOrCancelPersonnel(data.key)),
                       const SizedBox(width: 10),
                       ElevatedButton(
                         style: ButtonStyle(
@@ -167,17 +136,43 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                             _personnelControllers[data.key].text =
                                 _oldPersonnelControllers[data.key].text;
                             _showDeleteIcon[data.key] = true;
-
-                            /*showMap = false;
-                  _newCoordinatesText = coordinatesPlaceholder;
-                  _newMapNameController.clear();
-                  _helpText = '';*/
                           });
                         },
                       )
                     ]))
             ]))
         .toList();
+  }
+
+  void _saveOrCancelPersonnel(int index) {
+    String newEmail = _personnelControllers[index].text;
+
+    setState(() {
+      if (newEmail.isNotEmpty) {
+        if (!_personnel.contains(newEmail)) {
+          if (validateEmail(newEmail) == null) {
+            // TODO: saveMail (husk å legge til i _personnel og controller osv. også)
+            //_savePersonnelData();
+            _helpText = '';
+            _showDeleteIcon[index] = true;
+            _invalidValues = false;
+            _invalidValueIndex = -1;
+          } else {
+            _helpText = "'$newEmail' har ikke gyldig format";
+            _invalidValues = true;
+            _invalidValueIndex = index;
+          }
+        } else {
+          _helpText = nonUniqueEmail;
+          _invalidValues = true;
+          _invalidValueIndex = index;
+        }
+      } else {
+        _helpText = 'Skriv e-post'; // TODO: variable
+        _invalidValues = true;
+        _invalidValueIndex = index;
+      }
+    });
   }
 
   DataRow _newPersonnelRow() {
@@ -239,6 +234,9 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
         child: const Text("Avbryt"),
         onPressed: () {
           setState(() {
+            _newRow = false;
+            _newPersonnelController.clear();
+            _helpText = '';
             /*showMap = false;
                   _newCoordinatesText = coordinatesPlaceholder;
                   _newMapNameController.clear();
@@ -280,10 +278,12 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
       _personnelControllers.add(_newPersonnelController);
       _newPersonnelController = TextEditingController(text: '');
       _showDeleteIcon.add(true);
+
+      _savePersonnelData();
     }
   }
 
-  Column _saveOrDeleteButtons() {
+  /*Column _saveOrDeleteButtons() {
     return Column(children: [
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         ElevatedButton(
@@ -334,7 +334,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
         ),
       ])
     ]);
-  }
+  }*/
 
   void _validateEmails() {
     if (_personnel.toSet().length < _personnel.length) {
@@ -375,6 +375,8 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
 
                     _validateEmails();
                   });
+                  // TODO: db: delete one person
+                  //_savePersonnelData();
                 },
                 child: const Text('Ja, slett')),
             TextButton(
@@ -385,6 +387,106 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
           ],
         ));
   }
+
+  void _readPersonnelData() async {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+
+    CollectionReference farmCollection =
+        FirebaseFirestore.instance.collection('farms');
+    DocumentReference farmDoc = farmCollection.doc(uid);
+
+    List<String>? emails;
+
+    await farmDoc.get().then((doc) => {
+          if (doc.exists)
+            {
+              emails = doc.get('personnel'),
+              if (emails != null)
+                {
+                  for (String email in emails!)
+                    {
+                      _personnel.add(email),
+                      _showDeleteIcon.add(true),
+                      _personnelControllers
+                          .add(TextEditingController(text: email))
+                    },
+                  _oldPersonnelControllers = List.from(_personnelControllers),
+                  _oldPersonnel = List.from(emails!),
+                }
+            },
+          setState(() {
+            _loadingData = false;
+          })
+        });
+  }
+
+  void _savePersonnelData() async {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+
+    CollectionReference farmCollection =
+        FirebaseFirestore.instance.collection('farms');
+    DocumentReference farmDoc = farmCollection.doc(uid);
+
+    await farmDoc.get().then((doc) => {
+          if (doc.exists)
+            {
+              farmDoc.update({'personnel': _personnel})
+            }
+          else
+            {
+              farmDoc.set({
+                'maps': null,
+                'name': null,
+                'address': null,
+                'ties': null,
+                'eartags': null,
+                'personnel': _personnel
+              })
+            },
+        });
+
+    CollectionReference personnelCollection =
+        FirebaseFirestore.instance.collection('personnel');
+    DocumentReference personnelDoc;
+
+    for (String oldEmail in _oldPersonnel) {
+      if (!_personnel.contains(oldEmail)) {
+        personnelDoc = personnelCollection.doc(oldEmail);
+
+        await personnelDoc.get().then((doc) => {
+              if (doc.exists)
+                {
+                  personnelDoc.update({
+                    'farms': FieldValue.arrayRemove([uid])
+                  })
+                }
+            });
+      }
+    }
+
+    for (String email in _personnel) {
+      if (!_oldPersonnel.contains(email)) {
+        personnelDoc = personnelCollection.doc(email);
+
+        await personnelDoc.get().then((doc) => {
+              if (doc.exists)
+                {
+                  personnelDoc.update({
+                    'farms': FieldValue.arrayUnion([uid])
+                  })
+                }
+              else
+                {
+                  personnelDoc.set({
+                    'farms': [uid]
+                  })
+                }
+            });
+      }
+    }
+  }
+
+  // TODO: save for ny (arrayunion) NEI TROKKE DET TRENGS
 
   @override
   void dispose() {
