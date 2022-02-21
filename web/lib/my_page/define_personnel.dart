@@ -32,7 +32,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
   List<String> _oldPersonnel = [];
 
   List<TextEditingController> _personnelControllers = [];
-  List<TextEditingController> _oldPersonnelControllers = [];
+  //List<TextEditingController> _oldPersonnelControllers = [];
   TextEditingController _newPersonnelController = TextEditingController();
 
   String _helpText = '';
@@ -120,7 +120,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                               fixedSize: MaterialStateProperty.all(
                                   const Size.fromHeight(35))),
                           child: Text('Lagre', style: largerTextStyle),
-                          onPressed: () => _saveOrCancelPersonnel(data.key)),
+                          onPressed: () => _saveExistingPersonnel(data.key)),
                       const SizedBox(width: 10),
                       ElevatedButton(
                         style: ButtonStyle(
@@ -134,7 +134,8 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                         onPressed: () {
                           setState(() {
                             _personnelControllers[data.key].text =
-                                _oldPersonnelControllers[data.key].text;
+                                _oldPersonnel[data
+                                    .key]; //_oldPersonnelControllers[data.key].text;
                             _showDeleteIcon[data.key] = true;
                           });
                         },
@@ -144,7 +145,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
         .toList();
   }
 
-  void _saveOrCancelPersonnel(int index) {
+  void _saveExistingPersonnel(int index) {
     String newEmail = _personnelControllers[index].text;
 
     setState(() {
@@ -156,7 +157,9 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
             _helpText = '';
             _showDeleteIcon[index] = true;
             _invalidValues = false;
-            _invalidValueIndex = -1;
+            //_invalidValueIndex = -1;
+            _personnel[index] = newEmail;
+            _savePersonnelData();
           } else {
             _helpText = "'$newEmail' har ikke gyldig format";
             _invalidValues = true;
@@ -371,6 +374,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                   setState(() {
                     _personnel.removeAt(index);
                     _personnelControllers.removeAt(index);
+                    _showDeleteIcon.removeAt(index);
                     _personnelDeleted = true;
 
                     _validateEmails();
@@ -395,7 +399,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
         FirebaseFirestore.instance.collection('farms');
     DocumentReference farmDoc = farmCollection.doc(uid);
 
-    List<String>? emails;
+    List<dynamic>? emails;
 
     await farmDoc.get().then((doc) => {
           if (doc.exists)
@@ -410,7 +414,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                       _personnelControllers
                           .add(TextEditingController(text: email))
                     },
-                  _oldPersonnelControllers = List.from(_personnelControllers),
+                  //_oldPersonnelControllers = List.from(_personnelControllers),
                   _oldPersonnel = List.from(emails!),
                 }
             },
@@ -453,12 +457,20 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
       if (!_personnel.contains(oldEmail)) {
         personnelDoc = personnelCollection.doc(oldEmail);
 
+        List<dynamic>? farms;
+
         await personnelDoc.get().then((doc) => {
               if (doc.exists)
                 {
-                  personnelDoc.update({
-                    'farms': FieldValue.arrayRemove([uid])
-                  })
+                  farms = doc.get('farms'),
+                  if (farms!.length == 1)
+                    {personnelDoc.delete()}
+                  else
+                    {
+                      personnelDoc.update({
+                        'farms': FieldValue.arrayRemove([uid])
+                      }),
+                    }
                 }
             });
       }
@@ -486,13 +498,12 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
     }
   }
 
-  // TODO: save for ny (arrayunion) NEI TROKKE DET TRENGS
-
   @override
   void dispose() {
     for (TextEditingController controller in _personnelControllers) {
       controller.dispose();
     }
+    // TODO: dispose _oldPersonnelControllers
     super.dispose();
   }
 }
