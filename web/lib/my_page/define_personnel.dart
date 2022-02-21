@@ -1,7 +1,9 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:web/utils/constants.dart';
 import 'package:web/utils/styles.dart';
+import 'package:web/utils/validation.dart';
 
 class DefinePersonnel extends StatefulWidget {
   const DefinePersonnel({Key? key}) : super(key: key);
@@ -14,15 +16,17 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
   _DefinePersonnelState();
 
   bool _loadingData = false; // TODO: true
-  bool _valuesChanged = false;
   bool _equalValues = false;
-  bool _personnelAdded = false;
+  bool _invalidValues = false;
   bool _personnelDeleted = false;
+
+  int _invalidValueIndex = -1;
 
   List<String> _personnel = [];
   List<String> _oldPersonnel = [];
 
   List<TextEditingController> _personnelControllers = [];
+  List<TextEditingController> _oldPersonnelControllers = [];
 
   String _helpText = '';
 
@@ -44,7 +48,19 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                           )),
                           const DataColumn(label: Text(''))
                         ],
-                        rows: _existingPersonnelRows() + [_newPersonnelRow()])
+                        rows: _existingPersonnelRows() + [_addPersonnelRow()]),
+                    const SizedBox(height: 10),
+                    Text(
+                      _helpText,
+                      style: TextStyle(
+                          fontSize: 17,
+                          color: _helpText == dataSavedFeedback
+                              ? Colors.green
+                              : null),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 10),
+                    _saveOrDeleteButtons(),
                   ]));
   }
 
@@ -54,12 +70,21 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
         .entries
         .map((MapEntry<int, String> data) => DataRow(cells: [
               DataCell(
-                  TextField(
-                    controller: _personnelControllers[data.key],
-                    onChanged: (email) {
-                      //_showDeleteIcon[data.key] = false
-                    },
-                  ),
+                  Container(
+                      color: _invalidValues && data.key == _invalidValueIndex
+                          ? Colors.yellow.shade200 // TODO: check shade
+                          : null,
+                      child: TextField(
+                        controller: _personnelControllers[data.key],
+                        decoration:
+                            const InputDecoration(hintText: 'Skriv e-post'),
+                        onChanged: (email) {
+                          setState(() {
+                            _personnel[data.key] = email;
+                          });
+                          //_showDeleteIcon[data.key] = false
+                        },
+                      )),
                   showEditIcon: true),
               DataCell(IconButton(
                 icon: Icon(Icons.delete, color: Colors.grey.shade800, size: 26),
@@ -76,7 +101,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
         .toList();
   }
 
-  DataRow _newPersonnelRow() {
+  DataRow _addPersonnelRow() {
     return DataRow(cells: [
       DataCell.empty,
       DataCell(FloatingActionButton(
@@ -84,27 +109,92 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
         child: const Icon(Icons.add, size: 26),
         onPressed: () {
           setState(() {
+            //_addPersonnel = true;
+            //_invalidValues = true;
+            //_invalidValueIndex = _personnel.length;
+            _personnel.add('');
             TextEditingController controller = TextEditingController();
             controller.text = '';
-            _personnel.add('');
             _personnelControllers.add(controller);
-            _valuesChanged = true;
-            _personnelAdded = true;
-
-            _checkEqualEmails();
           });
         },
       ))
     ]);
   }
 
-  void _checkEqualEmails() {
+  Column _saveOrDeleteButtons() {
+    return Column(children: [
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        ElevatedButton(
+            style: ButtonStyle(
+                fixedSize: MaterialStateProperty.all(const Size.fromHeight(35)),
+                backgroundColor: MaterialStateProperty.all(
+                    _equalValues ? Colors.grey : Colors.green)),
+            child: Text(
+              "Lagre",
+              style: largerTextStyle,
+              textAlign: TextAlign.center,
+            ),
+            onPressed: () => {
+                  // TODO: validate
+                  _validateEmails(),
+                  if (!_equalValues && !_invalidValues && _personnel.isNotEmpty)
+                    {
+                      _oldPersonnel = List.from(_personnel),
+                      _oldPersonnelControllers =
+                          List.from(_personnelControllers),
+                      // TODO: controllergreier?
+                      setState(() {
+                        _helpText = dataSavedFeedback;
+                        _personnelDeleted = false;
+                      }),
+                      //_savePersonnelData() TODO
+                    }
+                }),
+        const SizedBox(width: 10),
+        ElevatedButton(
+          style: ButtonStyle(
+              fixedSize: MaterialStateProperty.all(const Size.fromHeight(35)),
+              backgroundColor: MaterialStateProperty.all(Colors.red)),
+          child: Text(
+            "Avbryt",
+            style: largerTextStyle,
+          ),
+          onPressed: () => {
+            setState(() {
+              _personnelDeleted = false;
+              _invalidValues = false; // TODO: blir dette riktig?
+              _personnel = List.from(_oldPersonnel);
+              _personnelControllers = _oldPersonnelControllers;
+              // controlergreier? TODO
+              _helpText = '';
+            })
+          },
+        ),
+      ])
+    ]);
+  }
+
+  void _validateEmails() {
     if (_personnel.toSet().length < _personnel.length) {
       _helpText = 'E-post må være unik';
       _equalValues = true;
     } else {
       _helpText = '';
       _equalValues = false;
+      _invalidValues = false;
+    }
+    for (String email in _personnel) {
+      if (validateEmail(email) != null) {
+        setState(() {
+          _invalidValues = true;
+          _invalidValueIndex = _personnel.indexOf(email);
+          _helpText = email == ''
+              ? 'E-post kan ikke være tom'
+              : "'$email' har ikke gyldig format";
+        });
+        break;
+      }
     }
   }
 
@@ -112,7 +202,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
     return BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
         child: AlertDialog(
-          title: Text('Slette ${_personnel[index]}?'),
+          title: Text("Slette '${_personnel[index]}'?"),
           actions: [
             TextButton(
                 onPressed: () {
@@ -120,11 +210,9 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                   setState(() {
                     _personnel.removeAt(index);
                     _personnelControllers.removeAt(index);
-
-                    _valuesChanged = true;
                     _personnelDeleted = true;
 
-                    _checkEqualEmails();
+                    _validateEmails();
                   });
                 },
                 child: const Text('Ja, slett')),
