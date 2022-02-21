@@ -18,20 +18,17 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
   _DefinePersonnelState();
 
   bool _loadingData = true;
-  bool _equalValues = false;
-  bool _invalidValues = false;
-  bool _newRow = false;
-  bool _invalidNewPersonnel = false;
+  bool _showNewEmailRow = false;
 
+  int _invalidEmailIndex = -1;
+  bool _invalidNewEmail = false;
+
+  final List<String> _emails = [];
+  List<String> _oldPersonnel = [];
   final List<bool> _showDeleteIcon = [];
 
-  int _invalidValueIndex = -1;
-
-  final List<String> _personnel = [];
-  List<String> _oldPersonnel = [];
-
-  final List<TextEditingController> _personnelControllers = [];
-  TextEditingController _newPersonnelController = TextEditingController();
+  final List<TextEditingController> _emailControllers = [];
+  TextEditingController _newEmailController = TextEditingController();
 
   String _helpText = '';
   final String nonUniqueEmail = 'E-post må være unik';
@@ -79,17 +76,17 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
   }
 
   List<DataRow> _existingPersonnelRows() {
-    return _personnel
+    return _emails
         .asMap()
         .entries
         .map((MapEntry<int, String> data) => DataRow(cells: [
               DataCell(
                   Container(
-                      color: _invalidValues && data.key == _invalidValueIndex
+                      color: data.key == _invalidEmailIndex
                           ? Colors.yellow.shade200
                           : null,
                       child: TextField(
-                        controller: _personnelControllers[data.key],
+                        controller: _emailControllers[data.key],
                         decoration: InputDecoration(hintText: writeEmail),
                         onChanged: (email) {
                           setState(() {
@@ -97,9 +94,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                                 email == _oldPersonnel[data.key];
                           });
                         },
-                        onSubmitted: (_) {
-                          _saveExistingPersonnel(data.key);
-                        },
+                        onSubmitted: (_) => _saveExistingPersonnel(data.key),
                       )),
                   showEditIcon: true),
               DataCell(_showDeleteIcon[data.key]
@@ -134,10 +129,10 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                         child: const Text("Avbryt"),
                         onPressed: () {
                           setState(() {
-                            _personnelControllers[data.key].text =
+                            _emailControllers[data.key].text =
                                 _oldPersonnel[data.key];
                             _showDeleteIcon[data.key] = true;
-                            _invalidValues = false;
+                            _invalidEmailIndex = -1;
                             _helpText = '';
                           });
                         },
@@ -148,58 +143,78 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
   }
 
   void _saveExistingPersonnel(int index) {
-    String newEmail = _personnelControllers[index].text;
+    String newEmail = _emailControllers[index].text;
 
-    setState(() {
-      if (newEmail.isNotEmpty) {
-        if (!_personnel.contains(newEmail)) {
-          if (validateEmail(newEmail) == null) {
-            _helpText = '';
-            _showDeleteIcon[index] = true;
-            _invalidValues = false;
-            //_invalidValueIndex = -1;
-            _personnel[index] = newEmail;
-            _oldPersonnel = List.from(_personnel);
-            _savePersonnelData();
+    if (newEmail != _oldPersonnel[index]) {
+      setState(() {
+        if (newEmail.isNotEmpty) {
+          if (!_emails.contains(newEmail)) {
+            if (validateEmail(newEmail) == null) {
+              _helpText = '';
+              _showDeleteIcon[index] = true;
+              _invalidEmailIndex = -1;
+              _emails[index] = newEmail;
+              _oldPersonnel = List.from(_emails);
+              _savePersonnelData();
+            } else {
+              _helpText = "'$newEmail' har ikke gyldig format";
+              _invalidEmailIndex = index;
+              _invalidNewEmail = false;
+            }
           } else {
-            _helpText = "'$newEmail' har ikke gyldig format";
-            _invalidValues = true;
-            _invalidValueIndex = index;
-            _invalidNewPersonnel = false;
+            _helpText = nonUniqueEmail;
+            _invalidEmailIndex = index;
+            _invalidNewEmail = false;
           }
         } else {
-          _helpText = nonUniqueEmail;
-          _invalidValues = true;
-          _invalidValueIndex = index;
-          _invalidNewPersonnel = false;
+          _helpText = writeEmail;
+          _invalidEmailIndex = index;
+          _invalidNewEmail = false;
         }
-      } else {
-        _helpText = writeEmail;
-        _invalidValues = true;
-        _invalidValueIndex = index;
-        _invalidNewPersonnel = false;
-      }
-    });
+      });
+    }
   }
 
   DataRow _newPersonnelRow() {
     return DataRow(
-        cells: _newRow
+        cells: _showNewEmailRow
             ? [
                 DataCell(
                     Container(
-                        color: _invalidNewPersonnel
-                            ? Colors.yellow.shade200
-                            : null,
+                        color: _invalidNewEmail ? Colors.yellow.shade200 : null,
                         child: TextField(
-                          controller: _newPersonnelController,
+                          controller: _newEmailController,
                           decoration: InputDecoration(hintText: writeEmail),
                           onSubmitted: (_) {
                             _saveNewPersonnel();
                           },
                         )),
                     showEditIcon: true),
-                DataCell(_saveOrCancelNewPersonnel()),
+                DataCell(Row(children: [
+                  ElevatedButton(
+                      style: ButtonStyle(
+                          fixedSize: MaterialStateProperty.all(
+                              const Size.fromHeight(35))),
+                      child: Text('Lagre', style: largerTextStyle),
+                      onPressed: _saveNewPersonnel),
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                        fixedSize: MaterialStateProperty.all(
+                            const Size.fromHeight(35)),
+                        textStyle: MaterialStateProperty.all(largerTextStyle),
+                        backgroundColor: MaterialStateProperty.all(Colors.red)),
+                    child: const Text("Avbryt"),
+                    onPressed: () {
+                      setState(() {
+                        _showNewEmailRow = false;
+                        _newEmailController.clear();
+                        _helpText = '';
+                        _invalidNewEmail = false;
+                      });
+                    },
+                  )
+                ])),
               ]
             : [
                 DataCell.empty,
@@ -208,71 +223,39 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                   child: const Icon(Icons.add, size: 26),
                   onPressed: () {
                     setState(() {
-                      _newRow = true;
+                      _showNewEmailRow = true;
                     });
                   },
                 ))
               ]);
   }
 
-  Row _saveOrCancelNewPersonnel() {
-    return Row(children: [
-      ElevatedButton(
-          style: ButtonStyle(
-              fixedSize: MaterialStateProperty.all(const Size.fromHeight(35))),
-          child: Text('Lagre', style: largerTextStyle),
-          onPressed: () {
-            _saveNewPersonnel();
-          }),
-      const SizedBox(width: 10),
-      ElevatedButton(
-        style: ButtonStyle(
-            fixedSize: MaterialStateProperty.all(const Size.fromHeight(35)),
-            textStyle: MaterialStateProperty.all(largerTextStyle),
-            backgroundColor: MaterialStateProperty.all(Colors.red)),
-        child: const Text("Avbryt"),
-        onPressed: () {
-          setState(() {
-            _newRow = false;
-            _newPersonnelController.clear();
-            _helpText = '';
-            _invalidNewPersonnel = false;
-          });
-        },
-      )
-    ]);
-  }
-
   void _saveNewPersonnel() {
-    String email = _newPersonnelController.text;
+    String email = _newEmailController.text;
 
     setState(() {
-      // TODO: Markere bakgrunn ved feil?
       if (email.isEmpty) {
         _helpText = 'E-post kan ikke være tom';
-        _invalidNewPersonnel = true;
-      } else if (_personnel.contains(email)) {
+        _invalidNewEmail = true;
+        _invalidEmailIndex = -1;
+      } else if (_emails.contains(email)) {
         _helpText = nonUniqueEmail;
-        _invalidNewPersonnel = true;
-        //_equalValues = true;
+        _invalidNewEmail = true;
+        _invalidEmailIndex = -1;
       } else if (validateEmail(email) != null) {
-        //_invalidValues = true;
-        //_invalidValueIndex = _personnel.indexOf(email);
-        _invalidNewPersonnel = true;
+        _invalidNewEmail = true;
+        _invalidEmailIndex = -1;
         _helpText = email == ''
             ? 'E-post kan ikke være tom'
             : "'$email' har ikke gyldig format for e-post";
-        //_helpText = '';
-        //_equalValues = false;
-        //_invalidValues = false;
       } else {
         _helpText = '';
-        _newRow = false;
-        _invalidNewPersonnel = false;
-        _personnel.add(email);
-        _oldPersonnel = List.from(_personnel);
-        _personnelControllers.add(_newPersonnelController);
-        _newPersonnelController = TextEditingController(text: '');
+        _showNewEmailRow = false;
+        _invalidNewEmail = false;
+        _emails.add(email);
+        _oldPersonnel = List.from(_emails);
+        _emailControllers.add(_newEmailController);
+        _newEmailController = TextEditingController(text: '');
         _showDeleteIcon.add(true);
 
         _savePersonnelData();
@@ -281,19 +264,16 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
   }
 
   void _validateEmails() {
-    if (_personnel.toSet().length < _personnel.length) {
+    if (_emails.toSet().length < _emails.length) {
       _helpText = 'E-post må være unik';
-      _equalValues = true;
     } else {
       _helpText = '';
-      _equalValues = false;
-      _invalidValues = false;
+      _invalidEmailIndex = -1;
     }
-    for (String email in _personnel) {
+    for (String email in _emails) {
       if (validateEmail(email) != null) {
         setState(() {
-          _invalidValues = true;
-          _invalidValueIndex = _personnel.indexOf(email);
+          _invalidEmailIndex = _emails.indexOf(email);
           _helpText = email == ''
               ? 'E-post kan ikke være tom'
               : "'$email' har ikke gyldig format";
@@ -307,15 +287,15 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
     return BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
         child: AlertDialog(
-          title: Text("Slette '${_personnel[index]}'?"),
+          title: Text("Slette '${_emails[index]}'?"),
           actions: [
             TextButton(
                 onPressed: () {
                   Navigator.of(context).pop('dialog');
                   setState(() {
-                    _personnel.removeAt(index);
+                    _emails.removeAt(index);
                     _oldPersonnel.removeAt(index);
-                    _personnelControllers.removeAt(index);
+                    _emailControllers.removeAt(index);
                     _showDeleteIcon.removeAt(index);
 
                     _validateEmails();
@@ -349,10 +329,9 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                 {
                   for (String email in emails!)
                     {
-                      _personnel.add(email),
+                      _emails.add(email),
                       _showDeleteIcon.add(true),
-                      _personnelControllers
-                          .add(TextEditingController(text: email))
+                      _emailControllers.add(TextEditingController(text: email))
                     },
                   _oldPersonnel = List.from(emails!),
                 }
@@ -373,7 +352,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
     await farmDoc.get().then((doc) => {
           if (doc.exists)
             {
-              farmDoc.update({'personnel': _personnel})
+              farmDoc.update({'personnel': _emails})
             }
           else
             {
@@ -383,7 +362,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                 'address': null,
                 'ties': null,
                 'eartags': null,
-                'personnel': _personnel
+                'personnel': _emails
               })
             },
         });
@@ -393,7 +372,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
     DocumentReference personnelDoc;
 
     for (String oldEmail in _oldPersonnel) {
-      if (!_personnel.contains(oldEmail)) {
+      if (!_emails.contains(oldEmail)) {
         personnelDoc = personnelCollection.doc(oldEmail);
 
         List<dynamic>? farms;
@@ -415,7 +394,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
       }
     }
 
-    for (String email in _personnel) {
+    for (String email in _emails) {
       if (!_oldPersonnel.contains(email)) {
         personnelDoc = personnelCollection.doc(email);
 
@@ -439,7 +418,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
 
   @override
   void dispose() {
-    for (TextEditingController controller in _personnelControllers) {
+    for (TextEditingController controller in _emailControllers) {
       controller.dispose();
     }
     super.dispose();
