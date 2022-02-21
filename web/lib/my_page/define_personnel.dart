@@ -17,26 +17,26 @@ class DefinePersonnel extends StatefulWidget {
 class _DefinePersonnelState extends State<DefinePersonnel> {
   _DefinePersonnelState();
 
-  bool _loadingData = false; // TODO: true
+  bool _loadingData = true;
   bool _equalValues = false;
   bool _invalidValues = false;
   bool _personnelDeleted = false;
   bool _newRow = false;
   bool _invalidNewPersonnel = false;
 
-  final List<bool> _showDeleteIcon = [true]; // TODO: remove value, read
+  final List<bool> _showDeleteIcon = [];
 
   int _invalidValueIndex = -1;
 
-  List<String> _personnel = [];
+  final List<String> _personnel = [];
   List<String> _oldPersonnel = [];
 
-  List<TextEditingController> _personnelControllers = [];
-  //List<TextEditingController> _oldPersonnelControllers = [];
+  final List<TextEditingController> _personnelControllers = [];
   TextEditingController _newPersonnelController = TextEditingController();
 
   String _helpText = '';
   final String nonUniqueEmail = 'E-post må være unik';
+  final String writeEmail = 'Skriv e-post';
 
   @override
   void initState() {
@@ -87,12 +87,11 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
               DataCell(
                   Container(
                       color: _invalidValues && data.key == _invalidValueIndex
-                          ? Colors.yellow.shade200 // TODO: check shade
+                          ? Colors.yellow.shade200
                           : null,
                       child: TextField(
                         controller: _personnelControllers[data.key],
-                        decoration:
-                            const InputDecoration(hintText: 'Skriv e-post'),
+                        decoration: InputDecoration(hintText: writeEmail),
                         onChanged: (email) {
                           setState(() {
                             _showDeleteIcon[data.key] =
@@ -134,8 +133,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                         onPressed: () {
                           setState(() {
                             _personnelControllers[data.key].text =
-                                _oldPersonnel[data
-                                    .key]; //_oldPersonnelControllers[data.key].text;
+                                _oldPersonnel[data.key];
                             _showDeleteIcon[data.key] = true;
                           });
                         },
@@ -152,8 +150,6 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
       if (newEmail.isNotEmpty) {
         if (!_personnel.contains(newEmail)) {
           if (validateEmail(newEmail) == null) {
-            // TODO: saveMail (husk å legge til i _personnel og controller osv. også)
-            //_savePersonnelData();
             _helpText = '';
             _showDeleteIcon[index] = true;
             _invalidValues = false;
@@ -171,7 +167,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
           _invalidValueIndex = index;
         }
       } else {
-        _helpText = 'Skriv e-post'; // TODO: variable
+        _helpText = writeEmail;
         _invalidValues = true;
         _invalidValueIndex = index;
       }
@@ -189,8 +185,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                             : null,
                         child: TextField(
                           controller: _newPersonnelController,
-                          decoration:
-                              const InputDecoration(hintText: 'Skriv e-post'),
+                          decoration: InputDecoration(hintText: writeEmail),
                         )),
                     showEditIcon: true),
                 DataCell(_saveOrCancelNewPersonnel()),
@@ -202,15 +197,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                   child: const Icon(Icons.add, size: 26),
                   onPressed: () {
                     setState(() {
-                      //_addPersonnel = true;
-                      //_invalidValues = true;
-                      //_invalidValueIndex = _personnel.length;
                       _newRow = true;
-                      /*_personnel.add('');
-                      TextEditingController controller =
-                          TextEditingController();
-                      controller.text = '';
-                      _personnelControllers.add(controller);*/
                     });
                   },
                 ))
@@ -240,10 +227,6 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
             _newRow = false;
             _newPersonnelController.clear();
             _helpText = '';
-            /*showMap = false;
-                  _newCoordinatesText = coordinatesPlaceholder;
-                  _newMapNameController.clear();
-                  _helpText = '';*/
           });
         },
       )
@@ -252,9 +235,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
 
   void _saveNewPersonnel() {
     String email = _newPersonnelController.text;
-    //_personnel.add(email);
 
-    //_validateEmails();
     // TODO: Markere bakgrunn ved feil?
     if (email.isEmpty) {
       _helpText = 'E-post kan ikke være tom';
@@ -285,59 +266,6 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
       _savePersonnelData();
     }
   }
-
-  /*Column _saveOrDeleteButtons() {
-    return Column(children: [
-      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        ElevatedButton(
-            style: ButtonStyle(
-                fixedSize: MaterialStateProperty.all(const Size.fromHeight(35)),
-                backgroundColor: MaterialStateProperty.all(
-                    _equalValues ? Colors.grey : Colors.green)),
-            child: Text(
-              "Lagre",
-              style: largerTextStyle,
-              textAlign: TextAlign.center,
-            ),
-            onPressed: () => {
-                  // TODO: validate
-                  _validateEmails(),
-                  if (!_equalValues && !_invalidValues && _personnel.isNotEmpty)
-                    {
-                      _oldPersonnel = List.from(_personnel),
-                      _oldPersonnelControllers =
-                          List.from(_personnelControllers),
-                      // TODO: controllergreier?
-                      setState(() {
-                        _helpText = dataSavedFeedback;
-                        _personnelDeleted = false;
-                      }),
-                      //_savePersonnelData() TODO
-                    }
-                }),
-        const SizedBox(width: 10),
-        ElevatedButton(
-          style: ButtonStyle(
-              fixedSize: MaterialStateProperty.all(const Size.fromHeight(35)),
-              backgroundColor: MaterialStateProperty.all(Colors.red)),
-          child: Text(
-            "Avbryt",
-            style: largerTextStyle,
-          ),
-          onPressed: () => {
-            setState(() {
-              _personnelDeleted = false;
-              _invalidValues = false; // TODO: blir dette riktig?
-              _personnel = List.from(_oldPersonnel);
-              _personnelControllers = _oldPersonnelControllers;
-              // controlergreier? TODO
-              _helpText = '';
-            })
-          },
-        ),
-      ])
-    ]);
-  }*/
 
   void _validateEmails() {
     if (_personnel.toSet().length < _personnel.length) {
@@ -379,8 +307,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
 
                     _validateEmails();
                   });
-                  // TODO: db: delete one person
-                  //_savePersonnelData();
+                  _savePersonnelData();
                 },
                 child: const Text('Ja, slett')),
             TextButton(
@@ -414,7 +341,6 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                       _personnelControllers
                           .add(TextEditingController(text: email))
                     },
-                  //_oldPersonnelControllers = List.from(_personnelControllers),
                   _oldPersonnel = List.from(emails!),
                 }
             },
@@ -503,7 +429,6 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
     for (TextEditingController controller in _personnelControllers) {
       controller.dispose();
     }
-    // TODO: dispose _oldPersonnelControllers
     super.dispose();
   }
 }
