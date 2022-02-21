@@ -20,7 +20,6 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
   bool _loadingData = true;
   bool _equalValues = false;
   bool _invalidValues = false;
-  bool _personnelDeleted = false;
   bool _newRow = false;
   bool _invalidNewPersonnel = false;
 
@@ -98,6 +97,9 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                                 email == _oldPersonnel[data.key];
                           });
                         },
+                        onSubmitted: (_) {
+                          _saveExistingPersonnel(data.key);
+                        },
                       )),
                   showEditIcon: true),
               DataCell(_showDeleteIcon[data.key]
@@ -135,6 +137,8 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                             _personnelControllers[data.key].text =
                                 _oldPersonnel[data.key];
                             _showDeleteIcon[data.key] = true;
+                            _invalidValues = false;
+                            _helpText = '';
                           });
                         },
                       )
@@ -155,21 +159,25 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
             _invalidValues = false;
             //_invalidValueIndex = -1;
             _personnel[index] = newEmail;
+            _oldPersonnel = List.from(_personnel);
             _savePersonnelData();
           } else {
             _helpText = "'$newEmail' har ikke gyldig format";
             _invalidValues = true;
             _invalidValueIndex = index;
+            _invalidNewPersonnel = false;
           }
         } else {
           _helpText = nonUniqueEmail;
           _invalidValues = true;
           _invalidValueIndex = index;
+          _invalidNewPersonnel = false;
         }
       } else {
         _helpText = writeEmail;
         _invalidValues = true;
         _invalidValueIndex = index;
+        _invalidNewPersonnel = false;
       }
     });
   }
@@ -186,6 +194,9 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                         child: TextField(
                           controller: _newPersonnelController,
                           decoration: InputDecoration(hintText: writeEmail),
+                          onSubmitted: (_) {
+                            _saveNewPersonnel();
+                          },
                         )),
                     showEditIcon: true),
                 DataCell(_saveOrCancelNewPersonnel()),
@@ -211,9 +222,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
               fixedSize: MaterialStateProperty.all(const Size.fromHeight(35))),
           child: Text('Lagre', style: largerTextStyle),
           onPressed: () {
-            setState(() {
-              _saveNewPersonnel();
-            });
+            _saveNewPersonnel();
           }),
       const SizedBox(width: 10),
       ElevatedButton(
@@ -227,6 +236,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
             _newRow = false;
             _newPersonnelController.clear();
             _helpText = '';
+            _invalidNewPersonnel = false;
           });
         },
       )
@@ -236,35 +246,38 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
   void _saveNewPersonnel() {
     String email = _newPersonnelController.text;
 
-    // TODO: Markere bakgrunn ved feil?
-    if (email.isEmpty) {
-      _helpText = 'E-post kan ikke være tom';
-      _invalidNewPersonnel = true;
-    } else if (_personnel.contains(email)) {
-      _helpText = nonUniqueEmail;
-      _invalidNewPersonnel = true;
-      //_equalValues = true;
-    } else if (validateEmail(email) != null) {
-      //_invalidValues = true;
-      //_invalidValueIndex = _personnel.indexOf(email);
-      _invalidNewPersonnel = true;
-      _helpText = email == ''
-          ? 'E-post kan ikke være tom'
-          : "'$email' har ikke gyldig format";
-      //_helpText = '';
-      //_equalValues = false;
-      //_invalidValues = false;
-    } else {
-      _helpText = '';
-      _newRow = false;
-      _invalidNewPersonnel = false;
-      _personnel.add(email);
-      _personnelControllers.add(_newPersonnelController);
-      _newPersonnelController = TextEditingController(text: '');
-      _showDeleteIcon.add(true);
+    setState(() {
+      // TODO: Markere bakgrunn ved feil?
+      if (email.isEmpty) {
+        _helpText = 'E-post kan ikke være tom';
+        _invalidNewPersonnel = true;
+      } else if (_personnel.contains(email)) {
+        _helpText = nonUniqueEmail;
+        _invalidNewPersonnel = true;
+        //_equalValues = true;
+      } else if (validateEmail(email) != null) {
+        //_invalidValues = true;
+        //_invalidValueIndex = _personnel.indexOf(email);
+        _invalidNewPersonnel = true;
+        _helpText = email == ''
+            ? 'E-post kan ikke være tom'
+            : "'$email' har ikke gyldig format for e-post";
+        //_helpText = '';
+        //_equalValues = false;
+        //_invalidValues = false;
+      } else {
+        _helpText = '';
+        _newRow = false;
+        _invalidNewPersonnel = false;
+        _personnel.add(email);
+        _oldPersonnel = List.from(_personnel);
+        _personnelControllers.add(_newPersonnelController);
+        _newPersonnelController = TextEditingController(text: '');
+        _showDeleteIcon.add(true);
 
-      _savePersonnelData();
-    }
+        _savePersonnelData();
+      }
+    });
   }
 
   void _validateEmails() {
@@ -301,9 +314,9 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                   Navigator.of(context).pop('dialog');
                   setState(() {
                     _personnel.removeAt(index);
+                    _oldPersonnel.removeAt(index);
                     _personnelControllers.removeAt(index);
                     _showDeleteIcon.removeAt(index);
-                    _personnelDeleted = true;
 
                     _validateEmails();
                   });
