@@ -397,14 +397,22 @@ class _DefineMapPageState extends State<DefineMapPage> {
 
   Text _coordinatesCell(int index) {
     return Text('(' +
-        _mapCoordinates[index]['northWest']!.latitude.toStringAsFixed(4) +
+        _mapCoordinates[index]['northWest']!
+            .latitude
+            .toStringAsFixed(graphicalDecimalAmount) +
         ', ' +
-        _mapCoordinates[index]['northWest']!.longitude.toStringAsFixed(4) +
+        _mapCoordinates[index]['northWest']!
+            .longitude
+            .toStringAsFixed(graphicalDecimalAmount) +
         ')' +
         ', (' +
-        _mapCoordinates[index]['southEast']!.latitude.toStringAsFixed(4) +
+        _mapCoordinates[index]['southEast']!
+            .latitude
+            .toStringAsFixed(graphicalDecimalAmount) +
         ', ' +
-        _mapCoordinates[index]['southEast']!.longitude.toStringAsFixed(4) +
+        _mapCoordinates[index]['southEast']!
+            .longitude
+            .toStringAsFixed(graphicalDecimalAmount) +
         ')');
   }
 
