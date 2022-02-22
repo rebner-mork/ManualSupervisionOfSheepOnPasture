@@ -125,36 +125,32 @@ class _DefineMapPageState extends State<DefineMapPage> {
     LinkedHashMap<String, dynamic>? linkedHashMap;
     TextEditingController textController;
 
-    await farmDoc.get().then((doc) => {
-          if (doc.exists)
-            {
-              linkedHashMap = doc.get('maps'),
-              if (linkedHashMap != null)
-                {
-                  dataMap = _castFromDynamic(linkedHashMap),
-                  for (MapEntry<String, Map<String, Map<String, double>>> data
-                      in dataMap.entries)
-                    {
-                      _mapNames.add(data.key),
-                      textController = TextEditingController(),
-                      textController.text = data.key,
-                      _mapNameControllers.add(textController),
-                      _mapCoordinates.add({
-                        'northWest': LatLng(
-                            data.value['northWest']!['latitude']!,
-                            data.value['northWest']!['longitude']!),
-                        'southEast': LatLng(
-                            data.value['southEast']!['latitude']!,
-                            data.value['southEast']!['longitude']!)
-                      }),
-                      _showDeleteIcon.add(true),
-                    },
-                }
-            },
-          setState(() {
-            _loadingData = false;
-          })
-        });
+    DocumentSnapshot<Object?> doc = await farmDoc.get();
+    if (doc.exists) {
+      linkedHashMap = doc.get('maps');
+
+      if (linkedHashMap != null) {
+        dataMap = _castFromDynamic(linkedHashMap);
+
+        for (MapEntry<String, Map<String, Map<String, double>>> data
+            in dataMap.entries) {
+          _mapNames.add(data.key);
+          textController = TextEditingController();
+          textController.text = data.key;
+          _mapNameControllers.add(textController);
+          _mapCoordinates.add({
+            'northWest': LatLng(data.value['northWest']!['latitude']!,
+                data.value['northWest']!['longitude']!),
+            'southEast': LatLng(data.value['southEast']!['latitude']!,
+                data.value['southEast']!['longitude']!)
+          });
+          _showDeleteIcon.add(true);
+        }
+      }
+    }
+    setState(() {
+      _loadingData = false;
+    });
   }
 
   void _saveMapData() async {
@@ -186,23 +182,20 @@ class _DefineMapPageState extends State<DefineMapPage> {
         FirebaseFirestore.instance.collection('farms');
     DocumentReference farmDoc = farmCollection.doc(uid);
 
-    await farmDoc.get().then((doc) => {
-          if (doc.exists)
-            {
-              farmDoc.update({'maps': dataMap})
-            }
-          else
-            {
-              farmDoc.set({
-                'maps': dataMap,
-                'name': null,
-                'address': null,
-                'ties': null,
-                'eartags': null,
-                'personnel': null
-              })
-            },
-        });
+    DocumentSnapshot<Object?> doc = await farmDoc.get();
+
+    if (doc.exists) {
+      farmDoc.update({'maps': dataMap});
+    } else {
+      farmDoc.set({
+        'maps': dataMap,
+        'name': null,
+        'address': null,
+        'ties': null,
+        'eartags': null,
+        'personnel': null
+      });
+    }
   }
 
   _castFromDynamic(LinkedHashMap<String, dynamic>? linkedHashMap) {
