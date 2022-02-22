@@ -96,7 +96,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
         setState(() {
           _helpText = helpTextSave;
           _newCoordinatesText =
-              '(${points[0].latitude}, ${points[0].longitude}), (${points[1].latitude}, ${points[0].longitude})';
+              '(${points[0].latitude}, ${points[0].longitude}), (${points[1].latitude}, ${points[1].longitude})';
           _newCoordinates = points;
         });
       }
@@ -321,7 +321,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
   DataRow _newMapRow() {
     return DataRow(
         color:
-            showMap ? MaterialStateProperty.all(Colors.yellow.shade200) : null,
+            showMap ? MaterialStateProperty.all(Colors.green.shade100) : null,
         cells: [
           DataCell(
               showMap
