@@ -432,6 +432,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
     for (TextEditingController controller in _emailControllers) {
       controller.dispose();
     }
+    _newEmailController.dispose();
     super.dispose();
   }
 }
