@@ -18,12 +18,12 @@ class _DefineMapPageState extends State<DefineMapPage> {
   _DefineMapPageState();
 
   final List<String> _mapNames = [];
-  final List<List<LatLng>> _mapCoordinates = [];
+  final List<Map<String, LatLng>> _mapCoordinates = [];
   final List<TextEditingController> _mapNameControllers = [];
   final List<bool> _showDeleteIcon = [];
 
   TextEditingController _newMapNameController = TextEditingController();
-  List<LatLng> _newCoordinates = [];
+  Map<String, LatLng> _newCoordinates = {};
   late String _newCoordinatesText;
   static const String coordinatesPlaceholder = "(?, ?), (?, ?)";
 
@@ -84,19 +84,19 @@ class _DefineMapPageState extends State<DefineMapPage> {
     ]));
   }
 
-  void _onCornerMarked(List<LatLng> points) {
+  void _onCornerMarked(Map<String, LatLng> points) {
     setState(() {
       if (points.length == 1) {
         _helpText = helpTextSouthEast;
         setState(() {
           _newCoordinatesText =
-              '(${points[0].latitude}, ${points[0].longitude})';
+              '(${points['northWest']!.latitude}, ${points['northWest']!.longitude})';
         });
       } else {
         setState(() {
           _helpText = helpTextSave;
           _newCoordinatesText =
-              '(${points[0].latitude}, ${points[0].longitude}), (${points[1].latitude}, ${points[1].longitude})';
+              '(${points['northWest']!.latitude}, ${points['northWest']!.longitude}), (${points['southEast']!.latitude}, ${points['southEast']!.longitude})';
           _newCoordinates = points;
         });
       }
@@ -134,12 +134,14 @@ class _DefineMapPageState extends State<DefineMapPage> {
                       textController = TextEditingController(),
                       textController.text = data.key,
                       _mapNameControllers.add(textController),
-                      _mapCoordinates.add([
-                        LatLng(data.value['northWest']!['latitude']!,
+                      _mapCoordinates.add({
+                        'northWest': LatLng(
+                            data.value['northWest']!['latitude']!,
                             data.value['northWest']!['longitude']!),
-                        LatLng(data.value['southEast']!['latitude']!,
+                        'southEast': LatLng(
+                            data.value['southEast']!['latitude']!,
                             data.value['southEast']!['longitude']!)
-                      ]),
+                      }),
                       _showDeleteIcon.add(true),
                     },
                 }
@@ -154,14 +156,14 @@ class _DefineMapPageState extends State<DefineMapPage> {
     Map dataMap = <String, Map<String, Map<String, double>>>{};
 
     for (int i = 0; i < _mapNames.length; i++) {
-      dataMap[_mapNames[i]] = <String, Map<String, double>>{
+      dataMap[_mapNames[i]] = {
         'northWest': {
-          'latitude': _mapCoordinates[i][0].latitude,
-          'longitude': _mapCoordinates[i][0].longitude
+          'latitude': _mapCoordinates[i]['northWest']!.latitude,
+          'longitude': _mapCoordinates[i]['northWest']!.longitude,
         },
         'southEast': {
-          'latitude': _mapCoordinates[i][1].latitude,
-          'longitude': _mapCoordinates[i][1].longitude
+          'latitude': _mapCoordinates[i]['southEast']!.latitude,
+          'longitude': _mapCoordinates[i]['southEast']!.longitude,
         }
       };
     }
@@ -389,14 +391,14 @@ class _DefineMapPageState extends State<DefineMapPage> {
 
   Text _coordinatesCell(int index) {
     return Text('(' +
-        _mapCoordinates[index][0].latitude.toString() +
+        _mapCoordinates[index]['northWest']!.latitude.toString() +
         ', ' +
-        _mapCoordinates[index][0].longitude.toString() +
+        _mapCoordinates[index]['northWest']!.longitude.toString() +
         ')' +
         ', (' +
-        _mapCoordinates[index][1].latitude.toString() +
+        _mapCoordinates[index]['southEast']!.latitude.toString() +
         ', ' +
-        _mapCoordinates[index][1].longitude.toString() +
+        _mapCoordinates[index]['southEast']!.longitude.toString() +
         ')');
   }
 

@@ -13,7 +13,7 @@ class DefineMap extends StatefulWidget {
   State<DefineMap> createState() => _DefineMapState();
 
   static const String route = 'define-map-widget';
-  final Function(List<LatLng> points) onCornerMarked;
+  final Function(Map<String, LatLng> points) onCornerMarked;
   final Function() secondMarkerIncorrectlyPlaced;
 }
 
@@ -45,14 +45,17 @@ class _DefineMapState extends State<DefineMap> {
                 _markers.add(
                     map_utils.getCornerMarker(point, _markers.length == 1));
               });
-              widget.onCornerMarked([_markers[0].point]);
+              widget.onCornerMarked({'northWest': _markers[0].point});
               if (_markers.length == 2 && !_rectangleDrawn) {
                 Future.delayed(const Duration(milliseconds: 500), () {
                   setState(() {
                     _rectangleDrawn = true;
                   });
                 });
-                widget.onCornerMarked([_markers[0].point, _markers[1].point]);
+                widget.onCornerMarked({
+                  'northWest': _markers[0].point,
+                  'southEast': _markers[1].point
+                });
               }
             } else {
               widget.secondMarkerIncorrectlyPlaced();
