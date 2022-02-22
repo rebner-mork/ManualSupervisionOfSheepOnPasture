@@ -116,10 +116,9 @@ class _DefineMapPageState extends State<DefineMapPage> {
         FirebaseFirestore.instance.collection('farms');
     DocumentReference farmDoc = farmCollection.doc(uid);
 
-    Map<String, Map<String, List<double>>> dataMap;
+    Map<String, Map<String, Map<String, double>>> dataMap;
     LinkedHashMap<String, dynamic>? linkedHashMap;
     TextEditingController textController;
-    List<List<double>> coordinates;
 
     await farmDoc.get().then((doc) => {
           if (doc.exists)
@@ -128,17 +127,18 @@ class _DefineMapPageState extends State<DefineMapPage> {
               if (linkedHashMap != null)
                 {
                   dataMap = _castFromDynamic(linkedHashMap),
-                  for (MapEntry<String, Map<String, List<double>>> data
+                  for (MapEntry<String, Map<String, Map<String, double>>> data
                       in dataMap.entries)
                     {
                       _mapNames.add(data.key),
                       textController = TextEditingController(),
                       textController.text = data.key,
                       _mapNameControllers.add(textController),
-                      coordinates = data.value.values.toList(),
                       _mapCoordinates.add([
-                        LatLng(coordinates[0][0], coordinates[0][1]),
-                        LatLng(coordinates[1][0], coordinates[1][1])
+                        LatLng(data.value['northWest']!['latitude']!,
+                            data.value['northWest']!['longitude']!),
+                        LatLng(data.value['southEast']!['latitude']!,
+                            data.value['southEast']!['longitude']!)
                       ]),
                       _showDeleteIcon.add(true),
                     },
@@ -151,11 +151,18 @@ class _DefineMapPageState extends State<DefineMapPage> {
   }
 
   void _saveMapData() async {
-    Map dataMap = <String, Map<String, List<double>>>{};
+    Map dataMap = <String, Map<String, Map<String, double>>>{};
+
     for (int i = 0; i < _mapNames.length; i++) {
-      dataMap[_mapNames[i]] = <String, List<double>>{
-        'nw': [_mapCoordinates[i][0].latitude, _mapCoordinates[i][0].longitude],
-        'se': [_mapCoordinates[i][1].latitude, _mapCoordinates[i][1].longitude]
+      dataMap[_mapNames[i]] = <String, Map<String, double>>{
+        'northWest': {
+          'latitude': _mapCoordinates[i][0].latitude,
+          'longitude': _mapCoordinates[i][0].longitude
+        },
+        'southEast': {
+          'latitude': _mapCoordinates[i][1].latitude,
+          'longitude': _mapCoordinates[i][1].longitude
+        }
       };
     }
 
@@ -186,12 +193,15 @@ class _DefineMapPageState extends State<DefineMapPage> {
   _castFromDynamic(LinkedHashMap<String, dynamic>? linkedHashMap) {
     return linkedHashMap!
         .map((key, value) => MapEntry(key, value as Map<String, dynamic>))
-        .map((key, value) => MapEntry(key,
-            value.map((key, value) => MapEntry(key, value as List<dynamic>))))
         .map((key, value) => MapEntry(
             key,
-            value.map((key, value) =>
-                MapEntry(key, value.map((e) => e as double).toList()))));
+            value
+                .map((key, value) =>
+                    MapEntry(key, value as Map<String, dynamic>))
+                .map((key, value) => MapEntry(
+                    key,
+                    value.map(
+                        (key, value) => MapEntry(key, value as double))))));
   }
 
   void _saveChangedMap(int index) {
