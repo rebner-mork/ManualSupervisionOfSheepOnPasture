@@ -37,7 +37,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
       "Klikk og hold på kartet for å markere sørøstlig hjørne av beiteområdet";
   static const String helpTextSave =
       "Klikk på lagre-knappen når du har skrevet inn navn på kartområdet";
-  static const String secondMarkerIncorrectlyPlaced =
+  static const String secondMarkerIncorrectlyPlacedText =
       "Sørøstlig hjørne må være sørøst for nordvest-markøren. Klikk og hold på kartet på nytt for å markere sørøstlig hjørne av beiteområdet";
 
   final TextStyle largerTextStyle = const TextStyle(fontSize: 18);
@@ -79,7 +79,8 @@ class _DefineMapPageState extends State<DefineMapPage> {
         Flexible(
             flex: 5,
             fit: FlexFit.tight,
-            child: DefineMap(_onCornerMarked, _secondMarkerIncorrectlyPlaced))
+            child:
+                DefineMap(_onCornerMarked, _secondMarkerIncorrectlyPlacedText))
     ]));
   }
 
@@ -102,9 +103,9 @@ class _DefineMapPageState extends State<DefineMapPage> {
     });
   }
 
-  void _secondMarkerIncorrectlyPlaced() {
+  void _secondMarkerIncorrectlyPlacedText() {
     setState(() {
-      _helpText = secondMarkerIncorrectlyPlaced;
+      _helpText = secondMarkerIncorrectlyPlacedText;
     });
   }
 
@@ -175,7 +176,8 @@ class _DefineMapPageState extends State<DefineMapPage> {
                 'name': null,
                 'address': null,
                 'ties': null,
-                'eartags': null
+                'eartags': null,
+                'personnel': null
               })
             },
         });
