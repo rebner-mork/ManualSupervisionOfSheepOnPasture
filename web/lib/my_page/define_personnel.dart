@@ -24,7 +24,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
   bool _invalidNewEmail = false;
 
   final List<String> _emails = [];
-  List<String> _oldPersonnel = [];
+  List<String> _oldEmails = [];
   final List<bool> _showDeleteIcon = [];
 
   final List<TextEditingController> _emailControllers = [];
@@ -48,7 +48,12 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
     return Material(
         child: Column(
             children: _loadingData
-                ? const [Text('Laster data...')]
+                ? const [
+                    Text(
+                      loadingData,
+                      style: TextStyle(fontSize: 18),
+                    )
+                  ]
                 : [
                     DataTable(
                         border: TableBorder.symmetric(),
@@ -65,11 +70,9 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                     const SizedBox(height: 10),
                     Text(
                       _helpText,
-                      style: TextStyle(
-                          fontSize: 17,
-                          color: _helpText == dataSavedFeedback
-                              ? Colors.green
-                              : null),
+                      style: const TextStyle(
+                        fontSize: 17,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ]));
@@ -91,53 +94,57 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                         onChanged: (email) {
                           setState(() {
                             _showDeleteIcon[data.key] =
-                                email == _oldPersonnel[data.key];
+                                email == _oldEmails[data.key];
                           });
                         },
                         onSubmitted: (_) => _saveExistingPersonnel(data.key),
                       )),
                   showEditIcon: true),
-              DataCell(_showDeleteIcon[data.key]
-                  ? IconButton(
-                      icon: Icon(Icons.delete,
-                          color: Colors.grey.shade800, size: 26),
-                      splashRadius: 22,
-                      hoverColor: Colors.red,
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (_) =>
-                                _deletePersonnelDialog(context, data.key));
-                      },
-                    )
-                  : Row(children: [
-                      ElevatedButton(
-                          style: ButtonStyle(
-                              fixedSize: MaterialStateProperty.all(
-                                  const Size.fromHeight(35))),
-                          child: Text('Lagre', style: largerTextStyle),
-                          onPressed: () => _saveExistingPersonnel(data.key)),
-                      const SizedBox(width: 10),
-                      ElevatedButton(
-                        style: ButtonStyle(
-                            fixedSize: MaterialStateProperty.all(
-                                const Size.fromHeight(35)),
-                            textStyle:
-                                MaterialStateProperty.all(largerTextStyle),
-                            backgroundColor:
-                                MaterialStateProperty.all(Colors.red)),
-                        child: const Text("Avbryt"),
-                        onPressed: () {
-                          setState(() {
-                            _emailControllers[data.key].text =
-                                _oldPersonnel[data.key];
-                            _showDeleteIcon[data.key] = true;
-                            _invalidEmailIndex = -1;
-                            _helpText = '';
-                          });
-                        },
-                      )
-                    ]))
+              DataCell(Container(
+                  constraints: const BoxConstraints(minWidth: 165),
+                  alignment: Alignment.centerLeft,
+                  child: _showDeleteIcon[data.key]
+                      ? IconButton(
+                          icon: Icon(Icons.delete,
+                              color: Colors.grey.shade800, size: 26),
+                          splashRadius: 22,
+                          hoverColor: Colors.red,
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (_) =>
+                                    _deletePersonnelDialog(context, data.key));
+                          },
+                        )
+                      : Row(children: [
+                          ElevatedButton(
+                              style: ButtonStyle(
+                                  fixedSize: MaterialStateProperty.all(
+                                      const Size.fromHeight(35))),
+                              child: Text('Lagre', style: largerTextStyle),
+                              onPressed: () =>
+                                  _saveExistingPersonnel(data.key)),
+                          const SizedBox(width: 10),
+                          ElevatedButton(
+                            style: ButtonStyle(
+                                fixedSize: MaterialStateProperty.all(
+                                    const Size.fromHeight(35)),
+                                textStyle:
+                                    MaterialStateProperty.all(largerTextStyle),
+                                backgroundColor:
+                                    MaterialStateProperty.all(Colors.red)),
+                            child: const Text("Avbryt"),
+                            onPressed: () {
+                              setState(() {
+                                _emailControllers[data.key].text =
+                                    _oldEmails[data.key];
+                                _showDeleteIcon[data.key] = true;
+                                _invalidEmailIndex = -1;
+                                _helpText = '';
+                              });
+                            },
+                          )
+                        ])))
             ]))
         .toList();
   }
@@ -145,7 +152,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
   void _saveExistingPersonnel(int index) {
     String newEmail = _emailControllers[index].text;
 
-    if (newEmail != _oldPersonnel[index]) {
+    if (newEmail != _oldEmails[index]) {
       setState(() {
         if (newEmail.isNotEmpty) {
           if (!_emails.contains(newEmail)) {
@@ -154,7 +161,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
               _showDeleteIcon[index] = true;
               _invalidEmailIndex = -1;
               _emails[index] = newEmail;
-              _oldPersonnel = List.from(_emails);
+              _oldEmails = List.from(_emails);
               _savePersonnelData();
             } else {
               _helpText = "'$newEmail' har ikke gyldig format";
@@ -253,7 +260,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
         _showNewEmailRow = false;
         _invalidNewEmail = false;
         _emails.add(email);
-        _oldPersonnel = List.from(_emails);
+        _oldEmails = List.from(_emails);
         _emailControllers.add(_newEmailController);
         _newEmailController = TextEditingController(text: '');
         _showDeleteIcon.add(true);
@@ -265,7 +272,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
 
   void _validateEmails() {
     if (_emails.toSet().length < _emails.length) {
-      _helpText = 'E-post må være unik';
+      _helpText = nonUniqueEmail;
     } else {
       _helpText = '';
       _invalidEmailIndex = -1;
@@ -288,13 +295,14 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
         filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
         child: AlertDialog(
           title: Text("Slette '${_emails[index]}'?"),
+          content: const Text('Sletting kan ikke angres'),
           actions: [
             TextButton(
                 onPressed: () {
                   Navigator.of(context).pop('dialog');
                   setState(() {
                     _emails.removeAt(index);
-                    _oldPersonnel.removeAt(index);
+                    _oldEmails.removeAt(index);
                     _emailControllers.removeAt(index);
                     _showDeleteIcon.removeAt(index);
 
@@ -333,7 +341,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                       _showDeleteIcon.add(true),
                       _emailControllers.add(TextEditingController(text: email))
                     },
-                  _oldPersonnel = List.from(emails!),
+                  _oldEmails = List.from(emails!),
                 }
             },
           setState(() {
@@ -345,6 +353,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
   void _savePersonnelData() async {
     String uid = FirebaseAuth.instance.currentUser!.uid;
 
+    // Save in own farm
     CollectionReference farmCollection =
         FirebaseFirestore.instance.collection('farms');
     DocumentReference farmDoc = farmCollection.doc(uid);
@@ -367,11 +376,12 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
             },
         });
 
+    // Remove farm from individual personnel if mail was removed
     CollectionReference personnelCollection =
         FirebaseFirestore.instance.collection('personnel');
     DocumentReference personnelDoc;
 
-    for (String oldEmail in _oldPersonnel) {
+    for (String oldEmail in _oldEmails) {
       if (!_emails.contains(oldEmail)) {
         personnelDoc = personnelCollection.doc(oldEmail);
 
@@ -394,8 +404,9 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
       }
     }
 
+    // Add farm to individual personnel if new mail was added
     for (String email in _emails) {
-      if (!_oldPersonnel.contains(email)) {
+      if (!_oldEmails.contains(email)) {
         personnelDoc = personnelCollection.doc(email);
 
         await personnelDoc.get().then((doc) => {
