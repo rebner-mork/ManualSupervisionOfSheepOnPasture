@@ -288,7 +288,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
           style: columnNameStyle,
         ),
         const Text(
-          ' (NV), (NØ)',
+          ' (NV), (SØ)',
         )
       ])),
       const DataColumn(
