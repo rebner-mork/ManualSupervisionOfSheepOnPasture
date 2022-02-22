@@ -40,6 +40,9 @@ class _DefineMapPageState extends State<DefineMapPage> {
   static const String secondMarkerIncorrectlyPlacedText =
       "Sørøstlig hjørne må være sørøst for nordvest-markøren. Klikk og hold på kartet på nytt for å markere sørøstlig hjørne av beiteområdet";
 
+  static const int graphicalDecimalAmount = 4;
+  static const int databaseDecimalAmount = 6;
+
   final TextStyle largerTextStyle = const TextStyle(fontSize: 18);
   final TextStyle columnNameStyle =
       const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
@@ -90,13 +93,15 @@ class _DefineMapPageState extends State<DefineMapPage> {
         _helpText = helpTextSouthEast;
         setState(() {
           _newCoordinatesText =
-              '(${points['northWest']!.latitude}, ${points['northWest']!.longitude})';
+              '(${points['northWest']!.latitude.toStringAsFixed(graphicalDecimalAmount)}, '
+              '${points['northWest']!.longitude.toStringAsFixed(graphicalDecimalAmount)})';
         });
       } else {
         setState(() {
           _helpText = helpTextSave;
           _newCoordinatesText =
-              '(${points['northWest']!.latitude}, ${points['northWest']!.longitude}), (${points['southEast']!.latitude}, ${points['southEast']!.longitude})';
+              '(${points['northWest']!.latitude.toStringAsFixed(graphicalDecimalAmount)}, ${points['northWest']!.longitude.toStringAsFixed(graphicalDecimalAmount)}), '
+              '(${points['southEast']!.latitude.toStringAsFixed(graphicalDecimalAmount)}, ${points['southEast']!.longitude.toStringAsFixed(graphicalDecimalAmount)})';
           _newCoordinates = points;
         });
       }
@@ -158,12 +163,20 @@ class _DefineMapPageState extends State<DefineMapPage> {
     for (int i = 0; i < _mapNames.length; i++) {
       dataMap[_mapNames[i]] = {
         'northWest': {
-          'latitude': _mapCoordinates[i]['northWest']!.latitude,
-          'longitude': _mapCoordinates[i]['northWest']!.longitude,
+          'latitude': double.parse(_mapCoordinates[i]['northWest']!
+              .latitude
+              .toStringAsFixed(databaseDecimalAmount)),
+          'longitude': double.parse(_mapCoordinates[i]['northWest']!
+              .longitude
+              .toStringAsFixed(databaseDecimalAmount)),
         },
         'southEast': {
-          'latitude': _mapCoordinates[i]['southEast']!.latitude,
-          'longitude': _mapCoordinates[i]['southEast']!.longitude,
+          'latitude': double.parse(_mapCoordinates[i]['southEast']!
+              .latitude
+              .toStringAsFixed(databaseDecimalAmount)),
+          'longitude': double.parse(_mapCoordinates[i]['southEast']!
+              .longitude
+              .toStringAsFixed(databaseDecimalAmount)),
         }
       };
     }
@@ -391,14 +404,14 @@ class _DefineMapPageState extends State<DefineMapPage> {
 
   Text _coordinatesCell(int index) {
     return Text('(' +
-        _mapCoordinates[index]['northWest']!.latitude.toString() +
+        _mapCoordinates[index]['northWest']!.latitude.toStringAsFixed(4) +
         ', ' +
-        _mapCoordinates[index]['northWest']!.longitude.toString() +
+        _mapCoordinates[index]['northWest']!.longitude.toStringAsFixed(4) +
         ')' +
         ', (' +
-        _mapCoordinates[index]['southEast']!.latitude.toString() +
+        _mapCoordinates[index]['southEast']!.latitude.toStringAsFixed(4) +
         ', ' +
-        _mapCoordinates[index]['southEast']!.longitude.toString() +
+        _mapCoordinates[index]['southEast']!.longitude.toStringAsFixed(4) +
         ')');
   }
 
