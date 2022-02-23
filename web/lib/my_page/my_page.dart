@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:web/my_page/define_ties.dart';
-import 'package:web/my_page/my_farm.dart';
+import 'package:web/my_page/define_ties_page.dart';
+import 'package:web/my_page/my_farm_page.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 
 class MyPage extends StatefulWidget {

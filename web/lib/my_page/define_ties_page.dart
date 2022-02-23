@@ -19,9 +19,9 @@ class _MyTiesState extends State<MyTies> {
   _MyTiesState();
 
   List<Color> _tieColors = [];
-  List<int> _tieLambs = [];
+  List<int> _tieMeaning = [];
   List<Color?> _oldTieColors = [];
-  List<int?> _oldTieLambs = [];
+  List<int?> _oldTieMeaning = [];
 
   bool _loadingData = true;
   bool _valuesChanged = false;
@@ -30,9 +30,11 @@ class _MyTiesState extends State<MyTies> {
   bool _tiesDeleted = false;
   String _helpText = '';
 
-  static const String nonUniqueColorFeedback = 'Slipsfarge må være unik';
-  static const String nonUniqueLambsFeedback = 'Antall lam må være unikt';
-  static const String dataSavedFeedback = 'Data er lagret';
+  Map<String, String> feedback = {
+    'nonUniqueColor': 'Slipsfarge må være unik',
+    'nonUniqueTieMeaning': 'Antall lam må være unikt',
+    'dataSaved': 'Data er lagret'
+  };
 
   @override
   void initState() {
@@ -67,7 +69,7 @@ class _MyTiesState extends State<MyTies> {
                 )),
                 const DataColumn(label: Text('')),
               ],
-              rows: _tieColors.length < possibleColors.length
+              rows: _tieColors.length < possibleTieColors.length
                   ? _tieRows() + _newTieRow()
                   : _tieRows(),
             ),
@@ -76,7 +78,7 @@ class _MyTiesState extends State<MyTies> {
         _helpText,
         style: TextStyle(
             fontSize: 17,
-            color: _helpText == dataSavedFeedback ? Colors.green : null),
+            color: _helpText == feedback['dataSaved']! ? Colors.green : null),
         textAlign: TextAlign.center,
       ),
       const SizedBox(height: 10),
@@ -95,7 +97,7 @@ class _MyTiesState extends State<MyTies> {
         child: Row(children: [
           DropdownButton<DropdownIcon>(
               value: DropdownIcon(color),
-              items: possibleColors
+              items: possibleTieColors
                   .map((Color color) => DropdownMenuItem<DropdownIcon>(
                       value: DropdownIcon(color),
                       child: DropdownIcon(color).icon))
@@ -115,12 +117,12 @@ class _MyTiesState extends State<MyTies> {
     return DataCell(Container(
         color: !_tiesAdded &&
                 !_tiesDeleted &&
-                _tieLambs[index] != _oldTieLambs[index]
+                _tieMeaning[index] != _oldTieMeaning[index]
             ? Colors.orange.shade100
             : null,
         child: Center(
             child: DropdownButton<int>(
-          value: _tieLambs[index],
+          value: _tieMeaning[index],
           items: <int>[0, 1, 2, 3, 4, 5, 6]
               .map((int value) => DropdownMenuItem<int>(
                   value: value,
@@ -193,10 +195,10 @@ class _MyTiesState extends State<MyTies> {
                   if (!_equalValues)
                     {
                       _oldTieColors = List.from(_tieColors),
-                      _oldTieLambs = List.from(_tieLambs),
+                      _oldTieMeaning = List.from(_tieMeaning),
                       setState(() {
                         _valuesChanged = false;
-                        _helpText = dataSavedFeedback;
+                        _helpText = feedback['dataSaved']!;
                         _tiesDeleted = false;
                         _tiesAdded = false;
                       }),
@@ -216,7 +218,7 @@ class _MyTiesState extends State<MyTies> {
             setState(() {
               _valuesChanged = false;
               _tieColors = List.from(_oldTieColors);
-              _tieLambs = List.from(_oldTieLambs);
+              _tieMeaning = List.from(_oldTieMeaning);
               _helpText = '';
               _tiesAdded = false;
               _tiesDeleted = false;
@@ -239,7 +241,7 @@ class _MyTiesState extends State<MyTies> {
                   Navigator.of(context).pop('dialog');
                   setState(() {
                     _tieColors.removeAt(index);
-                    _tieLambs.removeAt(index);
+                    _tieMeaning.removeAt(index);
 
                     _valuesChanged = true;
                     _tiesDeleted = true;
@@ -277,19 +279,19 @@ class _MyTiesState extends State<MyTies> {
     if (_tieColors.toSet().length < _tieColors.length) {
       _helpText = 'Slipsfarge må være unik';
       _equalValues = true;
-    } else if (_tieLambs.toSet().length == _tieLambs.length) {
+    } else if (_tieMeaning.toSet().length == _tieMeaning.length) {
       _helpText = '';
       _equalValues = false;
     } else {
-      _helpText = nonUniqueLambsFeedback;
+      _helpText = feedback['nonUniqueTieMeaning']!;
     }
   }
 
   void _onLambsChanged(int? newValue, int index) {
     _helpText = '';
-    if (newValue! != _tieLambs[index]) {
+    if (newValue! != _tieMeaning[index]) {
       setState(() {
-        _tieLambs[index] = newValue;
+        _tieMeaning[index] = newValue;
         _valuesChanged = true;
 
         _checkEqualLambAmount();
@@ -298,21 +300,21 @@ class _MyTiesState extends State<MyTies> {
   }
 
   void _checkEqualLambAmount() {
-    if (_tieLambs.toSet().length < _tieLambs.length) {
+    if (_tieMeaning.toSet().length < _tieMeaning.length) {
       _helpText = 'Antall lam må være unikt';
       _equalValues = true;
     } else if (_tieColors.toSet().length == _tieColors.length) {
       _helpText = '';
       _equalValues = false;
     } else {
-      _helpText = nonUniqueColorFeedback;
+      _helpText = feedback['nonUniqueColor']!;
     }
   }
 
   void _onTieAdded() {
     setState(() {
-      _tieColors.add(possibleColors.last);
-      _tieLambs.add(0);
+      _tieColors.add(possibleTieColors.last);
+      _tieMeaning.add(0);
       _valuesChanged = true;
       _tiesAdded = true;
 
@@ -331,34 +333,31 @@ class _MyTiesState extends State<MyTies> {
 
     LinkedHashMap<String, dynamic> dataMap;
 
-    await farmDoc.get().then((doc) => {
-          if (doc.exists)
-            {
-              dataMap = doc.get('ties'),
-              for (MapEntry<String, dynamic> data in dataMap.entries)
-                {
-                  _tieColors.add(Color(int.parse(data.key, radix: 16))),
-                  _tieLambs.add(data.value as int)
-                },
-            }
-          else
-            {
-              for (MapEntry<Color, int> data in defaultTieMap.entries)
-                {_tieColors.add(data.key), _tieLambs.add(data.value)},
-            },
-          _oldTieColors = List.from(_tieColors),
-          _oldTieLambs = List.from(_tieLambs),
-          setState(() {
-            _loadingData = false;
-          })
-        });
+    DocumentSnapshot<Object?> doc = await farmDoc.get();
+    if (doc.exists) {
+      dataMap = doc.get('ties');
+      for (MapEntry<String, dynamic> data in dataMap.entries) {
+        _tieColors.add(Color(int.parse(data.key, radix: 16)));
+        _tieMeaning.add(data.value as int);
+      }
+    } else {
+      for (MapEntry<Color, int> data in defaultTieMap.entries) {
+        _tieColors.add(data.key);
+        _tieMeaning.add(data.value);
+      }
+    }
+    _oldTieColors = List.from(_tieColors);
+    _oldTieMeaning = List.from(_tieMeaning);
+    setState(() {
+      _loadingData = false;
+    });
   }
 
   void _saveTieData() async {
     Map<String, int> dataMap = <String, int>{};
 
     for (int i = 0; i < _tieColors.length; i++) {
-      dataMap[_tieColors[i].value.toRadixString(16)] = _tieLambs[i];
+      dataMap[_tieColors[i].value.toRadixString(16)] = _tieMeaning[i];
     }
 
     String uid = FirebaseAuth.instance.currentUser!.uid;
@@ -366,21 +365,19 @@ class _MyTiesState extends State<MyTies> {
         FirebaseFirestore.instance.collection('farms');
     DocumentReference farmDoc = farmCollection.doc(uid);
 
-    await farmDoc.get().then((doc) => {
-          if (doc.exists)
-            {
-              farmDoc.update({'ties': dataMap})
-            }
-          else
-            {
-              farmDoc.set({
-                'name': null,
-                'address': null,
-                'maps': null,
-                'eartags': null,
-                'ties': dataMap
-              })
-            }
-        });
+    DocumentSnapshot<Object?> doc = await farmDoc.get();
+
+    if (doc.exists) {
+      farmDoc.update({'ties': dataMap});
+    } else {
+      farmDoc.set({
+        'name': null,
+        'address': null,
+        'maps': null,
+        'eartags': null,
+        'personnel': null,
+        'ties': dataMap
+      });
+    }
   }
 }

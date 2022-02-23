@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const List<Color> possibleColors = [
+const List<Color> possibleTieColors = [
   Color(0xFFF44336), // Red
   Color(0xFF2196F3), // Blue
   Color(0xFFFFEB3B), // Yellow
