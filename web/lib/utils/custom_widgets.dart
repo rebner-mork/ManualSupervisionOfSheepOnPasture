@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttericon/font_awesome5_icons.dart';
 
 InputDecoration customInputDecoration(String labelText, IconData icon,
     {bool passwordField = false,
@@ -24,8 +23,8 @@ SizedBox inputFieldSpacer() {
 }
 
 class DropdownIcon {
-  DropdownIcon(Color iconColor) {
-    icon = Icon(FontAwesome5.black_tie, color: iconColor);
+  DropdownIcon(IconData iconData, Color color) {
+    icon = Icon(iconData, color: color);
   }
 
   late Icon icon;

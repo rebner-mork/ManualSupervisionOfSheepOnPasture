@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 
+final Map<Color, int> defaultTieMap = <Color, int>{
+  const Color(0xFFF44336): 0, // Red
+  const Color(0xFF2196F3): 1, // Blue
+  const Color(0xFFFFEB3B): 2, // Yellow
+  const Color(0xFF4CAF50): 3, // Green
+};
+
 const List<Color> possibleTieColors = [
   Color(0xFFF44336), // Red
   Color(0xFF2196F3), // Blue
@@ -8,6 +15,15 @@ const List<Color> possibleTieColors = [
   Color(0xFFFF9800), // Orange
   Color(0xFFE91E63), // Pink
   Color(0x00000000), // Transparent
+];
+
+const List<Color> possibleEartagColors = [
+  Color(0xFFF44336), // Red
+  Color(0xFF2196F3), // Blue
+  Color(0xFFFFEB3B), // Yellow
+  Color(0xFF4CAF50), // Green
+  Color(0xFFFF9800), // Orange
+  Color(0xFFE91E63), // Pink
 ];
 
 const Map<int, Color> colorValueToColor = {
@@ -47,11 +63,4 @@ final Map<Color, String> dialogColorToString = <Color, String>{
   const Color(0xFFFF9800): 'oransje',
   const Color(0xFFE91E63): 'rosa',
   const Color(0x00000000): '\'ingen\''
-};
-
-final Map<Color, int> defaultTieMap = <Color, int>{
-  const Color(0xFFF44336): 0, // Red
-  const Color(0xFF2196F3): 1, // Blue
-  const Color(0xFFFFEB3B): 2, // Yellow
-  const Color(0xFF4CAF50): 3, // Green
 };

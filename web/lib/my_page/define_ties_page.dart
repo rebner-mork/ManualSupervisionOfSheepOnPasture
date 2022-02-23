@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:web/utils/constants.dart';
 import 'package:web/utils/custom_widgets.dart';
 import 'package:web/utils/styles.dart';
+import 'package:fluttericon/font_awesome5_icons.dart';
 
 class MyTies extends StatefulWidget {
   const MyTies({Key? key}) : super(key: key);
@@ -60,12 +61,12 @@ class _MyTiesState extends State<MyTies> {
                 DataColumn(
                     label: Text(
                   'Slipsfarge',
-                  style: columnNameTextStyle,
+                  style: dataColumnTextStyle,
                 )),
                 DataColumn(
                     label: Text(
                   'Antall lam',
-                  style: columnNameTextStyle,
+                  style: dataColumnTextStyle,
                 )),
                 const DataColumn(label: Text('')),
               ],
@@ -96,11 +97,11 @@ class _MyTiesState extends State<MyTies> {
         constraints: const BoxConstraints(minWidth: 115),
         child: Row(children: [
           DropdownButton<DropdownIcon>(
-              value: DropdownIcon(color),
+              value: DropdownIcon(FontAwesome5.black_tie, color),
               items: possibleTieColors
                   .map((Color color) => DropdownMenuItem<DropdownIcon>(
-                      value: DropdownIcon(color),
-                      child: DropdownIcon(color).icon))
+                      value: DropdownIcon(FontAwesome5.black_tie, color),
+                      child: DropdownIcon(FontAwesome5.black_tie, color).icon))
                   .toList(),
               onChanged: (DropdownIcon? newIcon) {
                 _onColorChanged(newIcon!.icon.color!, index, color);
@@ -108,7 +109,7 @@ class _MyTiesState extends State<MyTies> {
           const SizedBox(width: 8),
           Text(
             colorValueToString[color.value].toString(),
-            style: largerTextStyle,
+            style: dataCellTextStyle,
           ),
         ])));
   }
@@ -128,7 +129,7 @@ class _MyTiesState extends State<MyTies> {
                   value: value,
                   child: Text(
                     value.toString(),
-                    style: largerTextStyle,
+                    style: dataCellTextStyle,
                   )))
               .toList(),
           onChanged: (int? newValue) {
@@ -188,7 +189,7 @@ class _MyTiesState extends State<MyTies> {
                     _equalValues ? Colors.grey : Colors.green)),
             child: Text(
               "Lagre",
-              style: largerTextStyle,
+              style: buttonTextStyle,
               textAlign: TextAlign.center,
             ),
             onPressed: () => {
@@ -212,7 +213,7 @@ class _MyTiesState extends State<MyTies> {
               backgroundColor: MaterialStateProperty.all(Colors.red)),
           child: Text(
             "Avbryt",
-            style: largerTextStyle,
+            style: buttonTextStyle,
           ),
           onPressed: () => {
             setState(() {
