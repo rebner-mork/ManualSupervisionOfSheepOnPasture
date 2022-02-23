@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:web/my_page/define_ties_page.dart';
+import 'package:web/my_page/my_farm_page.dart';
 import 'package:web/my_page/define_map/define_map_page.dart';
-import 'package:web/my_page/my_farm.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 
 class MyPage extends StatefulWidget {
@@ -58,7 +59,8 @@ class _MyPageState extends State<MyPage> {
       ),
       const VerticalDivider(thickness: 1, width: 1),
       if (_selectedIndex == 0) const Expanded(child: MyFarm()),
-      if (_selectedIndex == 1) const Expanded(child: DefineMapPage())
+      if (_selectedIndex == 1) const Expanded(child: DefineMapPage()),
+      if (_selectedIndex == 3) const Expanded(child: MyTies())
     ]));
   }
 }
