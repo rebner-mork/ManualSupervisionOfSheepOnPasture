@@ -91,7 +91,7 @@ class _MyTiesState extends State<MyTies> {
         color: !_tiesAdded &&
                 !_tiesDeleted &&
                 _tieColors[index] != _oldTieColors[index]
-            ? Colors.orange.shade100
+            ? Colors.green.shade100
             : null,
         constraints: const BoxConstraints(minWidth: 115),
         child: Row(children: [
@@ -118,7 +118,7 @@ class _MyTiesState extends State<MyTies> {
         color: !_tiesAdded &&
                 !_tiesDeleted &&
                 _tieMeaning[index] != _oldTieMeaning[index]
-            ? Colors.orange.shade100
+            ? Colors.green.shade100
             : null,
         child: Center(
             child: DropdownButton<int>(
