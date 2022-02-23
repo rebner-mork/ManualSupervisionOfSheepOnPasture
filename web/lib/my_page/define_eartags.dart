@@ -29,7 +29,7 @@ class _MyEartagsState extends State<MyEartags> {
   bool _eartagsDeleted = false;
   String _helpText = '';
 
-  static const String nonUniqueColorFeedback = 'Øremerkefarge må være unik';
+  static const String dataSavedText = 'Øremerker er lagret';
 
   @override
   void initState() {
@@ -55,12 +55,12 @@ class _MyEartagsState extends State<MyEartags> {
                 DataColumn(
                     label: Text(
                   'Øremerke',
-                  style: columnNameTextStyle,
+                  style: dataColumnTextStyle,
                 )),
                 DataColumn(
                     label: Text(
                   'Eier',
-                  style: columnNameTextStyle,
+                  style: dataColumnTextStyle,
                 )),
                 const DataColumn(label: Text('')),
               ],
@@ -73,7 +73,7 @@ class _MyEartagsState extends State<MyEartags> {
         _helpText,
         style: TextStyle(
             fontSize: 17,
-            color: _helpText == dataSavedFeedback ? Colors.green : null),
+            color: _helpText == dataSavedText ? Colors.green : null),
         textAlign: TextAlign.center,
       ),
       const SizedBox(height: 10),
@@ -136,7 +136,7 @@ class _MyEartagsState extends State<MyEartags> {
           const SizedBox(width: 8),
           Text(
             colorValueToString[color.value].toString(),
-            style: largerTextStyle,
+            style: dataCellTextStyle,
           ),
         ])));
   }
@@ -154,11 +154,11 @@ class _MyEartagsState extends State<MyEartags> {
             ChoiceChip(
               label: Text(
                 'Meg',
-                style: isOwner ? largerBoldTextStyle : largerTextStyle,
+                style: isOwner ? dataCellBoldTextStyle : dataCellTextStyle,
               ),
               selected: isOwner,
               selectedColor: Colors.green.shade400,
-              labelStyle: isOwner ? largerBoldTextStyle : null,
+              labelStyle: isOwner ? dataCellBoldTextStyle : null,
               onSelected: (value) {
                 if (!isOwner) {
                   setState(() {
@@ -171,11 +171,11 @@ class _MyEartagsState extends State<MyEartags> {
             ChoiceChip(
               label: Text(
                 'Annen',
-                style: !isOwner ? largerBoldTextStyle : largerTextStyle,
+                style: !isOwner ? dataCellBoldTextStyle : dataCellTextStyle,
               ),
               selected: !isOwner,
               selectedColor: Colors.orange.shade300,
-              labelStyle: !isOwner ? largerBoldTextStyle : null,
+              labelStyle: !isOwner ? dataCellBoldTextStyle : null,
               onSelected: (value) {
                 if (isOwner) {
                   setState(() {
@@ -213,7 +213,7 @@ class _MyEartagsState extends State<MyEartags> {
 
   void _checkEqualColors() {
     if (_eartagColors.toSet().length < _eartagColors.length) {
-      _helpText = nonUniqueColorFeedback;
+      _helpText = 'Øremerkefarge må være unik';
       _equalValues = true;
     } else {
       _helpText = '';
@@ -231,7 +231,7 @@ class _MyEartagsState extends State<MyEartags> {
                     _equalValues ? Colors.grey : Colors.green)),
             child: Text(
               "Lagre",
-              style: largerTextStyle,
+              style: dataCellTextStyle,
               textAlign: TextAlign.center,
             ),
             onPressed: () => {
@@ -241,7 +241,7 @@ class _MyEartagsState extends State<MyEartags> {
                       _oldEartagOwners = List.from(_eartagOwners),
                       setState(() {
                         _valuesChanged = false;
-                        _helpText = dataSavedFeedback;
+                        _helpText = dataSavedText;
                         _eartagsDeleted = false;
                         _eartagsAdded = false;
                       }),
@@ -255,7 +255,7 @@ class _MyEartagsState extends State<MyEartags> {
               backgroundColor: MaterialStateProperty.all(Colors.red)),
           child: Text(
             "Avbryt",
-            style: largerTextStyle,
+            style: dataCellTextStyle,
           ),
           onPressed: () => {
             setState(() {
