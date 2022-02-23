@@ -175,7 +175,8 @@ class _MyFarmState extends State<MyFarm> {
                 {
                   farmDoc.set({
                     'name': farmNameController.text,
-                    'address': farmAddressController.text
+                    'address': farmAddressController.text,
+                    'maps': null
                   })
                 },
             });

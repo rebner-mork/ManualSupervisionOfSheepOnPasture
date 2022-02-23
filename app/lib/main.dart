@@ -1,14 +1,26 @@
 import 'package:app/login/login_page.dart';
+import 'package:app/register/register_sheep_orally.dart';
 import 'package:app/register/register_sheep.dart';
 import 'package:app/register_user/register_user_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'map/map_widget.dart';
+import 'package:latlong2/latlong.dart';
+
+import "utils/map_utils.dart";
+import 'utils/constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  //TODO Temporary
+  await downloadTiles(
+      LatLng(63.420017, 10.394660),
+      LatLng(63.415472, 10.411244),
+      OfflineZoomLevels.min,
+      OfflineZoomLevels.max);
+
   runApp(const MyApp());
 }
 
@@ -29,12 +41,15 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       theme: ThemeData(
           colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green)),
-      initialRoute: LoginPage.route,
+      initialRoute: Map.route,
       routes: {
         LoginPage.route: (context) => const LoginPage(),
         RegisterUserPage.route: (context) => const RegisterUserPage(),
-        Map.route: (context) => const Material(child: Map()),
+        Map.route: (context) =>
+            Map(LatLng(63.420017, 10.394660), LatLng(63.415472, 10.411244)),
         RegisterSheep.route: (context) => const RegisterSheep('fileName'),
+        RegisterSheepOrally.route: (context) =>
+            const RegisterSheepOrally('filename'),
       },
     );
   }
