@@ -329,25 +329,21 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
 
     List<dynamic>? emails;
 
-    await farmDoc.get().then((doc) => {
-          if (doc.exists)
-            {
-              emails = doc.get('personnel'),
-              if (emails != null)
-                {
-                  for (String email in emails!)
-                    {
-                      _emails.add(email),
-                      _showDeleteIcon.add(true),
-                      _emailControllers.add(TextEditingController(text: email))
-                    },
-                  _oldEmails = List.from(emails!),
-                }
-            },
-          setState(() {
-            _loadingData = false;
-          })
-        });
+    DocumentSnapshot<Object?> doc = await farmDoc.get();
+    if (doc.exists) {
+      emails = doc.get('personnel');
+      if (emails != null) {
+        for (String email in emails) {
+          _emails.add(email);
+          _showDeleteIcon.add(true);
+          _emailControllers.add(TextEditingController(text: email));
+        }
+        _oldEmails = List.from(emails);
+      }
+    }
+    setState(() {
+      _loadingData = false;
+    });
   }
 
   void _savePersonnelData() async {
@@ -358,23 +354,19 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
         FirebaseFirestore.instance.collection('farms');
     DocumentReference farmDoc = farmCollection.doc(uid);
 
-    await farmDoc.get().then((doc) => {
-          if (doc.exists)
-            {
-              farmDoc.update({'personnel': _emails})
-            }
-          else
-            {
-              farmDoc.set({
-                'maps': null,
-                'name': null,
-                'address': null,
-                'ties': null,
-                'eartags': null,
-                'personnel': _emails
-              })
-            },
-        });
+    DocumentSnapshot<Object?> doc = await farmDoc.get();
+    if (doc.exists) {
+      farmDoc.update({'personnel': _emails});
+    } else {
+      farmDoc.set({
+        'maps': null,
+        'name': null,
+        'address': null,
+        'ties': null,
+        'eartags': null,
+        'personnel': _emails
+      });
+    }
 
     // Remove farm from individual personnel if mail was removed
     CollectionReference personnelCollection =
@@ -387,20 +379,17 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
 
         List<dynamic>? farms;
 
-        await personnelDoc.get().then((doc) => {
-              if (doc.exists)
-                {
-                  farms = doc.get('farms'),
-                  if (farms!.length == 1)
-                    {personnelDoc.delete()}
-                  else
-                    {
-                      personnelDoc.update({
-                        'farms': FieldValue.arrayRemove([uid])
-                      }),
-                    }
-                }
+        doc = await personnelDoc.get();
+        if (doc.exists) {
+          farms = doc.get('farms');
+          if (farms!.length == 1) {
+            personnelDoc.delete();
+          } else {
+            personnelDoc.update({
+              'farms': FieldValue.arrayRemove([uid])
             });
+          }
+        }
       }
     }
 
@@ -409,20 +398,16 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
       if (!_oldEmails.contains(email)) {
         personnelDoc = personnelCollection.doc(email);
 
-        await personnelDoc.get().then((doc) => {
-              if (doc.exists)
-                {
-                  personnelDoc.update({
-                    'farms': FieldValue.arrayUnion([uid])
-                  })
-                }
-              else
-                {
-                  personnelDoc.set({
-                    'farms': [uid]
-                  })
-                }
-            });
+        doc = await personnelDoc.get();
+        if (doc.exists) {
+          personnelDoc.update({
+            'farms': FieldValue.arrayUnion([uid])
+          });
+        } else {
+          personnelDoc.set({
+            'farms': [uid]
+          });
+        }
       }
     }
   }
