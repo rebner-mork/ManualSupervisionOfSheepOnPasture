@@ -106,7 +106,7 @@ class _MyFarmState extends State<MyFarm> {
           ),
           inputFieldSpacer(),
           _loadingData
-              ? const Text('Laster data...')
+              ? const Text('Laster gårdsinformasjon...')
               : AnimatedOpacity(
                   opacity: _validationActivated ? 1.0 : 0.0,
                   duration: const Duration(milliseconds: 200),
@@ -178,7 +178,7 @@ class _MyFarmState extends State<MyFarm> {
           });
         }
         setState(() {
-          _feedback = 'Gårdsinfo lagret';
+          _feedback = 'Gårdsinformasjon lagret';
         });
       } catch (e) {
         debugPrint('exception: ' + e.toString());

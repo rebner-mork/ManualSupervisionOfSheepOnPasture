@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:web/utils/constants.dart';
 import 'package:web/utils/styles.dart';
 import 'package:web/utils/validation.dart';
 
@@ -20,6 +19,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
   bool _loadingData = true;
   bool _showNewEmailRow = false;
 
+  // Index of an invalid email in _emails. -1 if all emails are valid
   int _indexOfInvalidEmail = -1;
   bool _invalidNewEmail = false;
 
@@ -50,7 +50,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
             children: _loadingData
                 ? const [
                     Text(
-                      loadingData,
+                      'Laster inn oppsynspersonell...',
                       style: TextStyle(fontSize: 18),
                     )
                   ]
@@ -62,7 +62,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                           DataColumn(
                               label: Text(
                             'E-post',
-                            style: columnNameTextStyle,
+                            style: dataColumnTextStyle,
                           )),
                           const DataColumn(label: Text(''))
                         ],
@@ -121,7 +121,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                               style: ButtonStyle(
                                   fixedSize: MaterialStateProperty.all(
                                       const Size.fromHeight(35))),
-                              child: Text('Lagre', style: largerTextStyle),
+                              child: Text('Lagre', style: buttonTextStyle),
                               onPressed: () =>
                                   _saveExistingPersonnel(data.key)),
                           const SizedBox(width: 10),
@@ -130,7 +130,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                                 fixedSize: MaterialStateProperty.all(
                                     const Size.fromHeight(35)),
                                 textStyle:
-                                    MaterialStateProperty.all(largerTextStyle),
+                                    MaterialStateProperty.all(buttonTextStyle),
                                 backgroundColor:
                                     MaterialStateProperty.all(Colors.red)),
                             child: const Text("Avbryt"),
@@ -202,14 +202,14 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                       style: ButtonStyle(
                           fixedSize: MaterialStateProperty.all(
                               const Size.fromHeight(35))),
-                      child: Text('Lagre', style: largerTextStyle),
+                      child: Text('Lagre', style: buttonTextStyle),
                       onPressed: _saveNewPersonnel),
                   const SizedBox(width: 10),
                   ElevatedButton(
                     style: ButtonStyle(
                         fixedSize: MaterialStateProperty.all(
                             const Size.fromHeight(35)),
-                        textStyle: MaterialStateProperty.all(largerTextStyle),
+                        textStyle: MaterialStateProperty.all(buttonTextStyle),
                         backgroundColor: MaterialStateProperty.all(Colors.red)),
                     child: const Text("Avbryt"),
                     onPressed: () {

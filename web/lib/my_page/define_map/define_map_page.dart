@@ -39,6 +39,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
       "Klikk på lagre-knappen når du har skrevet inn navn på kartområdet";
   static const String secondMarkerIncorrectlyPlacedText =
       "Sørøstlig hjørne må være sørøst for nordvest-markøren. Klikk og hold på kartet på nytt for å markere sørøstlig hjørne av beiteområdet";
+  static const String dataSavedText = "Kart er lagret";
 
   static const int graphicalDecimalAmount = 4;
   static const int databaseDecimalAmount = 6;
@@ -220,7 +221,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
         _saveMapData();
         setState(() {
           _showDeleteIcon[index] = true;
-          _helpText = '';
+          _helpText = dataSavedText;
         });
       } else {
         setState(() {
@@ -249,7 +250,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
             _newCoordinatesText = coordinatesPlaceholder;
             _newMapNameController = TextEditingController();
 
-            _helpText = '';
+            _helpText = dataSavedText;
           });
           _saveMapData();
         } else {
@@ -326,6 +327,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
                     onChanged: (name) {
                       setState(() {
                         _showDeleteIcon[data.key] = false;
+                        _helpText = '';
                       });
                     },
                   ),
@@ -483,7 +485,9 @@ class _DefineMapPageState extends State<DefineMapPage> {
           ])
         : Text(
             _helpText,
-            style: const TextStyle(fontSize: 16),
+            style: TextStyle(
+                fontSize: 16,
+                color: _helpText == dataSavedText ? Colors.green : null),
           );
   }
 
