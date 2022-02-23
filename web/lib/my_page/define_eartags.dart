@@ -124,11 +124,11 @@ class _MyEartagsState extends State<MyEartags> {
         constraints: const BoxConstraints(minWidth: 115),
         child: Row(children: [
           DropdownButton<DropdownIcon>(
-              value: DropdownIcon(color),
+              value: DropdownIcon(Icons.local_offer, color),
               items: possibleEartagColors
                   .map((Color color) => DropdownMenuItem<DropdownIcon>(
-                      value: DropdownIcon(color),
-                      child: DropdownIcon(color).icon))
+                      value: DropdownIcon(Icons.local_offer, color),
+                      child: DropdownIcon(Icons.local_offer, color).icon))
                   .toList(),
               onChanged: (DropdownIcon? newIcon) {
                 _onColorChanged(newIcon!.icon.color!, index, color);
@@ -231,7 +231,7 @@ class _MyEartagsState extends State<MyEartags> {
                     _equalValues ? Colors.grey : Colors.green)),
             child: Text(
               "Lagre",
-              style: dataCellTextStyle,
+              style: buttonTextStyle,
               textAlign: TextAlign.center,
             ),
             onPressed: () => {
@@ -255,7 +255,7 @@ class _MyEartagsState extends State<MyEartags> {
               backgroundColor: MaterialStateProperty.all(Colors.red)),
           child: Text(
             "Avbryt",
-            style: dataCellTextStyle,
+            style: buttonTextStyle,
           ),
           onPressed: () => {
             setState(() {

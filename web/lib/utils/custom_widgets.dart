@@ -23,8 +23,8 @@ SizedBox inputFieldSpacer() {
 }
 
 class DropdownIcon {
-  DropdownIcon(Color iconColor) {
-    icon = Icon(Icons.local_offer, color: iconColor);
+  DropdownIcon(IconData iconData, Color color) {
+    icon = Icon(iconData, color: color);
   }
 
   late Icon icon;

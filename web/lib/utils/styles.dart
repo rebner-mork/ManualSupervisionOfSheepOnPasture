@@ -6,3 +6,6 @@ TextStyle dataColumnTextStyle =
 TextStyle dataCellTextStyle = const TextStyle(fontSize: 16);
 TextStyle dataCellBoldTextStyle =
     const TextStyle(fontSize: 16, fontWeight: FontWeight.bold);
+
+// Button
+TextStyle buttonTextStyle = const TextStyle(fontSize: 16);
