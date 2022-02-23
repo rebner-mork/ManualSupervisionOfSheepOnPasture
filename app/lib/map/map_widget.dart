@@ -9,7 +9,10 @@ import '../utils/constants.dart';
 
 // ignore: must_be_immutable
 class Map extends StatefulWidget {
-  Map(this.southWest, this.northEast, {Key? key}) : super(key: key);
+  Map(LatLng northWest, LatLng southEast, {Key? key}) : super(key: key) {
+    southWest = LatLng(southEast.latitude, northWest.longitude);
+    northEast = LatLng(northWest.latitude, southEast.longitude);
+  }
 
   static const String route = 'map';
   late LatLng southWest;

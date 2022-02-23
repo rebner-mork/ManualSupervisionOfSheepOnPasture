@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web/my_page/define_personnel.dart';
+import 'package:web/my_page/define_map/define_map_page.dart';
 import 'package:web/my_page/my_farm.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 
@@ -36,6 +37,10 @@ class _MyPageState extends State<MyPage> {
               ),
               selectedIcon: Icon(Icons.gite)),
           NavigationRailDestination(
+              icon: Icon(Icons.map_outlined),
+              label: Text('Kart', style: natigationTextStyle),
+              selectedIcon: Icon(Icons.map)),
+          NavigationRailDestination(
               icon: Icon(Icons.local_offer_outlined), //Icons.tag (#)
               label: Text(
                 'Øremerker',
@@ -49,12 +54,13 @@ class _MyPageState extends State<MyPage> {
           NavigationRailDestination(
               icon: Icon(Icons.groups_outlined),
               label: Text('Oppsynspersonell', style: natigationTextStyle),
-              selectedIcon: Icon(Icons.groups))
+              selectedIcon: Icon(Icons.groups)),
         ],
       ),
       const VerticalDivider(thickness: 1, width: 1),
       if (_selectedIndex == 0) const Expanded(child: MyFarm()),
-      if (_selectedIndex == 3) const Expanded(child: DefinePersonnel())
+      if (_selectedIndex == 1) const Expanded(child: DefineMapPage()),
+      if (_selectedIndex == 4) const Expanded(child: DefinePersonnel())
     ]));
   }
 }

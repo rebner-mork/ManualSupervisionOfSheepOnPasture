@@ -15,8 +15,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   //TODO Temporary
-  await downloadTiles(LatLng(62.469501, 6.146955), LatLng(62.473164, 6.159678),
-      OfflineZoomLevels.min, OfflineZoomLevels.max);
+  await downloadTiles(
+      LatLng(63.420017, 10.394660),
+      LatLng(63.415472, 10.411244),
+      OfflineZoomLevels.min,
+      OfflineZoomLevels.max);
 
   runApp(const MyApp());
 }
@@ -43,7 +46,7 @@ class _MyAppState extends State<MyApp> {
         LoginPage.route: (context) => const LoginPage(),
         RegisterUserPage.route: (context) => const RegisterUserPage(),
         Map.route: (context) =>
-            Map(LatLng(62.469501, 6.146955), LatLng(62.473164, 6.159678)),
+            Map(LatLng(63.420017, 10.394660), LatLng(63.415472, 10.411244)),
         RegisterSheep.route: (context) => const RegisterSheep('fileName'),
         RegisterSheepOrally.route: (context) =>
             const RegisterSheepOrally('filename'),

@@ -20,7 +20,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
   bool _loadingData = true;
   bool _showNewEmailRow = false;
 
-  int _invalidEmailIndex = -1;
+  int _indexOfInvalidEmail = -1;
   bool _invalidNewEmail = false;
 
   final List<String> _emails = [];
@@ -85,7 +85,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
         .map((MapEntry<int, String> data) => DataRow(cells: [
               DataCell(
                   Container(
-                      color: data.key == _invalidEmailIndex
+                      color: data.key == _indexOfInvalidEmail
                           ? Colors.yellow.shade200
                           : null,
                       child: TextField(
@@ -139,7 +139,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                                 _emailControllers[data.key].text =
                                     _oldEmails[data.key];
                                 _showDeleteIcon[data.key] = true;
-                                _invalidEmailIndex = -1;
+                                _indexOfInvalidEmail = -1;
                                 _helpText = '';
                               });
                             },
@@ -159,23 +159,23 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
             if (validateEmail(newEmail) == null) {
               _helpText = '';
               _showDeleteIcon[index] = true;
-              _invalidEmailIndex = -1;
+              _indexOfInvalidEmail = -1;
               _emails[index] = newEmail;
               _oldEmails = List.from(_emails);
               _savePersonnelData();
             } else {
               _helpText = "'$newEmail' har ikke gyldig format";
-              _invalidEmailIndex = index;
+              _indexOfInvalidEmail = index;
               _invalidNewEmail = false;
             }
           } else {
             _helpText = nonUniqueEmail;
-            _invalidEmailIndex = index;
+            _indexOfInvalidEmail = index;
             _invalidNewEmail = false;
           }
         } else {
           _helpText = writeEmail;
-          _invalidEmailIndex = index;
+          _indexOfInvalidEmail = index;
           _invalidNewEmail = false;
         }
       });
@@ -244,14 +244,14 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
       if (email.isEmpty) {
         _helpText = 'E-post kan ikke være tom';
         _invalidNewEmail = true;
-        _invalidEmailIndex = -1;
+        _indexOfInvalidEmail = -1;
       } else if (_emails.contains(email)) {
         _helpText = nonUniqueEmail;
         _invalidNewEmail = true;
-        _invalidEmailIndex = -1;
+        _indexOfInvalidEmail = -1;
       } else if (validateEmail(email) != null) {
         _invalidNewEmail = true;
-        _invalidEmailIndex = -1;
+        _indexOfInvalidEmail = -1;
         _helpText = email == ''
             ? 'E-post kan ikke være tom'
             : "'$email' har ikke gyldig format for e-post";
@@ -275,12 +275,12 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
       _helpText = nonUniqueEmail;
     } else {
       _helpText = '';
-      _invalidEmailIndex = -1;
+      _indexOfInvalidEmail = -1;
     }
     for (String email in _emails) {
       if (validateEmail(email) != null) {
         setState(() {
-          _invalidEmailIndex = _emails.indexOf(email);
+          _indexOfInvalidEmail = _emails.indexOf(email);
           _helpText = email == ''
               ? 'E-post kan ikke være tom'
               : "'$email' har ikke gyldig format";

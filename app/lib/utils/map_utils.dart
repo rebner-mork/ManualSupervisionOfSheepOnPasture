@@ -100,7 +100,7 @@ Future<void> downloadTiles(
     int south = getTileIndexY(southEast.latitude, zoom);
 
     for (int x = west; x <= east; x++) {
-      for (int y = south; y <= north; y++) {
+      for (int y = north; y <= south; y++) {
         await _downloadTile(x, y, zoom, urlTemplate, subdomains);
       }
     }
