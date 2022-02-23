@@ -31,13 +31,14 @@ class _MapState extends State<Map> {
   late String urlTemplate;
   bool urlTemplateLoaded = false;
   List<Polyline> linesOfSight = [];
+  LatLng? userPosition;
 
   Future<void> _updateMap() async {
-    LatLng pos = await map_utils.getDevicePosition();
+    userPosition = await map_utils.getDevicePosition();
     setState(() {
       //_mapController.move(pos, _mapController.zoom);
-      _currentPositionMarker = map_utils.getDevicePositionMarker(pos);
-      _movementPoints.add(pos);
+      _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition!);
+      _movementPoints.add(userPosition!);
     });
   }
 
@@ -48,11 +49,10 @@ class _MapState extends State<Map> {
     });
   }
 
-  Future<void> drawLineOfSight(LatLng targetPosition) async {
-    LatLng userPosition = await map_utils.getDevicePosition();
+  void drawLineOfSight(LatLng targetPosition) {
     setState(() {
       linesOfSight.add(Polyline(
-          points: [userPosition, targetPosition],
+          points: [userPosition!, targetPosition],
           color: Colors.red,
           strokeWidth: 5.0));
     });
@@ -61,7 +61,8 @@ class _MapState extends State<Map> {
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(const Duration(seconds: 15), (_) => _updateMap());
+    _updateMap(); //to set the position before waiting at startup
+    timer = Timer.periodic(const Duration(seconds: 5), (_) => _updateMap());
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _loadUrlTemplate();
