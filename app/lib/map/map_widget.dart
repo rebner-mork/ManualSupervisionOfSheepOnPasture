@@ -30,6 +30,7 @@ class _MapState extends State<Map> {
   late Timer timer;
   late String urlTemplate;
   bool urlTemplateLoaded = false;
+  List<Polyline> linesOfSight = [];
 
   Future<void> _updateMap() async {
     LatLng pos = await map_utils.getDevicePosition();
@@ -44,6 +45,16 @@ class _MapState extends State<Map> {
     urlTemplate = await map_utils.getOfflineUrlTemplate();
     setState(() {
       urlTemplateLoaded = true;
+    });
+  }
+
+  Future<void> drawLineOfSight(LatLng targetPosition) async {
+    LatLng userPosition = await map_utils.getDevicePosition();
+    setState(() {
+      linesOfSight.add(Polyline(
+          points: [userPosition, targetPosition],
+          color: Colors.red,
+          strokeWidth: 5.0));
     });
   }
 
@@ -73,6 +84,7 @@ class _MapState extends State<Map> {
                 onMapCreated: (c) {
                   _mapController = c;
                 },
+                onTap: (_, point) => drawLineOfSight(point),
                 zoom: OfflineZoomLevels.min,
                 minZoom: OfflineZoomLevels.min,
                 maxZoom: OfflineZoomLevels.max,
@@ -99,7 +111,8 @@ class _MapState extends State<Map> {
                       points: _movementPoints,
                       color: Colors.red,
                       isDotted: true,
-                      strokeWidth: 10.0)
+                      strokeWidth: 10.0),
+                  ...linesOfSight
                 ])
               ],
             )
