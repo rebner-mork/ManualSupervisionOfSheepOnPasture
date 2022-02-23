@@ -119,7 +119,7 @@ class _MyEartagsState extends State<MyEartags> {
         color: !_eartagsAdded &&
                 !_eartagsDeleted &&
                 _eartagColors[index] != _oldEartagColors[index]
-            ? Colors.orange.shade100
+            ? Colors.green.shade100
             : null,
         constraints: const BoxConstraints(minWidth: 115),
         child: Row(children: [
@@ -146,7 +146,7 @@ class _MyEartagsState extends State<MyEartags> {
         color: !_eartagsAdded &&
                 !_eartagsDeleted &&
                 _eartagOwners[index] != _oldEartagOwners[index]
-            ? Colors.orange.shade100
+            ? Colors.green.shade100
             : null,
         constraints: const BoxConstraints(minHeight: 50),
         child: Row(
@@ -308,14 +308,16 @@ class _MyEartagsState extends State<MyEartags> {
         FirebaseFirestore.instance.collection('farms');
     DocumentReference farmDoc = farmCollection.doc(uid);
 
-    Map<String, dynamic> dataMap;
+    Map<String, dynamic>? dataMap;
 
     DocumentSnapshot<Object?> doc = await farmDoc.get();
     if (doc.exists) {
       dataMap = doc.get('eartags');
-      for (MapEntry<String, dynamic> data in dataMap.entries) {
-        _eartagColors.add(Color(int.parse(data.key, radix: 16)));
-        _eartagOwners.add(data.value as bool);
+      if (dataMap != null) {
+        for (MapEntry<String, dynamic> data in dataMap.entries) {
+          _eartagColors.add(Color(int.parse(data.key, radix: 16)));
+          _eartagOwners.add(data.value as bool);
+        }
       }
     }
     _oldEartagColors = List.from(_eartagColors);
