@@ -34,7 +34,7 @@ class _MyTiesState extends State<MyTies> {
   Map<String, String> feedback = {
     'nonUniqueColor': 'Slipsfarge må være unik',
     'nonUniqueTieMeaning': 'Antall lam må være unikt',
-    'dataSaved': 'Data er lagret'
+    'dataSaved': 'Slips er lagret'
   };
 
   @override

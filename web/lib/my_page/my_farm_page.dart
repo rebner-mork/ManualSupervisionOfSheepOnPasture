@@ -106,7 +106,7 @@ class _MyFarmState extends State<MyFarm> {
           ),
           inputFieldSpacer(),
           _loadingData
-              ? const Text('Laster data...')
+              ? const Text('Laster gårdsinformasjon...')
               : AnimatedOpacity(
                   opacity: _validationActivated ? 1.0 : 0.0,
                   duration: const Duration(milliseconds: 200),
@@ -137,13 +137,11 @@ class _MyFarmState extends State<MyFarm> {
         FirebaseFirestore.instance.collection('farms');
     DocumentReference farmDoc = farmCollection.doc(uid);
 
-    await farmDoc.get().then((doc) => {
-          if (doc.exists)
-            {
-              farmNameController.text = doc.get('name') ?? '',
-              farmAddressController.text = doc.get('address') ?? '',
-            }
-        });
+    DocumentSnapshot<Object?> doc = await farmDoc.get();
+    if (doc.exists) {
+      farmNameController.text = doc.get('name') ?? '';
+      farmAddressController.text = doc.get('address') ?? '';
+    }
     setState(() {
       _loadingData = false;
     });
@@ -163,25 +161,24 @@ class _MyFarmState extends State<MyFarm> {
             FirebaseFirestore.instance.collection('farms');
         DocumentReference farmDoc = farmCollection.doc(uid);
 
-        await farmDoc.get().then((doc) => {
-              if (doc.exists)
-                {
-                  farmDoc.update({
-                    'name': farmNameController.text,
-                    'address': farmAddressController.text
-                  })
-                }
-              else
-                {
-                  farmDoc.set({
-                    'name': farmNameController.text,
-                    'address': farmAddressController.text,
-                    'maps': null
-                  })
-                },
-            });
+        DocumentSnapshot<Object?> doc = await farmDoc.get();
+        if (doc.exists) {
+          farmDoc.update({
+            'name': farmNameController.text,
+            'address': farmAddressController.text
+          });
+        } else {
+          farmDoc.set({
+            'maps': null,
+            'ties': null,
+            'eartags': null,
+            'personnel': null,
+            'name': farmNameController.text,
+            'address': farmAddressController.text
+          });
+        }
         setState(() {
-          _feedback = 'Gårdsinfo lagret';
+          _feedback = 'Gårdsinformasjon lagret';
         });
       } catch (e) {
         debugPrint('exception: ' + e.toString());

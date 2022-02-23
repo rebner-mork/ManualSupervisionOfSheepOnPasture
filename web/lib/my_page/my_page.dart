@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web/my_page/define_personnel.dart';
 import 'package:web/my_page/define_eartags.dart';
 import 'package:web/my_page/define_ties_page.dart';
 import 'package:web/my_page/my_farm_page.dart';
@@ -62,7 +63,8 @@ class _MyPageState extends State<MyPage> {
       if (_selectedIndex == 0) const Expanded(child: MyFarm()),
       if (_selectedIndex == 1) const Expanded(child: DefineMapPage()),
       if (_selectedIndex == 2) const Expanded(child: MyEartags()),
-      if (_selectedIndex == 3) const Expanded(child: MyTies())
+      if (_selectedIndex == 3) const Expanded(child: MyTies()),
+      if (_selectedIndex == 4) const Expanded(child: DefinePersonnel())
     ]));
   }
 }
