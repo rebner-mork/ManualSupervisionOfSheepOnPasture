@@ -310,22 +310,19 @@ class _MyEartagsState extends State<MyEartags> {
 
     Map<String, dynamic> dataMap;
 
-    await farmDoc.get().then((doc) => {
-          if (doc.exists)
-            {
-              dataMap = doc.get('eartags'),
-              for (MapEntry<String, dynamic> data in dataMap.entries)
-                {
-                  _eartagColors.add(Color(int.parse(data.key, radix: 16))),
-                  _eartagOwners.add(data.value as bool)
-                },
-            },
-          _oldEartagColors = List.from(_eartagColors),
-          _oldEartagOwners = List.from(_eartagOwners),
-          setState(() {
-            _loadingData = false;
-          })
-        });
+    DocumentSnapshot<Object?> doc = await farmDoc.get();
+    if (doc.exists) {
+      dataMap = doc.get('eartags');
+      for (MapEntry<String, dynamic> data in dataMap.entries) {
+        _eartagColors.add(Color(int.parse(data.key, radix: 16)));
+        _eartagOwners.add(data.value as bool);
+      }
+    }
+    _oldEartagColors = List.from(_eartagColors);
+    _oldEartagOwners = List.from(_eartagOwners);
+    setState(() {
+      _loadingData = false;
+    });
   }
 
   void _saveEartagData() async {
@@ -340,21 +337,19 @@ class _MyEartagsState extends State<MyEartags> {
         FirebaseFirestore.instance.collection('farms');
     DocumentReference farmDoc = farmCollection.doc(uid);
 
-    await farmDoc.get().then((doc) => {
-          if (doc.exists)
-            {
-              farmDoc.update({'eartags': dataMap})
-            }
-          else
-            {
-              farmDoc.set({
-                'name': null,
-                'address': null,
-                'maps': null,
-                'ties': null,
-                'eartags': dataMap
-              })
-            }
-        });
+    DocumentSnapshot<Object?> doc = await farmDoc.get();
+
+    if (doc.exists) {
+      farmDoc.update({'eartags': dataMap});
+    } else {
+      farmDoc.set({
+        'name': null,
+        'address': null,
+        'maps': null,
+        'ties': null,
+        'personnel': null,
+        'eartags': dataMap
+      });
+    }
   }
 }
