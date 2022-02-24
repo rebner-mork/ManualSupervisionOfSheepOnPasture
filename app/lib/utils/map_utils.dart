@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:math';
 import 'dart:io';
 import 'package:http/http.dart' as http;
@@ -5,7 +6,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter_map/flutter_map.dart';
+
+import 'dart:developer' as dev;
 
 Future<LatLng> getDevicePosition() async {
   LocationData _locationData;
@@ -111,3 +116,22 @@ Future<String> getOfflineUrlTemplate() async {
   Directory baseDir = await getApplicationDocumentsDirectory();
   return baseDir.path + "/maps/{z}/{x}/{y}.png";
 }
+
+Future<LinkedHashMap<String, dynamic>> getAllMapsFromFarm(String farmId) async {
+  try {
+    CollectionReference farmCollection =
+        FirebaseFirestore.instance.collection("farms");
+    DocumentReference farmDoc = farmCollection.doc(farmId);
+    DocumentSnapshot<Object?> doc = await farmDoc.get();
+    return await doc.get("maps");
+  } catch (e) {
+    dev.log(e.toString());
+  }
+  dynamic d;
+  return LinkedHashMap.from({"": d});
+}
+
+//
+//Future<Image> getMapThumbnail(){
+
+//}

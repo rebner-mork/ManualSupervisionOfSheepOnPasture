@@ -10,6 +10,7 @@ import 'package:latlong2/latlong.dart';
 
 import "utils/map_utils.dart";
 import 'utils/constants.dart';
+import 'map/my_maps.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,12 +42,13 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       theme: ThemeData(
           colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green)),
-      initialRoute: Map.route,
+      initialRoute: MyMapsPage.route,
       routes: {
         LoginPage.route: (context) => const LoginPage(),
         RegisterUserPage.route: (context) => const RegisterUserPage(),
         Map.route: (context) =>
             Map(LatLng(63.420017, 10.394660), LatLng(63.415472, 10.411244)),
+        MyMapsPage.route: (context) => const MyMapsPage(),
         RegisterSheep.route: (context) => const RegisterSheep('fileName'),
         RegisterSheepOrally.route: (context) =>
             const RegisterSheepOrally('filename'),
