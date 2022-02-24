@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:app/utils/styles.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,7 +18,9 @@ class _StartTripPageState extends State<StartTripPage> {
   _StartTripPageState();
 
   final List<String> _farmNames = [];
-  late String _selectedFarm;
+  List<String> _farmIDs = [];
+  late String _selectedFarmName;
+  Map _selectedFarmMaps = <String, Map<String, Map<String, double>>>{};
 
   String _feedbackText = '';
   bool _loadingData = true;
@@ -65,7 +69,7 @@ class _StartTripPageState extends State<StartTripPage> {
                                 width: 20,
                               ),
                               DropdownButton<String>(
-                                  value: _selectedFarm,
+                                  value: _selectedFarmName,
                                   items: _farmNames
                                       .map((String farmName) =>
                                           DropdownMenuItem<String>(
@@ -77,10 +81,14 @@ class _StartTripPageState extends State<StartTripPage> {
                                       .toList(),
                                   onChanged: (String? newString) {
                                     // TODO: hvis ulik, les inn kart
-                                    setState(() {
-                                      _selectedFarm = newString!;
-                                      _feedbackText = '';
-                                    });
+                                    if (_selectedFarmName != newString) {
+                                      _readFarmMaps(_farmIDs[
+                                          _farmNames.indexOf(newString!)]);
+                                      setState(() {
+                                        _selectedFarmName = newString;
+                                        _feedbackText = '';
+                                      });
+                                    }
                                   })
                             ],
                           ),
@@ -138,42 +146,79 @@ class _StartTripPageState extends State<StartTripPage> {
             )));
   }
 
+  Map<String, Map<String, Map<String, double>>> _castMapsFromDynamic(
+      LinkedHashMap<String, dynamic>? maps) {
+    return maps!
+        .map((key, value) => MapEntry(key, value as Map<String, dynamic>))
+        .map((key, value) => MapEntry(
+            key,
+            value
+                .map((key, value) =>
+                    MapEntry(key, value as Map<String, dynamic>))
+                .map((key, value) => MapEntry(
+                    key,
+                    value.map(
+                        (key, value) => MapEntry(key, value as double))))));
+  }
+
+  void _readFarmMaps(String farmId) async {
+    CollectionReference farmCollection =
+        FirebaseFirestore.instance.collection('farms');
+    DocumentReference farmDoc = farmCollection.doc(farmId);
+
+    DocumentSnapshot<Object?> doc = await farmDoc.get();
+    LinkedHashMap<String, dynamic>? maps = await doc.get('maps');
+
+    if (maps != null) {
+      _selectedFarmMaps = _castMapsFromDynamic(maps);
+      debugPrint(_selectedFarmMaps.toString());
+    } else {
+      // TODO: Gården har ikke definert noen kart. Ta kontakt med sauebonde.
+    }
+  }
+
   void _readFarms() async {
     String email = FirebaseAuth.instance.currentUser!.email!;
     CollectionReference personnelCollection =
         FirebaseFirestore.instance.collection('personnel');
     DocumentReference personnelDoc = personnelCollection.doc(email);
 
-    List<dynamic> farmIDs;
-
     DocumentSnapshot<Object?> doc = await personnelDoc.get();
     if (doc.exists) {
-      farmIDs = doc.get('farms');
-      debugPrint("HER: " + farmIDs.toString());
+      List<dynamic> farmIDs = doc.get('farms');
+      _farmIDs = farmIDs.map((dynamic id) => id as String).toList();
 
       CollectionReference farmCollection =
           FirebaseFirestore.instance.collection('farms');
       DocumentReference farmDoc;
 
-      for (dynamic farmId in farmIDs) {
-        farmDoc = farmCollection.doc(farmId);
+      for (int i = 0; i < farmIDs.length; i++) {
+        farmDoc = farmCollection.doc(farmIDs[i]);
 
         DocumentSnapshot<Object?> doc = await farmDoc.get();
         if (doc.exists) {
           _farmNames.add(doc.get('name'));
-        } else {
-          // TODO: Dette er en feil, skal ikke være mulig å havne her
+          if (i == 0) {
+            _readFarmMaps(_farmIDs.first);
+            /*LinkedHashMap<String, dynamic>? maps = await doc.get('maps');
+            if (maps != null) {
+              _selectedFarmMaps = _castMapsFromDynamic(maps);
+              debugPrint(_selectedFarmMaps.toString());
+            } else {
+              // TODO: Gården har ikke definert noen kart. Ta kontakt med sauebonde.
+            }*/
+          } else {
+            // TODO: Dette er en feil, skal ikke være mulig å havne her
+          }
         }
+
+        setState(() {
+          _selectedFarmName = _farmNames[0];
+        });
       }
-
-      // TODO: les inn kart til første
-
       setState(() {
-        _selectedFarm = _farmNames[0];
+        _loadingData = false;
       });
     }
-    setState(() {
-      _loadingData = false;
-    });
   }
 }

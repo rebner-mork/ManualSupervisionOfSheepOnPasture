@@ -386,7 +386,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
             personnelDoc.delete();
           } else {
             personnelDoc.update({
-              'farms': FieldValue.arrayRemove([uid])
+              'farms': FieldValue.arrayRemove([uid]) // TODO: make null if empty
             });
           }
         }
