@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:app/utils/styles.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -48,7 +46,7 @@ class _StartTripPageState extends State<StartTripPage> {
                         style: feedbackTextStyle,
                       )
                     ]
-                  : _farmNames.length == 0
+                  : _farmNames.isEmpty
                       ? [
                           Text(
                               'Du er ikke registrert som oppsynspersonell hos noen gård. Ta kontakt med sauebonde.',
@@ -78,6 +76,7 @@ class _StartTripPageState extends State<StartTripPage> {
                                               )))
                                       .toList(),
                                   onChanged: (String? newString) {
+                                    // TODO: hvis ulik, les inn kart
                                     setState(() {
                                       _selectedFarm = newString!;
                                       _feedbackText = '';
@@ -166,6 +165,9 @@ class _StartTripPageState extends State<StartTripPage> {
           // TODO: Dette er en feil, skal ikke være mulig å havne her
         }
       }
+
+      // TODO: les inn kart til første
+
     }
     setState(() {
       _selectedFarm = _farmNames[0];

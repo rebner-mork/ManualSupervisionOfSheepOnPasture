@@ -332,14 +332,16 @@ class _MyTiesState extends State<MyTies> {
         FirebaseFirestore.instance.collection('farms');
     DocumentReference farmDoc = farmCollection.doc(uid);
 
-    LinkedHashMap<String, dynamic> dataMap;
+    LinkedHashMap<String, dynamic>? dataMap;
 
     DocumentSnapshot<Object?> doc = await farmDoc.get();
     if (doc.exists) {
       dataMap = doc.get('ties');
-      for (MapEntry<String, dynamic> data in dataMap.entries) {
-        _tieColors.add(Color(int.parse(data.key, radix: 16)));
-        _tieMeaning.add(data.value as int);
+      if (dataMap != null) {
+        for (MapEntry<String, dynamic> data in dataMap.entries) {
+          _tieColors.add(Color(int.parse(data.key, radix: 16)));
+          _tieMeaning.add(data.value as int);
+        }
       }
     } else {
       for (MapEntry<Color, int> data in defaultTieMap.entries) {
