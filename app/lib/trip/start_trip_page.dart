@@ -1,4 +1,8 @@
+import 'dart:collection';
+
 import 'package:app/utils/styles.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class StartTripPage extends StatefulWidget {
@@ -13,15 +17,19 @@ class StartTripPage extends StatefulWidget {
 class _StartTripPageState extends State<StartTripPage> {
   _StartTripPageState();
 
-  final List<String> _farmNames = ['', 'Gård 1', 'Gård 2', 'Gård 3'];
+  final List<String> _farmNames = [];
   late String _selectedFarm;
 
   String _feedbackText = '';
+  bool _loadingData = true;
 
   @override
   void initState() {
     super.initState();
-    _selectedFarm = _farmNames[0];
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _readFarms();
+    });
   }
 
   @override
@@ -33,73 +41,135 @@ class _StartTripPageState extends State<StartTripPage> {
               centerTitle: true,
             ),
             body: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Gård',
-                      style: fieldNameTextStyle,
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    DropdownButton<String>(
-                        value: _selectedFarm,
-                        items: _farmNames
-                            .map((String farmName) => DropdownMenuItem<String>(
-                                value: farmName,
-                                child: Text(
-                                  farmName,
-                                  style: dropDownTextStyle,
-                                )))
-                            .toList(),
-                        onChanged: (String? newString) {
-                          setState(() {
-                            _selectedFarm = newString!;
-                            _feedbackText = '';
-                          });
-                        })
-                  ],
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      if (_selectedFarm == '') {
-                        _feedbackText = 'Gård må velges før kart';
-                      }
-                    });
-                  },
-                  child: Text(
-                    'Velg kart',
-                    style: buttonTextStyle,
-                  ),
-                  style: ButtonStyle(
-                      fixedSize: MaterialStateProperty.all(
-                          Size.fromHeight(buttonHeight)),
-                      backgroundColor: MaterialStateProperty.all(
-                          _selectedFarm == '' ? Colors.grey : Colors.green)),
-                ),
-                const SizedBox(height: 15),
-                Text(
-                  _feedbackText,
-                  style: feedbackTextStyle,
-                ),
-                const SizedBox(height: 15),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: Text(
-                    'Start oppsynstur',
-                    style: buttonTextStyle,
-                  ),
-                  style: ButtonStyle(
-                      fixedSize: MaterialStateProperty.all(
-                          Size.fromHeight(mainButtonHeight)),
-                      backgroundColor: MaterialStateProperty.all(
-                          _selectedFarm == '' ? Colors.grey : Colors.green)),
-                )
-              ],
+              children: _loadingData
+                  ? [
+                      Text(
+                        'Laster inn...',
+                        style: feedbackTextStyle,
+                      )
+                    ]
+                  : _farmNames.length == 0
+                      ? [
+                          Text(
+                              'Du er ikke registrert som oppsynspersonell hos noen gård. Ta kontakt med sauebonde.',
+                              style: feedbackTextStyle)
+                        ]
+                      : [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Gård',
+                                style: fieldNameTextStyle,
+                              ),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              DropdownButton<String>(
+                                  value: _selectedFarm,
+                                  items: _farmNames
+                                      .map((String farmName) =>
+                                          DropdownMenuItem<String>(
+                                              value: farmName,
+                                              child: Text(
+                                                farmName,
+                                                style: dropDownTextStyle,
+                                              )))
+                                      .toList(),
+                                  onChanged: (String? newString) {
+                                    setState(() {
+                                      _selectedFarm = newString!;
+                                      _feedbackText = '';
+                                    });
+                                  })
+                            ],
+                          ),
+                          const SizedBox(height: 15),
+                          ElevatedButton(
+                            onPressed: () {
+                              /*setState(() {
+                            if (_selectedFarm == '') {
+                              _feedbackText = 'Gård må velges før kart';
+                            }
+                          });*/
+                            },
+                            child: Text(
+                              'Velg kart',
+                              style: buttonTextStyle,
+                            ),
+                            style: ButtonStyle(
+                                fixedSize: MaterialStateProperty.all(
+                                    Size.fromHeight(buttonHeight))
+                                /*backgroundColor: MaterialStateProperty.all(
+                                _selectedFarm == ''
+                                    ? buttonDisabledColor
+                                    : buttonEnabledColor)*/
+                                ),
+                          ),
+                          const SizedBox(height: 15),
+                          Text(
+                            _feedbackText,
+                            style: feedbackTextStyle,
+                          ),
+                          const SizedBox(height: 15),
+                          ElevatedButton(
+                            onPressed: () {
+                              // TODO: feedback if map not selected
+                              /*if (_selectedFarm == '') {
+                            setState(() {
+                              _feedbackText = 'Gård må velges';
+                            });
+                          }*/
+                            },
+                            child: Text(
+                              'Start oppsynstur',
+                              style: buttonTextStyle,
+                            ),
+                            style: ButtonStyle(
+                                fixedSize: MaterialStateProperty.all(
+                                    Size.fromHeight(mainButtonHeight))
+                                /*backgroundColor: MaterialStateProperty.all(
+                                _selectedFarm == ''
+                                    ? buttonDisabledColor
+                                    : buttonEnabledColor)*/
+                                ),
+                          )
+                        ],
             )));
+  }
+
+  void _readFarms() async {
+    String email = FirebaseAuth.instance.currentUser!.email!;
+    CollectionReference personnelCollection =
+        FirebaseFirestore.instance.collection('personnel');
+    DocumentReference personnelDoc = personnelCollection.doc(email);
+
+    List<dynamic> farmIDs;
+
+    DocumentSnapshot<Object?> doc = await personnelDoc.get();
+    if (doc.exists) {
+      farmIDs = doc.get('farms');
+      debugPrint("HER: " + farmIDs.toString());
+
+      CollectionReference farmCollection =
+          FirebaseFirestore.instance.collection('farms');
+      DocumentReference farmDoc;
+
+      for (dynamic farmId in farmIDs) {
+        farmDoc = farmCollection.doc(farmId);
+
+        DocumentSnapshot<Object?> doc = await farmDoc.get();
+        if (doc.exists) {
+          _farmNames.add(doc.get('name'));
+        } else {
+          // TODO: Dette er en feil, skal ikke være mulig å havne her
+        }
+      }
+    }
+    setState(() {
+      _selectedFarm = _farmNames[0];
+      _loadingData = false;
+    });
   }
 }

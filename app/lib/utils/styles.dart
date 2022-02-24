@@ -7,7 +7,8 @@ TextStyle dropDownTextStyle = const TextStyle(fontSize: 20);
 
 // Button
 TextStyle buttonTextStyle = const TextStyle(fontSize: 18);
-Color disabledButtonColor = Colors.grey;
+Color buttonDisabledColor = Colors.grey;
+Color buttonEnabledColor = Colors.green;
 double buttonHeight = 40;
 double mainButtonHeight = 50;
 

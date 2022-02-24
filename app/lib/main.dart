@@ -42,7 +42,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       theme: ThemeData(
           colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green)),
-      initialRoute: StartTripPage.route, //Map.route, TODO
+      initialRoute: LoginPage.route,
       routes: {
         LoginPage.route: (context) => const LoginPage(),
         RegisterUserPage.route: (context) => const RegisterUserPage(),

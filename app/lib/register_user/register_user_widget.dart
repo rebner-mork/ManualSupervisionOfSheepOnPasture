@@ -1,3 +1,4 @@
+import 'package:app/trip/start_trip_page.dart';
 import 'package:app/utils/authentication.dart';
 import 'package:app/utils/field_validation.dart';
 import 'package:app/utils/custom_widgets.dart';
@@ -132,7 +133,7 @@ class _RegisterUserWidgetState extends State<RegisterUserWidget> {
           _feedback = response ?? '';
         });
         if (response == null) {
-          // TODO: Navigator.pushNamed(context, X.route);
+          Navigator.popAndPushNamed(context, StartTripPage.route);
         }
       } catch (e) {
         _feedback = 'Kunne ikke opprette bruker';
