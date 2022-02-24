@@ -151,6 +151,7 @@ FloatingActionButton completeRegistrationButton(
     BuildContext context, void Function() onPressed) {
   return MediaQuery.of(context).viewInsets.bottom == 0
       ? FloatingActionButton.extended(
+          heroTag: 'completeOralRegistrationButton',
           onPressed: onPressed,
           label: const Text('Fullfør registrering',
               style: TextStyle(fontSize: 19)))
@@ -164,6 +165,7 @@ FloatingActionButton completeRegistrationButton(
 
 FloatingActionButton startDialogButton(void Function() onPressed) {
   return FloatingActionButton(
+    heroTag: 'startDialogButton',
     onPressed: onPressed,
     child: const Icon(Icons.mic, size: 30),
   );
