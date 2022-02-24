@@ -4,6 +4,7 @@ import 'package:flutter_map/plugin_api.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:async';
 
+import 'package:app/register/register_sheep_orally.dart';
 import '../utils/map_utils.dart' as map_utils;
 import '../utils/constants.dart';
 
@@ -49,20 +50,33 @@ class _MapState extends State<Map> {
     });
   }
 
-  void drawLineOfSight(LatLng targetPosition) {
-    setState(() {
-      linesOfSight.add(Polyline(
-          points: [userPosition!, targetPosition],
-          color: Colors.red,
-          strokeWidth: 5.0));
+  void registerSheepByTap(LatLng targetPosition) async {
+    LatLng pos = userPosition!;
+    map_utils.getDevicePosition().then((value) {
+      pos = value;
+      _movementPoints.add(pos);
     });
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => RegisterSheepOrally(
+                  'filename',
+                  onCompletedSuccessfully: () {
+                    setState(() {
+                      linesOfSight.add(Polyline(
+                          points: [pos, targetPosition],
+                          color: Colors.red,
+                          strokeWidth: 5.0));
+                    });
+                  },
+                )));
   }
 
   @override
   void initState() {
     super.initState();
     _updateMap(); //to set the position before waiting at startup
-    timer = Timer.periodic(const Duration(seconds: 5), (_) => _updateMap());
+    timer = Timer.periodic(const Duration(seconds: 30), (_) => _updateMap());
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _loadUrlTemplate();
@@ -85,7 +99,7 @@ class _MapState extends State<Map> {
                 onMapCreated: (c) {
                   _mapController = c;
                 },
-                onTap: (_, point) => drawLineOfSight(point),
+                onTap: (_, point) => registerSheepByTap(point),
                 zoom: OfflineZoomLevels.min,
                 minZoom: OfflineZoomLevels.min,
                 maxZoom: OfflineZoomLevels.max,

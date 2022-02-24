@@ -15,9 +15,14 @@ import 'package:speech_to_text/speech_to_text.dart';
 import 'package:fluttericon/rpg_awesome_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 
-class RegisterSheepOrally extends StatefulWidget {
-  const RegisterSheepOrally(this.fileName, {Key? key}) : super(key: key);
+void emptyVoidFunction() {}
 
+class RegisterSheepOrally extends StatefulWidget {
+  const RegisterSheepOrally(this.fileName,
+      {this.onCompletedSuccessfully = emptyVoidFunction, Key? key})
+      : super(key: key);
+
+  final VoidCallback onCompletedSuccessfully;
   final String fileName;
   static const String route = 'register-sheep-orally';
 
@@ -207,6 +212,9 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
     final Map data = gatherRegisteredData(_textControllers);
 
     file.writeAsString(json.encode(data));
+
+    widget.onCompletedSuccessfully();
+    Navigator.pop(context);
   }
 
   @override
