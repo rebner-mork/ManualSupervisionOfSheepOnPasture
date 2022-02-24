@@ -260,7 +260,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
         _showNewEmailRow = false;
         _invalidNewEmail = false;
         _emails.add(email);
-        _oldEmails = List.from(_emails);
+        //_oldEmails = List.from(_emails); TODO: remove?
         _emailControllers.add(_newEmailController);
         _newEmailController = TextEditingController(text: '');
         _showDeleteIcon.add(true);
@@ -410,6 +410,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
         }
       }
     }
+    _oldEmails = List.from(_emails);
   }
 
   @override

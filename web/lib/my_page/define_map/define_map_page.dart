@@ -124,7 +124,6 @@ class _DefineMapPageState extends State<DefineMapPage> {
 
     Map<String, Map<String, Map<String, double>>> dataMap;
     LinkedHashMap<String, dynamic>? linkedHashMap;
-    TextEditingController textController;
 
     DocumentSnapshot<Object?> doc = await farmDoc.get();
     if (doc.exists) {
@@ -136,9 +135,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
         for (MapEntry<String, Map<String, Map<String, double>>> data
             in dataMap.entries) {
           _mapNames.add(data.key);
-          textController = TextEditingController();
-          textController.text = data.key;
-          _mapNameControllers.add(textController);
+          _mapNameControllers.add(TextEditingController(text: data.key));
           _mapCoordinates.add({
             'northWest': LatLng(data.value['northWest']!['latitude']!,
                 data.value['northWest']!['longitude']!),

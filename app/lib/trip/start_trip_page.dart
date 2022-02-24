@@ -168,9 +168,11 @@ class _StartTripPageState extends State<StartTripPage> {
 
       // TODO: les inn kart til første
 
+      setState(() {
+        _selectedFarm = _farmNames[0];
+      });
     }
     setState(() {
-      _selectedFarm = _farmNames[0];
       _loadingData = false;
     });
   }
