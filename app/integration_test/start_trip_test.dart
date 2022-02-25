@@ -21,9 +21,9 @@ void main() async {
       expect(find.text('Kart'), findsNothing);
 
       await tester.pumpAndSettle();
+
       expect(find.text('Laster inn...'), findsNothing);
       expect(find.text('Start oppsynstur'), findsNWidgets(2));
-
       expect(find.text('Gård'), findsOneWidget);
       expect(find.text('Kart'), findsOneWidget);
 
@@ -59,7 +59,6 @@ void main() async {
   group('Start trip with no maps defined', () {
     testWidgets('Initial layout', (WidgetTester tester) async {
       await setUpFarm(maps: null);
-
       await tester.pumpWidget(const MaterialApp(home: StartTripPage()));
 
       expect(find.text('Start oppsynstur'), findsOneWidget);
@@ -68,13 +67,13 @@ void main() async {
       expect(find.text('Kart'), findsNothing);
 
       await tester.pumpAndSettle();
+
       expect(find.text('Laster inn...'), findsNothing);
       expect(find.text('Start oppsynstur'), findsNWidgets(2));
-
-      expect(find.text('Gården \'$farmName\' har ikke definert noen kart'),
-          findsOneWidget);
       expect(find.text('Gård'), findsOneWidget);
       expect(find.text('Kart'), findsOneWidget);
+      expect(find.text('Gården \'$farmName\' har ikke definert noen kart'),
+          findsOneWidget);
     });
   });
 
@@ -89,12 +88,6 @@ void main() async {
       }
 
       await tester.pumpWidget(const MaterialApp(home: StartTripPage()));
-
-      expect(find.text('Start oppsynstur'), findsOneWidget);
-      expect(find.text('Laster inn...'), findsOneWidget);
-      expect(find.text('Gård'), findsNothing);
-      expect(find.text('Kart'), findsNothing);
-
       await tester.pumpAndSettle();
 
       expect(find.text('Laster inn...'), findsNothing);

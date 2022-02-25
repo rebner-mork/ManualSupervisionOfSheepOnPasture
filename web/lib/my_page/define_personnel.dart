@@ -260,7 +260,6 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
         _showNewEmailRow = false;
         _invalidNewEmail = false;
         _emails.add(email);
-        //_oldEmails = List.from(_emails); TODO: remove?
         _emailControllers.add(_newEmailController);
         _newEmailController = TextEditingController(text: '');
         _showDeleteIcon.add(true);
@@ -298,17 +297,19 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
           content: const Text('Sletting kan ikke angres'),
           actions: [
             TextButton(
-                onPressed: () {
+                onPressed: () async {
                   Navigator.of(context).pop('dialog');
                   setState(() {
                     _emails.removeAt(index);
+                  });
+                  await _savePersonnelData();
+                  setState(() {
                     _oldEmails.removeAt(index);
                     _emailControllers.removeAt(index);
                     _showDeleteIcon.removeAt(index);
 
                     _validateEmails();
                   });
-                  _savePersonnelData();
                 },
                 child: const Text('Ja, slett')),
             TextButton(
@@ -346,7 +347,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
     });
   }
 
-  void _savePersonnelData() async {
+  Future<void> _savePersonnelData() async {
     String uid = FirebaseAuth.instance.currentUser!.uid;
 
     // Save in own farm
@@ -386,7 +387,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
             personnelDoc.delete();
           } else {
             personnelDoc.update({
-              'farms': FieldValue.arrayRemove([uid]) // TODO: make null if empty
+              'farms': FieldValue.arrayRemove([uid])
             });
           }
         }

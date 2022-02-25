@@ -6,7 +6,6 @@ import 'package:firebase_core/firebase_core.dart';
 const String email = 'test@gmail.com';
 const String password = '12345678';
 const String phone = password;
-
 const String farmName = 'Reppesgård';
 const Map<String, Map<String, Map<String, double>>> validMaps = {
   'Hjertnesskogen': {

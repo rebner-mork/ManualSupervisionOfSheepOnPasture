@@ -25,7 +25,7 @@ SizedBox inputFieldSpacer() {
   return const SizedBox(height: 18);
 }
 
-SizedBox appbarSpacer() {
+SizedBox appbarBodySpacer() {
   return const SizedBox(height: 20);
 }
 

@@ -81,7 +81,7 @@ class _StartTripPageState extends State<StartTripPage>
             body: Column(
               children: _loadingData
                   ? [
-                      appbarSpacer(),
+                      appbarBodySpacer(),
                       Center(
                           child: Text(
                         'Laster inn...',
@@ -95,7 +95,7 @@ class _StartTripPageState extends State<StartTripPage>
                               style: feedbackTextStyle)
                         ]
                       : [
-                          appbarSpacer(),
+                          appbarBodySpacer(),
                           _farmNameRow(),
                           inputFieldSpacer(),
                           _farmMapRow(),
