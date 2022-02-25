@@ -354,10 +354,10 @@ class _StartTripPageState extends State<StartTripPage>
           _selectedFarmName = _farmNames[0];
         });
       }
-      setState(() {
-        _loadingData = false;
-      });
     }
+    setState(() {
+      _loadingData = false;
+    });
   }
 
   @override

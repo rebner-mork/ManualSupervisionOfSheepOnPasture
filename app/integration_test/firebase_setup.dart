@@ -8,14 +8,14 @@ const String password = '12345678';
 const String phone = password;
 
 const String farmName = 'Reppesgård';
-Map maps = <String, Map<String, Map<String, double>>>{
-  'Gon': {
-    'northWest': {'latitude': 59.021541, 'longitude': 10.070096},
-    'southEast': {'latitude': 59.018361, 'longitude': 10.078612}
-  },
+const Map<String, Map<String, Map<String, double>>> validMaps = {
   'Hjertnesskogen': {
     'northWest': {'latitude': 59.125678, 'longitude': 10.210824},
     'southEast': {'latitude': 59.124544, 'longitude': 10.214976}
+  },
+  'Gon': {
+    'northWest': {'latitude': 59.021541, 'longitude': 10.070096},
+    'southEast': {'latitude': 59.018361, 'longitude': 10.078612}
   }
 };
 
@@ -42,14 +42,15 @@ Future<void> firebaseSetup(
   }
 }
 
-Future<void> setUpFarm() async {
+Future<void> setUpFarm(
+    {Map<String, Map<String, Map<String, double>>>? maps = validMaps}) async {
   String uid = FirebaseAuth.instance.currentUser!.uid;
 
   CollectionReference farmCollection =
       FirebaseFirestore.instance.collection('farms');
   DocumentReference farmDoc = farmCollection.doc(uid);
 
-  DocumentSnapshot<Object?> doc = await farmDoc.get();
+  await farmDoc.get();
 
   farmDoc.set({
     'maps': maps,
@@ -64,7 +65,7 @@ Future<void> setUpFarm() async {
       FirebaseFirestore.instance.collection('personnel');
   DocumentReference personnelDoc = personnelCollection.doc(email);
 
-  doc = await personnelDoc.get();
+  await personnelDoc.get();
   personnelDoc.set({
     'farms': [uid]
   });
