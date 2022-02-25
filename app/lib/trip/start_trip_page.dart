@@ -27,6 +27,11 @@ class _StartTripPageState extends State<StartTripPage> {
   String _feedbackText = '';
   bool _loadingData = true;
 
+  static const BoxConstraints fieldNameConstraints =
+      BoxConstraints(minWidth: 50);
+  static const BoxConstraints dropdownConstraints =
+      BoxConstraints(minWidth: 150, maxWidth: 150, maxHeight: 50);
+
   @override
   void initState() {
     super.initState();
@@ -59,6 +64,7 @@ class _StartTripPageState extends State<StartTripPage> {
                               style: feedbackTextStyle)
                         ]
                       : [
+                          const SizedBox(height: 20),
                           _farmNameRow(),
                           const SizedBox(height: 15),
                           _farmMapRow(),
@@ -97,51 +103,53 @@ class _StartTripPageState extends State<StartTripPage> {
   Row _farmNameRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(
-          'Gård',
-          style: fieldNameTextStyle,
-        ),
+        Container(
+            constraints: fieldNameConstraints,
+            child: Text(
+              'Gård',
+              style: fieldNameTextStyle,
+            )),
         const SizedBox(
           width: 20,
         ),
-        DropdownButton<String>(
-            value: _selectedFarmName,
-            items: _farmNames
-                .map((String farmName) => DropdownMenuItem<String>(
-                    value: farmName,
-                    child: Text(
-                      farmName,
-                      style: dropDownTextStyle,
-                    )))
-                .toList(),
-            onChanged: (String? newString) {
-              if (_selectedFarmName != newString) {
-                _readFarmMaps(_farmIDs[_farmNames.indexOf(newString!)]);
-                setState(() {
-                  _selectedFarmName = newString;
-                  _feedbackText = '';
-                });
-              }
-            })
+        Container(
+            constraints: dropdownConstraints,
+            child: DropdownButton<String>(
+                value: _selectedFarmName,
+                items: _farmNames
+                    .map((String farmName) => DropdownMenuItem<String>(
+                        value: farmName,
+                        child: Text(farmName, style: dropDownTextStyle)))
+                    .toList(),
+                onChanged: (String? newString) {
+                  if (_selectedFarmName != newString) {
+                    _readFarmMaps(_farmIDs[_farmNames.indexOf(newString!)]);
+                    setState(() {
+                      _selectedFarmName = newString;
+                      _feedbackText = '';
+                    });
+                  }
+                }))
       ],
     );
   }
 
   Row _farmMapRow() {
-    return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Container(
+          constraints: fieldNameConstraints,
+          child: Text(
             'Kart',
             style: fieldNameTextStyle,
-          ),
-          const SizedBox(
-            width: 20,
-          ),
-          DropdownButton<String>(
+          )),
+      const SizedBox(
+        width: 20,
+      ),
+      Container(
+          constraints: dropdownConstraints,
+          child: DropdownButton<String>(
+            isExpanded: true,
             value: _selectedFarmMap,
             items: _selectedFarmMaps.keys
                 .map((String mapName) => DropdownMenuItem<String>(
@@ -153,8 +161,8 @@ class _StartTripPageState extends State<StartTripPage> {
                 // TODO
               }
             },
-          )
-        ]);
+          ))
+    ]);
   }
 
   Map<String, Map<String, Map<String, double>>> _castMapsFromDynamic(
