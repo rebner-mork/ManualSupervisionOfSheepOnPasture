@@ -39,7 +39,7 @@ class _StartTripPageState extends State<StartTripPage>
   static const BoxConstraints fieldNameConstraints =
       BoxConstraints(minWidth: 50);
   static const BoxConstraints dropdownConstraints =
-      BoxConstraints(minWidth: 150, maxWidth: 150, maxHeight: 50);
+      BoxConstraints(minWidth: 175, maxWidth: 175, maxHeight: 50);
 
   @override
   void initState() {
@@ -114,7 +114,7 @@ class _StartTripPageState extends State<StartTripPage>
         ),
         Container(
             constraints: const BoxConstraints(
-                minWidth: 150 + 50, maxWidth: 150 + 50, maxHeight: 50),
+                minWidth: 175 + 70, maxWidth: 175 + 70, maxHeight: 50),
             child: Padding(
                 padding: const EdgeInsets.only(right: 50),
                 child: DropdownButton<String>(
@@ -178,7 +178,7 @@ class _StartTripPageState extends State<StartTripPage>
         Visibility(
             visible: !_downloadingMap,
             child: IconButton(
-              iconSize: 40,
+              iconSize: 32,
               icon: Icon(
                 _mapIcon,
                 color: _mapDownloaded ? Colors.green : null,
@@ -198,7 +198,7 @@ class _StartTripPageState extends State<StartTripPage>
                   setState(() {
                     controller = AnimationController(
                       vsync: this,
-                      duration: const Duration(seconds: 3),
+                      duration: const Duration(seconds: 2),
                     )..addListener(() {
                         setState(() {});
                       });
@@ -226,8 +226,13 @@ class _StartTripPageState extends State<StartTripPage>
               },
             )),
         if (_downloadingMap)
-          CircularProgressIndicator(
-              color: Colors.blue, strokeWidth: 5, value: controller.value)
+          SizedBox(
+              height: 48,
+              width: 48,
+              child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: CircularProgressIndicator(
+                      color: Colors.blue, value: controller.value)))
       ])),
     ]);
   }
