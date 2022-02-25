@@ -1,9 +1,12 @@
 import 'dart:collection';
 
+import 'package:app/utils/constants.dart';
+import 'package:app/utils/map_utils.dart';
 import 'package:app/utils/styles.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 
 class StartTripPage extends StatefulWidget {
   const StartTripPage({Key? key}) : super(key: key);
@@ -14,7 +17,8 @@ class StartTripPage extends StatefulWidget {
   State<StartTripPage> createState() => _StartTripPageState();
 }
 
-class _StartTripPageState extends State<StartTripPage> {
+class _StartTripPageState extends State<StartTripPage>
+    with TickerProviderStateMixin {
   _StartTripPageState();
 
   final List<String> _farmNames = [];
@@ -26,6 +30,11 @@ class _StartTripPageState extends State<StartTripPage> {
 
   String _feedbackText = '';
   bool _loadingData = true;
+
+  IconData _mapIcon = Icons.download_for_offline;
+  late AnimationController controller = AnimationController(vsync: this);
+  bool _downloadingMap = false;
+  bool _mapDownloaded = false;
 
   static const BoxConstraints fieldNameConstraints =
       BoxConstraints(minWidth: 50);
@@ -76,12 +85,7 @@ class _StartTripPageState extends State<StartTripPage> {
                           const SizedBox(height: 15),
                           ElevatedButton(
                             onPressed: () {
-                              // TODO: feedback if map not selected
-                              /*if (_selectedFarm == '') {
-                            setState(() {
-                              _feedbackText = 'Gård må velges';
-                            });
-                          }*/
+                              // TODO: downloadTiles? Går vel bra uten nett dersom kart er nedlastet. Feedbackon error
                             },
                             child: Text(
                               'Start oppsynstur',
@@ -89,12 +93,7 @@ class _StartTripPageState extends State<StartTripPage> {
                             ),
                             style: ButtonStyle(
                                 fixedSize: MaterialStateProperty.all(
-                                    Size.fromHeight(mainButtonHeight))
-                                /*backgroundColor: MaterialStateProperty.all(
-                                _selectedFarm == ''
-                                    ? buttonDisabledColor
-                                    : buttonEnabledColor)*/
-                                ),
+                                    Size.fromHeight(mainButtonHeight))),
                           )
                         ],
             )));
@@ -117,7 +116,7 @@ class _StartTripPageState extends State<StartTripPage> {
             constraints: const BoxConstraints(
                 minWidth: 150 + 50, maxWidth: 150 + 50, maxHeight: 50),
             child: Padding(
-                padding: EdgeInsets.only(right: 50),
+                padding: const EdgeInsets.only(right: 50),
                 child: DropdownButton<String>(
                     value: _selectedFarmName,
                     items: _farmNames
@@ -132,6 +131,7 @@ class _StartTripPageState extends State<StartTripPage> {
                         setState(() {
                           _selectedFarmName = newFarmName;
                           _feedbackText = '';
+                          _mapDownloaded = false;
                         });
                       }
                     })))
@@ -167,15 +167,67 @@ class _StartTripPageState extends State<StartTripPage> {
                 if (newMapName! != _selectedFarmName) {
                   setState(() {
                     _selectedFarmMap = newMapName;
+                    _feedbackText = '';
+                    _mapIcon = Icons.download_for_offline;
+                    _mapDownloaded = false;
                   });
                 }
               },
             )),
         const SizedBox(width: 10),
-        Icon(
-          Icons.download_for_offline,
-          size: 40,
-        )
+        Visibility(
+            visible: !_downloadingMap,
+            child: IconButton(
+              iconSize: 40,
+              icon: Icon(
+                _mapIcon,
+                color: _mapDownloaded ? Colors.green : null,
+              ),
+              onPressed: () {
+                if (_mapIcon != Icons.file_download_done) {
+                  LatLng northWest = LatLng(
+                      _selectedFarmMaps[_selectedFarmMap]!['northWest']![
+                          'latitude']!,
+                      _selectedFarmMaps[_selectedFarmMap]!['northWest']![
+                          'longitude']!);
+                  LatLng southEast = LatLng(
+                      _selectedFarmMaps[_selectedFarmMap]!['southEast']![
+                          'latitude']!,
+                      _selectedFarmMaps[_selectedFarmMap]!['southEast']![
+                          'longitude']!);
+                  setState(() {
+                    controller = AnimationController(
+                      vsync: this,
+                      duration: const Duration(seconds: 3),
+                    )..addListener(() {
+                        setState(() {});
+                      });
+                    controller.repeat(reverse: true); // REVERSE
+                    _downloadingMap = true;
+                    _mapIcon = Icons.downloading;
+                    _feedbackText = 'Laster ned kart...';
+                  });
+                  downloadTiles(northWest, southEast, OfflineZoomLevels.min,
+                          OfflineZoomLevels.max)
+                      .then((_) => {
+                            setState(() {
+                              _downloadingMap = false;
+                              _mapDownloaded = true;
+                              _mapIcon = Icons.file_download_done;
+                              //controller.dispose(); TODO
+                              //controller.stop(); // ?
+                              _feedbackText =
+                                  'Kartet \'$_selectedFarmMap\' er nedlastet.';
+                            })
+                          });
+                } else {
+                  debugPrint("Jauda");
+                }
+              },
+            )),
+        if (_downloadingMap)
+          CircularProgressIndicator(
+              color: Colors.blue, strokeWidth: 5, value: controller.value)
       ])),
     ]);
   }
@@ -257,5 +309,11 @@ class _StartTripPageState extends State<StartTripPage> {
         _loadingData = false;
       });
     }
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 }
