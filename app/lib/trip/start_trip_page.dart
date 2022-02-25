@@ -23,22 +23,24 @@ class _StartTripPageState extends State<StartTripPage>
     with TickerProviderStateMixin {
   _StartTripPageState();
 
+  late List<String> _farmIDs;
+
   final List<String> _farmNames = [];
-  List<String> _farmIDs = [];
   late String _selectedFarmName;
-  Map<String, Map<String, Map<String, double>>> _selectedFarmMaps =
-      <String, Map<String, Map<String, double>>>{};
+
+  Map<String, Map<String, Map<String, double>>> _selectedFarmMaps = {};
   String _selectedFarmMap = '';
 
-  String _feedbackText = '';
   bool _loadingData = true;
+  bool _downloadingMap = false;
+  bool _mapDownloaded = false;
+  bool _noMapsDefined = false;
+
+  String _feedbackText = '';
 
   IconData _mapIcon = Icons.download_for_offline_outlined;
   late AnimationController _animationController;
   late Animation<Color?> _colorTween;
-  bool _downloadingMap = false;
-  bool _mapDownloaded = false;
-  bool _noMapsDefined = false;
 
   static const double downloadIconSize = 48;
   static const double fieldNameWidth = 50;
@@ -48,6 +50,14 @@ class _StartTripPageState extends State<StartTripPage>
   void initState() {
     super.initState();
 
+    _animationSetup();
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _readFarms();
+    });
+  }
+
+  void _animationSetup() {
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
@@ -55,12 +65,9 @@ class _StartTripPageState extends State<StartTripPage>
         setState(() {});
       });
     _animationController.reset();
+
     _colorTween = _animationController.drive(
         ColorTween(begin: Colors.yellow.shade700, end: Colors.blue.shade700));
-
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      _readFarms();
-    });
   }
 
   @override
@@ -74,9 +81,10 @@ class _StartTripPageState extends State<StartTripPage>
             body: Column(
               children: _loadingData
                   ? [
+                      appbarSpacer(),
                       Center(
                           child: Text(
-                        'Laster inn...', // TODO: center
+                        'Laster inn...',
                         style: feedbackTextStyle,
                       ))
                     ]
@@ -87,7 +95,7 @@ class _StartTripPageState extends State<StartTripPage>
                               style: feedbackTextStyle)
                         ]
                       : [
-                          const SizedBox(height: 20),
+                          appbarSpacer(),
                           _farmNameRow(),
                           inputFieldSpacer(),
                           _farmMapRow(),
@@ -97,44 +105,7 @@ class _StartTripPageState extends State<StartTripPage>
                             style: feedbackTextStyle,
                           ),
                           inputFieldSpacer(),
-                          ElevatedButton(
-                            onPressed: () async {
-                              if (!_noMapsDefined) {
-                                LatLng northWest = LatLng(
-                                    _selectedFarmMaps[_selectedFarmMap]![
-                                        'northWest']!['latitude']!,
-                                    _selectedFarmMaps[_selectedFarmMap]![
-                                        'northWest']!['longitude']!);
-                                LatLng southEast = LatLng(
-                                    _selectedFarmMaps[_selectedFarmMap]![
-                                        'southEast']!['latitude']!,
-                                    _selectedFarmMaps[_selectedFarmMap]![
-                                        'southEast']!['longitude']!);
-                                await downloadTiles(
-                                    northWest,
-                                    southEast,
-                                    OfflineZoomLevels.min,
-                                    OfflineZoomLevels.max);
-                                setState(() {
-                                  _feedbackText = '';
-                                });
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            MapWidget(northWest, southEast)));
-                              }
-                            },
-                            child: Text(
-                              'Start oppsynstur',
-                              style: buttonTextStyle,
-                            ),
-                            style: ButtonStyle(
-                                fixedSize: MaterialStateProperty.all(
-                                    Size.fromHeight(mainButtonHeight)),
-                                backgroundColor: MaterialStateProperty.all(
-                                    _noMapsDefined ? Colors.grey : null)),
-                          )
+                          startTripButton()
                         ],
             )));
   }
@@ -172,6 +143,7 @@ class _StartTripPageState extends State<StartTripPage>
                     });
                   }
                 })),
+        // To fill space of download-icon in _farmMapRow (+ 10 from SizedBox)
         const SizedBox(
           width: downloadIconSize + 10,
         )
@@ -273,6 +245,43 @@ class _StartTripPageState extends State<StartTripPage>
         ]);
   }
 
+  ElevatedButton startTripButton() {
+    return ElevatedButton(
+      child: Text(
+        'Start oppsynstur',
+        style: buttonTextStyle,
+      ),
+      style: ButtonStyle(
+          fixedSize:
+              MaterialStateProperty.all(Size.fromHeight(mainButtonHeight)),
+          backgroundColor:
+              MaterialStateProperty.all(_noMapsDefined ? Colors.grey : null)),
+      onPressed: () async {
+        if (!_noMapsDefined) {
+          _startTrip();
+        }
+      },
+    );
+  }
+
+  void _startTrip() async {
+    LatLng northWest = LatLng(
+        _selectedFarmMaps[_selectedFarmMap]!['northWest']!['latitude']!,
+        _selectedFarmMaps[_selectedFarmMap]!['northWest']!['longitude']!);
+    LatLng southEast = LatLng(
+        _selectedFarmMaps[_selectedFarmMap]!['southEast']!['latitude']!,
+        _selectedFarmMaps[_selectedFarmMap]!['southEast']!['longitude']!);
+    await downloadTiles(
+        northWest, southEast, OfflineZoomLevels.min, OfflineZoomLevels.max);
+    setState(() {
+      _feedbackText = '';
+    });
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => MapWidget(northWest, southEast)));
+  }
+
   Map<String, Map<String, Map<String, double>>> _castMapsFromDynamic(
       LinkedHashMap<String, dynamic>? maps) {
     return maps!
@@ -304,9 +313,10 @@ class _StartTripPageState extends State<StartTripPage>
       });
     } else {
       setState(() {
+        _noMapsDefined = true;
+        _selectedFarmMap = '';
         _feedbackText =
             'Gården \'$_selectedFarmName\' har ikke definert noen kart';
-        _noMapsDefined = true;
       });
     }
   }
@@ -334,9 +344,10 @@ class _StartTripPageState extends State<StartTripPage>
           _farmNames.add(doc.get('name'));
           if (i == 0) {
             _readFarmMaps(_farmIDs.first);
-          } else {
-            // TODO: Dette er en feil, skal ikke være mulig å havne her
           }
+        } else {
+          throw Exception(
+              'Firestore: Farm with id ${farmIDs[i]} found in a Personnel-document, but does not exist in the Farms-collection.');
         }
 
         setState(() {
