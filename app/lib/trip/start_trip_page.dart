@@ -20,7 +20,9 @@ class _StartTripPageState extends State<StartTripPage> {
   final List<String> _farmNames = [];
   List<String> _farmIDs = [];
   late String _selectedFarmName;
-  Map _selectedFarmMaps = <String, Map<String, Map<String, double>>>{};
+  Map<String, Map<String, Map<String, double>>> _selectedFarmMaps =
+      <String, Map<String, Map<String, double>>>{};
+  String _selectedFarmMap = '';
 
   String _feedbackText = '';
   bool _loadingData = true;
@@ -57,63 +59,9 @@ class _StartTripPageState extends State<StartTripPage> {
                               style: feedbackTextStyle)
                         ]
                       : [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Gård',
-                                style: fieldNameTextStyle,
-                              ),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              DropdownButton<String>(
-                                  value: _selectedFarmName,
-                                  items: _farmNames
-                                      .map((String farmName) =>
-                                          DropdownMenuItem<String>(
-                                              value: farmName,
-                                              child: Text(
-                                                farmName,
-                                                style: dropDownTextStyle,
-                                              )))
-                                      .toList(),
-                                  onChanged: (String? newString) {
-                                    // TODO: hvis ulik, les inn kart
-                                    if (_selectedFarmName != newString) {
-                                      _readFarmMaps(_farmIDs[
-                                          _farmNames.indexOf(newString!)]);
-                                      setState(() {
-                                        _selectedFarmName = newString;
-                                        _feedbackText = '';
-                                      });
-                                    }
-                                  })
-                            ],
-                          ),
+                          _farmNameRow(),
                           const SizedBox(height: 15),
-                          ElevatedButton(
-                            onPressed: () {
-                              /*setState(() {
-                            if (_selectedFarm == '') {
-                              _feedbackText = 'Gård må velges før kart';
-                            }
-                          });*/
-                            },
-                            child: Text(
-                              'Velg kart',
-                              style: buttonTextStyle,
-                            ),
-                            style: ButtonStyle(
-                                fixedSize: MaterialStateProperty.all(
-                                    Size.fromHeight(buttonHeight))
-                                /*backgroundColor: MaterialStateProperty.all(
-                                _selectedFarm == ''
-                                    ? buttonDisabledColor
-                                    : buttonEnabledColor)*/
-                                ),
-                          ),
+                          _farmMapRow(),
                           const SizedBox(height: 15),
                           Text(
                             _feedbackText,
@@ -146,6 +94,69 @@ class _StartTripPageState extends State<StartTripPage> {
             )));
   }
 
+  Row _farmNameRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          'Gård',
+          style: fieldNameTextStyle,
+        ),
+        const SizedBox(
+          width: 20,
+        ),
+        DropdownButton<String>(
+            value: _selectedFarmName,
+            items: _farmNames
+                .map((String farmName) => DropdownMenuItem<String>(
+                    value: farmName,
+                    child: Text(
+                      farmName,
+                      style: dropDownTextStyle,
+                    )))
+                .toList(),
+            onChanged: (String? newString) {
+              if (_selectedFarmName != newString) {
+                _readFarmMaps(_farmIDs[_farmNames.indexOf(newString!)]);
+                setState(() {
+                  _selectedFarmName = newString;
+                  _feedbackText = '';
+                });
+              }
+            })
+      ],
+    );
+  }
+
+  Row _farmMapRow() {
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            'Kart',
+            style: fieldNameTextStyle,
+          ),
+          const SizedBox(
+            width: 20,
+          ),
+          DropdownButton<String>(
+            value: _selectedFarmMap,
+            items: _selectedFarmMaps.keys
+                .map((String mapName) => DropdownMenuItem<String>(
+                    value: mapName,
+                    child: Text(mapName, style: dropDownTextStyle)))
+                .toList(),
+            onChanged: (String? newMapName) {
+              if (newMapName! != _selectedFarmName) {
+                // TODO
+              }
+            },
+          )
+        ]);
+  }
+
   Map<String, Map<String, Map<String, double>>> _castMapsFromDynamic(
       LinkedHashMap<String, dynamic>? maps) {
     return maps!
@@ -171,7 +182,10 @@ class _StartTripPageState extends State<StartTripPage> {
 
     if (maps != null) {
       _selectedFarmMaps = _castMapsFromDynamic(maps);
-      debugPrint(_selectedFarmMaps.toString());
+
+      setState(() {
+        _selectedFarmMap = _selectedFarmMaps.keys.first;
+      });
     } else {
       // TODO: Gården har ikke definert noen kart. Ta kontakt med sauebonde.
     }
