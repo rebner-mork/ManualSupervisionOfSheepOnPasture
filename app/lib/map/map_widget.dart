@@ -8,8 +8,8 @@ import '../utils/map_utils.dart' as map_utils;
 import '../utils/constants.dart';
 
 // ignore: must_be_immutable
-class Map extends StatefulWidget {
-  Map(LatLng northWest, LatLng southEast, {Key? key}) : super(key: key) {
+class MapWidget extends StatefulWidget {
+  MapWidget(LatLng northWest, LatLng southEast, {Key? key}) : super(key: key) {
     southWest = LatLng(southEast.latitude, northWest.longitude);
     northEast = LatLng(northWest.latitude, southEast.longitude);
   }
@@ -19,10 +19,10 @@ class Map extends StatefulWidget {
   late LatLng northEast;
 
   @override
-  State<Map> createState() => _MapState();
+  State<MapWidget> createState() => _MapState();
 }
 
-class _MapState extends State<Map> {
+class _MapState extends State<MapWidget> {
   MapController _mapController = MapController();
   Marker _currentPositionMarker =
       map_utils.getDevicePositionMarker(LatLng(0, 0));

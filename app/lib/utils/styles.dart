@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 // User input fields
 TextStyle fieldNameTextStyle =
-    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
-TextStyle dropDownTextStyle = const TextStyle(fontSize: 20);
+    const TextStyle(fontSize: 21, fontWeight: FontWeight.bold);
+TextStyle dropDownTextStyle = const TextStyle(fontSize: 21);
 
 // Button
 TextStyle buttonTextStyle = const TextStyle(fontSize: 18);

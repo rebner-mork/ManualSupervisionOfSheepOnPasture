@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:app/map/map_widget.dart';
 import 'package:app/utils/constants.dart';
 import 'package:app/utils/map_utils.dart';
 import 'package:app/utils/styles.dart';
@@ -32,18 +33,29 @@ class _StartTripPageState extends State<StartTripPage>
   bool _loadingData = true;
 
   IconData _mapIcon = Icons.download_for_offline;
-  late AnimationController controller = AnimationController(vsync: this);
+  late AnimationController _animationController;
+  late Animation<Color?> _colorTween;
   bool _downloadingMap = false;
   bool _mapDownloaded = false;
 
   static const BoxConstraints fieldNameConstraints =
       BoxConstraints(minWidth: 50);
   static const BoxConstraints dropdownConstraints =
-      BoxConstraints(minWidth: 175, maxWidth: 175, maxHeight: 50);
+      BoxConstraints(minWidth: 190, maxWidth: 190, maxHeight: 50);
 
   @override
   void initState() {
     super.initState();
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..addListener(() {
+        setState(() {});
+      });
+    _animationController.reset();
+    _colorTween = _animationController
+        .drive(ColorTween(begin: Colors.yellow, end: Colors.blue));
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _readFarms();
@@ -84,8 +96,28 @@ class _StartTripPageState extends State<StartTripPage>
                           ),
                           const SizedBox(height: 15),
                           ElevatedButton(
-                            onPressed: () {
-                              // TODO: downloadTiles? Går vel bra uten nett dersom kart er nedlastet. Feedbackon error
+                            onPressed: () async {
+                              // TODO: downloadTiles? Går vel bra uten nett dersom kart er nedlastet. Feedback on error
+                              LatLng northWest = LatLng(
+                                  _selectedFarmMaps[_selectedFarmMap]![
+                                      'northWest']!['latitude']!,
+                                  _selectedFarmMaps[_selectedFarmMap]![
+                                      'northWest']!['longitude']!);
+                              LatLng southEast = LatLng(
+                                  _selectedFarmMaps[_selectedFarmMap]![
+                                      'southEast']!['latitude']!,
+                                  _selectedFarmMaps[_selectedFarmMap]![
+                                      'southEast']!['longitude']!);
+                              await downloadTiles(northWest, southEast,
+                                  OfflineZoomLevels.min, OfflineZoomLevels.max);
+                              setState(() {
+                                _feedbackText = '';
+                              });
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          MapWidget(northWest, southEast)));
                             },
                             child: Text(
                               'Start oppsynstur',
@@ -114,7 +146,7 @@ class _StartTripPageState extends State<StartTripPage>
         ),
         Container(
             constraints: const BoxConstraints(
-                minWidth: 175 + 70, maxWidth: 175 + 70, maxHeight: 50),
+                minWidth: 190 + 70, maxWidth: 190 + 70, maxHeight: 50),
             child: Padding(
                 padding: const EdgeInsets.only(right: 50),
                 child: DropdownButton<String>(
@@ -164,7 +196,7 @@ class _StartTripPageState extends State<StartTripPage>
                       child: Text(mapName, style: dropDownTextStyle)))
                   .toList(),
               onChanged: (String? newMapName) {
-                if (newMapName! != _selectedFarmName) {
+                if (newMapName! != _selectedFarmMap) {
                   setState(() {
                     _selectedFarmMap = newMapName;
                     _feedbackText = '';
@@ -196,13 +228,8 @@ class _StartTripPageState extends State<StartTripPage>
                       _selectedFarmMaps[_selectedFarmMap]!['southEast']![
                           'longitude']!);
                   setState(() {
-                    controller = AnimationController(
-                      vsync: this,
-                      duration: const Duration(seconds: 2),
-                    )..addListener(() {
-                        setState(() {});
-                      });
-                    controller.repeat(reverse: true); // REVERSE
+                    _animationController.repeat(reverse: true);
+                    //controller.repeat(reverse: true); // REVERSE
                     _downloadingMap = true;
                     _mapIcon = Icons.downloading;
                     _feedbackText = 'Laster ned kart...';
@@ -210,15 +237,19 @@ class _StartTripPageState extends State<StartTripPage>
                   downloadTiles(northWest, southEast, OfflineZoomLevels.min,
                           OfflineZoomLevels.max)
                       .then((_) => {
-                            setState(() {
-                              _downloadingMap = false;
-                              _mapDownloaded = true;
-                              _mapIcon = Icons.file_download_done;
-                              //controller.dispose(); TODO
-                              //controller.stop(); // ?
-                              _feedbackText =
-                                  'Kartet \'$_selectedFarmMap\' er nedlastet.';
-                            })
+                            Future.delayed(const Duration(seconds: 4))
+                                .then((_) => {
+                                      setState(() {
+                                        _downloadingMap = false;
+                                        _mapDownloaded = true;
+                                        _mapIcon = Icons.file_download_done;
+                                        _animationController.reset();
+                                        //controller.dispose(); TODO
+                                        //controller.stop(); // ?
+                                        _feedbackText =
+                                            'Kartet \'$_selectedFarmMap\' er nedlastet.';
+                                      })
+                                    })
                           });
                 } else {
                   debugPrint("Jauda");
@@ -232,7 +263,11 @@ class _StartTripPageState extends State<StartTripPage>
               child: Padding(
                   padding: const EdgeInsets.all(10),
                   child: CircularProgressIndicator(
-                      color: Colors.blue, value: controller.value)))
+                    color: Colors.blue,
+                    //backgroundColor: Colors.grey,
+                    //value: _animationController.value,
+                    valueColor: _colorTween,
+                  )))
       ])),
     ]);
   }
@@ -318,7 +353,7 @@ class _StartTripPageState extends State<StartTripPage>
 
   @override
   void dispose() {
-    controller.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 }

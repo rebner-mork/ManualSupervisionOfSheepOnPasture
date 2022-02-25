@@ -47,8 +47,8 @@ class _MyAppState extends State<MyApp> {
         LoginPage.route: (context) => const LoginPage(),
         RegisterUserPage.route: (context) => const RegisterUserPage(),
         StartTripPage.route: (context) => const StartTripPage(),
-        Map.route: (context) =>
-            Map(LatLng(63.420017, 10.394660), LatLng(63.415472, 10.411244)),
+        MapWidget.route: (context) => MapWidget(
+            LatLng(63.420017, 10.394660), LatLng(63.415472, 10.411244)),
         RegisterSheep.route: (context) => const RegisterSheep('fileName'),
         RegisterSheepOrally.route: (context) =>
             const RegisterSheepOrally('filename'),
