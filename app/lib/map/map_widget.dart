@@ -1,5 +1,3 @@
-import 'package:app/register/register_sheep.dart';
-import 'package:app/utils/custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/plugin_api.dart';
@@ -28,9 +26,8 @@ class Map extends StatefulWidget {
 }
 
 class _MapState extends State<Map> {
-  late RegisterSheepOrally _registerSheepOrally;
-  late SpeechToText _stt;
-  ValueNotifier<bool> _ongoingDialog = ValueNotifier<bool>(false);
+  late SpeechToText _speechToText;
+  final ValueNotifier<bool> _ongoingDialog = ValueNotifier<bool>(false);
 
   MapController _mapController = MapController();
   Marker _currentPositionMarker =
@@ -55,18 +52,11 @@ class _MapState extends State<Map> {
   }
 
   void _initSpeechToText() async {
-    _stt = SpeechToText();
-
-    try {
-      await _stt.initialize(onError: _sttError);
-    } catch (_) {
-      debugPrint("FEIL"); // TODO fjern try catch når fungerer
-    }
+    _speechToText = SpeechToText();
+    await _speechToText.initialize(onError: _speechToTextError);
   }
 
-  void _sttError(SpeechRecognitionError error) {
-    debugPrint(error.errorMsg);
-    //_registerSheepOrally.speechError();
+  void _speechToTextError(SpeechRecognitionError error) {
     setState(() {
       _ongoingDialog.value = false;
     });
@@ -95,29 +85,14 @@ class _MapState extends State<Map> {
       _movementPoints.add(pos);
     });
 
-    /*_registerSheepOrally = RegisterSheepOrally(
-      'filename',
-      _stt,
-      _ongoingDialog,
-      onCompletedSuccessfully: () {
-        setState(() {
-          linesOfSight.add(Polyline(
-              points: [pos, targetPosition],
-              color: Colors.red,
-              strokeWidth: 5.0));
-          // TODO: dispose _registerSheepOrally ellerno
-        });
-      },
-    );*/
-
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => ValueListenableBuilder<bool>(
                 valueListenable: _ongoingDialog,
-                builder: (context, value, Widget? child) => RegisterSheepOrally(
+                builder: (context, value, child) => RegisterSheepOrally(
                       'filename',
-                      _stt,
+                      _speechToText,
                       _ongoingDialog,
                       onCompletedSuccessfully: () {
                         setState(() {
@@ -125,7 +100,6 @@ class _MapState extends State<Map> {
                               points: [pos, targetPosition],
                               color: Colors.red,
                               strokeWidth: 5.0));
-                          // TODO: dispose _registerSheepOrally ellerno
                         });
                       },
                     ))));

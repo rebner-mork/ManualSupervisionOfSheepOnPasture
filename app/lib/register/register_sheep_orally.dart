@@ -9,7 +9,6 @@ import 'package:app/utils/speech_input_filters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:fluttericon/rpg_awesome_icons.dart';
@@ -18,20 +17,16 @@ import 'package:fluttericon/font_awesome5_icons.dart';
 void emptyVoidFunction() {}
 
 class RegisterSheepOrally extends StatefulWidget {
-  RegisterSheepOrally(this.fileName, this.stt, this.ongoingDialog,
+  const RegisterSheepOrally(this.fileName, this.stt, this.ongoingDialog,
       {this.onCompletedSuccessfully = emptyVoidFunction, Key? key})
       : super(key: key);
 
   final VoidCallback onCompletedSuccessfully;
   final String fileName;
   final SpeechToText stt;
-  ValueNotifier<bool> ongoingDialog;
+  final ValueNotifier<bool> ongoingDialog;
 
   static const String route = 'register-sheep-orally';
-
-  void speechError() {
-    ongoingDialog.value = false;
-  }
 
   @override
   State<RegisterSheepOrally> createState() => _RegisterSheepOrallyState();
