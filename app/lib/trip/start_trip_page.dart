@@ -67,7 +67,7 @@ class _StartTripPageState extends State<StartTripPage>
     _animationController.reset();
 
     _colorTween = _animationController.drive(
-        ColorTween(begin: Colors.yellow.shade700, end: Colors.blue.shade700));
+        ColorTween(begin: Colors.green.shade700, end: Colors.green.shade300));
   }
 
   @override
@@ -237,8 +237,6 @@ class _StartTripPageState extends State<StartTripPage>
                 child: Padding(
                     padding: const EdgeInsets.all(10),
                     child: CircularProgressIndicator(
-                      color: Colors.blue,
-                      backgroundColor: Colors.grey.shade400,
                       valueColor: _colorTween,
                       strokeWidth: 5,
                     ))),
