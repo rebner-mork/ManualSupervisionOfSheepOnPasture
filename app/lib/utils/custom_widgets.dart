@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:app/register/register_sheep.dart';
 import 'package:app/utils/other.dart';
 import 'package:flutter/material.dart';
 

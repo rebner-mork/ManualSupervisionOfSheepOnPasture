@@ -81,7 +81,9 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
             builder: (_) => speechNotEnabledDialog(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => RegisterSheep(widget.fileName))));
+                    builder: (context) => RegisterSheep(widget.fileName,
+                        onCompletedSuccessfully:
+                            widget.onCompletedSuccessfully))));
       }
     });
   }
