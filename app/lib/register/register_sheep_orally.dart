@@ -78,8 +78,10 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
       } else {
         showDialog(
             context: context,
-            builder: (_) =>
-                speechNotEnabledDialog(context, RegisterSheep.route));
+            builder: (_) => speechNotEnabledDialog(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => RegisterSheep(widget.fileName))));
       }
     });
   }

@@ -12,7 +12,6 @@ class RegisterSheep extends StatefulWidget {
   const RegisterSheep(this.fileName, {Key? key}) : super(key: key);
 
   final String fileName;
-  static const String route = 'register-sheep';
 
   @override
   State<RegisterSheep> createState() => _RegisterSheepState();
