@@ -129,7 +129,8 @@ BackdropFilter cancelRegistrationDialog(BuildContext context) {
       ));
 }
 
-BackdropFilter speechNotEnabledDialog(BuildContext context, String route) {
+BackdropFilter speechNotEnabledDialog(
+    BuildContext context, MaterialPageRoute route) {
   return BackdropFilter(
       filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
       child: AlertDialog(
@@ -140,7 +141,7 @@ BackdropFilter speechNotEnabledDialog(BuildContext context, String route) {
           TextButton(
               onPressed: () {
                 Navigator.of(context).pop('dialog');
-                Navigator.of(context).pushReplacementNamed(route);
+                Navigator.of(context).pushReplacement(route);
               },
               child: const Text('Til manuell registrering')),
         ],
@@ -151,6 +152,7 @@ FloatingActionButton completeRegistrationButton(
     BuildContext context, void Function() onPressed) {
   return MediaQuery.of(context).viewInsets.bottom == 0
       ? FloatingActionButton.extended(
+          heroTag: 'completeOralRegistrationButton',
           onPressed: onPressed,
           label: const Text('Fullfør registrering',
               style: TextStyle(fontSize: 19)))
@@ -164,6 +166,7 @@ FloatingActionButton completeRegistrationButton(
 
 FloatingActionButton startDialogButton(void Function() onPressed) {
   return FloatingActionButton(
+    heroTag: 'startDialogButton',
     onPressed: onPressed,
     child: const Icon(Icons.mic, size: 30),
   );

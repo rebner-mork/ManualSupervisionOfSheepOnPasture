@@ -9,10 +9,11 @@ import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:path_provider/path_provider.dart';
 
 class RegisterSheep extends StatefulWidget {
-  const RegisterSheep(this.fileName, {Key? key}) : super(key: key);
+  const RegisterSheep(this.fileName, {this.onCompletedSuccessfully, Key? key})
+      : super(key: key);
 
   final String fileName;
-  static const String route = 'register-sheep';
+  final VoidCallback? onCompletedSuccessfully;
 
   @override
   State<RegisterSheep> createState() => _RegisterSheepState();
@@ -148,6 +149,13 @@ class _RegisterSheepState extends State<RegisterSheep> {
     final Map data = gatherRegisteredData(_textControllers);
 
     file.writeAsString(json.encode(data));
+
+    if (widget.onCompletedSuccessfully != null) {
+      widget.onCompletedSuccessfully!();
+    }
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
   }
 
   @override
