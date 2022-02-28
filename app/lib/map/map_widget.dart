@@ -7,16 +7,14 @@ import 'dart:async';
 import '../utils/map_utils.dart' as map_utils;
 import '../utils/constants.dart';
 
-// ignore: must_be_immutable
 class MapWidget extends StatefulWidget {
   MapWidget(LatLng northWest, LatLng southEast, {Key? key}) : super(key: key) {
     southWest = LatLng(southEast.latitude, northWest.longitude);
     northEast = LatLng(northWest.latitude, southEast.longitude);
   }
 
-  static const String route = 'map';
-  late LatLng southWest;
-  late LatLng northEast;
+  late final LatLng southWest;
+  late final LatLng northEast;
 
   @override
   State<MapWidget> createState() => _MapState();
