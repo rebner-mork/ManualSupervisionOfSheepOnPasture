@@ -14,14 +14,12 @@ import 'package:speech_to_text/speech_to_text.dart';
 import 'package:fluttericon/rpg_awesome_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 
-void emptyVoidFunction() {}
-
 class RegisterSheepOrally extends StatefulWidget {
   const RegisterSheepOrally(this.fileName, this.stt, this.ongoingDialog,
-      {this.onCompletedSuccessfully = emptyVoidFunction, Key? key})
+      {this.onCompletedSuccessfully, Key? key})
       : super(key: key);
 
-  final VoidCallback onCompletedSuccessfully;
+  final VoidCallback? onCompletedSuccessfully;
   final String fileName;
   final SpeechToText stt;
   final ValueNotifier<bool> ongoingDialog;
@@ -44,9 +42,6 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
   static const double volume = 1.0;
   static const double pitch = 1.0;
   static const double rate = 0.5;
-
-  //bool _speechEnabled = false;
-  //bool widget.ongoingDialog = true;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -88,13 +83,6 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
       }
     });
   }
-
-  /*void _sttError(SpeechRecognitionError error) {
-    debugPrint(error.errorMsg);
-    setState(() {
-      widget.ongoingDialog = false;
-    });
-  }*/
 
   void _startDialog(
       List<String> questions, List<QuestionContext> questionContexts) async {
@@ -205,7 +193,9 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
 
     file.writeAsString(json.encode(data));
 
-    widget.onCompletedSuccessfully();
+    if (widget.onCompletedSuccessfully != null) {
+      widget.onCompletedSuccessfully!();
+    }
     Navigator.pop(context);
   }
 
