@@ -200,7 +200,9 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
     if (widget.onCompletedSuccessfully != null) {
       widget.onCompletedSuccessfully!();
     }
-    Navigator.pop(context);
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
   }
 
   @override

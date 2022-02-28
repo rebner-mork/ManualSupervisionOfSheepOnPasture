@@ -153,7 +153,9 @@ class _RegisterSheepState extends State<RegisterSheep> {
     if (widget.onCompletedSuccessfully != null) {
       widget.onCompletedSuccessfully!();
     }
-    Navigator.pop(context);
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
   }
 
   @override
