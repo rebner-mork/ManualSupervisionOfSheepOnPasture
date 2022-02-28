@@ -1,3 +1,5 @@
+import 'package:app/register/register_sheep.dart';
+import 'package:app/utils/custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/plugin_api.dart';
@@ -5,6 +7,8 @@ import 'package:latlong2/latlong.dart';
 import 'dart:async';
 
 import 'package:app/register/register_sheep_orally.dart';
+import 'package:speech_to_text/speech_recognition_error.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 import '../utils/map_utils.dart' as map_utils;
 import '../utils/constants.dart';
 
@@ -24,6 +28,10 @@ class Map extends StatefulWidget {
 }
 
 class _MapState extends State<Map> {
+  late RegisterSheepOrally _registerSheepOrally;
+  late SpeechToText _stt;
+  ValueNotifier<bool> _ongoingDialog = ValueNotifier<bool>(false);
+
   MapController _mapController = MapController();
   Marker _currentPositionMarker =
       map_utils.getDevicePositionMarker(LatLng(0, 0));
@@ -33,6 +41,36 @@ class _MapState extends State<Map> {
   bool urlTemplateLoaded = false;
   List<Polyline> linesOfSight = [];
   LatLng? userPosition;
+
+  @override
+  void initState() {
+    super.initState();
+    _initSpeechToText();
+    _updateMap(); //to set the position before waiting at startup
+    timer = Timer.periodic(const Duration(seconds: 30), (_) => _updateMap());
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _loadUrlTemplate();
+    });
+  }
+
+  void _initSpeechToText() async {
+    _stt = SpeechToText();
+
+    try {
+      await _stt.initialize(onError: _sttError);
+    } catch (_) {
+      debugPrint("FEIL"); // TODO fjern try catch når fungerer
+    }
+  }
+
+  void _sttError(SpeechRecognitionError error) {
+    debugPrint(error.errorMsg);
+    //_registerSheepOrally.speechError();
+    setState(() {
+      _ongoingDialog.value = false;
+    });
+  }
 
   Future<void> _updateMap() async {
     userPosition = await map_utils.getDevicePosition();
@@ -56,31 +94,41 @@ class _MapState extends State<Map> {
       pos = value;
       _movementPoints.add(pos);
     });
+
+    /*_registerSheepOrally = RegisterSheepOrally(
+      'filename',
+      _stt,
+      _ongoingDialog,
+      onCompletedSuccessfully: () {
+        setState(() {
+          linesOfSight.add(Polyline(
+              points: [pos, targetPosition],
+              color: Colors.red,
+              strokeWidth: 5.0));
+          // TODO: dispose _registerSheepOrally ellerno
+        });
+      },
+    );*/
+
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => RegisterSheepOrally(
-                  'filename',
-                  onCompletedSuccessfully: () {
-                    setState(() {
-                      linesOfSight.add(Polyline(
-                          points: [pos, targetPosition],
-                          color: Colors.red,
-                          strokeWidth: 5.0));
-                    });
-                  },
-                )));
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _updateMap(); //to set the position before waiting at startup
-    timer = Timer.periodic(const Duration(seconds: 30), (_) => _updateMap());
-
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      _loadUrlTemplate();
-    });
+            builder: (context) => ValueListenableBuilder<bool>(
+                valueListenable: _ongoingDialog,
+                builder: (context, value, Widget? child) => RegisterSheepOrally(
+                      'filename',
+                      _stt,
+                      _ongoingDialog,
+                      onCompletedSuccessfully: () {
+                        setState(() {
+                          linesOfSight.add(Polyline(
+                              points: [pos, targetPosition],
+                              color: Colors.red,
+                              strokeWidth: 5.0));
+                          // TODO: dispose _registerSheepOrally ellerno
+                        });
+                      },
+                    ))));
   }
 
   @override

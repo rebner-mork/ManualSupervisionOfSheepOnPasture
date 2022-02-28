@@ -48,8 +48,7 @@ class _MyAppState extends State<MyApp> {
         Map.route: (context) =>
             Map(LatLng(63.420017, 10.394660), LatLng(63.415472, 10.411244)),
         RegisterSheep.route: (context) => const RegisterSheep('fileName'),
-        RegisterSheepOrally.route: (context) =>
-            const RegisterSheepOrally('filename'),
+        //RegisterSheepOrally.route: (context) => RegisterSheepOrally('filename'),
       },
     );
   }

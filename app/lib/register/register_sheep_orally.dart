@@ -18,13 +18,20 @@ import 'package:fluttericon/font_awesome5_icons.dart';
 void emptyVoidFunction() {}
 
 class RegisterSheepOrally extends StatefulWidget {
-  const RegisterSheepOrally(this.fileName,
+  RegisterSheepOrally(this.fileName, this.stt, this.ongoingDialog,
       {this.onCompletedSuccessfully = emptyVoidFunction, Key? key})
       : super(key: key);
 
   final VoidCallback onCompletedSuccessfully;
   final String fileName;
+  final SpeechToText stt;
+  ValueNotifier<bool> ongoingDialog;
+
   static const String route = 'register-sheep-orally';
+
+  void speechError() {
+    ongoingDialog.value = false;
+  }
 
   @override
   State<RegisterSheepOrally> createState() => _RegisterSheepOrallyState();
@@ -43,9 +50,8 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
   static const double pitch = 1.0;
   static const double rate = 0.5;
 
-  late SpeechToText _stt;
-  bool _speechEnabled = false;
-  bool ongoingDialog = true;
+  //bool _speechEnabled = false;
+  //bool widget.ongoingDialog = true;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -76,38 +82,29 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
   void initState() {
     super.initState();
     _initTextToSpeech();
-    _initSpeechToTextAndStartDialog();
-  }
-
-  void _initSpeechToTextAndStartDialog() async {
-    _stt = SpeechToText();
-
-    try {
-      _speechEnabled = await _stt.initialize(onError: _sttError);
-    } catch (_) {}
-
-    if (_speechEnabled) {
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      if (widget.stt.isAvailable) {
         _startDialog(questions, questionContexts);
-      });
-    } else {
-      showDialog(
-          context: context,
-          builder: (_) => speechNotEnabledDialog(context, RegisterSheep.route));
-    }
-  }
-
-  void _sttError(SpeechRecognitionError error) {
-    debugPrint(error.errorMsg);
-    setState(() {
-      ongoingDialog = false;
+      } else {
+        showDialog(
+            context: context,
+            builder: (_) =>
+                speechNotEnabledDialog(context, RegisterSheep.route));
+      }
     });
   }
+
+  /*void _sttError(SpeechRecognitionError error) {
+    debugPrint(error.errorMsg);
+    setState(() {
+      widget.ongoingDialog = false;
+    });
+  }*/
 
   void _startDialog(
       List<String> questions, List<QuestionContext> questionContexts) async {
     setState(() {
-      ongoingDialog = true;
+      widget.ongoingDialog.value = true;
       FocusManager.instance.primaryFocus?.unfocus();
     });
     await _speak(questions[questionIndex]);
@@ -115,7 +112,7 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
   }
 
   Future<void> _listen(QuestionContext questionContext) async {
-    await _stt.listen(
+    await widget.stt.listen(
         onResult: (result) => _onSpeechResult(result, questionContext),
         localeId: 'en-US',
         onDevice: true,
@@ -175,7 +172,7 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
             questionIndex = 0;
             currentHeadlineIndex = 0;
             setState(() {
-              ongoingDialog = false;
+              widget.ongoingDialog.value = false;
             });
           }
         }
@@ -236,10 +233,10 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
                   title: const Text('Registrer sau muntlig'),
                   leading: BackButton(
                       onPressed: () => {
-                            _stt.stop(),
+                            widget.stt.stop(),
                             _tts.stop(),
                             setState(() {
-                              ongoingDialog = false;
+                              widget.ongoingDialog.value = false;
                             }),
                             showDialog(
                                 context: context,
@@ -325,7 +322,8 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
                       inputFieldSpacer(),
                       const SizedBox(height: 80),
                     ]))),
-                floatingActionButton: !ongoingDialog
+                floatingActionButton: !widget
+                        .ongoingDialog.value // TODO if no else
                     ? Row(
                         mainAxisAlignment:
                             MediaQuery.of(context).viewInsets.bottom == 0
