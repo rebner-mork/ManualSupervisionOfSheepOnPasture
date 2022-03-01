@@ -30,6 +30,7 @@ class _MapState extends State<MapWidget> {
   MapController _mapController = MapController();
   Marker _currentPositionMarker =
       map_utils.getDevicePositionMarker(LatLng(0, 0));
+  List<Marker> registrationMarkers = [];
   final List<LatLng> _movementPoints = [];
   late Timer timer;
   late String urlTemplate;
@@ -87,20 +88,21 @@ class _MapState extends State<MapWidget> {
         context,
         MaterialPageRoute(
             builder: (context) => ValueListenableBuilder<bool>(
-                valueListenable: _ongoingDialog,
-                builder: (context, value, child) => RegisterSheepOrally(
-                      'filename',
-                      _speechToText,
-                      _ongoingDialog,
+                  valueListenable: _ongoingDialog,
+                  builder: (context, value, child) => RegisterSheepOrally(
+                      'filename', _speechToText, _ongoingDialog,
                       onCompletedSuccessfully: () {
-                        setState(() {
-                          linesOfSight.add(Polyline(
-                              points: [pos, targetPosition],
-                              color: Colors.red,
-                              strokeWidth: 5.0));
-                        });
-                      },
-                    ))));
+                    setState(() {
+                      linesOfSight.add(Polyline(
+                          points: [pos, targetPosition],
+                          color: Colors.black,
+                          isDotted: true,
+                          strokeWidth: 5.0));
+                      registrationMarkers
+                          .add(map_utils.getSheepMarker(targetPosition));
+                    });
+                  }),
+                )));
   }
 
   @override
@@ -139,16 +141,16 @@ class _MapState extends State<MapWidget> {
                     );
                   },
                 ),
-                MarkerLayerOptions(
-                    markers: [_currentPositionMarker], rotate: true),
                 PolylineLayerOptions(polylines: [
                   Polyline(
-                      points: _movementPoints,
-                      color: Colors.red,
-                      isDotted: true,
-                      strokeWidth: 10.0),
+                    points: _movementPoints,
+                    color: Colors.red,
+                    strokeWidth: 7.0,
+                  ),
                   ...linesOfSight
-                ])
+                ]),
+                MarkerLayerOptions(
+                    markers: [_currentPositionMarker, ...registrationMarkers])
               ],
             )
           : const Center(child: Text("Laster inn")),
