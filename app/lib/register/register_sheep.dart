@@ -13,7 +13,7 @@ class RegisterSheep extends StatefulWidget {
       : super(key: key);
 
   final String fileName;
-  final void Function(int)? onCompletedSuccessfully;
+  final ValueChanged<int>? onCompletedSuccessfully;
 
   @override
   State<RegisterSheep> createState() => _RegisterSheepState();

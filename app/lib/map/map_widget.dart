@@ -118,7 +118,7 @@ class _MapState extends State<MapWidget> {
                     ))));
   }
 
-  InkWell _sheepAmountIcon() {
+  InkWell _sheepometerButton() {
     return InkWell(
         onTapDown: (_) {
           setState(() {
@@ -133,8 +133,7 @@ class _MapState extends State<MapWidget> {
         child: Container(
             height: 50,
             width: 62 +
-                textSize(
-                        _sheepAmount.toString(), sheepAmountRegisteredTextStyle)
+                textSize(_sheepAmount.toString(), circularMapButtonTextStyle)
                     .width,
             decoration: BoxDecoration(
                 color: sheepAmountButtonColor,
@@ -144,8 +143,7 @@ class _MapState extends State<MapWidget> {
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               const Image(
                   image: AssetImage('images/sheep.png'), width: 42, height: 42),
-              Text(_sheepAmount.toString(),
-                  style: sheepAmountRegisteredTextStyle),
+              Text(_sheepAmount.toString(), style: circularMapButtonTextStyle),
               const SizedBox(
                 width: 2,
               )
@@ -203,7 +201,7 @@ class _MapState extends State<MapWidget> {
             )
           : const Center(child: Text("Laster inn")),
       Positioned(
-        child: _sheepAmountIcon(),
+        child: _sheepometerButton(),
         bottom: 8,
         left: 8,
       ),

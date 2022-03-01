@@ -11,7 +11,7 @@ Color buttonDisabledColor = Colors.grey;
 Color buttonEnabledColor = Colors.green;
 double buttonHeight = 40;
 double mainButtonHeight = 50;
-TextStyle sheepAmountRegisteredTextStyle =
+TextStyle circularMapButtonTextStyle =
     const TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 Border circularMapButtonBorder = Border.all(color: Colors.black, width: 1.5);
 

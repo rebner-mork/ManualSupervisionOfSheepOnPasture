@@ -19,7 +19,7 @@ class RegisterSheepOrally extends StatefulWidget {
       {this.onCompletedSuccessfully, Key? key})
       : super(key: key);
 
-  final void Function(int)? onCompletedSuccessfully;
+  final ValueChanged<int>? onCompletedSuccessfully;
   final String fileName;
   final SpeechToText stt;
   final ValueNotifier<bool> ongoingDialog;
