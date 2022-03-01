@@ -1,6 +1,4 @@
 import 'package:app/login/login_page.dart';
-import 'package:app/register/register_sheep_orally.dart';
-import 'package:app/register/register_sheep.dart';
 import 'package:app/register_user/register_user_page.dart';
 import 'package:app/trip/start_trip_page.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -36,9 +34,6 @@ class _MyAppState extends State<MyApp> {
         LoginPage.route: (context) => const LoginPage(),
         RegisterUserPage.route: (context) => const RegisterUserPage(),
         StartTripPage.route: (context) => const StartTripPage(),
-        RegisterSheep.route: (context) => const RegisterSheep('fileName'),
-        RegisterSheepOrally.route: (context) =>
-            const RegisterSheepOrally('filename'),
       },
     );
   }

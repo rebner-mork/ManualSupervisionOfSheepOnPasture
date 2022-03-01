@@ -28,8 +28,7 @@ void main() {
     for (int zoom = minZoom.toInt(); zoom <= maxZoom.toInt(); zoom++) {
       int west = getTileIndexX(northWest.longitude, zoom);
       int east = getTileIndexX(southEast.longitude, zoom);
-      //-1 to compesate for rounding down when calculating tile indeces
-      int north = getTileIndexY(northWest.latitude, zoom) - 1;
+      int north = getTileIndexY(northWest.latitude, zoom);
       int south = getTileIndexY(southEast.latitude, zoom);
       String currentPath = basePath + slash + zoom.toString();
       expectedDirectoryListing.add(currentPath);

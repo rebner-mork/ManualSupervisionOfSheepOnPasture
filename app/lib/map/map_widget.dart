@@ -4,6 +4,9 @@ import 'package:flutter_map/plugin_api.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:async';
 
+import 'package:app/register/register_sheep_orally.dart';
+import 'package:speech_to_text/speech_recognition_error.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 import '../utils/map_utils.dart' as map_utils;
 import '../utils/constants.dart';
 
@@ -21,6 +24,9 @@ class MapWidget extends StatefulWidget {
 }
 
 class _MapState extends State<MapWidget> {
+  late SpeechToText _speechToText;
+  final ValueNotifier<bool> _ongoingDialog = ValueNotifier<bool>(false);
+
   MapController _mapController = MapController();
   Marker _currentPositionMarker =
       map_utils.getDevicePositionMarker(LatLng(0, 0));
@@ -28,13 +34,38 @@ class _MapState extends State<MapWidget> {
   late Timer timer;
   late String urlTemplate;
   bool urlTemplateLoaded = false;
+  List<Polyline> linesOfSight = [];
+  LatLng? userPosition;
+
+  @override
+  void initState() {
+    super.initState();
+    _initSpeechToText();
+    _updateMap(); //to set the position before waiting at startup
+    timer = Timer.periodic(const Duration(seconds: 30), (_) => _updateMap());
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _loadUrlTemplate();
+    });
+  }
+
+  void _initSpeechToText() async {
+    _speechToText = SpeechToText();
+    await _speechToText.initialize(onError: _speechToTextError);
+  }
+
+  void _speechToTextError(SpeechRecognitionError error) {
+    setState(() {
+      _ongoingDialog.value = false;
+    });
+  }
 
   Future<void> _updateMap() async {
-    LatLng pos = await map_utils.getDevicePosition();
+    userPosition = await map_utils.getDevicePosition();
     setState(() {
       //_mapController.move(pos, _mapController.zoom);
-      _currentPositionMarker = map_utils.getDevicePositionMarker(pos);
-      _movementPoints.add(pos);
+      _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition!);
+      _movementPoints.add(userPosition!);
     });
   }
 
@@ -45,14 +76,31 @@ class _MapState extends State<MapWidget> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    timer = Timer.periodic(const Duration(seconds: 15), (_) => _updateMap());
-
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      _loadUrlTemplate();
+  void registerSheepByTap(LatLng targetPosition) async {
+    LatLng pos = userPosition!;
+    map_utils.getDevicePosition().then((value) {
+      pos = value;
+      _movementPoints.add(pos);
     });
+
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ValueListenableBuilder<bool>(
+                valueListenable: _ongoingDialog,
+                builder: (context, value, child) => RegisterSheepOrally(
+                      'filename',
+                      _speechToText,
+                      _ongoingDialog,
+                      onCompletedSuccessfully: () {
+                        setState(() {
+                          linesOfSight.add(Polyline(
+                              points: [pos, targetPosition],
+                              color: Colors.red,
+                              strokeWidth: 5.0));
+                        });
+                      },
+                    ))));
   }
 
   @override
@@ -71,6 +119,7 @@ class _MapState extends State<MapWidget> {
                 onMapCreated: (c) {
                   _mapController = c;
                 },
+                onTap: (_, point) => registerSheepByTap(point),
                 zoom: OfflineZoomLevels.min,
                 minZoom: OfflineZoomLevels.min,
                 maxZoom: OfflineZoomLevels.max,
@@ -97,7 +146,8 @@ class _MapState extends State<MapWidget> {
                       points: _movementPoints,
                       color: Colors.red,
                       isDotted: true,
-                      strokeWidth: 10.0)
+                      strokeWidth: 10.0),
+                  ...linesOfSight
                 ])
               ],
             )
