@@ -43,8 +43,24 @@ Marker getDevicePositionMarker(LatLng pos) {
       width: size,
       builder: (context) => const Icon(
             Icons.gps_fixed,
-            color: Colors.pink,
+            color: Colors.red,
             size: size,
+          ));
+}
+
+Marker getSheepMarker(LatLng pos) {
+  const double size = 50;
+  return Marker(
+      point: pos,
+      anchorPos: AnchorPos.align(AnchorAlign.top),
+      rotateAlignment: Alignment.bottomCenter,
+      height: size,
+      width: size,
+      rotate: true,
+      builder: (context) => const Image(
+            image: AssetImage("images/sheep_marker_green.png"),
+            width: size,
+            height: size,
           ));
 }
 

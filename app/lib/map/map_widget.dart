@@ -37,6 +37,7 @@ class _MapState extends State<MapWidget> {
 
   Marker _currentPositionMarker =
       map_utils.getDevicePositionMarker(LatLng(0, 0));
+  List<Marker> registrationMarkers = [];
   final List<LatLng> _movementPoints = [];
   List<Polyline> linesOfSight = [];
 
@@ -106,8 +107,11 @@ class _MapState extends State<MapWidget> {
                             _sheepAmount += sheepAmountRegistered;
                             linesOfSight.add(Polyline(
                                 points: [pos, targetPosition],
-                                color: Colors.red,
+                                color: Colors.black,
+                                isDotted: true,
                                 strokeWidth: 5.0));
+                            registrationMarkers
+                                .add(map_utils.getSheepMarker(targetPosition));
                           }
                         });
                       },
@@ -185,16 +189,16 @@ class _MapState extends State<MapWidget> {
                     );
                   },
                 ),
-                MarkerLayerOptions(
-                    markers: [_currentPositionMarker], rotate: true),
                 PolylineLayerOptions(polylines: [
                   Polyline(
-                      points: _movementPoints,
-                      color: Colors.red,
-                      isDotted: true,
-                      strokeWidth: 10.0),
+                    points: _movementPoints,
+                    color: Colors.red,
+                    strokeWidth: 7.0,
+                  ),
                   ...linesOfSight
-                ])
+                ]),
+                MarkerLayerOptions(
+                    markers: [_currentPositionMarker, ...registrationMarkers])
               ],
             )
           : const Center(child: Text("Laster inn")),
