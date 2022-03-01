@@ -5,7 +5,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:latlong2/latlong.dart';
+
 import 'package:flutter_map/flutter_map.dart';
+
+// --- LOCATION SERVICE ---
 
 Future<LatLng> getDevicePosition() async {
   LocationData _locationData;
@@ -34,6 +37,8 @@ Future<LatLng> getDevicePosition() async {
 
   return LatLng(_locationData.latitude!, _locationData.longitude!);
 }
+
+// --- MARKERS ---
 
 Marker getDevicePositionMarker(LatLng pos) {
   const double size = 40;
@@ -64,6 +69,8 @@ Marker getSheepMarker(LatLng pos) {
           ));
 }
 
+// --- INDEX CALCULATIONS ---
+
 int getTileIndexX(double longitude, int zoom) {
   return (((longitude + 180) / 360) * pow(2, zoom)).floor();
 }
@@ -77,6 +84,8 @@ int getTileIndexY(double latitude, int zoom) {
       .floor();
 }
 
+// --- PATHS ---
+
 String _getTileUrl(
     String urlTemplate, int x, int y, int zoom, List<String> subdomains) {
   var random = Random();
@@ -86,6 +95,18 @@ String _getTileUrl(
       .replaceFirst("{y}", y.toString())
       .replaceFirst("{s}", subdomains[random.nextInt(subdomains.length)]);
 }
+
+Future<String> getLocalUrlTemplate() async {
+  Directory baseDir = await getApplicationDocumentsDirectory();
+  return baseDir.path + "/maps/{z}/{x}/{y}.png";
+}
+
+Future<String> _getLocalTileUrl(int x, int y, int z) async {
+  String urlTemplate = await getLocalUrlTemplate();
+  return _getTileUrl(urlTemplate, x, y, z, [""]);
+}
+
+// --- DOWNLOADS ---
 
 Future<void> _downloadTile(
     int x, int y, int zoom, String urlTemplate, List<String> subdomains) async {
@@ -123,7 +144,22 @@ Future<void> downloadTiles(
   }
 }
 
-Future<String> getOfflineUrlTemplate() async {
-  Directory baseDir = await getApplicationDocumentsDirectory();
-  return baseDir.path + "/maps/{z}/{x}/{y}.png";
+Future<bool> isTilesDownloaded(
+    LatLng northWest, LatLng southEast, double minZoom, double maxZoom) async {
+  for (int zoom = minZoom.toInt(); zoom <= maxZoom.toInt(); zoom++) {
+    int west = getTileIndexX(northWest.longitude, zoom);
+    int east = getTileIndexX(southEast.longitude, zoom);
+    int north = getTileIndexY(northWest.latitude, zoom);
+    int south = getTileIndexY(southEast.latitude, zoom);
+
+    for (int x = west; x <= east; x++) {
+      for (int y = north; y <= south; y++) {
+        String path = await _getLocalTileUrl(x, y, zoom);
+        if (!File(path).existsSync()) {
+          return false;
+        }
+      }
+    }
+  }
+  return true;
 }
