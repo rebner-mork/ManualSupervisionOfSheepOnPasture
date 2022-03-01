@@ -18,8 +18,6 @@ class MapWidget extends StatefulWidget {
     northEast = LatLng(northWest.latitude, southEast.longitude);
   }
 
-  static const String route = 'map-widget';
-
   late final LatLng southWest;
   late final LatLng northEast;
 
@@ -104,11 +102,13 @@ class _MapState extends State<MapWidget> {
                       _ongoingDialog,
                       onCompletedSuccessfully: (int sheepAmountRegistered) {
                         setState(() {
-                          _sheepAmount += sheepAmountRegistered;
-                          linesOfSight.add(Polyline(
-                              points: [pos, targetPosition],
-                              color: Colors.red,
-                              strokeWidth: 5.0));
+                          if (sheepAmountRegistered > 0) {
+                            _sheepAmount += sheepAmountRegistered;
+                            linesOfSight.add(Polyline(
+                                points: [pos, targetPosition],
+                                color: Colors.red,
+                                strokeWidth: 5.0));
+                          }
                         });
                       },
                     ))));
@@ -128,7 +128,7 @@ class _MapState extends State<MapWidget> {
         },
         child: Container(
             height: 50,
-            width: 55 +
+            width: 62 +
                 textSize(
                         _sheepAmount.toString(), sheepAmountRegisteredTextStyle)
                     .width,
@@ -141,7 +141,10 @@ class _MapState extends State<MapWidget> {
               const Image(
                   image: AssetImage('images/sheep.png'), width: 42, height: 42),
               Text(_sheepAmount.toString(),
-                  style: sheepAmountRegisteredTextStyle)
+                  style: sheepAmountRegisteredTextStyle),
+              const SizedBox(
+                width: 2,
+              )
             ])));
   }
 

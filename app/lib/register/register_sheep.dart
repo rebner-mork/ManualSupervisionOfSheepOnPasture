@@ -151,8 +151,10 @@ class _RegisterSheepState extends State<RegisterSheep> {
     file.writeAsString(json.encode(data));
 
     if (widget.onCompletedSuccessfully != null) {
-      widget
-          .onCompletedSuccessfully!(int.parse(_textControllers['sheep']!.text));
+      int sheepAmount = _textControllers['sheep']!.text == ''
+          ? 0
+          : int.parse(_textControllers['sheep']!.text);
+      widget.onCompletedSuccessfully!(sheepAmount);
     }
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
