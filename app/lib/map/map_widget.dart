@@ -1,3 +1,4 @@
+import 'package:app/utils/other.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/plugin_api.dart';
@@ -15,6 +16,8 @@ class MapWidget extends StatefulWidget {
     southWest = LatLng(southEast.latitude, northWest.longitude);
     northEast = LatLng(northWest.latitude, southEast.longitude);
   }
+
+  static const String route = 'map-widget';
 
   late final LatLng southWest;
   late final LatLng northEast;
@@ -103,6 +106,27 @@ class _MapState extends State<MapWidget> {
                     ))));
   }
 
+  Container _sheepAmountIcon() {
+    return Container(
+        height: 50,
+        width: 55 +
+            textSize('123',
+                    const TextStyle(fontSize: 30, fontWeight: FontWeight.bold))
+                .width,
+        decoration: BoxDecoration(
+            color: Colors.green,
+            border: Border.all(color: Colors.black, width: 1.5),
+            borderRadius: const BorderRadius.all(Radius.elliptical(75, 75))),
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: const [
+          Image(image: AssetImage('images/sheep.png'), width: 40, height: 40),
+          Text(
+            '123',
+            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+          )
+        ]));
+  }
+
   @override
   void dispose() {
     timer.cancel();
@@ -112,7 +136,8 @@ class _MapState extends State<MapWidget> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      child: urlTemplateLoaded
+        child: Stack(children: [
+      urlTemplateLoaded
           ? FlutterMap(
               mapController: _mapController,
               options: MapOptions(
@@ -152,6 +177,11 @@ class _MapState extends State<MapWidget> {
               ],
             )
           : const Center(child: Text("Laster inn")),
-    );
+      Positioned(
+        child: _sheepAmountIcon(),
+        bottom: 8,
+        left: 8,
+      ),
+    ]));
   }
 }
