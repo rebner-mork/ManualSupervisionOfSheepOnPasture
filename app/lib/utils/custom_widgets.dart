@@ -25,6 +25,10 @@ SizedBox inputFieldSpacer() {
   return const SizedBox(height: 18);
 }
 
+SizedBox appbarBodySpacer() {
+  return const SizedBox(height: 20);
+}
+
 const double defaultIconSize = 30;
 
 Row inputRow(String text, TextEditingController controller, IconData iconData,

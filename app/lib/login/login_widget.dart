@@ -1,3 +1,4 @@
+import 'package:app/trip/start_trip_page.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/field_validation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -118,6 +119,7 @@ class _LoginWidgetState extends State<LoginWidget> {
         setState(() {
           _loginFailed = false;
         });
+        Navigator.popAndPushNamed(context, StartTripPage.route);
       } catch (e) {
         logger.log("Ikke innlogget: " + e.toString());
         setState(() {

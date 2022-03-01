@@ -123,22 +123,19 @@ class _DefineMapPageState extends State<DefineMapPage> {
     DocumentReference farmDoc = farmCollection.doc(uid);
 
     Map<String, Map<String, Map<String, double>>> dataMap;
-    LinkedHashMap<String, dynamic>? linkedHashMap;
-    TextEditingController textController;
+    LinkedHashMap<String, dynamic>? maps;
 
     DocumentSnapshot<Object?> doc = await farmDoc.get();
     if (doc.exists) {
-      linkedHashMap = doc.get('maps');
+      maps = doc.get('maps');
 
-      if (linkedHashMap != null) {
-        dataMap = _castFromDynamic(linkedHashMap);
+      if (maps != null) {
+        dataMap = _castMapsFromDynamic(maps);
 
         for (MapEntry<String, Map<String, Map<String, double>>> data
             in dataMap.entries) {
           _mapNames.add(data.key);
-          textController = TextEditingController();
-          textController.text = data.key;
-          _mapNameControllers.add(textController);
+          _mapNameControllers.add(TextEditingController(text: data.key));
           _mapCoordinates.add({
             'northWest': LatLng(data.value['northWest']!['latitude']!,
                 data.value['northWest']!['longitude']!),
@@ -199,8 +196,9 @@ class _DefineMapPageState extends State<DefineMapPage> {
     }
   }
 
-  _castFromDynamic(LinkedHashMap<String, dynamic>? linkedHashMap) {
-    return linkedHashMap!
+  Map<String, Map<String, Map<String, double>>> _castMapsFromDynamic(
+      LinkedHashMap<String, dynamic>? maps) {
+    return maps!
         .map((key, value) => MapEntry(key, value as Map<String, dynamic>))
         .map((key, value) => MapEntry(
             key,
