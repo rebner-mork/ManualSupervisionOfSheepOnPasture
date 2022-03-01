@@ -1,4 +1,5 @@
 import 'package:app/utils/other.dart';
+import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/plugin_api.dart';
@@ -39,6 +40,8 @@ class _MapState extends State<MapWidget> {
   bool urlTemplateLoaded = false;
   List<Polyline> linesOfSight = [];
   LatLng? userPosition;
+
+  int _sheepAmount = 0;
 
   @override
   void initState() {
@@ -95,8 +98,9 @@ class _MapState extends State<MapWidget> {
                       'filename',
                       _speechToText,
                       _ongoingDialog,
-                      onCompletedSuccessfully: () {
+                      onCompletedSuccessfully: (int sheepAmountRegistered) {
                         setState(() {
+                          _sheepAmount += sheepAmountRegistered;
                           linesOfSight.add(Polyline(
                               points: [pos, targetPosition],
                               color: Colors.red,
@@ -110,20 +114,16 @@ class _MapState extends State<MapWidget> {
     return Container(
         height: 50,
         width: 55 +
-            textSize('123',
-                    const TextStyle(fontSize: 30, fontWeight: FontWeight.bold))
+            textSize(_sheepAmount.toString(), sheepAmountRegisteredTextStyle)
                 .width,
         decoration: BoxDecoration(
             color: Colors.green,
-            border: Border.all(color: Colors.black, width: 1.5),
+            border: circularMapButtonBorder,
             borderRadius: const BorderRadius.all(Radius.elliptical(75, 75))),
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: const [
-          Image(image: AssetImage('images/sheep.png'), width: 40, height: 40),
-          Text(
-            '123',
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-          )
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          const Image(
+              image: AssetImage('images/sheep.png'), width: 42, height: 42),
+          Text(_sheepAmount.toString(), style: sheepAmountRegisteredTextStyle)
         ]));
   }
 

@@ -13,7 +13,7 @@ class RegisterSheep extends StatefulWidget {
       : super(key: key);
 
   final String fileName;
-  final VoidCallback? onCompletedSuccessfully;
+  final void Function(int)? onCompletedSuccessfully;
 
   @override
   State<RegisterSheep> createState() => _RegisterSheepState();
@@ -151,7 +151,8 @@ class _RegisterSheepState extends State<RegisterSheep> {
     file.writeAsString(json.encode(data));
 
     if (widget.onCompletedSuccessfully != null) {
-      widget.onCompletedSuccessfully!();
+      widget
+          .onCompletedSuccessfully!(int.parse(_textControllers['sheep']!.text));
     }
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
