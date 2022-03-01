@@ -31,17 +31,21 @@ class _MapState extends State<MapWidget> {
   late SpeechToText _speechToText;
   final ValueNotifier<bool> _ongoingDialog = ValueNotifier<bool>(false);
 
+  int _sheepAmount = 0;
+  Color sheepAmountButtonColor = Colors.green;
+
   MapController _mapController = MapController();
+  LatLng? userPosition;
+
   Marker _currentPositionMarker =
       map_utils.getDevicePositionMarker(LatLng(0, 0));
   final List<LatLng> _movementPoints = [];
+  List<Polyline> linesOfSight = [];
+
   late Timer timer;
+
   late String urlTemplate;
   bool urlTemplateLoaded = false;
-  List<Polyline> linesOfSight = [];
-  LatLng? userPosition;
-
-  int _sheepAmount = 0;
 
   @override
   void initState() {
@@ -110,21 +114,35 @@ class _MapState extends State<MapWidget> {
                     ))));
   }
 
-  Container _sheepAmountIcon() {
-    return Container(
-        height: 50,
-        width: 55 +
-            textSize(_sheepAmount.toString(), sheepAmountRegisteredTextStyle)
-                .width,
-        decoration: BoxDecoration(
-            color: Colors.green,
-            border: circularMapButtonBorder,
-            borderRadius: const BorderRadius.all(Radius.elliptical(75, 75))),
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          const Image(
-              image: AssetImage('images/sheep.png'), width: 42, height: 42),
-          Text(_sheepAmount.toString(), style: sheepAmountRegisteredTextStyle)
-        ]));
+  InkWell _sheepAmountIcon() {
+    return InkWell(
+        onTapDown: (_) {
+          setState(() {
+            sheepAmountButtonColor = Colors.green.shade700;
+          });
+        },
+        onTap: () {
+          setState(() {
+            sheepAmountButtonColor = Colors.green;
+          });
+        },
+        child: Container(
+            height: 50,
+            width: 55 +
+                textSize(
+                        _sheepAmount.toString(), sheepAmountRegisteredTextStyle)
+                    .width,
+            decoration: BoxDecoration(
+                color: sheepAmountButtonColor,
+                border: circularMapButtonBorder,
+                borderRadius:
+                    const BorderRadius.all(Radius.elliptical(75, 75))),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              const Image(
+                  image: AssetImage('images/sheep.png'), width: 42, height: 42),
+              Text(_sheepAmount.toString(),
+                  style: sheepAmountRegisteredTextStyle)
+            ])));
   }
 
   @override
