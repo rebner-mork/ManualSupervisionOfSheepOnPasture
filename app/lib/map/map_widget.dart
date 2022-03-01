@@ -1,3 +1,5 @@
+import 'package:app/utils/other.dart';
+import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/plugin_api.dart';
@@ -27,16 +29,22 @@ class _MapState extends State<MapWidget> {
   late SpeechToText _speechToText;
   final ValueNotifier<bool> _ongoingDialog = ValueNotifier<bool>(false);
 
+  int _sheepAmount = 0;
+  Color sheepAmountButtonColor = Colors.green;
+
   MapController _mapController = MapController();
+  LatLng? userPosition;
+
   Marker _currentPositionMarker =
       map_utils.getDevicePositionMarker(LatLng(0, 0));
   List<Marker> registrationMarkers = [];
   final List<LatLng> _movementPoints = [];
+  List<Polyline> linesOfSight = [];
+
   late Timer timer;
+
   late String urlTemplate;
   bool urlTemplateLoaded = false;
-  List<Polyline> linesOfSight = [];
-  LatLng? userPosition;
 
   @override
   void initState() {
@@ -88,21 +96,58 @@ class _MapState extends State<MapWidget> {
         context,
         MaterialPageRoute(
             builder: (context) => ValueListenableBuilder<bool>(
-                  valueListenable: _ongoingDialog,
-                  builder: (context, value, child) => RegisterSheepOrally(
-                      'filename', _speechToText, _ongoingDialog,
-                      onCompletedSuccessfully: () {
-                    setState(() {
-                      linesOfSight.add(Polyline(
-                          points: [pos, targetPosition],
-                          color: Colors.black,
-                          isDotted: true,
-                          strokeWidth: 5.0));
-                      registrationMarkers
-                          .add(map_utils.getSheepMarker(targetPosition));
-                    });
-                  }),
-                )));
+                valueListenable: _ongoingDialog,
+                builder: (context, value, child) => RegisterSheepOrally(
+                      'filename',
+                      _speechToText,
+                      _ongoingDialog,
+                      onCompletedSuccessfully: (int sheepAmountRegistered) {
+                        setState(() {
+                          if (sheepAmountRegistered > 0) {
+                            _sheepAmount += sheepAmountRegistered;
+                            linesOfSight.add(Polyline(
+                                points: [pos, targetPosition],
+                                color: Colors.black,
+                                isDotted: true,
+                                strokeWidth: 5.0));
+                            registrationMarkers
+                                .add(map_utils.getSheepMarker(targetPosition));
+                          }
+                        });
+                      },
+                    ))));
+  }
+
+  InkWell _sheepometerButton() {
+    return InkWell(
+        onTapDown: (_) {
+          setState(() {
+            sheepAmountButtonColor = Colors.green.shade700;
+          });
+        },
+        onTap: () {
+          setState(() {
+            sheepAmountButtonColor = Colors.green;
+          });
+        },
+        child: Container(
+            height: 50,
+            width: 62 +
+                textSize(_sheepAmount.toString(), circularMapButtonTextStyle)
+                    .width,
+            decoration: BoxDecoration(
+                color: sheepAmountButtonColor,
+                border: circularMapButtonBorder,
+                borderRadius:
+                    const BorderRadius.all(Radius.elliptical(75, 75))),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              const Image(
+                  image: AssetImage('images/sheep.png'), width: 42, height: 42),
+              Text(_sheepAmount.toString(), style: circularMapButtonTextStyle),
+              const SizedBox(
+                width: 2,
+              )
+            ])));
   }
 
   @override
@@ -114,7 +159,8 @@ class _MapState extends State<MapWidget> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      child: urlTemplateLoaded
+        child: Stack(children: [
+      urlTemplateLoaded
           ? FlutterMap(
               mapController: _mapController,
               options: MapOptions(
@@ -154,6 +200,11 @@ class _MapState extends State<MapWidget> {
               ],
             )
           : const Center(child: Text("Laster inn")),
-    );
+      Positioned(
+        child: _sheepometerButton(),
+        bottom: 8,
+        left: 8,
+      ),
+    ]));
   }
 }
