@@ -333,6 +333,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
         .entries
         .map((MapEntry<int, String> data) => DataRow(cells: [
               DataCell(Image(
+                  height: _rowHeight - 10,
                   image: getMapNetworkImage(
                       _mapCoordinates[data.key]['northWest']!,
                       _mapCoordinates[data.key]['southEast']!,
