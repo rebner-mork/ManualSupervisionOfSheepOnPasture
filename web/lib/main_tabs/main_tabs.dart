@@ -22,35 +22,36 @@ class _MainState extends State<MainTabs> {
           initialIndex: 2,
           child: Scaffold(
             appBar: PreferredSize(
-                child: Container(
-                    color: Colors.grey[800],
-                    child: Padding(
-                        padding: const EdgeInsets.only(left: 128),
-                        child: AppBar(
-                          toolbarHeight: 0,
-                          backgroundColor: Colors.grey[800],
-                          bottom: TabBar(
-                              unselectedLabelColor: Colors.grey[400],
-                              indicator: const UnderlineTabIndicator(
-                                borderSide: BorderSide(
-                                    width: 3, color: Colors.green), //Colors.red
-                              ),
-                              //indicatorSize: TabBarIndicatorSize.label,
-                              tabs: [
-                                Tab(
-                                    child: Text(
-                                  'Årsrapporter',
-                                  style: mainTabsTextStyle,
-                                )),
-                                Tab(
-                                    child: Text('Oppsynsturer',
-                                        style: mainTabsTextStyle)),
-                                Tab(
-                                    child: Text('Min side',
-                                        style: mainTabsTextStyle)),
-                              ]),
-                        ))),
-                preferredSize: const Size.fromHeight(48)),
+              preferredSize: const Size.fromHeight(48),
+              child: Container(
+                  color: Colors.grey[800],
+                  child: Padding(
+                      padding: const EdgeInsets.only(left: 128),
+                      child: AppBar(
+                        toolbarHeight: 0,
+                        backgroundColor: Colors.grey[800],
+                        bottom: TabBar(
+                            unselectedLabelColor: Colors.grey[400],
+                            indicator: const UnderlineTabIndicator(
+                              borderSide: BorderSide(
+                                  width: 3, color: Colors.green), //Colors.red
+                            ),
+                            //indicatorSize: TabBarIndicatorSize.label,
+                            tabs: [
+                              Tab(
+                                  child: Text(
+                                'Årsrapporter',
+                                style: mainTabsTextStyle,
+                              )),
+                              Tab(
+                                  child: Text('Oppsynsturer',
+                                      style: mainTabsTextStyle)),
+                              Tab(
+                                  child: Text('Min side',
+                                      style: mainTabsTextStyle)),
+                            ]),
+                      ))),
+            ),
             body: const TabBarView(children: [Text('1'), Text('2'), MyPage()]),
           )),
     );

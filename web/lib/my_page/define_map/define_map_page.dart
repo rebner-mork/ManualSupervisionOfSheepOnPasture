@@ -82,9 +82,6 @@ class _DefineMapPageState extends State<DefineMapPage> {
                   const SizedBox(height: 20),
                   Text('Mine beiteområder', style: definePageHeadlineTextStyle),
                   const SizedBox(height: 10),
-                  /*Text(
-                      'Beiteområdene gjør det mulig å gå oppsynstur uten nettverkstilgang',
-                      style: definePageInfoTextStyle),*/
                   Text(
                       'Her kan du legge til beiteområder. I appen laster oppsynspersonell ned\nkart over et av områdene for å gå oppsynstur uten nettverksforbindelse.',
                       style: definePageInfoTextStyle),

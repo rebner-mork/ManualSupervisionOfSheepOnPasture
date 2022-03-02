@@ -54,7 +54,8 @@ class _MyEartagsState extends State<MyEartags> {
               Text('Øremerker', style: definePageHeadlineTextStyle),
               const SizedBox(height: 10),
               Text(
-                  'Her kan du legge til øremerker som oppsynspersonell kan møte på under oppsynstur.\nOppsynspersonell kan ikke registrere andre øremerker enn de som er lagt til her.',
+                  'Her kan du legge til øremerker som oppsynspersonell kan møte på under oppsynstur.\n'
+                  'Oppsynspersonell kan ikke registrere andre øremerker enn de som er lagt til her.',
                   style: definePageInfoTextStyle),
               DataTable(
                 border: TableBorder.symmetric(),
