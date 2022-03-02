@@ -55,18 +55,27 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                     )
                   ]
                 : [
-                    DataTable(
-                        border: TableBorder.symmetric(),
-                        showCheckboxColumn: false,
-                        columns: [
-                          DataColumn(
-                              label: Text(
-                            'E-post',
-                            style: dataColumnTextStyle,
-                          )),
-                          const DataColumn(label: Text(''))
-                        ],
-                        rows: _existingPersonnelRows() + [_newPersonnelRow()]),
+                    Column(children: [
+                      const SizedBox(height: 20),
+                      Text('Mitt oppsynspersonell',
+                          style: definePageHeadlineTextStyle),
+                      const SizedBox(height: 10),
+                      Text(
+                          'Her kan du legge til brukere som kan gå oppsynstur for deg i appen.',
+                          style: definePageInfoTextStyle),
+                      DataTable(
+                          border: TableBorder.symmetric(),
+                          showCheckboxColumn: false,
+                          columns: [
+                            DataColumn(
+                                label: Text(
+                              'E-post',
+                              style: dataColumnTextStyle,
+                            )),
+                            const DataColumn(label: Text(''))
+                          ],
+                          rows: _existingPersonnelRows() + [_newPersonnelRow()])
+                    ]),
                     const SizedBox(height: 10),
                     Text(
                       _helpText,

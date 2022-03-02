@@ -55,25 +55,35 @@ class _MyTiesState extends State<MyTies> {
               'Laster data...',
               style: TextStyle(fontSize: 18),
             )
-          : DataTable(
-              border: TableBorder.symmetric(),
-              columns: [
-                DataColumn(
-                    label: Text(
-                  'Slipsfarge',
-                  style: dataColumnTextStyle,
-                )),
-                DataColumn(
-                    label: Text(
-                  'Antall lam',
-                  style: dataColumnTextStyle,
-                )),
-                const DataColumn(label: Text('')),
-              ],
-              rows: _tieColors.length < possibleTieColors.length
-                  ? _tieRows() + _newTieRow()
-                  : _tieRows(),
-            ),
+          : Column(children: [
+              const SizedBox(height: 20),
+              Text('Mine slips', style: definePageHeadlineTextStyle),
+              const SizedBox(height: 10),
+              Text('Her kan du legge til slips som brukes på søyene dine.',
+                  style: definePageInfoTextStyle),
+              Text(
+                  'Oppsynspersonell kan ikke registrere andre slips enn de som er lagt til her.',
+                  style: definePageInfoTextStyle),
+              DataTable(
+                border: TableBorder.symmetric(),
+                columns: [
+                  DataColumn(
+                      label: Text(
+                    'Slipsfarge',
+                    style: dataColumnTextStyle,
+                  )),
+                  DataColumn(
+                      label: Text(
+                    'Antall lam',
+                    style: dataColumnTextStyle,
+                  )),
+                  const DataColumn(label: Text('')),
+                ],
+                rows: _tieColors.length < possibleTieColors.length
+                    ? _tieRows() + _newTieRow()
+                    : _tieRows(),
+              )
+            ]),
       const SizedBox(height: 10),
       Text(
         _helpText,

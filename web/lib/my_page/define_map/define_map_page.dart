@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:web/my_page/define_map/define_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:web/utils/map_utils.dart';
+import 'package:web/utils/styles.dart';
 
 class DefineMapPage extends StatefulWidget {
   const DefineMapPage({Key? key}) : super(key: key);
@@ -77,12 +78,23 @@ class _DefineMapPageState extends State<DefineMapPage> {
                   style: largerTextStyle,
                 )
               : SingleChildScrollView(
-                  child: DataTable(
+                  child: Column(children: [
+                  const SizedBox(height: 20),
+                  Text('Mine beiteområder', style: definePageHeadlineTextStyle),
+                  const SizedBox(height: 10),
+                  /*Text(
+                      'Beiteområdene gjør det mulig å gå oppsynstur uten nettverkstilgang',
+                      style: definePageInfoTextStyle),*/
+                  Text(
+                      'Her kan du legge til beiteområder. I appen laster oppsynspersonell ned\nkart over et av områdene for å gå oppsynstur uten nettverksforbindelse.',
+                      style: definePageInfoTextStyle),
+                  DataTable(
                       dataRowHeight: _rowHeight,
                       border: TableBorder.symmetric(),
                       showCheckboxColumn: false,
                       columns: _tableColumns(),
-                      rows: _existingMapRows() + [_newMapRow()]))),
+                      rows: _existingMapRows() + [_newMapRow()])
+                ]))),
       const SizedBox(height: 10),
       _helpTextWidgets(),
       const SizedBox(height: 10),

@@ -49,25 +49,33 @@ class _MyEartagsState extends State<MyEartags> {
               'Laster data...',
               style: TextStyle(fontSize: 18),
             )
-          : DataTable(
-              border: TableBorder.symmetric(),
-              columns: [
-                DataColumn(
-                    label: Text(
-                  'Øremerke',
-                  style: dataColumnTextStyle,
-                )),
-                DataColumn(
-                    label: Text(
-                  'Eier',
-                  style: dataColumnTextStyle,
-                )),
-                const DataColumn(label: Text('')),
-              ],
-              rows: _eartagColors.length < possibleEartagColors.length
-                  ? _eartagRows() + [_newEartagRow()]
-                  : _eartagRows(),
-            ),
+          : Column(children: [
+              const SizedBox(height: 20),
+              Text('Øremerker', style: definePageHeadlineTextStyle),
+              const SizedBox(height: 10),
+              Text(
+                  'Her kan du legge til øremerker som oppsynspersonell kan møte på under oppsynstur.\nOppsynspersonell kan ikke registrere andre øremerker enn de som er lagt til her.',
+                  style: definePageInfoTextStyle),
+              DataTable(
+                border: TableBorder.symmetric(),
+                columns: [
+                  DataColumn(
+                      label: Text(
+                    'Øremerke',
+                    style: dataColumnTextStyle,
+                  )),
+                  DataColumn(
+                      label: Text(
+                    'Eier',
+                    style: dataColumnTextStyle,
+                  )),
+                  const DataColumn(label: Text('')),
+                ],
+                rows: _eartagColors.length < possibleEartagColors.length
+                    ? _eartagRows() + [_newEartagRow()]
+                    : _eartagRows(),
+              )
+            ]),
       const SizedBox(height: 10),
       Text(
         _helpText,
