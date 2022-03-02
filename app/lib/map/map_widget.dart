@@ -49,8 +49,7 @@ class _MapState extends State<MapWidget> {
   @override
   void initState() {
     super.initState();
-    _initSpeechToText();
-    _updateMap(); //to set the position before waiting at startup
+    _initGpsAndSpeechToText();
     timer = Timer.periodic(const Duration(seconds: 30), (_) => _updateMap());
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -58,7 +57,20 @@ class _MapState extends State<MapWidget> {
     });
   }
 
-  void _initSpeechToText() async {
+  Future<void> _initGpsAndSpeechToText() async {
+    await _initGps();
+    _initSpeechToText();
+  }
+
+  Future<void> _initGps() async {
+    userPosition = await map_utils.getDevicePosition();
+    setState(() {
+      _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition!);
+      _movementPoints.add(userPosition!);
+    });
+  }
+
+  Future<void> _initSpeechToText() async {
     _speechToText = SpeechToText();
     await _speechToText.initialize(onError: _speechToTextError);
   }
