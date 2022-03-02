@@ -64,9 +64,8 @@ class _DefineMapState extends State<DefineMap> {
         ),
         layers: [
           TileLayerOptions(
-            urlTemplate:
-                "https://opencache{s}.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}",
-            subdomains: ['', '2', '3'],
+            urlTemplate: map_utils.MapProvider.urlTemplate,
+            subdomains: map_utils.MapProvider.subdomains,
             attributionBuilder: (_) {
               return const Text(
                 "Kartverket",
