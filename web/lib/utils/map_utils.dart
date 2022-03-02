@@ -3,8 +3,11 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:math';
 
-const String urlTemplate =
-    "https://opencache{s}.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}";
+abstract class MapProvider {
+  static const String urlTemplate =
+      "https://opencache{s}.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}";
+  static final List<String> subdomains = ['', '2', '3'];
+}
 
 Marker getCornerMarker(LatLng pos, bool upperLeft) {
   const double size = 50;
@@ -29,18 +32,19 @@ NetworkImage getMapNetworkImage(LatLng northWest, LatLng southEast, int zoom) {
   int x = getTileIndexX(centerPoint.longitude, zoom);
   int y = getTileIndexY(centerPoint.latitude, zoom);
 
-  return NetworkImage(_getTileUrl(urlTemplate, x, y, zoom, ["", "2", "3"]),
-      scale: 2);
+  return NetworkImage(_getTileUrl(x, y, zoom), scale: 2);
 }
 
-String _getTileUrl(
-    String urlTemplate, int x, int y, int zoom, List<String> subdomains) {
+String _getTileUrl(int x, int y, int zoom) {
   var random = Random();
-  return urlTemplate
+  return MapProvider.urlTemplate
       .replaceFirst("{z}", zoom.toString())
       .replaceFirst("{x}", x.toString())
       .replaceFirst("{y}", y.toString())
-      .replaceFirst("{s}", subdomains[random.nextInt(subdomains.length)]);
+      .replaceFirst(
+          "{s}",
+          MapProvider
+              .subdomains[random.nextInt(MapProvider.subdomains.length)]);
 }
 
 int getTileIndexX(double longitude, int zoom) {
