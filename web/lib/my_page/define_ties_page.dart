@@ -336,6 +336,14 @@ class _MyTiesState extends State<MyTies> {
     });
   }
 
+  void _useDefaultTies() {
+    for (MapEntry<Color, int> data in defaultTieMap.entries) {
+      _tieColors.add(data.key);
+      _tieMeaning.add(data.value);
+    }
+    _saveTieData();
+  }
+
   void _readTieData() async {
     String uid = FirebaseAuth.instance.currentUser!.uid;
     CollectionReference farmCollection =
@@ -345,6 +353,7 @@ class _MyTiesState extends State<MyTies> {
     LinkedHashMap<String, dynamic>? dataMap;
 
     DocumentSnapshot<Object?> doc = await farmDoc.get();
+
     if (doc.exists) {
       dataMap = doc.get('ties');
       if (dataMap != null) {
@@ -352,12 +361,11 @@ class _MyTiesState extends State<MyTies> {
           _tieColors.add(Color(int.parse(data.key, radix: 16)));
           _tieMeaning.add(data.value as int);
         }
+      } else {
+        _useDefaultTies();
       }
     } else {
-      for (MapEntry<Color, int> data in defaultTieMap.entries) {
-        _tieColors.add(data.key);
-        _tieMeaning.add(data.value);
-      }
+      _useDefaultTies();
     }
     _oldTieColors = List.from(_tieColors);
     _oldTieMeaning = List.from(_tieMeaning);
