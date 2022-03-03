@@ -1,7 +1,6 @@
 import 'dart:collection';
 
 import 'package:app/main_page.dart';
-import 'package:app/map/map_widget.dart';
 import 'package:app/utils/constants.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/map_utils.dart';

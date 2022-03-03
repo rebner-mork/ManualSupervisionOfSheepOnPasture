@@ -1,7 +1,5 @@
 import 'package:app/map/map_widget.dart';
 import 'package:app/utils/custom_widgets.dart';
-import 'package:app/utils/other.dart';
-import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';

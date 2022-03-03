@@ -178,9 +178,9 @@ FloatingActionButton startDialogButton(void Function() onPressed) {
 }
 
 class Sheepometer extends StatefulWidget {
-  Sheepometer(this.sheepAmount, {Key? key}) : super(key: key);
+  const Sheepometer(this.sheepAmount, {Key? key}) : super(key: key);
 
-  int sheepAmount;
+  final int sheepAmount;
 
   @override
   State<Sheepometer> createState() => _SheepometerState();
