@@ -66,7 +66,9 @@ class _MapState extends State<MainPage> {
             Icons.settings,
             size: 44,
           ),
-          onPressed: () {},
+          onPressed: () {
+            // TODO: showDialog? https://stackoverflow.com/questions/54480641/flutter-how-to-create-forms-in-popup
+          },
         ),
         top: 8 + MediaQuery.of(context).viewPadding.top,
         right: 8,
