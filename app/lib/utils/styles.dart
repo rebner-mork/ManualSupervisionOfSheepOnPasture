@@ -14,6 +14,7 @@ double mainButtonHeight = 50;
 TextStyle circularMapButtonTextStyle =
     const TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
+Size circularMapButtonSize = const Size(50, 50);
 BoxDecoration circularMapButtonDecoration = BoxDecoration(
     color: Colors.green,
     border: Border.all(color: Colors.transparent, width: 0),

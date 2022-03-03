@@ -203,7 +203,7 @@ class _SheepometerState extends State<Sheepometer> {
           });
         },
         child: Container(
-            height: 50,
+            height: circularMapButtonSize.height,
             width: 62 +
                 textSize(widget.sheepAmount.toString(),
                         circularMapButtonTextStyle)
@@ -228,13 +228,11 @@ class SettingsButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-        color: Colors.transparent,
-        child: Container(
-            width: 50,
-            height: 50,
-            decoration: circularMapButtonDecoration,
-            child: const SettingsIconButton()));
+    return Container(
+        width: circularMapButtonSize.width,
+        height: circularMapButtonSize.height,
+        decoration: circularMapButtonDecoration,
+        child: const SettingsIconButton());
   }
 }
 
@@ -243,17 +241,20 @@ class SettingsIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      padding: EdgeInsets.zero,
-      icon: const Icon(
-        Icons.settings,
-        color: Colors.black,
-        size: 42,
-      ),
-      onPressed: () {
-        showDialog(context: context, builder: (_) => const SettingsDialog());
-      },
-    );
+    return Material(
+        color: Colors.transparent,
+        child: IconButton(
+          padding: EdgeInsets.zero,
+          icon: const Icon(
+            Icons.settings,
+            color: Colors.black,
+            size: 42,
+          ),
+          onPressed: () {
+            showDialog(
+                context: context, builder: (_) => const SettingsDialog());
+          },
+        ));
   }
 }
 
