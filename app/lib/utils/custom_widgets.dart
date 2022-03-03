@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:app/utils/other.dart';
+import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
 
 InputDecoration customInputDecoration(String labelText, IconData icon,
@@ -174,4 +175,120 @@ FloatingActionButton startDialogButton(void Function() onPressed) {
     onPressed: onPressed,
     child: const Icon(Icons.mic, size: 30),
   );
+}
+
+class Sheepometer extends StatefulWidget {
+  Sheepometer(this.sheepAmount, {Key? key}) : super(key: key);
+
+  int sheepAmount;
+
+  @override
+  State<Sheepometer> createState() => _SheepometerState();
+}
+
+class _SheepometerState extends State<Sheepometer> {
+  Color color = Colors.green;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+        onTapDown: (_) {
+          setState(() {
+            color = Colors.green.shade700;
+          });
+        },
+        onTap: () {
+          setState(() {
+            color = Colors.green;
+          });
+        },
+        child: Container(
+            height: 50,
+            width: 62 +
+                textSize(widget.sheepAmount.toString(),
+                        circularMapButtonTextStyle)
+                    .width,
+            decoration: color == Colors.green
+                ? circularMapButtonDecoration
+                : circularMapButtonDecorationPressed,
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              const Image(
+                  image: AssetImage('images/sheep.png'), width: 42, height: 42),
+              Text(widget.sheepAmount.toString(),
+                  style: circularMapButtonTextStyle),
+              const SizedBox(
+                width: 2,
+              )
+            ])));
+  }
+}
+
+class SettingsButton extends StatelessWidget {
+  const SettingsButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+        color: Colors.transparent,
+        child: Container(
+            width: 50,
+            height: 50,
+            decoration: circularMapButtonDecoration,
+            child: const SettingsIconButton()));
+  }
+}
+
+class SettingsIconButton extends StatelessWidget {
+  const SettingsIconButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      padding: EdgeInsets.zero,
+      icon: const Icon(
+        Icons.settings,
+        color: Colors.black,
+        size: 42,
+      ),
+      onPressed: () {
+        showDialog(context: context, builder: (_) => const SettingsDialog());
+      },
+    );
+  }
+}
+
+class SettingsDialog extends StatelessWidget {
+  const SettingsDialog({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SimpleDialog(
+        title: const Text(
+          'Innstillinger',
+          textAlign: TextAlign.center,
+        ),
+        children: [
+          ListTile(
+            title: const Text('Auto-dialog'),
+            trailing: Switch(
+                value: true, activeColor: Colors.green, onChanged: (_) {}),
+          ),
+          ListTile(
+            title: const Text('Les tilbake'),
+            trailing: Switch(
+                value: true, activeColor: Colors.green, onChanged: (_) {}),
+          ),
+          ElevatedButton(
+            child: Text(
+              'Nedlastede kart',
+              style: buttonTextStyle,
+            ),
+            style: ButtonStyle(
+              fixedSize:
+                  MaterialStateProperty.all(Size.fromHeight(mainButtonHeight)),
+            ),
+            onPressed: () {},
+          )
+        ]);
+  }
 }

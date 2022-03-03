@@ -78,6 +78,7 @@ class _StartTripPageState extends State<StartTripPage>
             appBar: AppBar(
               title: const Text('Start oppsynstur'),
               centerTitle: true,
+              actions: const [SettingsIconButton()],
             ),
             body: Column(
               children: _loadingData

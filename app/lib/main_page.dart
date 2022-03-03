@@ -1,4 +1,5 @@
 import 'package:app/map/map_widget.dart';
+import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/other.dart';
 import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,6 @@ class _MapState extends State<MainPage> {
   final ValueNotifier<bool> _ongoingDialog = ValueNotifier<bool>(false);
 
   int _sheepAmount = 0;
-  Color sheepAmountButtonColor = Colors.green;
 
   @override
   void initState() {
@@ -56,70 +56,14 @@ class _MapState extends State<MainPage> {
                 });
               })),
       Positioned(
-        child: Sheepometer(_sheepAmount, sheepAmountButtonColor),
+        child: Sheepometer(_sheepAmount),
         bottom: 8 + MediaQuery.of(context).viewPadding.bottom,
         left: 8,
       ),
       Positioned(
-        child: IconButton(
-          icon: const Icon(
-            Icons.settings,
-            size: 44,
-          ),
-          onPressed: () {
-            // TODO: showDialog? https://stackoverflow.com/questions/54480641/flutter-how-to-create-forms-in-popup
-          },
-        ),
-        top: 8 + MediaQuery.of(context).viewPadding.top,
-        right: 8,
-      )
+          top: 8 + MediaQuery.of(context).viewPadding.top,
+          right: 8,
+          child: const SettingsButton())
     ]));
-  }
-}
-
-class Sheepometer extends StatefulWidget {
-  Sheepometer(this.sheepAmount, this.color, {Key? key}) : super(key: key);
-
-  int sheepAmount;
-  Color color;
-
-  @override
-  State<Sheepometer> createState() => _SheepometerState();
-}
-
-class _SheepometerState extends State<Sheepometer> {
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-        onTapDown: (_) {
-          setState(() {
-            widget.color = Colors.green.shade700;
-          });
-        },
-        onTap: () {
-          setState(() {
-            widget.color = Colors.green;
-          });
-        },
-        child: Container(
-            height: 50,
-            width: 62 +
-                textSize(widget.sheepAmount.toString(),
-                        circularMapButtonTextStyle)
-                    .width,
-            decoration: BoxDecoration(
-                color: widget.color,
-                border: circularMapButtonBorder,
-                borderRadius:
-                    const BorderRadius.all(Radius.elliptical(75, 75))),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              const Image(
-                  image: AssetImage('images/sheep.png'), width: 42, height: 42),
-              Text(widget.sheepAmount.toString(),
-                  style: circularMapButtonTextStyle),
-              const SizedBox(
-                width: 2,
-              )
-            ])));
   }
 }
