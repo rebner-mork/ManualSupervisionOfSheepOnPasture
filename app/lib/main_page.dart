@@ -1,7 +1,6 @@
 import 'package:app/map/map_widget.dart';
-import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/other.dart';
-import 'package:app/utils/styles.dart';
+import 'package:app/utils/widgets/circular_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
@@ -56,21 +55,20 @@ class _MapState extends State<MainPage> {
                 });
               })),
       Positioned(
-        child: CircularMapButton(
-          child: SheepometerIconButton(_sheepAmount),
-          width: 62 +
-              textSize(_sheepAmount.toString(), circularMapButtonTextStyle)
-                  .width,
-        ),
-        bottom: 8 + MediaQuery.of(context).viewPadding.bottom,
-        left: 8,
-      ),
-      Positioned(
           top: 8 + MediaQuery.of(context).viewPadding.top,
           right: 8,
-          child: const CircularMapButton(
+          child: const CircularButton(
             child: SettingsIconButton(),
-          ))
+          )),
+      Positioned(
+        bottom: 8 + MediaQuery.of(context).viewPadding.bottom,
+        left: 8,
+        child: CircularButton(
+          child: SheepometerIconButton(_sheepAmount),
+          width: 62 +
+              textSize(_sheepAmount.toString(), circularButtonTextStyle).width,
+        ),
+      ),
     ]));
   }
 }
