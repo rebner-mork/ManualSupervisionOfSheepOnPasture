@@ -8,7 +8,10 @@ import 'package:app/utils/styles.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+
+import 'dart:developer' as dev;
 
 class StartTripPage extends StatefulWidget {
   const StartTripPage({Key? key}) : super(key: key);
@@ -30,6 +33,7 @@ class _StartTripPageState extends State<StartTripPage>
 
   Map<String, Map<String, Map<String, double>>> _selectedFarmMaps = {};
   String _selectedFarmMap = '';
+  Map<String, LatLng> mapBounds = {};
 
   bool _loadingData = true;
   bool _downloadingMap = false;
@@ -38,7 +42,9 @@ class _StartTripPageState extends State<StartTripPage>
 
   String _feedbackText = '';
 
-  IconData _mapIcon = Icons.download_for_offline_outlined;
+  final IconData downloadedIcon = Icons.download_done;
+  final IconData notDownloadedIcon = Icons.download_for_offline_sharp;
+  IconData _mapIcon = Icons.download_for_offline_sharp;
   late AnimationController _animationController;
   late Animation<Color?> _colorTween;
 
@@ -139,7 +145,7 @@ class _StartTripPageState extends State<StartTripPage>
                     setState(() {
                       _selectedFarmName = newFarmName;
                       _feedbackText = '';
-                      _mapDownloaded = false;
+                      updateIcon();
                     });
                   }
                 })),
@@ -181,8 +187,7 @@ class _StartTripPageState extends State<StartTripPage>
                     setState(() {
                       _selectedFarmMap = newMapName;
                       _feedbackText = '';
-                      _mapIcon = Icons.download_for_offline_outlined;
-                      _mapDownloaded = false;
+                      updateIcon();
                     });
                   }
                 },
@@ -198,30 +203,24 @@ class _StartTripPageState extends State<StartTripPage>
                   color: _mapDownloaded ? Colors.green : null,
                 ),
                 onPressed: () {
-                  if (_mapIcon != Icons.file_download_done) {
-                    LatLng northWest = LatLng(
-                        _selectedFarmMaps[_selectedFarmMap]!['northWest']![
-                            'latitude']!,
-                        _selectedFarmMaps[_selectedFarmMap]!['northWest']![
-                            'longitude']!);
-                    LatLng southEast = LatLng(
-                        _selectedFarmMaps[_selectedFarmMap]!['southEast']![
-                            'latitude']!,
-                        _selectedFarmMaps[_selectedFarmMap]!['southEast']![
-                            'longitude']!);
+                  if (_mapIcon != downloadedIcon) {
                     setState(() {
                       _animationController.repeat();
                       _downloadingMap = true;
                       _mapIcon = Icons.downloading;
                       _feedbackText = 'Laster ned kart...';
                     });
-                    downloadTiles(northWest, southEast, OfflineZoomLevels.min,
+                    dev.log(mapBounds.toString());
+                    downloadTiles(
+                            mapBounds['northWest']!,
+                            mapBounds['southEast']!,
+                            OfflineZoomLevels.min,
                             OfflineZoomLevels.max)
                         .then((_) => {
                               setState(() {
                                 _downloadingMap = false;
                                 _mapDownloaded = true;
-                                _mapIcon = Icons.file_download_done;
+                                _mapIcon = downloadedIcon;
                                 _animationController.reset();
                                 _feedbackText =
                                     'Kartet \'$_selectedFarmMap\' er nedlastet.';
@@ -243,6 +242,23 @@ class _StartTripPageState extends State<StartTripPage>
         ]);
   }
 
+  void setMapBounds() {
+    mapBounds['northWest'] = LatLng(
+        _selectedFarmMaps[_selectedFarmMap]!['northWest']!['latitude']!,
+        _selectedFarmMaps[_selectedFarmMap]!['northWest']!['longitude']!);
+    mapBounds['southEast'] = LatLng(
+        _selectedFarmMaps[_selectedFarmMap]!['southEast']!['latitude']!,
+        _selectedFarmMaps[_selectedFarmMap]!['southEast']!['longitude']!);
+    dev.log(mapBounds.toString());
+  }
+
+  void updateIcon() {
+    setMapBounds();
+    _mapDownloaded = isTilesDownloaded(mapBounds['northWest']!,
+        mapBounds['southEast']!, OfflineZoomLevels.min, OfflineZoomLevels.max);
+    _mapIcon = _mapDownloaded ? downloadedIcon : notDownloadedIcon;
+  }
+
   ElevatedButton startTripButton() {
     return ElevatedButton(
       child: Text(
@@ -262,22 +278,17 @@ class _StartTripPageState extends State<StartTripPage>
     );
   }
 
-  void _startTrip() async {
-    LatLng northWest = LatLng(
-        _selectedFarmMaps[_selectedFarmMap]!['northWest']!['latitude']!,
-        _selectedFarmMaps[_selectedFarmMap]!['northWest']!['longitude']!);
-    LatLng southEast = LatLng(
-        _selectedFarmMaps[_selectedFarmMap]!['southEast']!['latitude']!,
-        _selectedFarmMaps[_selectedFarmMap]!['southEast']!['longitude']!);
-    await downloadTiles(
-        northWest, southEast, OfflineZoomLevels.min, OfflineZoomLevels.max);
+  Future<void> _startTrip() async {
+    await downloadTiles(mapBounds['northWest']!, mapBounds['southEast']!,
+        OfflineZoomLevels.min, OfflineZoomLevels.max);
     setState(() {
       _feedbackText = '';
     });
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) => MapWidget(northWest, southEast)));
+            builder: (context) =>
+                MapWidget(mapBounds['northWest']!, mapBounds['southEast']!)));
   }
 
   Map<String, Map<String, Map<String, double>>> _castMapsFromDynamic(
@@ -295,7 +306,7 @@ class _StartTripPageState extends State<StartTripPage>
                         (key, value) => MapEntry(key, value as double))))));
   }
 
-  void _readFarmMaps(String farmId) async {
+  Future<void> _readFarmMaps(String farmId) async {
     CollectionReference farmCollection =
         FirebaseFirestore.instance.collection('farms');
     DocumentReference farmDoc = farmCollection.doc(farmId);
@@ -308,6 +319,7 @@ class _StartTripPageState extends State<StartTripPage>
 
       setState(() {
         _selectedFarmMap = _selectedFarmMaps.keys.first;
+        updateIcon();
       });
     } else {
       setState(() {
@@ -319,7 +331,7 @@ class _StartTripPageState extends State<StartTripPage>
     }
   }
 
-  void _readFarms() async {
+  Future<void> _readFarms() async {
     String email = FirebaseAuth.instance.currentUser!.email!;
     CollectionReference personnelCollection =
         FirebaseFirestore.instance.collection('personnel');

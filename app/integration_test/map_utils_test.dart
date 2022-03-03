@@ -54,6 +54,9 @@ void main() {
 
     expect(acutalDirectoryListing.length, expectedDirectoryListing.length);
 
+    expect(acutalDirectoryListing.length,
+        numberOfTiles(northWest, southEast, minZoom, maxZoom));
+
     Set<String> expectedDirectoryListingSet = expectedDirectoryListing.toSet();
 
     expect(acutalDirectoryListing.length, expectedDirectoryListingSet.length);
