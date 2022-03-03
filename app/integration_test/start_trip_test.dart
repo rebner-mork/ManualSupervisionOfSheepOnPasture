@@ -25,6 +25,7 @@ void main() async {
       expect(find.text('Kart'), findsNothing);
 
       await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 300));
 
       expect(find.text('Laster inn...'), findsNothing);
       expect(find.text('Start oppsynstur'), findsNWidgets(2));
@@ -33,7 +34,7 @@ void main() async {
 
       expect(find.text(farmName), findsOneWidget);
       expect(find.text(validMaps.keys.first), findsOneWidget);
-      expect(find.text(validMaps.keys.elementAt(1)), findsOneWidget);
+      expect(find.text(validMaps.keys.last), findsOneWidget);
 
       expect(find.byIcon(notDownloadedIcon), findsOneWidget);
     });
@@ -41,19 +42,25 @@ void main() async {
     testWidgets('Download map', (WidgetTester tester) async {
       await tester.pumpWidget(const MaterialApp(home: StartTripPage()));
       await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 300));
 
       expect(find.byIcon(notDownloadedIcon), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.byType(LinearProgressIndicator), findsNothing);
 
       await tester.tap(find.byIcon(notDownloadedIcon));
       await tester.pump();
 
       expect(find.byIcon(notDownloadedIcon), findsNothing);
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byType(LinearProgressIndicator), findsOneWidget);
       expect(find.text('Laster ned kart...'), findsOneWidget);
 
       await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 300));
+
       expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.byType(LinearProgressIndicator), findsNothing);
       expect(find.byIcon(downloadedIcon), findsOneWidget);
       expect(find.text('Kartet \'${validMaps.keys.first}\' er nedlastet.'),
           findsOneWidget);
@@ -71,6 +78,7 @@ void main() async {
       expect(find.text('Kart'), findsNothing);
 
       await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 300));
 
       expect(find.text('Laster inn...'), findsNothing);
       expect(find.text('Start oppsynstur'), findsNWidgets(2));
@@ -93,6 +101,7 @@ void main() async {
 
       await tester.pumpWidget(const MaterialApp(home: StartTripPage()));
       await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 300));
 
       expect(find.text('Laster inn...'), findsNothing);
       expect(
