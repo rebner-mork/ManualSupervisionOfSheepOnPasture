@@ -8,7 +8,6 @@ import 'package:app/utils/styles.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
 class StartTripPage extends StatefulWidget {
@@ -213,7 +212,7 @@ class _StartTripPageState extends State<StartTripPage>
                   color: _mapDownloaded ? Colors.green : null,
                 ),
                 onPressed: () {
-                  if (_mapIcon != downloadedIcon) {
+                  if (!_mapDownloaded) {
                     setState(() {
                       _animationController.repeat();
                       _downloadingMap = true;
@@ -340,17 +339,21 @@ class _StartTripPageState extends State<StartTripPage>
     if (maps != null) {
       _selectedFarmMaps = _castMapsFromDynamic(maps);
 
-      setState(() {
-        _selectedFarmMap = _selectedFarmMaps.keys.first;
-        updateIcon();
-      });
+      if (mounted) {
+        setState(() {
+          _selectedFarmMap = _selectedFarmMaps.keys.first;
+          updateIcon();
+        });
+      }
     } else {
-      setState(() {
-        _noMapsDefined = true;
-        _selectedFarmMap = '';
-        _feedbackText =
-            'Gården \'$_selectedFarmName\' har ikke definert noen kart';
-      });
+      if (mounted) {
+        setState(() {
+          _noMapsDefined = true;
+          _selectedFarmMap = '';
+          _feedbackText =
+              'Gården \'$_selectedFarmName\' har ikke definert noen kart';
+        });
+      }
     }
   }
 

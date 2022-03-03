@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:latlong2/latlong.dart';
@@ -139,14 +138,13 @@ String _getServerTileUrl(int x, int y, int z) {
 // --- DOWNLOADS ---
 
 Future<void> _downloadTile(int x, int y, int zoom) async {
-  String localPath = _getLocalTileUrl(x, y, zoom);
-  String serverPath = _getServerTileUrl(x, y, zoom);
-  String localDirPath = localPath.replaceAll(y.toString() + ".png", "");
+  String localFilePath = _getLocalTileUrl(x, y, zoom);
+  String localDirPath = localFilePath.replaceAll(y.toString() + ".png", "");
 
-  if (!File(localPath).existsSync()) {
+  if (!File(localFilePath).existsSync()) {
     await Directory(localDirPath).create(recursive: true);
     var response = await http.get(Uri.parse(_getServerTileUrl(x, y, zoom)));
-    File(localPath).writeAsBytesSync(response.bodyBytes);
+    File(localFilePath).writeAsBytesSync(response.bodyBytes);
   }
 }
 
@@ -167,7 +165,9 @@ Future<void> downloadTiles(
     for (int x = west; x <= east; x++) {
       for (int y = north; y <= south; y++) {
         await _downloadTile(x, y, zoom);
-        progressIndicator!(++currentTileNumber / totalTileNumber);
+        if (progressIndicator != null) {
+          progressIndicator(++currentTileNumber / totalTileNumber);
+        }
       }
     }
   }

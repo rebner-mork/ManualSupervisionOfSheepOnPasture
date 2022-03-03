@@ -71,7 +71,7 @@ class _MapState extends State<MapWidget> {
   }
 
   Future<void> _loadUrlTemplate() async {
-    urlTemplate = await map_utils.getLocalUrlTemplate();
+    urlTemplate = map_utils.getLocalUrlTemplate();
     setState(() {
       urlTemplateLoaded = true;
     });

@@ -1,4 +1,5 @@
 import 'package:app/trip/start_trip_page.dart';
+import 'package:app/utils/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,6 +11,9 @@ void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   await firebaseSetup(createUser: true, signIn: true);
   await setUpFarm();
+  setConstants();
+  final IconData downloadedIcon = Icons.download_done;
+  final IconData notDownloadedIcon = Icons.download_for_offline_sharp;
 
   group('Start trip happy day scenario', () {
     testWidgets('Initial layout', (WidgetTester tester) async {
@@ -31,26 +35,26 @@ void main() async {
       expect(find.text(validMaps.keys.first), findsOneWidget);
       expect(find.text(validMaps.keys.elementAt(1)), findsOneWidget);
 
-      expect(find.byIcon(Icons.download_for_offline_outlined), findsOneWidget);
+      expect(find.byIcon(notDownloadedIcon), findsOneWidget);
     });
 
     testWidgets('Download map', (WidgetTester tester) async {
       await tester.pumpWidget(const MaterialApp(home: StartTripPage()));
       await tester.pumpAndSettle();
 
-      expect(find.byIcon(Icons.download_for_offline_outlined), findsOneWidget);
+      expect(find.byIcon(notDownloadedIcon), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsNothing);
 
-      await tester.tap(find.byIcon(Icons.download_for_offline_outlined));
+      await tester.tap(find.byIcon(notDownloadedIcon));
       await tester.pump();
 
-      expect(find.byIcon(Icons.download_for_offline_outlined), findsNothing);
+      expect(find.byIcon(notDownloadedIcon), findsNothing);
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
       expect(find.text('Laster ned kart...'), findsOneWidget);
 
       await tester.pumpAndSettle();
       expect(find.byType(CircularProgressIndicator), findsNothing);
-      expect(find.byIcon(Icons.file_download_done), findsOneWidget);
+      expect(find.byIcon(downloadedIcon), findsOneWidget);
       expect(find.text('Kartet \'${validMaps.keys.first}\' er nedlastet.'),
           findsOneWidget);
     });
