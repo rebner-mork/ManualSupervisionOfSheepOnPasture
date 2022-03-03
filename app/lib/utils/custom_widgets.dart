@@ -177,62 +177,50 @@ FloatingActionButton startDialogButton(void Function() onPressed) {
   );
 }
 
-class Sheepometer extends StatefulWidget {
-  const Sheepometer(this.sheepAmount, {Key? key}) : super(key: key);
+class CircularMapButton extends StatelessWidget {
+  const CircularMapButton({this.child, this.width, this.height, Key? key})
+      : super(key: key);
 
-  final int sheepAmount;
-
-  @override
-  State<Sheepometer> createState() => _SheepometerState();
-}
-
-class _SheepometerState extends State<Sheepometer> {
-  Color color = Colors.green;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-        onTapDown: (_) {
-          setState(() {
-            color = Colors.green.shade700;
-          });
-        },
-        onTap: () {
-          setState(() {
-            color = Colors.green;
-          });
-        },
-        child: Container(
-            height: circularMapButtonSize.height,
-            width: 62 +
-                textSize(widget.sheepAmount.toString(),
-                        circularMapButtonTextStyle)
-                    .width,
-            decoration: color == Colors.green
-                ? circularMapButtonDecoration
-                : circularMapButtonDecorationPressed,
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              const Image(
-                  image: AssetImage('images/sheep.png'), width: 42, height: 42),
-              Text(widget.sheepAmount.toString(),
-                  style: circularMapButtonTextStyle),
-              const SizedBox(
-                width: 2,
-              )
-            ])));
-  }
-}
-
-class SettingsButton extends StatelessWidget {
-  const SettingsButton({Key? key}) : super(key: key);
+  final Widget? child;
+  final double? width;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        width: circularMapButtonSize.width,
-        height: circularMapButtonSize.height,
+        clipBehavior: Clip.hardEdge,
+        width: width ?? circularMapButtonSize.width,
+        height: height ?? circularMapButtonSize.height,
         decoration: circularMapButtonDecoration,
-        child: const SettingsIconButton());
+        child: child);
+  }
+}
+
+class SheepometerIconButton extends StatelessWidget {
+  const SheepometerIconButton(this.sheepAmount, {Key? key}) : super(key: key);
+
+  final int sheepAmount;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+        color: Colors.transparent,
+        child: IconButton(
+          highlightColor: Colors.green.shade700,
+          splashRadius: 42 +
+              textSize(sheepAmount.toString(), circularMapButtonTextStyle)
+                  .width,
+          padding: EdgeInsets.zero,
+          icon: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            const Image(
+                image: AssetImage('images/sheep.png'), width: 42, height: 42),
+            Text(sheepAmount.toString(), style: circularMapButtonTextStyle),
+            const SizedBox(
+              width: 2,
+            )
+          ]),
+          onPressed: () {},
+        ));
   }
 }
 
@@ -244,6 +232,8 @@ class SettingsIconButton extends StatelessWidget {
     return Material(
         color: Colors.transparent,
         child: IconButton(
+          highlightColor: Colors.green.shade700,
+          splashRadius: 27,
           padding: EdgeInsets.zero,
           icon: const Icon(
             Icons.settings,
