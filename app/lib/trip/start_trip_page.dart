@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:app/main_page.dart';
 import 'package:app/map/map_widget.dart';
 import 'package:app/utils/constants.dart';
 import 'package:app/utils/custom_widgets.dart';
@@ -277,7 +278,7 @@ class _StartTripPageState extends State<StartTripPage>
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) => MapWidget(northWest, southEast)));
+            builder: (context) => MainPage(northWest, southEast)));
   }
 
   Map<String, Map<String, Map<String, double>>> _castMapsFromDynamic(
