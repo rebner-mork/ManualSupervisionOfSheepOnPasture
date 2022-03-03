@@ -264,18 +264,22 @@ class SettingsDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-        title: const Text(
+        title: Text(
           'Innstillinger',
+          style: settingsHeadlineTextStyle,
           textAlign: TextAlign.center,
         ),
         children: [
           ListTile(
-            title: const Text('Auto-dialog'),
+            title: Text(
+              'Auto-dialog',
+              style: settingsTextStyle,
+            ),
             trailing: Switch(
                 value: true, activeColor: Colors.green, onChanged: (_) {}),
           ),
           ListTile(
-            title: const Text('Les tilbake'),
+            title: Text('Les tilbake', style: settingsTextStyle),
             trailing: Switch(
                 value: true, activeColor: Colors.green, onChanged: (_) {}),
           ),
