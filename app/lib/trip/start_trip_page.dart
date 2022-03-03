@@ -40,6 +40,8 @@ class _StartTripPageState extends State<StartTripPage>
   bool _mapDownloaded = false;
   bool _noMapsDefined = false;
 
+  double _downloadProgress = 0.0;
+
   String _feedbackText = '';
 
   final IconData downloadedIcon = Icons.download_done;
@@ -110,6 +112,17 @@ class _StartTripPageState extends State<StartTripPage>
                             _feedbackText,
                             style: feedbackTextStyle,
                           ),
+                          inputFieldSpacer(),
+                          Visibility(
+                              visible: _downloadingMap,
+                              child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 40),
+                                  child: LinearProgressIndicator(
+                                    value: _downloadProgress,
+                                    //backgroundColor: Colors.grey,
+                                    minHeight: 10,
+                                  ))),
                           inputFieldSpacer(),
                           startTripButton()
                         ],
@@ -212,20 +225,21 @@ class _StartTripPageState extends State<StartTripPage>
                     });
                     dev.log(mapBounds.toString());
                     downloadTiles(
-                            mapBounds['northWest']!,
-                            mapBounds['southEast']!,
-                            OfflineZoomLevels.min,
-                            OfflineZoomLevels.max)
-                        .then((_) => {
-                              setState(() {
-                                _downloadingMap = false;
-                                _mapDownloaded = true;
-                                _mapIcon = downloadedIcon;
-                                _animationController.reset();
-                                _feedbackText =
-                                    'Kartet \'$_selectedFarmMap\' er nedlastet.';
-                              })
-                            });
+                        mapBounds['northWest']!,
+                        mapBounds['southEast']!,
+                        OfflineZoomLevels.min,
+                        OfflineZoomLevels.max, progressIndicator: (value) {
+                      _downloadProgress = value;
+                    }).then((_) => {
+                          setState(() {
+                            _downloadingMap = false;
+                            _mapDownloaded = true;
+                            _mapIcon = downloadedIcon;
+                            _animationController.reset();
+                            _feedbackText =
+                                'Kartet \'$_selectedFarmMap\' er nedlastet.';
+                          })
+                        });
                   }
                 },
               )),
@@ -279,10 +293,25 @@ class _StartTripPageState extends State<StartTripPage>
   }
 
   Future<void> _startTrip() async {
-    await downloadTiles(mapBounds['northWest']!, mapBounds['southEast']!,
-        OfflineZoomLevels.min, OfflineZoomLevels.max);
+    if (!_mapDownloaded) {
+      setState(() {
+        _feedbackText = 'Oppsynsturen starter når kartet er lastet ned';
+        _downloadingMap = true;
+      });
+      await downloadTiles(
+          mapBounds['northWest']!,
+          mapBounds['southEast']!,
+          OfflineZoomLevels.min,
+          OfflineZoomLevels.max, progressIndicator: (value) {
+        setState(() {
+          _downloadProgress = value;
+        });
+      });
+    }
     setState(() {
       _feedbackText = '';
+      updateIcon();
+      _downloadingMap = false;
     });
     Navigator.pushReplacement(
         context,

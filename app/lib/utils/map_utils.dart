@@ -95,17 +95,23 @@ int getTileIndexY(double latitude, int zoom) {
       .floor();
 }
 
+//TODO REFACTOR with calculations!!!!!!!!!!
 int numberOfTiles(
-    LatLng northWest, LatLng southEast, double maxZoom, double minZoom) {
-  int numberOfTiles = 0;
-  for (int z = minZoom.toInt(); minZoom <= maxZoom.toInt(); z++) {
-    int west = getTileIndexX(northWest.longitude, z);
-    int east = getTileIndexX(southEast.longitude, z);
-    int north = getTileIndexY(northWest.latitude, z);
-    int south = getTileIndexY(southEast.latitude, z);
-    numberOfTiles += (east - west) * (south - north);
+    LatLng northWest, LatLng southEast, double minZoom, double maxZoom) {
+  int _numberOfTiles = 0;
+  for (int zoom = minZoom.toInt(); zoom <= maxZoom.toInt(); zoom++) {
+    int west = getTileIndexX(northWest.longitude, zoom);
+    int east = getTileIndexX(southEast.longitude, zoom);
+    int north = getTileIndexY(northWest.latitude, zoom);
+    int south = getTileIndexY(southEast.latitude, zoom);
+
+    for (int x = west; x <= east; x++) {
+      for (int y = north; y <= south; y++) {
+        _numberOfTiles++;
+      }
+    }
   }
-  return numberOfTiles;
+  return _numberOfTiles;
 }
 
 // --- PATHS ---
@@ -151,14 +157,12 @@ Future<void> _downloadTile(int x, int y, int zoom) async {
 // TODO evt ha prosent på callback (?????)
 
 Future<void> downloadTiles(
-  LatLng northWest,
-  LatLng southEast,
-  double minZoom,
-  double maxZoom,
-  /*{ValueChanged<int>? progressIndicator}*/
-) async {
-  int tileNumber = 0;
-
+    LatLng northWest, LatLng southEast, double minZoom, double maxZoom,
+    {ValueChanged<double>? progressIndicator}) async {
+  int currentTileNumber = 0;
+  dev.log("okeu");
+  int totalTileNumber = numberOfTiles(northWest, southEast, minZoom, maxZoom);
+  dev.log("okjh");
   for (int zoom = minZoom.toInt(); zoom <= maxZoom.toInt(); zoom++) {
     int west = getTileIndexX(northWest.longitude, zoom);
     int east = getTileIndexX(southEast.longitude, zoom);
@@ -171,13 +175,12 @@ Future<void> downloadTiles(
       for (int y = north; y <= south; y++) {
         await _downloadTile(x, y, zoom);
         dev.log("download $x $y $zoom");
-        //  progressIndicator!(++tileNumber);
-
+        progressIndicator!(++currentTileNumber / totalTileNumber);
       }
     }
   }
 
-  dev.log("download completed ($tileNumber tiles)");
+  dev.log("download completed ($currentTileNumber tiles)");
 }
 
 bool isTilesDownloaded(
