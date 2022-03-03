@@ -11,8 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
-import 'dart:developer' as dev;
-
 class StartTripPage extends StatefulWidget {
   const StartTripPage({Key? key}) : super(key: key);
 
@@ -117,10 +115,9 @@ class _StartTripPageState extends State<StartTripPage>
                               visible: _downloadingMap,
                               child: Padding(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 40),
+                                      horizontal: 160),
                                   child: LinearProgressIndicator(
                                     value: _downloadProgress,
-                                    //backgroundColor: Colors.grey,
                                     minHeight: 10,
                                   ))),
                           inputFieldSpacer(),
@@ -220,10 +217,8 @@ class _StartTripPageState extends State<StartTripPage>
                     setState(() {
                       _animationController.repeat();
                       _downloadingMap = true;
-                      _mapIcon = Icons.downloading;
                       _feedbackText = 'Laster ned kart...';
                     });
-                    dev.log(mapBounds.toString());
                     downloadTiles(
                         mapBounds['northWest']!,
                         mapBounds['southEast']!,
@@ -263,7 +258,6 @@ class _StartTripPageState extends State<StartTripPage>
     mapBounds['southEast'] = LatLng(
         _selectedFarmMaps[_selectedFarmMap]!['southEast']!['latitude']!,
         _selectedFarmMaps[_selectedFarmMap]!['southEast']!['longitude']!);
-    dev.log(mapBounds.toString());
   }
 
   void updateIcon() {

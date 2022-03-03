@@ -9,8 +9,6 @@ import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'constants.dart';
 
-import 'dart:developer' as dev;
-
 // --- MAP PROVIDER ---
 
 abstract class MapProvider {
@@ -145,8 +143,6 @@ Future<void> _downloadTile(int x, int y, int zoom) async {
   String serverPath = _getServerTileUrl(x, y, zoom);
   String localDirPath = localPath.replaceAll(y.toString() + ".png", "");
 
-  dev.log("local path: $localPath\n server path: $serverPath");
-
   if (!File(localPath).existsSync()) {
     await Directory(localDirPath).create(recursive: true);
     var response = await http.get(Uri.parse(_getServerTileUrl(x, y, zoom)));
@@ -160,27 +156,21 @@ Future<void> downloadTiles(
     LatLng northWest, LatLng southEast, double minZoom, double maxZoom,
     {ValueChanged<double>? progressIndicator}) async {
   int currentTileNumber = 0;
-  dev.log("okeu");
   int totalTileNumber = numberOfTiles(northWest, southEast, minZoom, maxZoom);
-  dev.log("okjh");
+
   for (int zoom = minZoom.toInt(); zoom <= maxZoom.toInt(); zoom++) {
     int west = getTileIndexX(northWest.longitude, zoom);
     int east = getTileIndexX(southEast.longitude, zoom);
     int north = getTileIndexY(northWest.latitude, zoom);
     int south = getTileIndexY(southEast.latitude, zoom);
 
-    dev.log("$west -> $east $north -> $south");
-
     for (int x = west; x <= east; x++) {
       for (int y = north; y <= south; y++) {
         await _downloadTile(x, y, zoom);
-        dev.log("download $x $y $zoom");
         progressIndicator!(++currentTileNumber / totalTileNumber);
       }
     }
   }
-
-  dev.log("download completed ($currentTileNumber tiles)");
 }
 
 bool isTilesDownloaded(
@@ -194,13 +184,11 @@ bool isTilesDownloaded(
     for (int x = west; x <= east; x++) {
       for (int y = north; y <= south; y++) {
         String path = _getLocalTileUrl(x, y, zoom);
-        dev.log("checked $x $y $zoom");
         if (!File(path).existsSync()) {
           return false;
         }
       }
     }
   }
-  dev.log("check completed");
   return true;
 }
