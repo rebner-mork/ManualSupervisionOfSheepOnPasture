@@ -57,8 +57,19 @@ class _MapState extends State<MainPage> {
               })),
       Positioned(
         child: Sheepometer(_sheepAmount, sheepAmountButtonColor),
-        bottom: 8,
+        bottom: 8 + MediaQuery.of(context).viewPadding.bottom,
         left: 8,
+      ),
+      Positioned(
+        child: IconButton(
+          icon: const Icon(
+            Icons.settings,
+            size: 44,
+          ),
+          onPressed: () {},
+        ),
+        top: 8 + MediaQuery.of(context).viewPadding.top,
+        right: 8,
       )
     ]));
   }
