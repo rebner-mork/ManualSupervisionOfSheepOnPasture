@@ -1,5 +1,4 @@
 import 'package:app/utils/custom_widgets.dart';
-import 'package:app/utils/other.dart';
 import 'package:flutter/material.dart';
 
 TextStyle circularButtonTextStyle =
@@ -92,11 +91,7 @@ class SettingsIconButton extends StatelessWidget {
           highlightColor: Colors.green.shade700,
           splashRadius: 24,
           padding: EdgeInsets.zero,
-          icon: const Icon(
-            Icons.settings,
-            color: Colors.black,
-            size: 42,
-          ),
+          icon: const SettingsIcon(iconSize: 42),
           onPressed: () {
             showDialog(
                 context: context, builder: (_) => const SettingsDialog());
