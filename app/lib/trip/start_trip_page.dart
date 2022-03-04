@@ -1,6 +1,6 @@
 import 'dart:collection';
 
-import 'package:app/map/map_widget.dart';
+import 'package:app/main_page.dart';
 import 'package:app/utils/constants.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/map_utils.dart';
@@ -77,6 +77,7 @@ class _StartTripPageState extends State<StartTripPage>
             appBar: AppBar(
               title: const Text('Start oppsynstur'),
               centerTitle: true,
+              actions: const [SettingsIconButton()],
             ),
             body: Column(
               children: _loadingData
@@ -277,7 +278,7 @@ class _StartTripPageState extends State<StartTripPage>
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) => MapWidget(northWest, southEast)));
+            builder: (context) => MainPage(northWest, southEast)));
   }
 
   Map<String, Map<String, Map<String, double>>> _castMapsFromDynamic(

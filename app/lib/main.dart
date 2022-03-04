@@ -1,15 +1,21 @@
 import 'package:app/login/login_page.dart';
+import 'package:app/providers/settings_provider.dart';
 import 'package:app/register_user/register_user_page.dart';
 import 'package:app/trip/start_trip_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  runApp(const MyApp());
+// Provider.of<SettingsProvider>(context).autoDialog;
+// Provider.of<SettingsProvider>(context, listen: false).toggleAutoDialog();
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (context) => SettingsProvider())
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatefulWidget {
