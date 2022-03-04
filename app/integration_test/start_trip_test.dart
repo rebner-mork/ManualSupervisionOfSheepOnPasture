@@ -24,8 +24,8 @@ void main() async {
       expect(find.text('Gård'), findsNothing);
       expect(find.text('Kart'), findsNothing);
 
-      await tester.pumpAndSettle();
-      await tester.pump(const Duration(milliseconds: 300));
+      await tester.pumpAndSettle(const Duration(milliseconds: 1500));
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.text('Laster inn...'), findsNothing);
       expect(find.text('Start oppsynstur'), findsNWidgets(2));
@@ -35,7 +35,6 @@ void main() async {
       expect(find.text(farmName), findsOneWidget);
       expect(find.text(validMaps.keys.first), findsOneWidget);
       expect(find.text(validMaps.keys.last), findsOneWidget);
-
       expect(find.byIcon(notDownloadedIcon), findsOneWidget);
     });
 
