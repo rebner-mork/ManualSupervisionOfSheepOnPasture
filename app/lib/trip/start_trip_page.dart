@@ -341,21 +341,17 @@ class _StartTripPageState extends State<StartTripPage>
     if (maps != null) {
       _selectedFarmMaps = _castMapsFromDynamic(maps);
 
-      if (mounted) {
-        setState(() {
-          _selectedFarmMap = _selectedFarmMaps.keys.first;
-          updateIcon();
-        });
-      }
+      setState(() {
+        _selectedFarmMap = _selectedFarmMaps.keys.first;
+        updateIcon();
+      });
     } else {
-      if (mounted) {
-        setState(() {
-          _noMapsDefined = true;
-          _selectedFarmMap = '';
-          _feedbackText =
-              'Gården \'$_selectedFarmName\' har ikke definert noen kart';
-        });
-      }
+      setState(() {
+        _noMapsDefined = true;
+        _selectedFarmMap = '';
+        _feedbackText =
+            'Gården \'$_selectedFarmName\' har ikke definert noen kart';
+      });
     }
   }
 
