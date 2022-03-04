@@ -6,6 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:web/my_page/define_map/define_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:web/utils/map_utils.dart';
+import 'package:web/utils/styles.dart';
 
 class DefineMapPage extends StatefulWidget {
   const DefineMapPage({Key? key}) : super(key: key);
@@ -44,6 +46,10 @@ class _DefineMapPageState extends State<DefineMapPage> {
   static const int graphicalDecimalAmount = 4;
   static const int databaseDecimalAmount = 6;
 
+  late double _rowHeight;
+  final double rowHeightLarge = 120;
+  final double rowHeightSmall = 40;
+
   final TextStyle largerTextStyle = const TextStyle(fontSize: 18);
   final TextStyle columnNameStyle =
       const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
@@ -53,6 +59,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
     super.initState();
 
     _newCoordinatesText = coordinatesPlaceholder;
+    _rowHeight = rowHeightLarge;
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _readMapData();
@@ -71,11 +78,20 @@ class _DefineMapPageState extends State<DefineMapPage> {
                   style: largerTextStyle,
                 )
               : SingleChildScrollView(
-                  child: DataTable(
+                  child: Column(children: [
+                  const SizedBox(height: 20),
+                  Text('Mine beiteområder', style: definePageHeadlineTextStyle),
+                  const SizedBox(height: 10),
+                  Text(
+                      'Her kan du legge til beiteområder. I appen laster oppsynspersonell ned\nkart over et av områdene for å gå oppsynstur uten nettverksforbindelse.',
+                      style: definePageInfoTextStyle),
+                  DataTable(
+                      dataRowHeight: _rowHeight,
                       border: TableBorder.symmetric(),
                       showCheckboxColumn: false,
                       columns: _tableColumns(),
-                      rows: _existingMapRows() + [_newMapRow()]))),
+                      rows: _existingMapRows() + [_newMapRow()])
+                ]))),
       const SizedBox(height: 10),
       _helpTextWidgets(),
       const SizedBox(height: 10),
@@ -147,6 +163,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
       }
     }
     setState(() {
+      _rowHeight = _mapNames.isEmpty ? rowHeightSmall : rowHeightLarge;
       _loadingData = false;
     });
   }
@@ -244,6 +261,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
             _mapNameControllers.add(_newMapNameController);
             _showDeleteIcon.add(true);
 
+            _rowHeight = rowHeightLarge;
             showMap = false;
             _newCoordinatesText = coordinatesPlaceholder;
             _newMapNameController = TextEditingController();
@@ -293,6 +311,10 @@ class _DefineMapPageState extends State<DefineMapPage> {
 
   List<DataColumn> _tableColumns() {
     return [
+      const DataColumn(
+          label: Text(
+        '',
+      )),
       DataColumn(
           label: Text(
         'Kartnavn',
@@ -319,6 +341,12 @@ class _DefineMapPageState extends State<DefineMapPage> {
         .asMap()
         .entries
         .map((MapEntry<int, String> data) => DataRow(cells: [
+              DataCell(Image(
+                  height: _rowHeight - 10,
+                  image: getMapNetworkImage(
+                      _mapCoordinates[data.key]['northWest']!,
+                      _mapCoordinates[data.key]['southEast']!,
+                      13))),
               DataCell(
                   TextField(
                     controller: _mapNameControllers[data.key],
@@ -341,6 +369,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
         color:
             showMap ? MaterialStateProperty.all(Colors.green.shade100) : null,
         cells: [
+          DataCell.empty,
           DataCell(
               showMap
                   ? TextField(
@@ -373,6 +402,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
               child: const Text("Avbryt"),
               onPressed: () {
                 setState(() {
+                  _rowHeight = rowHeightLarge;
                   showMap = false;
                   _newCoordinatesText = coordinatesPlaceholder;
                   _newMapNameController.clear();
@@ -388,6 +418,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
             child: Text("Legg til", style: largerTextStyle),
             onPressed: () {
               setState(() {
+                _rowHeight = rowHeightSmall;
                 showMap = true;
                 _helpText = helpTextNorthWest;
               });

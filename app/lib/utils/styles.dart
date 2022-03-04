@@ -14,3 +14,6 @@ double mainButtonHeight = 50;
 
 // Feedback
 TextStyle feedbackTextStyle = const TextStyle(fontSize: 16);
+
+TextStyle settingsHeadlineTextStyle = const TextStyle(fontSize: 22);
+TextStyle settingsTextStyle = const TextStyle(fontSize: 18);

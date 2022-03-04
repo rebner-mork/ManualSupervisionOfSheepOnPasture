@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:app/utils/other.dart';
+import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
 
 InputDecoration customInputDecoration(String labelText, IconData icon,
@@ -174,4 +175,59 @@ FloatingActionButton startDialogButton(void Function() onPressed) {
     onPressed: onPressed,
     child: const Icon(Icons.mic, size: 30),
   );
+}
+
+class SettingsIcon extends StatelessWidget {
+  const SettingsIcon({required this.iconSize, Key? key}) : super(key: key);
+
+  final double iconSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return Icon(
+      Icons.settings,
+      color: Colors.black,
+      size: iconSize,
+    );
+  }
+}
+
+class SettingsDialog extends StatelessWidget {
+  const SettingsDialog({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SimpleDialog(
+        title: Text(
+          'Innstillinger',
+          style: settingsHeadlineTextStyle,
+          textAlign: TextAlign.center,
+        ),
+        children: [
+          ListTile(
+            title: Text(
+              'Auto-dialog',
+              style: settingsTextStyle,
+            ),
+            trailing: Switch(
+                value: true, activeColor: Colors.green, onChanged: (_) {}),
+          ),
+          ListTile(
+            title: Text('Les tilbake', style: settingsTextStyle),
+            trailing: Switch(
+                value: true, activeColor: Colors.green, onChanged: (_) {}),
+          ),
+          ElevatedButton(
+            child: Text(
+              'Nedlastede kart',
+              style: buttonTextStyle,
+            ),
+            style: ButtonStyle(
+              fixedSize:
+                  MaterialStateProperty.all(Size.fromHeight(mainButtonHeight)),
+            ),
+            onPressed: () {},
+          )
+        ]);
+  }
 }

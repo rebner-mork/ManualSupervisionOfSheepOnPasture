@@ -55,25 +55,35 @@ class _MyTiesState extends State<MyTies> {
               'Laster data...',
               style: TextStyle(fontSize: 18),
             )
-          : DataTable(
-              border: TableBorder.symmetric(),
-              columns: [
-                DataColumn(
-                    label: Text(
-                  'Slipsfarge',
-                  style: dataColumnTextStyle,
-                )),
-                DataColumn(
-                    label: Text(
-                  'Antall lam',
-                  style: dataColumnTextStyle,
-                )),
-                const DataColumn(label: Text('')),
-              ],
-              rows: _tieColors.length < possibleTieColors.length
-                  ? _tieRows() + _newTieRow()
-                  : _tieRows(),
-            ),
+          : Column(children: [
+              const SizedBox(height: 20),
+              Text('Mine slips', style: definePageHeadlineTextStyle),
+              const SizedBox(height: 10),
+              Text('Her kan du legge til slips som brukes på søyene dine.',
+                  style: definePageInfoTextStyle),
+              Text(
+                  'Oppsynspersonell kan ikke registrere andre slips enn de som er lagt til her.',
+                  style: definePageInfoTextStyle),
+              DataTable(
+                border: TableBorder.symmetric(),
+                columns: [
+                  DataColumn(
+                      label: Text(
+                    'Slipsfarge',
+                    style: dataColumnTextStyle,
+                  )),
+                  DataColumn(
+                      label: Text(
+                    'Antall lam',
+                    style: dataColumnTextStyle,
+                  )),
+                  const DataColumn(label: Text('')),
+                ],
+                rows: _tieColors.length < possibleTieColors.length
+                    ? _tieRows() + _newTieRow()
+                    : _tieRows(),
+              )
+            ]),
       const SizedBox(height: 10),
       Text(
         _helpText,
@@ -326,6 +336,14 @@ class _MyTiesState extends State<MyTies> {
     });
   }
 
+  void _useDefaultTies() {
+    for (MapEntry<Color, int> data in defaultTieMap.entries) {
+      _tieColors.add(data.key);
+      _tieMeaning.add(data.value);
+    }
+    _saveTieData();
+  }
+
   void _readTieData() async {
     String uid = FirebaseAuth.instance.currentUser!.uid;
     CollectionReference farmCollection =
@@ -335,6 +353,7 @@ class _MyTiesState extends State<MyTies> {
     LinkedHashMap<String, dynamic>? dataMap;
 
     DocumentSnapshot<Object?> doc = await farmDoc.get();
+
     if (doc.exists) {
       dataMap = doc.get('ties');
       if (dataMap != null) {
@@ -342,12 +361,11 @@ class _MyTiesState extends State<MyTies> {
           _tieColors.add(Color(int.parse(data.key, radix: 16)));
           _tieMeaning.add(data.value as int);
         }
+      } else {
+        _useDefaultTies();
       }
     } else {
-      for (MapEntry<Color, int> data in defaultTieMap.entries) {
-        _tieColors.add(data.key);
-        _tieMeaning.add(data.value);
-      }
+      _useDefaultTies();
     }
     _oldTieColors = List.from(_tieColors);
     _oldTieMeaning = List.from(_tieMeaning);

@@ -1,14 +1,16 @@
 import 'dart:collection';
 
-import 'package:app/map/map_widget.dart';
+import 'package:app/main_page.dart';
 import 'package:app/utils/constants.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/map_utils.dart';
 import 'package:app/utils/styles.dart';
+import 'package:app/widgets/circular_buttons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
+import '../utils/map_utils.dart' as map_utils;
 
 class StartTripPage extends StatefulWidget {
   const StartTripPage({Key? key}) : super(key: key);
@@ -82,6 +84,7 @@ class _StartTripPageState extends State<StartTripPage>
             appBar: AppBar(
               title: const Text('Start oppsynstur'),
               centerTitle: true,
+              actions: const [SettingsIconButton()],
             ),
             body: Column(
               children: _loadingData
@@ -294,6 +297,8 @@ class _StartTripPageState extends State<StartTripPage>
         _feedbackText = 'Oppsynsturen starter når kartet er lastet ned';
         _downloadingMap = true;
       });
+          // TODO: try/catch (Unhandled Exception: Location services does not have permissions)
+    LatLng userStartPosition = await map_utils.getDevicePosition();
       await downloadTiles(
           mapBounds['northWest']!,
           mapBounds['southEast']!,
@@ -310,11 +315,15 @@ class _StartTripPageState extends State<StartTripPage>
       _downloadingMap = false;
       _downloadProgress = 0;
     });
+
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                MapWidget(mapBounds['northWest']!, mapBounds['southEast']!)));
+            builder: (context) => MainPage(
+                  northWest: mapBounds['northWest']!,
+                  southEast: mapBounds['southEast']!,
+                  userStartPosition: userStartPosition,
+                )));
   }
 
   Map<String, Map<String, Map<String, double>>> _castMapsFromDynamic(

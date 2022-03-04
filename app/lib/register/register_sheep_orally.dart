@@ -19,7 +19,7 @@ class RegisterSheepOrally extends StatefulWidget {
       {this.onCompletedSuccessfully, Key? key})
       : super(key: key);
 
-  final VoidCallback? onCompletedSuccessfully;
+  final ValueChanged<int>? onCompletedSuccessfully;
   final String fileName;
   final SpeechToText stt;
   final ValueNotifier<bool> ongoingDialog;
@@ -198,7 +198,10 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
     file.writeAsString(json.encode(data));
 
     if (widget.onCompletedSuccessfully != null) {
-      widget.onCompletedSuccessfully!();
+      int sheepAmount = _textControllers['sheep']!.text == ''
+          ? 0
+          : int.parse(_textControllers['sheep']!.text);
+      widget.onCompletedSuccessfully!(sheepAmount);
     }
     if (Navigator.canPop(context)) {
       Navigator.pop(context);

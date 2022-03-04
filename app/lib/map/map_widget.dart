@@ -5,13 +5,14 @@ import 'package:latlong2/latlong.dart';
 import 'dart:async';
 
 import 'package:app/register/register_sheep_orally.dart';
-import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import '../utils/map_utils.dart' as map_utils;
 import '../utils/constants.dart';
 
 class MapWidget extends StatefulWidget {
-  MapWidget(LatLng northWest, LatLng southEast, {Key? key}) : super(key: key) {
+  MapWidget(LatLng northWest, LatLng southEast, this.stt, this.ongoingDialog,
+      {required this.userStartPosition, this.onSheepRegistered, Key? key})
+      : super(key: key) {
     southWest = LatLng(southEast.latitude, northWest.longitude);
     northEast = LatLng(northWest.latitude, southEast.longitude);
   }
@@ -19,30 +20,38 @@ class MapWidget extends StatefulWidget {
   late final LatLng southWest;
   late final LatLng northEast;
 
+  final SpeechToText stt;
+  final ValueNotifier<bool> ongoingDialog;
+
+  final LatLng userStartPosition;
+  final ValueChanged<int>? onSheepRegistered;
+
   @override
   State<MapWidget> createState() => _MapState();
 }
 
 class _MapState extends State<MapWidget> {
-  late SpeechToText _speechToText;
-  final ValueNotifier<bool> _ongoingDialog = ValueNotifier<bool>(false);
-
   MapController _mapController = MapController();
-  Marker _currentPositionMarker =
-      map_utils.getDevicePositionMarker(LatLng(0, 0));
+  late LatLng userPosition;
+
+  late Marker _currentPositionMarker;
   List<Marker> registrationMarkers = [];
   final List<LatLng> _movementPoints = [];
+  List<Polyline> linesOfSight = [];
+
   late Timer timer;
+
   late String urlTemplate;
   bool urlTemplateLoaded = false;
-  List<Polyline> linesOfSight = [];
-  LatLng? userPosition;
 
   @override
   void initState() {
     super.initState();
-    _initSpeechToText();
-    _updateMap(); //to set the position before waiting at startup
+
+    userPosition = widget.userStartPosition;
+    _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition);
+    _movementPoints.add(userPosition);
+
     timer = Timer.periodic(const Duration(seconds: 30), (_) => _updateMap());
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -50,23 +59,12 @@ class _MapState extends State<MapWidget> {
     });
   }
 
-  void _initSpeechToText() async {
-    _speechToText = SpeechToText();
-    await _speechToText.initialize(onError: _speechToTextError);
-  }
-
-  void _speechToTextError(SpeechRecognitionError error) {
-    setState(() {
-      _ongoingDialog.value = false;
-    });
-  }
-
   Future<void> _updateMap() async {
     userPosition = await map_utils.getDevicePosition();
     setState(() {
       //_mapController.move(pos, _mapController.zoom);
-      _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition!);
-      _movementPoints.add(userPosition!);
+      _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition);
+      _movementPoints.add(userPosition);
     });
   }
 
@@ -78,7 +76,7 @@ class _MapState extends State<MapWidget> {
   }
 
   void registerSheepByTap(LatLng targetPosition) async {
-    LatLng pos = userPosition!;
+    LatLng pos = userPosition;
     map_utils.getDevicePosition().then((value) {
       pos = value;
       _movementPoints.add(pos);
@@ -88,21 +86,28 @@ class _MapState extends State<MapWidget> {
         context,
         MaterialPageRoute(
             builder: (context) => ValueListenableBuilder<bool>(
-                  valueListenable: _ongoingDialog,
-                  builder: (context, value, child) => RegisterSheepOrally(
-                      'filename', _speechToText, _ongoingDialog,
-                      onCompletedSuccessfully: () {
-                    setState(() {
-                      linesOfSight.add(Polyline(
-                          points: [pos, targetPosition],
-                          color: Colors.black,
-                          isDotted: true,
-                          strokeWidth: 5.0));
-                      registrationMarkers
-                          .add(map_utils.getSheepMarker(targetPosition));
-                    });
-                  }),
-                )));
+                valueListenable: widget.ongoingDialog,
+                builder: (context, value, child) => RegisterSheepOrally(
+                      'filename',
+                      widget.stt,
+                      widget.ongoingDialog,
+                      onCompletedSuccessfully: (int sheepAmountRegistered) {
+                        setState(() {
+                          if (sheepAmountRegistered > 0) {
+                            if (widget.onSheepRegistered != null) {
+                              widget.onSheepRegistered!(sheepAmountRegistered);
+                            }
+                            linesOfSight.add(Polyline(
+                                points: [pos, targetPosition],
+                                color: Colors.black,
+                                isDotted: true,
+                                strokeWidth: 5.0));
+                            registrationMarkers
+                                .add(map_utils.getSheepMarker(targetPosition));
+                          }
+                        });
+                      },
+                    ))));
   }
 
   @override

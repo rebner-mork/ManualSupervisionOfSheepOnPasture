@@ -11,6 +11,9 @@ Due to Flutter not yet supporting integration tests directly in browsers, they h
 <b>Integration tests</b>: `firebase emulators:exec 'flutter test integration_test'`
 
 ## Web app
+
+https://master-backend-93896.web.app/#login-page
+
 Make sure to be inside the `./web` directory to run commands towards the web app.
 
 ### Deploy to Firebase
