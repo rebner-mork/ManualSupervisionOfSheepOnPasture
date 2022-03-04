@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:app/utils/constants.dart';
 import 'package:app/utils/map_utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider/path_provider.dart';
@@ -8,6 +9,8 @@ import 'package:latlong2/latlong.dart';
 void main() {
   test("Download tiles to app document directory", () async {
     String slash = Platform.isWindows ? '\\' : '/';
+
+    setConstants();
 
     List<String> acutalDirectoryListing = [];
     List<String> expectedDirectoryListing = [];
