@@ -65,21 +65,6 @@ class Sheepometer extends StatelessWidget {
   }
 }
 
-class SettingsIcon extends StatelessWidget {
-  const SettingsIcon({required this.iconSize, Key? key}) : super(key: key);
-
-  final double iconSize;
-
-  @override
-  Widget build(BuildContext context) {
-    return Icon(
-      Icons.settings,
-      color: Colors.black,
-      size: iconSize,
-    );
-  }
-}
-
 class SettingsIconButton extends StatelessWidget {
   const SettingsIconButton({Key? key}) : super(key: key);
 
