@@ -292,13 +292,13 @@ class _StartTripPageState extends State<StartTripPage>
   }
 
   Future<void> _startTrip() async {
+    // TODO: try/catch (Unhandled Exception: Location services does not have permissions)
+    LatLng userStartPosition = await map_utils.getDevicePosition();
     if (!_mapDownloaded) {
       setState(() {
         _feedbackText = 'Oppsynsturen starter når kartet er lastet ned';
         _downloadingMap = true;
       });
-          // TODO: try/catch (Unhandled Exception: Location services does not have permissions)
-    LatLng userStartPosition = await map_utils.getDevicePosition();
       await downloadTiles(
           mapBounds['northWest']!,
           mapBounds['southEast']!,
@@ -320,10 +320,9 @@ class _StartTripPageState extends State<StartTripPage>
         context,
         MaterialPageRoute(
             builder: (context) => MainPage(
-                  northWest: mapBounds['northWest']!,
-                  southEast: mapBounds['southEast']!,
-                  userStartPosition: userStartPosition,
-                )));
+                northWest: mapBounds['northWest']!,
+                southEast: mapBounds['southEast']!,
+                userStartPosition: userStartPosition)));
   }
 
   Map<String, Map<String, Map<String, double>>> _castMapsFromDynamic(
