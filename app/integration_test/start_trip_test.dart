@@ -12,8 +12,8 @@ void main() async {
   await firebaseSetup(createUser: true, signIn: true);
   await setUpFarm();
   setConstants();
-  final IconData downloadedIcon = Icons.download_done;
-  final IconData notDownloadedIcon = Icons.download_for_offline_sharp;
+  const IconData downloadedIcon = Icons.download_done;
+  const IconData notDownloadedIcon = Icons.download_for_offline_sharp;
 
   group('Start trip happy day scenario', () {
     testWidgets('Initial layout', (WidgetTester tester) async {
