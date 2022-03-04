@@ -144,7 +144,6 @@ Future<void> _downloadTile(int x, int y, int zoom) async {
   }
 }
 
-
 Future<void> downloadTiles(
     LatLng northWest, LatLng southEast, double minZoom, double maxZoom,
     {ValueChanged<double>? progressIndicator}) async {
