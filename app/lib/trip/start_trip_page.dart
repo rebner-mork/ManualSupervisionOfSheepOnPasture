@@ -1,14 +1,16 @@
 import 'dart:collection';
 
-import 'package:app/map/map_widget.dart';
+import 'package:app/main_page.dart';
 import 'package:app/utils/constants.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/map_utils.dart';
 import 'package:app/utils/styles.dart';
+import 'package:app/widgets/circular_buttons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
+import '../utils/map_utils.dart' as map_utils;
 
 class StartTripPage extends StatefulWidget {
   const StartTripPage({Key? key}) : super(key: key);
@@ -77,6 +79,7 @@ class _StartTripPageState extends State<StartTripPage>
             appBar: AppBar(
               title: const Text('Start oppsynstur'),
               centerTitle: true,
+              actions: const [SettingsIconButton()],
             ),
             body: Column(
               children: _loadingData
@@ -269,15 +272,24 @@ class _StartTripPageState extends State<StartTripPage>
     LatLng southEast = LatLng(
         _selectedFarmMaps[_selectedFarmMap]!['southEast']!['latitude']!,
         _selectedFarmMaps[_selectedFarmMap]!['southEast']!['longitude']!);
+
+    // TODO: try/catch (Unhandled Exception: Location services does not have permissions)
+    LatLng userStartPosition = await map_utils.getDevicePosition();
     await downloadTiles(
         northWest, southEast, OfflineZoomLevels.min, OfflineZoomLevels.max);
+
     setState(() {
       _feedbackText = '';
     });
+
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) => MapWidget(northWest, southEast)));
+            builder: (context) => MainPage(
+                  northWest: northWest,
+                  southEast: southEast,
+                  userStartPosition: userStartPosition,
+                )));
   }
 
   Map<String, Map<String, Map<String, double>>> _castMapsFromDynamic(

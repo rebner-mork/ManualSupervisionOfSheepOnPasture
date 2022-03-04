@@ -11,9 +11,9 @@ Color buttonDisabledColor = Colors.grey;
 Color buttonEnabledColor = Colors.green;
 double buttonHeight = 40;
 double mainButtonHeight = 50;
-TextStyle circularMapButtonTextStyle =
-    const TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-Border circularMapButtonBorder = Border.all(color: Colors.black, width: 1.5);
 
 // Feedback
 TextStyle feedbackTextStyle = const TextStyle(fontSize: 16);
+
+TextStyle settingsHeadlineTextStyle = const TextStyle(fontSize: 22);
+TextStyle settingsTextStyle = const TextStyle(fontSize: 18);

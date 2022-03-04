@@ -1,5 +1,3 @@
-import 'package:app/utils/other.dart';
-import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/plugin_api.dart';
@@ -7,13 +5,14 @@ import 'package:latlong2/latlong.dart';
 import 'dart:async';
 
 import 'package:app/register/register_sheep_orally.dart';
-import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import '../utils/map_utils.dart' as map_utils;
 import '../utils/constants.dart';
 
 class MapWidget extends StatefulWidget {
-  MapWidget(LatLng northWest, LatLng southEast, {Key? key}) : super(key: key) {
+  MapWidget(LatLng northWest, LatLng southEast, this.stt, this.ongoingDialog,
+      {required this.userStartPosition, this.onSheepRegistered, Key? key})
+      : super(key: key) {
     southWest = LatLng(southEast.latitude, northWest.longitude);
     northEast = LatLng(northWest.latitude, southEast.longitude);
   }
@@ -21,22 +20,21 @@ class MapWidget extends StatefulWidget {
   late final LatLng southWest;
   late final LatLng northEast;
 
+  final SpeechToText stt;
+  final ValueNotifier<bool> ongoingDialog;
+
+  final LatLng userStartPosition;
+  final ValueChanged<int>? onSheepRegistered;
+
   @override
   State<MapWidget> createState() => _MapState();
 }
 
 class _MapState extends State<MapWidget> {
-  late SpeechToText _speechToText;
-  final ValueNotifier<bool> _ongoingDialog = ValueNotifier<bool>(false);
-
-  int _sheepAmount = 0;
-  Color sheepAmountButtonColor = Colors.green;
-
   MapController _mapController = MapController();
-  LatLng? userPosition;
+  late LatLng userPosition;
 
-  Marker _currentPositionMarker =
-      map_utils.getDevicePositionMarker(LatLng(0, 0));
+  late Marker _currentPositionMarker;
   List<Marker> registrationMarkers = [];
   final List<LatLng> _movementPoints = [];
   List<Polyline> linesOfSight = [];
@@ -49,7 +47,11 @@ class _MapState extends State<MapWidget> {
   @override
   void initState() {
     super.initState();
-    _initGpsAndSpeechToText();
+
+    userPosition = widget.userStartPosition;
+    _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition);
+    _movementPoints.add(userPosition);
+
     timer = Timer.periodic(const Duration(seconds: 30), (_) => _updateMap());
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -57,36 +59,12 @@ class _MapState extends State<MapWidget> {
     });
   }
 
-  Future<void> _initGpsAndSpeechToText() async {
-    await _initGps();
-    _initSpeechToText();
-  }
-
-  Future<void> _initGps() async {
-    userPosition = await map_utils.getDevicePosition();
-    setState(() {
-      _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition!);
-      _movementPoints.add(userPosition!);
-    });
-  }
-
-  Future<void> _initSpeechToText() async {
-    _speechToText = SpeechToText();
-    await _speechToText.initialize(onError: _speechToTextError);
-  }
-
-  void _speechToTextError(SpeechRecognitionError error) {
-    setState(() {
-      _ongoingDialog.value = false;
-    });
-  }
-
   Future<void> _updateMap() async {
     userPosition = await map_utils.getDevicePosition();
     setState(() {
       //_mapController.move(pos, _mapController.zoom);
-      _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition!);
-      _movementPoints.add(userPosition!);
+      _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition);
+      _movementPoints.add(userPosition);
     });
   }
 
@@ -98,7 +76,7 @@ class _MapState extends State<MapWidget> {
   }
 
   void registerSheepByTap(LatLng targetPosition) async {
-    LatLng pos = userPosition!;
+    LatLng pos = userPosition;
     map_utils.getDevicePosition().then((value) {
       pos = value;
       _movementPoints.add(pos);
@@ -108,15 +86,17 @@ class _MapState extends State<MapWidget> {
         context,
         MaterialPageRoute(
             builder: (context) => ValueListenableBuilder<bool>(
-                valueListenable: _ongoingDialog,
+                valueListenable: widget.ongoingDialog,
                 builder: (context, value, child) => RegisterSheepOrally(
                       'filename',
-                      _speechToText,
-                      _ongoingDialog,
+                      widget.stt,
+                      widget.ongoingDialog,
                       onCompletedSuccessfully: (int sheepAmountRegistered) {
                         setState(() {
                           if (sheepAmountRegistered > 0) {
-                            _sheepAmount += sheepAmountRegistered;
+                            if (widget.onSheepRegistered != null) {
+                              widget.onSheepRegistered!(sheepAmountRegistered);
+                            }
                             linesOfSight.add(Polyline(
                                 points: [pos, targetPosition],
                                 color: Colors.black,
@@ -130,38 +110,6 @@ class _MapState extends State<MapWidget> {
                     ))));
   }
 
-  InkWell _sheepometerButton() {
-    return InkWell(
-        onTapDown: (_) {
-          setState(() {
-            sheepAmountButtonColor = Colors.green.shade700;
-          });
-        },
-        onTap: () {
-          setState(() {
-            sheepAmountButtonColor = Colors.green;
-          });
-        },
-        child: Container(
-            height: 50,
-            width: 62 +
-                textSize(_sheepAmount.toString(), circularMapButtonTextStyle)
-                    .width,
-            decoration: BoxDecoration(
-                color: sheepAmountButtonColor,
-                border: circularMapButtonBorder,
-                borderRadius:
-                    const BorderRadius.all(Radius.elliptical(75, 75))),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              const Image(
-                  image: AssetImage('images/sheep.png'), width: 42, height: 42),
-              Text(_sheepAmount.toString(), style: circularMapButtonTextStyle),
-              const SizedBox(
-                width: 2,
-              )
-            ])));
-  }
-
   @override
   void dispose() {
     timer.cancel();
@@ -171,8 +119,7 @@ class _MapState extends State<MapWidget> {
   @override
   Widget build(BuildContext context) {
     return Material(
-        child: Stack(children: [
-      urlTemplateLoaded
+      child: urlTemplateLoaded
           ? FlutterMap(
               mapController: _mapController,
               options: MapOptions(
@@ -212,11 +159,6 @@ class _MapState extends State<MapWidget> {
               ],
             )
           : const Center(child: Text("Laster inn")),
-      Positioned(
-        child: _sheepometerButton(),
-        bottom: 8,
-        left: 8,
-      ),
-    ]));
+    );
   }
 }
