@@ -10,6 +10,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
+import '../utils/map_utils.dart' as map_utils;
 
 class StartTripPage extends StatefulWidget {
   const StartTripPage({Key? key}) : super(key: key);
@@ -271,15 +272,24 @@ class _StartTripPageState extends State<StartTripPage>
     LatLng southEast = LatLng(
         _selectedFarmMaps[_selectedFarmMap]!['southEast']!['latitude']!,
         _selectedFarmMaps[_selectedFarmMap]!['southEast']!['longitude']!);
+
+    // TODO: try/catch (Unhandled Exception: Location services does not have permissions)
+    LatLng userStartPosition = await map_utils.getDevicePosition();
     await downloadTiles(
         northWest, southEast, OfflineZoomLevels.min, OfflineZoomLevels.max);
+
     setState(() {
       _feedbackText = '';
     });
+
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) => MainPage(northWest, southEast)));
+            builder: (context) => MainPage(
+                  northWest: northWest,
+                  southEast: southEast,
+                  userStartPosition: userStartPosition,
+                )));
   }
 
   Map<String, Map<String, Map<String, double>>> _castMapsFromDynamic(

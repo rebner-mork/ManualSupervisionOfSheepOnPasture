@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:web/utils/custom_widgets.dart';
+import 'package:web/utils/styles.dart';
 import 'package:web/utils/validation.dart';
 
 class MyFarm extends StatefulWidget {
@@ -46,7 +47,9 @@ class _MyFarmState extends State<MyFarm> {
     return Form(
         key: _formKey,
         child: Column(children: [
-          const SizedBox(height: 50),
+          const SizedBox(height: 20),
+          Text('Min gård', style: definePageHeadlineTextStyle),
+          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

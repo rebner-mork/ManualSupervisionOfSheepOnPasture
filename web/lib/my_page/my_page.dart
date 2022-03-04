@@ -40,7 +40,7 @@ class _MyPageState extends State<MyPage> {
               selectedIcon: Icon(Icons.gite)),
           NavigationRailDestination(
               icon: Icon(Icons.map_outlined),
-              label: Text('Kart', style: natigationTextStyle),
+              label: Text('Beiteområder', style: natigationTextStyle),
               selectedIcon: Icon(Icons.map)),
           NavigationRailDestination(
               icon: Icon(Icons.local_offer_outlined), //Icons.tag (#)

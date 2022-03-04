@@ -11,7 +11,7 @@ import '../utils/constants.dart';
 
 class MapWidget extends StatefulWidget {
   MapWidget(LatLng northWest, LatLng southEast, this.stt, this.ongoingDialog,
-      {this.onSheepRegistered, Key? key})
+      {required this.userStartPosition, this.onSheepRegistered, Key? key})
       : super(key: key) {
     southWest = LatLng(southEast.latitude, northWest.longitude);
     northEast = LatLng(northWest.latitude, southEast.longitude);
@@ -22,6 +22,8 @@ class MapWidget extends StatefulWidget {
 
   final SpeechToText stt;
   final ValueNotifier<bool> ongoingDialog;
+
+  final LatLng userStartPosition;
   final ValueChanged<int>? onSheepRegistered;
 
   @override
@@ -30,10 +32,9 @@ class MapWidget extends StatefulWidget {
 
 class _MapState extends State<MapWidget> {
   MapController _mapController = MapController();
-  LatLng? userPosition;
+  late LatLng userPosition;
 
-  Marker _currentPositionMarker =
-      map_utils.getDevicePositionMarker(LatLng(0, 0));
+  late Marker _currentPositionMarker;
   List<Marker> registrationMarkers = [];
   final List<LatLng> _movementPoints = [];
   List<Polyline> linesOfSight = [];
@@ -47,7 +48,10 @@ class _MapState extends State<MapWidget> {
   void initState() {
     super.initState();
 
-    _updateMap(); //to set the position before waiting at startup
+    userPosition = widget.userStartPosition;
+    _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition);
+    _movementPoints.add(userPosition);
+
     timer = Timer.periodic(const Duration(seconds: 30), (_) => _updateMap());
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -59,8 +63,8 @@ class _MapState extends State<MapWidget> {
     userPosition = await map_utils.getDevicePosition();
     setState(() {
       //_mapController.move(pos, _mapController.zoom);
-      _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition!);
-      _movementPoints.add(userPosition!);
+      _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition);
+      _movementPoints.add(userPosition);
     });
   }
 
@@ -72,7 +76,7 @@ class _MapState extends State<MapWidget> {
   }
 
   void registerSheepByTap(LatLng targetPosition) async {
-    LatLng pos = userPosition!;
+    LatLng pos = userPosition;
     map_utils.getDevicePosition().then((value) {
       pos = value;
       _movementPoints.add(pos);
