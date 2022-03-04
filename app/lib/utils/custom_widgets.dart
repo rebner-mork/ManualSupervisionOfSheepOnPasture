@@ -1,8 +1,10 @@
 import 'dart:ui';
 
+import 'package:app/providers/settings_provider.dart';
 import 'package:app/utils/other.dart';
 import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 InputDecoration customInputDecoration(String labelText, IconData icon,
     {bool passwordField = false,
@@ -276,12 +278,22 @@ class SettingsDialog extends StatelessWidget {
               style: settingsTextStyle,
             ),
             trailing: Switch(
-                value: true, activeColor: Colors.green, onChanged: (_) {}),
+                value: Provider.of<SettingsProvider>(context).autoDialog,
+                activeColor: Colors.green,
+                onChanged: (_) {
+                  Provider.of<SettingsProvider>(context, listen: false)
+                      .toggleAutoDialog();
+                }),
           ),
           ListTile(
             title: Text('Les tilbake', style: settingsTextStyle),
             trailing: Switch(
-                value: true, activeColor: Colors.green, onChanged: (_) {}),
+                value: Provider.of<SettingsProvider>(context).readBack,
+                activeColor: Colors.green,
+                onChanged: (_) {
+                  Provider.of<SettingsProvider>(context, listen: false)
+                      .toggleReadBack();
+                }),
           ),
           ElevatedButton(
             child: Text(

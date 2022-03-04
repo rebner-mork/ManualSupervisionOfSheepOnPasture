@@ -11,8 +11,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-// Provider.of<SettingsProvider>(context).autoDialog;
-// Provider.of<SettingsProvider>(context, listen: false).toggleAutoDialog();
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => SettingsProvider())
   ], child: const MyApp()));

@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 
 class SettingsProvider extends ChangeNotifier {
-  SettingsProvider({this.autoDialog = true});
+  SettingsProvider({this.autoDialog = true, this.readBack = true});
 
   bool autoDialog;
+  bool readBack;
 
   void toggleAutoDialog() {
     autoDialog = !autoDialog;
     notifyListeners();
   }
-}
 
-// Provider.of<SettingsProvider>(context).autoDialog;
-// Provider.of<SettingsProvider>(context, listen: false).toggleAutoDialog();
+  void toggleReadBack() {
+    readBack = !readBack;
+    notifyListeners();
+  }
+}
