@@ -114,7 +114,7 @@ class _StartTripPageState extends State<StartTripPage>
                               visible: _downloadingMap,
                               child: Padding(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 160),
+                                      horizontal: 40),
                                   child: LinearProgressIndicator(
                                     value: _downloadProgress,
                                     minHeight: 10,
