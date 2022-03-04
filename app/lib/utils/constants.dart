@@ -7,10 +7,9 @@ abstract class OfflineZoomLevels {
   static double max = 17;
 }
 
-// ignore: non_constant_identifier_names
-late final String APPLICATION_DOCUMENT_DIRECTORY_PATH;
+late final String applicationDocumentDirectoryPath;
 
 Future<void> setConstants() async {
   Directory dir = await getApplicationDocumentsDirectory();
-  APPLICATION_DOCUMENT_DIRECTORY_PATH = dir.path;
+  applicationDocumentDirectoryPath = dir.path;
 }

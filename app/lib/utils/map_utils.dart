@@ -92,7 +92,6 @@ int getTileIndexY(double latitude, int zoom) {
       .floor();
 }
 
-//TODO REFACTOR with calculations!!!!!!!!!!
 int numberOfTiles(
     LatLng northWest, LatLng southEast, double minZoom, double maxZoom) {
   int _numberOfTiles = 0;
@@ -120,7 +119,7 @@ String _getTileUrl(
 }
 
 String getLocalUrlTemplate() {
-  return APPLICATION_DOCUMENT_DIRECTORY_PATH + "/maps/{z}/{x}/{y}.png";
+  return applicationDocumentDirectoryPath + "/maps/{z}/{x}/{y}.png";
 }
 
 String _getLocalTileUrl(int x, int y, int z) {
