@@ -229,6 +229,7 @@ class _StartTripPageState extends State<StartTripPage>
                             _downloadingMap = false;
                             _mapDownloaded = true;
                             _mapIcon = downloadedIcon;
+                            _downloadProgress = 0;
                             _animationController.reset();
                             _feedbackText =
                                 'Kartet \'$_selectedFarmMap\' er nedlastet.';
@@ -305,6 +306,7 @@ class _StartTripPageState extends State<StartTripPage>
       _feedbackText = '';
       updateIcon();
       _downloadingMap = false;
+      _downloadProgress = 0;
     });
     Navigator.pushReplacement(
         context,

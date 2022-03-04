@@ -102,11 +102,7 @@ int numberOfTiles(
     int north = getTileIndexY(northWest.latitude, zoom);
     int south = getTileIndexY(southEast.latitude, zoom);
 
-    for (int x = west; x <= east; x++) {
-      for (int y = north; y <= south; y++) {
-        _numberOfTiles++;
-      }
-    }
+    _numberOfTiles += (east - west + 1) * (south - north + 1);
   }
   return _numberOfTiles;
 }
