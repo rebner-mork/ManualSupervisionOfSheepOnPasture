@@ -12,8 +12,6 @@ void main() async {
   await firebaseSetup(createUser: true, signIn: true);
   await setUpFarm();
   setConstants();
-  const IconData downloadedIcon = Icons.download_done;
-  const IconData notDownloadedIcon = Icons.download_for_offline_sharp;
 
   group('Start trip happy day scenario', () {
     testWidgets('Initial layout', (WidgetTester tester) async {
@@ -35,7 +33,7 @@ void main() async {
       expect(find.text(farmName), findsOneWidget);
       expect(find.text(validMaps.keys.first), findsOneWidget);
       expect(find.text(validMaps.keys.last), findsOneWidget);
-      expect(find.byIcon(notDownloadedIcon), findsOneWidget);
+      expect(find.byIcon(StartTripPage.notDownloadedIcon), findsOneWidget);
     });
 
     testWidgets('Download map', (WidgetTester tester) async {
@@ -43,14 +41,14 @@ void main() async {
       await tester.pumpAndSettle();
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(find.byIcon(notDownloadedIcon), findsOneWidget);
+      expect(find.byIcon(StartTripPage.notDownloadedIcon), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsNothing);
       expect(find.byType(LinearProgressIndicator), findsNothing);
 
-      await tester.tap(find.byIcon(notDownloadedIcon));
+      await tester.tap(find.byIcon(StartTripPage.notDownloadedIcon));
       await tester.pump();
 
-      expect(find.byIcon(notDownloadedIcon), findsNothing);
+      expect(find.byIcon(StartTripPage.notDownloadedIcon), findsNothing);
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
       expect(find.byType(LinearProgressIndicator), findsOneWidget);
       expect(find.text('Laster ned kart...'), findsOneWidget);
@@ -60,7 +58,7 @@ void main() async {
 
       expect(find.byType(CircularProgressIndicator), findsNothing);
       expect(find.byType(LinearProgressIndicator), findsNothing);
-      expect(find.byIcon(downloadedIcon), findsOneWidget);
+      expect(find.byIcon(StartTripPage.downloadedIcon), findsOneWidget);
       expect(find.text('Kartet \'${validMaps.keys.first}\' er nedlastet.'),
           findsOneWidget);
     });

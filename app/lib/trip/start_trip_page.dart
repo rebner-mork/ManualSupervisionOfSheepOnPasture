@@ -14,6 +14,8 @@ class StartTripPage extends StatefulWidget {
   const StartTripPage({Key? key}) : super(key: key);
 
   static const String route = 'start-trip';
+  static const IconData downloadedIcon = Icons.download_done;
+  static const IconData notDownloadedIcon = Icons.download_for_offline_sharp;
 
   @override
   State<StartTripPage> createState() => _StartTripPageState();
@@ -41,9 +43,7 @@ class _StartTripPageState extends State<StartTripPage>
 
   String _feedbackText = '';
 
-  final IconData downloadedIcon = Icons.download_done;
-  final IconData notDownloadedIcon = Icons.download_for_offline_sharp;
-  IconData _mapIcon = Icons.download_for_offline_sharp;
+  IconData _mapIcon = StartTripPage.notDownloadedIcon;
   late AnimationController _animationController;
   late Animation<Color?> _colorTween;
 
@@ -228,7 +228,7 @@ class _StartTripPageState extends State<StartTripPage>
                           setState(() {
                             _downloadingMap = false;
                             _mapDownloaded = true;
-                            _mapIcon = downloadedIcon;
+                            _mapIcon = StartTripPage.downloadedIcon;
                             _downloadProgress = 0;
                             _animationController.reset();
                             _feedbackText =
@@ -264,7 +264,9 @@ class _StartTripPageState extends State<StartTripPage>
     setMapBounds();
     _mapDownloaded = isTilesDownloaded(mapBounds['northWest']!,
         mapBounds['southEast']!, OfflineZoomLevels.min, OfflineZoomLevels.max);
-    _mapIcon = _mapDownloaded ? downloadedIcon : notDownloadedIcon;
+    _mapIcon = _mapDownloaded
+        ? StartTripPage.downloadedIcon
+        : StartTripPage.notDownloadedIcon;
   }
 
   ElevatedButton startTripButton() {
