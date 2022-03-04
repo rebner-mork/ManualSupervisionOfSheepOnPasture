@@ -166,7 +166,7 @@ Future<void> downloadTiles(
   }
 }
 
-bool isTilesDownloaded(
+bool isEveryTileDownloaded(
     LatLng northWest, LatLng southEast, double minZoom, double maxZoom) {
   for (int zoom = minZoom.toInt(); zoom <= maxZoom.toInt(); zoom++) {
     int west = getTileIndexX(northWest.longitude, zoom);

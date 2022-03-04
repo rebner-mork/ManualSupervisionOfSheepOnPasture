@@ -262,7 +262,7 @@ class _StartTripPageState extends State<StartTripPage>
 
   void updateIcon() {
     setMapBounds();
-    _mapDownloaded = isTilesDownloaded(mapBounds['northWest']!,
+    _mapDownloaded = isEveryTileDownloaded(mapBounds['northWest']!,
         mapBounds['southEast']!, OfflineZoomLevels.min, OfflineZoomLevels.max);
     _mapIcon = _mapDownloaded
         ? StartTripPage.downloadedIcon
