@@ -5,7 +5,7 @@ import 'package:app/utils/constants.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/map_utils.dart';
 import 'package:app/utils/styles.dart';
-import 'package:app/utils/widgets/circular_buttons.dart';
+import 'package:app/widgets/circular_buttons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
