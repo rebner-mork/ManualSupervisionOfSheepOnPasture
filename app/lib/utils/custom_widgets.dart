@@ -272,36 +272,70 @@ class SettingsDialog extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         children: [
-          SwitchListTile(
-              title: Text(
-                'Auto-dialog',
-                style: settingsTextStyle,
-              ),
-              activeColor: Colors.green,
-              value: Provider.of<SettingsProvider>(context).autoDialog,
-              onChanged: (_) {
-                Provider.of<SettingsProvider>(context, listen: false)
-                    .toggleAutoDialog();
-              }),
-          SwitchListTile(
-              title: Text('Les tilbake', style: settingsTextStyle),
-              activeColor: Colors.green,
+          SettingsSwitchListTile(
+            tooltipText:
+                'PÅ: Taleregistrering starter automatisk\nAV: Taleregistrering startes med knapp', // 'Taleregistrerings-dialog starter automatisk'
+            settingText: 'Autostart dialog',
+            value: Provider.of<SettingsProvider>(context).autoDialog,
+            onChanged: (_) {
+              Provider.of<SettingsProvider>(context, listen: false)
+                  .toggleAutoDialog();
+            },
+            margin: const EdgeInsets.only(left: 34),
+          ),
+          SettingsSwitchListTile(
+              tooltipText:
+                  'Taleassistent leser tilbake det den tolket at du sa',
+              settingText: 'Les tilbake',
               value: Provider.of<SettingsProvider>(context).readBack,
               onChanged: (_) {
                 Provider.of<SettingsProvider>(context, listen: false)
                     .toggleReadBack();
-              }),
-          ElevatedButton(
-            child: Text(
-              'Nedlastede kart',
-              style: buttonTextStyle,
-            ),
-            style: ButtonStyle(
-              fixedSize:
-                  MaterialStateProperty.all(Size.fromHeight(mainButtonHeight)),
-            ),
-            onPressed: () {},
-          )
+              })
         ]);
+  }
+}
+
+class SettingsSwitchListTile extends StatelessWidget {
+  const SettingsSwitchListTile(
+      {required this.tooltipText,
+      required this.settingText,
+      required this.value,
+      required this.onChanged,
+      this.margin,
+      Key? key})
+      : super(key: key);
+
+  final String settingText;
+  final String tooltipText;
+  final bool value;
+  final Function(bool) onChanged;
+  final EdgeInsets? margin;
+
+  @override
+  Widget build(BuildContext context) {
+    return SwitchListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+        title: Text(
+          settingText,
+          style: settingsTextStyle,
+        ),
+        activeColor: Colors.green,
+        secondary: Tooltip(
+          //verticalOffset: 100,
+          message: tooltipText,
+          preferBelow: true,
+          textStyle: const TextStyle(fontSize: 16, color: Colors.white),
+          margin: margin,
+          padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
+          child: Icon(
+            Icons.info,
+            size: 36,
+            color: Colors.grey.shade600,
+          ),
+          triggerMode: TooltipTriggerMode.tap,
+        ),
+        value: value,
+        onChanged: onChanged);
   }
 }
