@@ -272,29 +272,25 @@ class SettingsDialog extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         children: [
-          ListTile(
-            title: Text(
-              'Auto-dialog',
-              style: settingsTextStyle,
-            ),
-            trailing: Switch(
-                value: Provider.of<SettingsProvider>(context).autoDialog,
-                activeColor: Colors.green,
-                onChanged: (_) {
-                  Provider.of<SettingsProvider>(context, listen: false)
-                      .toggleAutoDialog();
-                }),
-          ),
-          ListTile(
-            title: Text('Les tilbake', style: settingsTextStyle),
-            trailing: Switch(
-                value: Provider.of<SettingsProvider>(context).readBack,
-                activeColor: Colors.green,
-                onChanged: (_) {
-                  Provider.of<SettingsProvider>(context, listen: false)
-                      .toggleReadBack();
-                }),
-          ),
+          SwitchListTile(
+              title: Text(
+                'Auto-dialog',
+                style: settingsTextStyle,
+              ),
+              activeColor: Colors.green,
+              value: Provider.of<SettingsProvider>(context).autoDialog,
+              onChanged: (_) {
+                Provider.of<SettingsProvider>(context, listen: false)
+                    .toggleAutoDialog();
+              }),
+          SwitchListTile(
+              title: Text('Les tilbake', style: settingsTextStyle),
+              activeColor: Colors.green,
+              value: Provider.of<SettingsProvider>(context).readBack,
+              onChanged: (_) {
+                Provider.of<SettingsProvider>(context, listen: false)
+                    .toggleReadBack();
+              }),
           ElevatedButton(
             child: Text(
               'Nedlastede kart',
