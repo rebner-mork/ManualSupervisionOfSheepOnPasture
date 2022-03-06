@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:app/providers/settings_provider.dart';
 import 'package:app/register/register_sheep.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/other.dart';
@@ -9,6 +10,7 @@ import 'package:app/utils/speech_input_filters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:fluttericon/rpg_awesome_icons.dart';
@@ -74,7 +76,9 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
     _initTextToSpeech();
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       if (widget.stt.isAvailable) {
-        _startDialog(questions, questionContexts);
+        if (Provider.of<SettingsProvider>(context, listen: false).autoDialog) {
+          _startDialog(questions, questionContexts);
+        }
       } else {
         showDialog(
             context: context,
@@ -139,7 +143,9 @@ class _RegisterSheepOrallyState extends State<RegisterSheepOrally> {
           await _speak(response);
           await _listen(questionContexts[questionIndex]);
         } else {
-          await _speak(spokenWord, language: 'en-US');
+          if (Provider.of<SettingsProvider>(context, listen: false).readBack) {
+            await _speak(spokenWord, language: 'en-US');
+          }
 
           setState(() {
             _textControllers.values.elementAt(questionIndex).text = spokenWord;

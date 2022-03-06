@@ -265,13 +265,33 @@ class SettingsDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SimpleDialog(
+    return Dialog(
+        insetPadding:
+            const EdgeInsets.symmetric(horizontal: 40.0, vertical: 24.0),
+        clipBehavior: Clip.none,
+        child: Padding(
+            padding: const EdgeInsets.fromLTRB(6, 0, 6, 16),
+            child: SingleChildScrollView(
+              child: Padding(
+                  padding: const EdgeInsets.only(top: 26, bottom: 10),
+                  child: ListBody(children: [
+                    Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: Text(
+                          'Innstillinger',
+                          style: settingsHeadlineTextStyle,
+                          textAlign: TextAlign.center,
+                        )),
+                    ...speechSettings(context)
+                  ])),
+            )));
+    /*return SimpleDialog(
         title: Text(
           'Innstillinger',
           style: settingsHeadlineTextStyle,
           textAlign: TextAlign.center,
         ),
-        children: [...speechSettings(context)]);
+        children: [...speechSettings(context)]);*/
   }
 }
 
@@ -368,7 +388,6 @@ class SettingsSwitchListTile extends StatelessWidget {
         ),
         activeColor: Colors.green,
         secondary: Tooltip(
-          //verticalOffset: 100,
           message: tooltipText,
           preferBelow: true,
           textStyle: const TextStyle(fontSize: 16, color: Colors.white),

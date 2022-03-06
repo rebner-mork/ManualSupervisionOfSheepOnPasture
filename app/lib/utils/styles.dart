@@ -29,6 +29,7 @@ BoxDecoration circularMapButtonDecorationPressed = BoxDecoration(
 // Feedback
 TextStyle feedbackTextStyle = const TextStyle(fontSize: 16);
 
-TextStyle settingsHeadlineTextStyle = const TextStyle(fontSize: 22);
+TextStyle settingsHeadlineTextStyle =
+    const TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
 TextStyle settingsHeadlineTwoTextStyle = const TextStyle(fontSize: 20);
 TextStyle settingsTextStyle = const TextStyle(fontSize: 18);
