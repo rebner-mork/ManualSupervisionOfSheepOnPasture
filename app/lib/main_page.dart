@@ -1,7 +1,9 @@
 import 'package:app/map/map_widget.dart';
+import 'package:app/providers/settings_provider.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
@@ -30,6 +32,8 @@ class _MapState extends State<MainPage> {
   void _initSpeechToText() async {
     _speechToText = SpeechToText();
     await _speechToText.initialize(onError: _speechToTextError);
+    Provider.of<SettingsProvider>(context, listen: false)
+        .setSttAvailability(_speechToText.isAvailable);
   }
 
   void _speechToTextError(SpeechRecognitionError error) {

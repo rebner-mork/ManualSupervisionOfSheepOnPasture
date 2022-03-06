@@ -271,29 +271,75 @@ class SettingsDialog extends StatelessWidget {
           style: settingsHeadlineTextStyle,
           textAlign: TextAlign.center,
         ),
-        children: [
-          SettingsSwitchListTile(
-            tooltipText:
-                'PÅ: Taleregistrering starter automatisk\nAV: Taleregistrering startes med knapp', // 'Taleregistrerings-dialog starter automatisk'
-            settingText: 'Autostart dialog',
-            value: Provider.of<SettingsProvider>(context).autoDialog,
-            onChanged: (_) {
-              Provider.of<SettingsProvider>(context, listen: false)
-                  .toggleAutoDialog();
-            },
-            margin: const EdgeInsets.only(left: 34),
-          ),
-          SettingsSwitchListTile(
-              tooltipText:
-                  'Taleassistent leser tilbake det den tolket at du sa',
-              settingText: 'Les tilbake',
-              value: Provider.of<SettingsProvider>(context).readBack,
-              onChanged: (_) {
-                Provider.of<SettingsProvider>(context, listen: false)
-                    .toggleReadBack();
-              })
-        ]);
+        children: [...speechSettings(context)]);
   }
+}
+
+List<Widget> speechSettings(BuildContext context) {
+  return [
+    Padding(
+        padding: const EdgeInsets.only(bottom: 5),
+        child: Text(
+          'Tale',
+          style: settingsHeadlineTwoTextStyle,
+          textAlign: TextAlign.center,
+        )),
+    ...Provider.of<SettingsProvider>(context).sttAvailable == null
+        ? [
+            const Text(
+              'Blir tilgjengelig under oppsynstur',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 15),
+            )
+          ]
+        : Provider.of<SettingsProvider>(context).sttAvailable!
+            ? <Widget>[
+                SettingsSwitchListTile(
+                  tooltipText:
+                      'PÅ: Taleregistrering starter automatisk\nAV: Taleregistrering startes med knapp', // 'Taleregistrerings-dialog starter automatisk'
+                  settingText: 'Autostart dialog',
+                  value: Provider.of<SettingsProvider>(context).autoDialog,
+                  onChanged: (_) {
+                    Provider.of<SettingsProvider>(context, listen: false)
+                        .toggleAutoDialog();
+                  },
+                  margin: const EdgeInsets.only(left: 34),
+                ),
+                SettingsSwitchListTile(
+                    tooltipText:
+                        'Taleassistent leser tilbake det den tolket at du sa',
+                    settingText: 'Les tilbake',
+                    value: Provider.of<SettingsProvider>(context).readBack,
+                    onChanged: (_) {
+                      Provider.of<SettingsProvider>(context, listen: false)
+                          .toggleReadBack();
+                    })
+              ]
+            : <Widget>[
+                Row(children: [
+                  Tooltip(
+                      message:
+                          'Enheten er ikke konfigurert for offline taleregistrering. '
+                          'Last ned språkpakken engelsk(US) på enhetens innstillinger og restart appen. '
+                          'Samsung-brukere må muligens skru av Samsung voice typing.',
+                      preferBelow: true,
+                      textStyle:
+                          const TextStyle(fontSize: 16, color: Colors.white),
+                      child: Icon(
+                        Icons.info,
+                        size: 36,
+                        color: Colors.grey.shade600,
+                      ),
+                      triggerMode: TooltipTriggerMode.tap,
+                      showDuration: const Duration(seconds: 30)),
+                  Text(
+                    'Tale-til-tekst ikke konfigurert',
+                    style: settingsTextStyle,
+                    textAlign: TextAlign.center,
+                  )
+                ]),
+              ]
+  ];
 }
 
 class SettingsSwitchListTile extends StatelessWidget {
