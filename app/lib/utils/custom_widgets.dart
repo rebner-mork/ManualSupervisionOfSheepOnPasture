@@ -241,25 +241,24 @@ List<Widget> speechSettings(BuildContext context) {
         : Provider.of<SettingsProvider>(context).sttAvailable!
             ? <Widget>[
                 SettingsSwitchListTile(
-                  tooltipText:
-                      'PÅ: Taleregistrering starter automatisk\nAV: Taleregistrering startes med knapp', // 'Taleregistrerings-dialog starter automatisk'
+                  tooltipText: 'Taleregistrerings-dialog starter automatisk',
                   settingText: 'Autostart dialog',
                   value: Provider.of<SettingsProvider>(context).autoDialog,
                   onChanged: (_) {
                     Provider.of<SettingsProvider>(context, listen: false)
                         .toggleAutoDialog();
                   },
-                  margin: const EdgeInsets.only(left: 34),
+                  margin: const EdgeInsets.only(left: 15),
                 ),
                 SettingsSwitchListTile(
-                    tooltipText:
-                        'Taleassistent leser tilbake det den tolket at du sa',
+                    tooltipText: 'Det som ble tolket leses tilbake',
                     settingText: 'Les tilbake',
                     value: Provider.of<SettingsProvider>(context).readBack,
                     onChanged: (_) {
                       Provider.of<SettingsProvider>(context, listen: false)
                           .toggleReadBack();
-                    })
+                    },
+                    margin: const EdgeInsets.only(left: 35))
               ]
             : <Widget>[
                 Row(children: [
@@ -314,18 +313,17 @@ class SettingsSwitchListTile extends StatelessWidget {
         ),
         activeColor: Colors.green,
         secondary: Tooltip(
-          message: tooltipText,
-          preferBelow: true,
-          textStyle: const TextStyle(fontSize: 16, color: Colors.white),
-          margin: margin,
-          padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
-          child: Icon(
-            Icons.info,
-            size: 36,
-            color: Colors.grey.shade600,
-          ),
-          triggerMode: TooltipTriggerMode.tap,
-        ),
+            message: tooltipText,
+            preferBelow: true,
+            textStyle: const TextStyle(fontSize: 16, color: Colors.white),
+            margin: margin,
+            padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
+            child: Icon(
+              Icons.info,
+              size: 38,
+              color: Colors.grey.shade600,
+            ),
+            triggerMode: TooltipTriggerMode.tap),
         value: value,
         onChanged: onChanged);
   }
