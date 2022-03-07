@@ -203,29 +203,21 @@ class SettingsDialog extends StatelessWidget {
         insetPadding:
             const EdgeInsets.symmetric(horizontal: 40.0, vertical: 24.0),
         clipBehavior: Clip.none,
-        child: Padding(
-            padding: const EdgeInsets.fromLTRB(6, 0, 6, 16),
-            child: SingleChildScrollView(
-              child: Padding(
-                  padding: const EdgeInsets.only(top: 26, bottom: 10),
-                  child: ListBody(children: [
-                    Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: Text(
-                          'Innstillinger',
-                          style: settingsHeadlineTextStyle,
-                          textAlign: TextAlign.center,
-                        )),
-                    ...speechSettings(context)
-                  ])),
-            )));
-    /*return SimpleDialog(
-        title: Text(
-          'Innstillinger',
-          style: settingsHeadlineTextStyle,
-          textAlign: TextAlign.center,
-        ),
-        children: [...speechSettings(context)]);*/
+        child: SingleChildScrollView(
+          child: Padding(
+              padding:
+                  const EdgeInsets.only(left: 6, top: 26, right: 6, bottom: 26),
+              child: ListBody(children: [
+                Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Text(
+                      'Innstillinger',
+                      style: settingsHeadlineTextStyle,
+                      textAlign: TextAlign.center,
+                    )),
+                ...speechSettings(context)
+              ])),
+        ));
   }
 }
 
