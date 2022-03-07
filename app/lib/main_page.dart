@@ -83,6 +83,16 @@ class _MapState extends State<MainPage> {
               textSize(_sheepAmount.toString(), circularButtonTextStyle).width,
         ),
       ),
+      Positioned(
+          top: 8 + MediaQuery.of(context).viewPadding.top,
+          left: 8,
+          child: CircularButton(
+            child: Icon(
+              Icons.cloud_upload,
+              size: iconSize,
+            ),
+            onPressed: () => debugPrint("End trip"),
+          ))
     ]));
   }
 }
