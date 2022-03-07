@@ -4,7 +4,7 @@ import 'package:flutter_map/plugin_api.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:async';
 
-import 'package:app/register/register_sheep_orally.dart';
+import 'package:app/register/register_sheep.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import '../utils/map_utils.dart' as map_utils;
 import '../utils/constants.dart';
@@ -87,7 +87,7 @@ class _MapState extends State<MapWidget> {
         MaterialPageRoute(
             builder: (context) => ValueListenableBuilder<bool>(
                 valueListenable: widget.ongoingDialog,
-                builder: (context, value, child) => RegisterSheepOrally(
+                builder: (context, value, child) => RegisterSheep(
                       'filename',
                       widget.stt,
                       widget.ongoingDialog,

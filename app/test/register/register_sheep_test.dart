@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttericon/rpg_awesome_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 void main() {
   group('Widget tests', () {
     TestWidgetsFlutterBinding.ensureInitialized();
     testWidgets('Initial layout and content', (WidgetTester tester) async {
-      await tester
-          .pumpWidget(const MaterialApp(home: RegisterSheep('testFile')));
+      await tester.pumpWidget(MaterialApp(
+          home:
+              RegisterSheep('testFile', SpeechToText(), ValueNotifier(false))));
 
       expect(find.byType(BackButton), findsOneWidget);
       expect(find.text('Registrer sau'), findsOneWidget);
@@ -28,8 +30,9 @@ void main() {
     });
 
     testWidgets('Alert-dialog on back button', (WidgetTester tester) async {
-      await tester
-          .pumpWidget(const MaterialApp(home: RegisterSheep('testFile')));
+      await tester.pumpWidget(MaterialApp(
+          home:
+              RegisterSheep('testFile', SpeechToText(), ValueNotifier(false))));
 
       expect(find.byType(AlertDialog), findsNothing);
 
