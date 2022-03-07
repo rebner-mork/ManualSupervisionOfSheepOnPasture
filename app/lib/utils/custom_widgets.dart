@@ -179,84 +179,18 @@ FloatingActionButton startDialogButton(void Function() onPressed) {
   );
 }
 
-class Sheepometer extends StatefulWidget {
-  const Sheepometer(this.sheepAmount, {Key? key}) : super(key: key);
+class SettingsIcon extends StatelessWidget {
+  const SettingsIcon({required this.iconSize, Key? key}) : super(key: key);
 
-  final int sheepAmount;
-
-  @override
-  State<Sheepometer> createState() => _SheepometerState();
-}
-
-class _SheepometerState extends State<Sheepometer> {
-  Color color = Colors.green;
+  final double iconSize;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-        onTapDown: (_) {
-          setState(() {
-            color = Colors.green.shade700;
-          });
-        },
-        onTap: () {
-          setState(() {
-            color = Colors.green;
-          });
-        },
-        child: Container(
-            height: circularMapButtonSize.height,
-            width: 62 +
-                textSize(widget.sheepAmount.toString(),
-                        circularMapButtonTextStyle)
-                    .width,
-            decoration: color == Colors.green
-                ? circularMapButtonDecoration
-                : circularMapButtonDecorationPressed,
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              const Image(
-                  image: AssetImage('images/sheep.png'), width: 42, height: 42),
-              Text(widget.sheepAmount.toString(),
-                  style: circularMapButtonTextStyle),
-              const SizedBox(
-                width: 2,
-              )
-            ])));
-  }
-}
-
-class SettingsButton extends StatelessWidget {
-  const SettingsButton({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        width: circularMapButtonSize.width,
-        height: circularMapButtonSize.height,
-        decoration: circularMapButtonDecoration,
-        child: const SettingsIconButton());
-  }
-}
-
-class SettingsIconButton extends StatelessWidget {
-  const SettingsIconButton({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-        color: Colors.transparent,
-        child: IconButton(
-          padding: EdgeInsets.zero,
-          icon: const Icon(
-            Icons.settings,
-            color: Colors.black,
-            size: 42,
-          ),
-          onPressed: () {
-            showDialog(
-                context: context, builder: (_) => const SettingsDialog());
-          },
-        ));
+    return Icon(
+      Icons.settings,
+      color: Colors.black,
+      size: iconSize,
+    );
   }
 }
 

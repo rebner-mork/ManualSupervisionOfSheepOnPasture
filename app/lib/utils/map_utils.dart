@@ -1,11 +1,22 @@
 import 'dart:math';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:latlong2/latlong.dart';
+
 import 'package:flutter_map/flutter_map.dart';
+import 'constants.dart';
+
+// --- MAP PROVIDER ---
+
+abstract class MapProvider {
+  static const String urlTemplate =
+      "https://opencache{s}.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}";
+  static final List<String> subdomains = ["", "2", "3"];
+}
+
+// --- LOCATION SERVICE ---
 
 Future<LatLng> getDevicePosition() async {
   LocationData _locationData;
@@ -34,6 +45,8 @@ Future<LatLng> getDevicePosition() async {
 
   return LatLng(_locationData.latitude!, _locationData.longitude!);
 }
+
+// --- MARKERS ---
 
 Marker getDevicePositionMarker(LatLng pos) {
   const double size = 40;
@@ -64,6 +77,8 @@ Marker getSheepMarker(LatLng pos) {
           ));
 }
 
+// --- INDEX CALCULATIONS ---
+
 int getTileIndexX(double longitude, int zoom) {
   return (((longitude + 180) / 360) * pow(2, zoom)).floor();
 }
@@ -77,6 +92,22 @@ int getTileIndexY(double latitude, int zoom) {
       .floor();
 }
 
+int numberOfTiles(
+    LatLng northWest, LatLng southEast, double minZoom, double maxZoom) {
+  int _numberOfTiles = 0;
+  for (int zoom = minZoom.toInt(); zoom <= maxZoom.toInt(); zoom++) {
+    int west = getTileIndexX(northWest.longitude, zoom);
+    int east = getTileIndexX(southEast.longitude, zoom);
+    int north = getTileIndexY(northWest.latitude, zoom);
+    int south = getTileIndexY(southEast.latitude, zoom);
+
+    _numberOfTiles += (east - west + 1) * (south - north + 1);
+  }
+  return _numberOfTiles;
+}
+
+// --- PATHS ---
+
 String _getTileUrl(
     String urlTemplate, int x, int y, int zoom, List<String> subdomains) {
   var random = Random();
@@ -87,27 +118,36 @@ String _getTileUrl(
       .replaceFirst("{s}", subdomains[random.nextInt(subdomains.length)]);
 }
 
-Future<void> _downloadTile(
-    int x, int y, int zoom, String urlTemplate, List<String> subdomains) async {
-  Directory baseDir = await getApplicationDocumentsDirectory();
-  String basePath = baseDir.path;
-  String subPath = "/maps/" + zoom.toString() + "/" + x.toString();
-  await Directory(basePath + subPath).create(recursive: true);
-  String fileName = "/" + y.toString() + ".png";
+String getLocalUrlTemplate() {
+  return applicationDocumentDirectoryPath + "/maps/{z}/{x}/{y}.png";
+}
 
-  if (!File(basePath + subPath + fileName).existsSync()) {
-    var response = await http
-        .get(Uri.parse(_getTileUrl(urlTemplate, x, y, zoom, subdomains)));
-    File(basePath + subPath + fileName).writeAsBytesSync(response.bodyBytes);
+String _getLocalTileUrl(int x, int y, int z) {
+  return _getTileUrl(getLocalUrlTemplate(), x, y, z, [""]);
+}
+
+String _getServerTileUrl(int x, int y, int z) {
+  return _getTileUrl(MapProvider.urlTemplate, x, y, z, MapProvider.subdomains);
+}
+
+// --- DOWNLOADS ---
+
+Future<void> _downloadTile(int x, int y, int zoom) async {
+  String localFilePath = _getLocalTileUrl(x, y, zoom);
+  String localDirPath = localFilePath.replaceAll(y.toString() + ".png", "");
+
+  if (!File(localFilePath).existsSync()) {
+    await Directory(localDirPath).create(recursive: true);
+    var response = await http.get(Uri.parse(_getServerTileUrl(x, y, zoom)));
+    File(localFilePath).writeAsBytesSync(response.bodyBytes);
   }
 }
 
-// TODO Should this return Future<void> or just void ???
 Future<void> downloadTiles(
-    LatLng northWest, LatLng southEast, double minZoom, double maxZoom) async {
-  String urlTemplate =
-      "https://opencache{s}.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}";
-  final List<String> subdomains = ["", "2", "3"];
+    LatLng northWest, LatLng southEast, double minZoom, double maxZoom,
+    {ValueChanged<double>? progressIndicator}) async {
+  int currentTileNumber = 0;
+  int totalTileNumber = numberOfTiles(northWest, southEast, minZoom, maxZoom);
 
   for (int zoom = minZoom.toInt(); zoom <= maxZoom.toInt(); zoom++) {
     int west = getTileIndexX(northWest.longitude, zoom);
@@ -117,13 +157,31 @@ Future<void> downloadTiles(
 
     for (int x = west; x <= east; x++) {
       for (int y = north; y <= south; y++) {
-        await _downloadTile(x, y, zoom, urlTemplate, subdomains);
+        await _downloadTile(x, y, zoom);
+        if (progressIndicator != null) {
+          progressIndicator(++currentTileNumber / totalTileNumber);
+        }
       }
     }
   }
 }
 
-Future<String> getOfflineUrlTemplate() async {
-  Directory baseDir = await getApplicationDocumentsDirectory();
-  return baseDir.path + "/maps/{z}/{x}/{y}.png";
+bool isEveryTileDownloaded(
+    LatLng northWest, LatLng southEast, double minZoom, double maxZoom) {
+  for (int zoom = minZoom.toInt(); zoom <= maxZoom.toInt(); zoom++) {
+    int west = getTileIndexX(northWest.longitude, zoom);
+    int east = getTileIndexX(southEast.longitude, zoom);
+    int north = getTileIndexY(northWest.latitude, zoom);
+    int south = getTileIndexY(southEast.latitude, zoom);
+
+    for (int x = west; x <= east; x++) {
+      for (int y = north; y <= south; y++) {
+        String path = _getLocalTileUrl(x, y, zoom);
+        if (!File(path).existsSync()) {
+          return false;
+        }
+      }
+    }
+  }
+  return true;
 }
