@@ -1,3 +1,4 @@
+import 'package:app/register/register_sheep.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/plugin_api.dart';
@@ -72,38 +73,47 @@ class _MapState extends State<MapWidget> {
   }
 
   void registerSheepByTap(LatLng targetPosition) async {
+    // TODO: userPosition! is null when tapping map 'instantly' after map opens
     LatLng pos = userPosition!;
     map_utils.getDevicePosition().then((value) {
       pos = value;
       _movementPoints.add(pos);
     });
 
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ValueListenableBuilder<bool>(
-                valueListenable: widget.ongoingDialog,
-                builder: (context, value, child) => RegisterSheepOrally(
-                      'filename',
-                      widget.stt,
-                      widget.ongoingDialog,
-                      onCompletedSuccessfully: (int sheepAmountRegistered) {
-                        setState(() {
-                          if (sheepAmountRegistered > 0) {
-                            if (widget.onSheepRegistered != null) {
-                              widget.onSheepRegistered!(sheepAmountRegistered);
+    if (widget.stt.isAvailable) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ValueListenableBuilder<bool>(
+                  valueListenable: widget.ongoingDialog,
+                  builder: (context, value, child) => RegisterSheepOrally(
+                        'filename',
+                        widget.stt,
+                        widget.ongoingDialog,
+                        onCompletedSuccessfully: (int sheepAmountRegistered) {
+                          setState(() {
+                            if (sheepAmountRegistered > 0) {
+                              if (widget.onSheepRegistered != null) {
+                                widget
+                                    .onSheepRegistered!(sheepAmountRegistered);
+                              }
+                              linesOfSight.add(Polyline(
+                                  points: [pos, targetPosition],
+                                  color: Colors.black,
+                                  isDotted: true,
+                                  strokeWidth: 5.0));
+                              registrationMarkers.add(
+                                  map_utils.getSheepMarker(targetPosition));
                             }
-                            linesOfSight.add(Polyline(
-                                points: [pos, targetPosition],
-                                color: Colors.black,
-                                isDotted: true,
-                                strokeWidth: 5.0));
-                            registrationMarkers
-                                .add(map_utils.getSheepMarker(targetPosition));
-                          }
-                        });
-                      },
-                    ))));
+                          });
+                        },
+                      ))));
+    } else {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const RegisterSheep('filename')));
+    }
   }
 
   @override
