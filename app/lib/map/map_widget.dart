@@ -5,7 +5,7 @@ import 'package:flutter_map/plugin_api.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:async';
 
-import 'package:app/register/register_sheep_orally.dart';
+import 'package:app/register/register_sheep.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import '../utils/map_utils.dart' as map_utils;
 import '../utils/constants.dart';
@@ -83,40 +83,32 @@ class _MapState extends State<MapWidget> {
       _movementPoints.add(pos);
     });
 
-    if (widget.stt.isAvailable) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ValueListenableBuilder<bool>(
-                  valueListenable: widget.ongoingDialog,
-                  builder: (context, value, child) => RegisterSheepOrally(
-                        'filename',
-                        widget.stt,
-                        widget.ongoingDialog,
-                        onCompletedSuccessfully: (int sheepAmountRegistered) {
-                          setState(() {
-                            if (sheepAmountRegistered > 0) {
-                              if (widget.onSheepRegistered != null) {
-                                widget
-                                    .onSheepRegistered!(sheepAmountRegistered);
-                              }
-                              linesOfSight.add(Polyline(
-                                  points: [pos, targetPosition],
-                                  color: Colors.black,
-                                  isDotted: true,
-                                  strokeWidth: 5.0));
-                              registrationMarkers.add(
-                                  map_utils.getSheepMarker(targetPosition));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ValueListenableBuilder<bool>(
+                valueListenable: widget.ongoingDialog,
+                builder: (context, value, child) => RegisterSheep(
+                      'filename',
+                      widget.stt,
+                      widget.ongoingDialog,
+                      onCompletedSuccessfully: (int sheepAmountRegistered) {
+                        setState(() {
+                          if (sheepAmountRegistered > 0) {
+                            if (widget.onSheepRegistered != null) {
+                              widget.onSheepRegistered!(sheepAmountRegistered);
                             }
-                          });
-                        },
-                      ))));
-    } else {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const RegisterSheep('filename')));
-    }
+                            linesOfSight.add(Polyline(
+                                points: [pos, targetPosition],
+                                color: Colors.black,
+                                isDotted: true,
+                                strokeWidth: 5.0));
+                            registrationMarkers
+                                .add(map_utils.getSheepMarker(targetPosition));
+                          }
+                        });
+                      },
+                    ))));
   }
 
   @override
