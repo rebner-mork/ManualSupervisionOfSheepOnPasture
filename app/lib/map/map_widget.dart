@@ -87,7 +87,6 @@ class _MapState extends State<MapWidget> {
       map_utils.getDevicePosition().then((value) {
         pos = value;
         _movementPoints.add(pos);
-        debugPrint(distance.distance(pos, targetPosition).toString());
 
         Navigator.push(
             context,

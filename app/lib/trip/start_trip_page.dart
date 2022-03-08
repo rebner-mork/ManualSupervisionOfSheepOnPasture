@@ -86,46 +86,39 @@ class _StartTripPageState extends State<StartTripPage>
               centerTitle: true,
               actions: const [SettingsIconButton()],
             ),
-            body: Column(
-              children: _loadingData
-                  ? [
-                      appbarBodySpacer(),
-                      Center(
-                          child: Text(
-                        'Laster inn...',
-                        style: feedbackTextStyle,
-                      ))
-                    ]
-                  : _farmNames.isEmpty
-                      ? [
-                          Text(
-                              'Du er ikke registrert som oppsynspersonell hos noen gård. Ta kontakt med sauebonde.',
-                              style: feedbackTextStyle)
-                        ]
-                      : [
-                          appbarBodySpacer(),
-                          _farmNameRow(),
-                          inputFieldSpacer(),
-                          _farmMapRow(),
-                          inputFieldSpacer(),
-                          Text(
-                            _feedbackText,
-                            style: feedbackTextStyle,
-                          ),
-                          inputFieldSpacer(),
-                          Visibility(
-                              visible: _downloadingMap,
-                              child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 40),
-                                  child: LinearProgressIndicator(
-                                    value: _downloadProgress,
-                                    minHeight: 10,
-                                  ))),
-                          inputFieldSpacer(),
-                          startTripButton()
-                        ],
-            )));
+            body: _loadingData
+                ? const LoadingData()
+                : Column(
+                    children: _farmNames.isEmpty
+                        ? [
+                            Text(
+                                'Du er ikke registrert som oppsynspersonell hos noen gård. Ta kontakt med sauebonde.',
+                                style: feedbackTextStyle)
+                          ]
+                        : [
+                            appbarBodySpacer(),
+                            _farmNameRow(),
+                            inputFieldSpacer(),
+                            _farmMapRow(),
+                            inputFieldSpacer(),
+                            Text(
+                              _feedbackText,
+                              style: feedbackTextStyle,
+                            ),
+                            inputFieldSpacer(),
+                            Visibility(
+                                visible: _downloadingMap,
+                                child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 40),
+                                    child: LinearProgressIndicator(
+                                      value: _downloadProgress,
+                                      minHeight: 10,
+                                    ))),
+                            inputFieldSpacer(),
+                            startTripButton()
+                          ],
+                  )));
   }
 
   Row _farmNameRow() {
@@ -294,6 +287,7 @@ class _StartTripPageState extends State<StartTripPage>
   Future<void> _startTrip() async {
     // TODO: try/catch (Unhandled Exception: Location services does not have permissions)
     LatLng userStartPosition = await map_utils.getDevicePosition();
+
     if (!_mapDownloaded) {
       setState(() {
         _feedbackText = 'Oppsynsturen starter når kartet er lastet ned';
@@ -309,6 +303,7 @@ class _StartTripPageState extends State<StartTripPage>
         });
       });
     }
+
     setState(() {
       _feedbackText = '';
       updateIcon();
@@ -322,7 +317,7 @@ class _StartTripPageState extends State<StartTripPage>
             builder: (context) => MainPage(
                 northWest: mapBounds['northWest']!,
                 southEast: mapBounds['southEast']!,
-                userStartPosition: userStartPosition)));
+                farmId: _farmIDs[_farmNames.indexOf(_selectedFarmName)])));
   }
 
   Map<String, Map<String, Map<String, double>>> _castMapsFromDynamic(

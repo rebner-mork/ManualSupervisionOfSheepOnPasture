@@ -34,6 +34,28 @@ SizedBox appbarBodySpacer() {
 
 const double defaultIconSize = 30;
 
+class LoadingData extends StatelessWidget {
+  const LoadingData(
+      {this.text = 'Laster inn...', this.moreVerticalPadding = false, Key? key})
+      : super(key: key);
+
+  final String text;
+  final bool moreVerticalPadding;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      appbarBodySpacer(),
+      if (moreVerticalPadding) const SizedBox(height: 30),
+      Center(
+          child: Text(
+        text,
+        style: feedbackTextStyle,
+      ))
+    ]);
+  }
+}
+
 Row inputRow(String text, TextEditingController controller, IconData iconData,
     Color color,
     {double iconSize = defaultIconSize,
