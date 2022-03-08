@@ -1,4 +1,5 @@
 import 'package:app/register/register_sheep.dart';
+import 'package:app/utils/custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/plugin_api.dart';
@@ -44,7 +45,6 @@ class _MapState extends State<MapWidget> {
   late String urlTemplate;
   bool urlTemplateLoaded = false;
 
-  Distance distance = const Distance();
   bool mapAlreadyTapped = false;
 
   @override
@@ -79,47 +79,44 @@ class _MapState extends State<MapWidget> {
   }
 
   void registerSheepByTap(LatLng targetPosition) async {
-    debugPrint("mapAlreadyTapped: " + mapAlreadyTapped.toString());
     if (!mapAlreadyTapped) {
       mapAlreadyTapped = true;
 
-      LatLng pos = userPosition;
-      map_utils.getDevicePosition().then((value) {
-        pos = value;
-        _movementPoints.add(pos);
-
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ValueListenableBuilder<bool>(
-                    valueListenable: widget.ongoingDialog,
-                    builder: (context, value, child) => RegisterSheep(
-                            'filename',
-                            widget.stt,
-                            widget.ongoingDialog,
-                            distance.distance(pos, targetPosition) < 50,
-                            onCompletedSuccessfully:
-                                (int sheepAmountRegistered) {
-                          mapAlreadyTapped = false;
-                          setState(() {
-                            if (sheepAmountRegistered > 0) {
-                              if (widget.onSheepRegistered != null) {
-                                widget
-                                    .onSheepRegistered!(sheepAmountRegistered);
-                              }
-                              linesOfSight.add(Polyline(
-                                  points: [pos, targetPosition],
-                                  color: Colors.black,
-                                  isDotted: true,
-                                  strokeWidth: 5.0));
-                              registrationMarkers.add(
-                                  map_utils.getSheepMarker(targetPosition));
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ValueListenableBuilder<bool>(
+                  valueListenable: widget.ongoingDialog,
+                  builder: (context, value, child) => RegisterSheep(
+                          'filename',
+                          widget.stt,
+                          widget.ongoingDialog,
+                          targetPosition, onCompletedSuccessfully:
+                              (Map<String, Object> returnedData) {
+                        mapAlreadyTapped = false;
+                        int sheepAmount = returnedData['sheep'] == ''
+                            ? 0
+                            : returnedData['sheep'] as int;
+                        setState(() {
+                          if (sheepAmount > 0) {
+                            if (widget.onSheepRegistered != null) {
+                              widget.onSheepRegistered!(sheepAmount);
                             }
-                          });
-                        }, onWillPop: () {
-                          mapAlreadyTapped = false;
-                        }))));
-      });
+                            linesOfSight.add(Polyline(
+                                points: [
+                                  returnedData['devicePosition']! as LatLng,
+                                  targetPosition
+                                ],
+                                color: Colors.black,
+                                isDotted: true,
+                                strokeWidth: 5.0));
+                            registrationMarkers
+                                .add(map_utils.getSheepMarker(targetPosition));
+                          }
+                        });
+                      }, onWillPop: () {
+                        mapAlreadyTapped = false;
+                      }))));
     }
   }
 
@@ -171,7 +168,7 @@ class _MapState extends State<MapWidget> {
                     markers: [_currentPositionMarker, ...registrationMarkers])
               ],
             )
-          : const Center(child: Text("Laster inn")),
+          : null,
     );
   }
 }

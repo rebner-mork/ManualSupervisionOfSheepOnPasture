@@ -12,18 +12,20 @@ import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:fluttericon/rpg_awesome_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:latlong2/latlong.dart';
+import '../utils/map_utils.dart' as map_utils;
 
 class RegisterSheep extends StatefulWidget {
   const RegisterSheep(
-      this.fileName, this.stt, this.ongoingDialog, this.isShortDistance,
+      this.fileName, this.stt, this.ongoingDialog, this.sheepPosition,
       {this.onCompletedSuccessfully, this.onWillPop, Key? key})
       : super(key: key);
 
   final String fileName;
   final SpeechToText stt;
   final ValueNotifier<bool> ongoingDialog;
-  final bool isShortDistance;
-  final ValueChanged<int>? onCompletedSuccessfully;
+  final LatLng sheepPosition;
+  final ValueChanged<Map<String, Object>>? onCompletedSuccessfully; //int
   final VoidCallback? onWillPop;
 
   @override
@@ -33,7 +35,7 @@ class RegisterSheep extends StatefulWidget {
 class _RegisterSheepState extends State<RegisterSheep> {
   _RegisterSheepState();
 
-  late String title;
+  String title = '';
 
   int questionIndex = 0;
 
@@ -62,17 +64,35 @@ class _RegisterSheepState extends State<RegisterSheep> {
     'blueEar': TextEditingController(),
   };
 
+  late LatLng _devicePosition;
+  final Distance distance = const Distance();
+  late bool _isShortDistance;
+
   late List<String> questions;
   late List<QuestionContext> questionContexts;
 
   List<String> numbers = numbersFilter.keys.toList();
   List<String> colors = colorsFilter.keys.toList();
 
+  bool _loadingData = true;
+
   @override
   void initState() {
     super.initState();
 
-    if (widget.isShortDistance) {
+    _initTextToSpeech();
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _initGpsQuestionsAndDialog();
+    });
+  }
+
+  Future<void> _initGpsQuestionsAndDialog() async {
+    _devicePosition = await map_utils.getDevicePosition();
+    _isShortDistance =
+        distance.distance(_devicePosition, widget.sheepPosition) < 50;
+
+    if (_isShortDistance) {
       title = 'Nærregistrering sau';
       questions = [
         ...sheepQuestions['distance']!.keys.toList(),
@@ -88,13 +108,13 @@ class _RegisterSheepState extends State<RegisterSheep> {
       questionContexts = sheepQuestions['distance']!.values.toList();
     }
 
-    _initTextToSpeech();
-
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      if (widget.stt.isAvailable) {
-        _startDialog(questions, questionContexts);
-      }
+    setState(() {
+      _loadingData = false;
     });
+
+    if (widget.stt.isAvailable) {
+      _startDialog(questions, questionContexts);
+    }
   }
 
   void _startDialog(
@@ -176,7 +196,6 @@ class _RegisterSheepState extends State<RegisterSheep> {
     }
   }
 
-  // TODO: init in parent to save time? how much time?
   void _initTextToSpeech() {
     _tts = FlutterTts();
 
@@ -203,15 +222,16 @@ class _RegisterSheepState extends State<RegisterSheep> {
     final String path = directory.path;
 
     final File file = File('$path/${widget.fileName}.json');
-    final Map data = gatherRegisteredData(_textControllers);
+    final Map data = {};
 
     file.writeAsString(json.encode(data));
 
     if (widget.onCompletedSuccessfully != null) {
-      int sheepAmount = _textControllers['sheep']!.text == ''
-          ? 0
-          : int.parse(_textControllers['sheep']!.text);
-      widget.onCompletedSuccessfully!(sheepAmount);
+      Map<String, Object> dataToReturn = {};
+      data.addAll(gatherRegisteredData(_textControllers));
+      data['devicePosition'] = _devicePosition;
+      data.addAll(gatherRegisteredData(_textControllers));
+      widget.onCompletedSuccessfully!(dataToReturn);
     }
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
@@ -314,42 +334,45 @@ class _RegisterSheepState extends State<RegisterSheep> {
                   title: Text(title),
                   leading: BackButton(onPressed: _backButtonPressed),
                 ),
-                body: SingleChildScrollView(
-                    controller: scrollController,
-                    child: Center(
-                        child: Column(children: [
-                      const SizedBox(height: 10),
-                      inputDividerWithHeadline('Antall'),
-                      inputRow('Sauer', _textControllers['sheep']!,
-                          RpgAwesome.sheep, Colors.grey),
-                      inputFieldSpacer(),
-                      inputRow('Lam', _textControllers['lambs']!,
-                          RpgAwesome.sheep, Colors.grey,
-                          iconSize: 24),
-                      inputFieldSpacer(),
-                      inputRow(
-                        'Hvite',
-                        _textControllers['white']!,
-                        RpgAwesome.sheep,
-                        Colors.white,
-                      ),
-                      inputFieldSpacer(),
-                      inputRow(
-                        'Svarte',
-                        _textControllers['black']!,
-                        RpgAwesome.sheep,
-                        Colors.black,
-                      ),
-                      inputFieldSpacer(),
-                      inputRow('Svart hode', _textControllers['blackHead']!,
-                          RpgAwesome.sheep, Colors.black,
-                          scrollController: scrollController,
-                          fieldAmount: 5,
-                          key: firstHeadlineFieldKeys[0]),
-                      if (widget.isShortDistance) ..._shortDistance(),
-                      const SizedBox(height: 80),
-                    ]))),
-                floatingActionButton: !widget.ongoingDialog.value
+                body: _loadingData
+                    ? const LoadingData()
+                    : SingleChildScrollView(
+                        controller: scrollController,
+                        child: Center(
+                            child: Column(children: [
+                          const SizedBox(height: 10),
+                          inputDividerWithHeadline('Antall'),
+                          inputRow('Sauer', _textControllers['sheep']!,
+                              RpgAwesome.sheep, Colors.grey),
+                          inputFieldSpacer(),
+                          inputRow('Lam', _textControllers['lambs']!,
+                              RpgAwesome.sheep, Colors.grey,
+                              iconSize: 24),
+                          inputFieldSpacer(),
+                          inputRow(
+                            'Hvite',
+                            _textControllers['white']!,
+                            RpgAwesome.sheep,
+                            Colors.white,
+                          ),
+                          inputFieldSpacer(),
+                          inputRow(
+                            'Svarte',
+                            _textControllers['black']!,
+                            RpgAwesome.sheep,
+                            Colors.black,
+                          ),
+                          inputFieldSpacer(),
+                          inputRow('Svart hode', _textControllers['blackHead']!,
+                              RpgAwesome.sheep, Colors.black,
+                              scrollController: scrollController,
+                              fieldAmount: 5,
+                              key: firstHeadlineFieldKeys[0]),
+                          if (_isShortDistance) ..._shortDistance(),
+                          const SizedBox(height: 80),
+                        ]))),
+                floatingActionButton: !_loadingData &&
+                        !widget.ongoingDialog.value
                     ? Row(
                         mainAxisAlignment:
                             MediaQuery.of(context).viewInsets.bottom == 0

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 
 import 'package:app/map/map_widget.dart';
@@ -79,7 +80,6 @@ class _MapState extends State<MainPage> {
 
     _eartags = dbEartags.map((key, value) => MapEntry(key, value as bool));
     _ties = dbTies.map((key, value) => MapEntry(key, value as int));
-
     setState(() {
       _loadingData = false;
     });
@@ -89,9 +89,7 @@ class _MapState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Material(
         child: _loadingData
-            ? const LoadingData(
-                moreVerticalPadding: true,
-              )
+            ? const LoadingData()
             : Stack(children: [
                 ValueListenableBuilder<bool>(
                     valueListenable: _ongoingDialog,

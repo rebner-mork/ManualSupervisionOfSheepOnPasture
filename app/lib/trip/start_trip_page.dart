@@ -10,7 +10,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import '../utils/map_utils.dart' as map_utils;
 
 class StartTripPage extends StatefulWidget {
   const StartTripPage({Key? key}) : super(key: key);
@@ -286,7 +285,6 @@ class _StartTripPageState extends State<StartTripPage>
 
   Future<void> _startTrip() async {
     // TODO: try/catch (Unhandled Exception: Location services does not have permissions)
-    LatLng userStartPosition = await map_utils.getDevicePosition();
 
     if (!_mapDownloaded) {
       setState(() {
