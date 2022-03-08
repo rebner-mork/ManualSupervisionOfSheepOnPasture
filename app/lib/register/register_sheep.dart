@@ -62,8 +62,9 @@ class _RegisterSheepState extends State<RegisterSheep> {
     'blueEar': TextEditingController(),
   };
 
-  List<String> questions = allSheepQuestions.keys.toList();
-  List<QuestionContext> questionContexts = allSheepQuestions.values.toList();
+  late List<String> questions;
+  late List<QuestionContext> questionContexts;
+
   List<String> numbers = numbersFilter.keys.toList();
   List<String> colors = colorsFilter.keys.toList();
 
@@ -71,9 +72,22 @@ class _RegisterSheepState extends State<RegisterSheep> {
   void initState() {
     super.initState();
 
-    title = widget.isShortDistance
-        ? 'Nærregistrering sau'
-        : 'Avstandsregistrering sau';
+    if (widget.isShortDistance) {
+      title = 'Nærregistrering sau';
+      questions = [
+        ...sheepQuestions['distance']!.keys.toList(),
+        ...sheepQuestions['close']!.keys.toList()
+      ];
+      questionContexts = [
+        ...sheepQuestions['distance']!.values.toList(),
+        ...sheepQuestions['close']!.values.toList()
+      ];
+    } else {
+      title = 'Avstandsregistrering sau';
+      questions = sheepQuestions['distance']!.keys.toList();
+      questionContexts = sheepQuestions['distance']!.values.toList();
+    }
+
     _initTextToSpeech();
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -142,7 +156,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
 
           questionIndex++;
 
-          if (questionIndex < allSheepQuestions.length) {
+          if (questionIndex < questions.length) {
             if (firstHeadlineFieldIndexes.contains(questionIndex)) {
               scrollToKey(scrollController,
                   firstHeadlineFieldKeys[currentHeadlineIndex++]);
@@ -204,6 +218,82 @@ class _RegisterSheepState extends State<RegisterSheep> {
     }
   }
 
+  Future<void> _backButtonPressed() async {
+    if (widget.stt.isAvailable) {
+      widget.stt.stop();
+      _tts.stop();
+      setState(() {
+        widget.ongoingDialog.value = false;
+      });
+    }
+    await cancelRegistrationDialog(context).then((value) => {
+          if (value)
+            {
+              if (widget.onWillPop != null) {widget.onWillPop!()},
+              Navigator.pop(context)
+            }
+        });
+  }
+
+  Future<bool> _onWillPop() async {
+    bool returnValue = false;
+
+    if (widget.stt.isAvailable) {
+      widget.stt.stop();
+      _tts.stop();
+      setState(() {
+        widget.ongoingDialog.value = false;
+      });
+    }
+
+    await cancelRegistrationDialog(context)
+        .then((value) => {returnValue = value});
+    if (returnValue && widget.onWillPop != null) {
+      widget.onWillPop!();
+    }
+    return returnValue;
+  }
+
+  List _shortDistance() {
+    return [
+      inputDividerWithHeadline('Slips', firstHeadlineFieldKeys[0]),
+      inputRow(
+        'Røde',
+        _textControllers['redTie']!,
+        FontAwesome5.black_tie,
+        Colors.red,
+      ),
+      inputFieldSpacer(),
+      inputRow(
+        'Blå',
+        _textControllers['blueTie']!,
+        FontAwesome5.black_tie,
+        Colors.blue,
+      ),
+      inputFieldSpacer(),
+      inputRow('Gule', _textControllers['yellowTie']!, FontAwesome5.black_tie,
+          Colors.yellow,
+          scrollController: scrollController,
+          fieldAmount: 3,
+          key: firstHeadlineFieldKeys[1]),
+      inputDividerWithHeadline('Øremerker', firstHeadlineFieldKeys[1]),
+      inputRow(
+        'Røde',
+        _textControllers['redEar']!,
+        Icons.local_offer,
+        Colors.red,
+      ),
+      inputFieldSpacer(),
+      inputRow(
+        'Blå',
+        _textControllers['blueEar']!,
+        Icons.local_offer,
+        Colors.blue,
+      ),
+      inputFieldSpacer()
+    ];
+  }
+
   @override
   void dispose() {
     scrollController.dispose();
@@ -218,44 +308,11 @@ class _RegisterSheepState extends State<RegisterSheep> {
     return Material(
         child: Form(
             key: _formKey,
-            onWillPop: () async {
-              if (widget.stt.isAvailable) {
-                widget.stt.stop();
-                _tts.stop();
-                setState(() {
-                  widget.ongoingDialog.value = false;
-                });
-              }
-              bool returnValue = false;
-              await cancelRegistrationDialog(context)
-                  .then((value) => {returnValue = value});
-
-              if (returnValue && widget.onWillPop != null) {
-                widget.onWillPop!();
-              }
-
-              return returnValue;
-            },
+            onWillPop: _onWillPop,
             child: Scaffold(
                 appBar: AppBar(
                   title: Text(title),
-                  leading: BackButton(onPressed: () async {
-                    if (widget.stt.isAvailable) {
-                      widget.stt.stop();
-                      _tts.stop();
-                      setState(() {
-                        widget.ongoingDialog.value = false;
-                      });
-                    }
-                    await cancelRegistrationDialog(context).then((value) => {
-                          if (value)
-                            {
-                              if (widget.onWillPop != null)
-                                {widget.onWillPop!()},
-                              Navigator.pop(context)
-                            }
-                        });
-                  }),
+                  leading: BackButton(onPressed: _backButtonPressed),
                 ),
                 body: SingleChildScrollView(
                     controller: scrollController,
@@ -289,43 +346,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
                           scrollController: scrollController,
                           fieldAmount: 5,
                           key: firstHeadlineFieldKeys[0]),
-                      inputDividerWithHeadline(
-                          'Slips', firstHeadlineFieldKeys[0]),
-                      inputRow(
-                        'Røde',
-                        _textControllers['redTie']!,
-                        FontAwesome5.black_tie,
-                        Colors.red,
-                      ),
-                      inputFieldSpacer(),
-                      inputRow(
-                        'Blå',
-                        _textControllers['blueTie']!,
-                        FontAwesome5.black_tie,
-                        Colors.blue,
-                      ),
-                      inputFieldSpacer(),
-                      inputRow('Gule', _textControllers['yellowTie']!,
-                          FontAwesome5.black_tie, Colors.yellow,
-                          scrollController: scrollController,
-                          fieldAmount: 3,
-                          key: firstHeadlineFieldKeys[1]),
-                      inputDividerWithHeadline(
-                          'Øremerker', firstHeadlineFieldKeys[1]),
-                      inputRow(
-                        'Røde',
-                        _textControllers['redEar']!,
-                        Icons.local_offer,
-                        Colors.red,
-                      ),
-                      inputFieldSpacer(),
-                      inputRow(
-                        'Blå',
-                        _textControllers['blueEar']!,
-                        Icons.local_offer,
-                        Colors.blue,
-                      ),
-                      inputFieldSpacer(),
+                      if (widget.isShortDistance) ..._shortDistance(),
                       const SizedBox(height: 80),
                     ]))),
                 floatingActionButton: !widget.ongoingDialog.value
