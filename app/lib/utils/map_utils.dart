@@ -29,7 +29,7 @@ Future<LatLng> getDevicePosition() async {
   if (!_serviceEnabled) {
     _serviceEnabled = await location.requestService();
     if (!_serviceEnabled) {
-      return Future.error('Location services is not enabeled');
+      return Future.error('Location services is not enabled');
     }
   }
 

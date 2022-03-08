@@ -11,7 +11,10 @@ import '../utils/constants.dart';
 
 class MapWidget extends StatefulWidget {
   MapWidget(LatLng northWest, LatLng southEast, this.stt, this.ongoingDialog,
-      {required this.userStartPosition, this.onSheepRegistered, Key? key})
+      {required this.userStartPosition,
+      this.onSheepRegistered,
+      this.onNewPosition,
+      Key? key})
       : super(key: key) {
     southWest = LatLng(southEast.latitude, northWest.longitude);
     northEast = LatLng(northWest.latitude, southEast.longitude);
@@ -24,7 +27,9 @@ class MapWidget extends StatefulWidget {
   final ValueNotifier<bool> ongoingDialog;
 
   final LatLng userStartPosition;
-  final ValueChanged<int>? onSheepRegistered;
+
+  final ValueChanged<Map<String, Object>>? onSheepRegistered;
+  final ValueChanged<LatLng>? onNewPosition;
 
   @override
   State<MapWidget> createState() => _MapState();
@@ -61,6 +66,9 @@ class _MapState extends State<MapWidget> {
 
   Future<void> _updateMap() async {
     userPosition = await map_utils.getDevicePosition();
+    if (widget.onNewPosition != null) {
+      widget.onNewPosition!(userPosition);
+    }
     setState(() {
       //_mapController.move(pos, _mapController.zoom);
       _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition);
@@ -88,14 +96,25 @@ class _MapState extends State<MapWidget> {
             builder: (context) => ValueListenableBuilder<bool>(
                 valueListenable: widget.ongoingDialog,
                 builder: (context, value, child) => RegisterSheep(
-                      'filename',
                       widget.stt,
                       widget.ongoingDialog,
-                      onCompletedSuccessfully: (int sheepAmountRegistered) {
+                      onCompletedSuccessfully: (data) {
+                        int sheepAmountRegistered =
+                            //TODO fix jallavonvertering?
+                            int.parse(data['sheep'].toString());
                         setState(() {
                           if (sheepAmountRegistered > 0) {
                             if (widget.onSheepRegistered != null) {
-                              widget.onSheepRegistered!(sheepAmountRegistered);
+                              data['devicePosition'] = {
+                                'latitude': pos.latitude,
+                                'longitude': pos.longitude
+                              };
+                              data['registrationPosition'] = {
+                                'latitude': targetPosition.latitude,
+                                'longitude': targetPosition.longitude
+                              };
+                              widget.onSheepRegistered!(data);
+                              //TODO legg inn callback til registration page her
                             }
                             linesOfSight.add(Polyline(
                                 points: [pos, targetPosition],

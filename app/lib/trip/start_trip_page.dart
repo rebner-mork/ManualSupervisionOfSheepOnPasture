@@ -320,6 +320,8 @@ class _StartTripPageState extends State<StartTripPage>
         context,
         MaterialPageRoute(
             builder: (context) => MainPage(
+                farm: _farmIDs[_farmNames.indexOf(_selectedFarmName)],
+                overseer: FirebaseAuth.instance.currentUser!.email!,
                 northWest: mapBounds['northWest']!,
                 southEast: mapBounds['southEast']!,
                 userStartPosition: userStartPosition)));

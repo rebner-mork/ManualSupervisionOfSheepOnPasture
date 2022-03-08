@@ -1,8 +1,10 @@
+import 'package:app/trip/trip_data.dart';
 import 'package:app/map/map_widget.dart';
 import 'package:app/providers/settings_provider.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/other.dart';
 import 'package:app/widgets/circular_buttons.dart';
+
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
@@ -10,16 +12,23 @@ import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage(
+  MainPage(
       {required this.northWest,
       required this.southEast,
       required this.userStartPosition,
+      required farm,
+      required overseer,
       Key? key})
-      : super(key: key);
+      : super(key: key) {
+    trip = TripDataManager.start(farm: farm, overseer: overseer);
+    trip.track.add(userStartPosition);
+  }
 
   final LatLng northWest;
   final LatLng southEast;
   final LatLng userStartPosition;
+
+  late TripDataManager trip;
 
   @override
   State<MainPage> createState() => _MapState();
@@ -31,6 +40,8 @@ class _MapState extends State<MainPage> {
 
   int _sheepAmount = 0;
   double iconSize = 42;
+
+  final Map<String, Object> tripData = {};
 
   @override
   void initState() {
@@ -57,16 +68,24 @@ class _MapState extends State<MainPage> {
         child: Stack(children: [
       ValueListenableBuilder<bool>(
           valueListenable: _ongoingDialog,
-          builder: (context, value, child) => MapWidget(widget.northWest,
-                  widget.southEast, _speechToText, _ongoingDialog,
-                  userStartPosition: widget.userStartPosition,
-                  onSheepRegistered: (int sheepAmountRegistered) {
-                setState(() {
-                  if (sheepAmountRegistered > 0) {
-                    _sheepAmount += sheepAmountRegistered;
-                  }
-                });
-              })),
+          builder: (context, value, child) => MapWidget(
+                widget.northWest,
+                widget.southEast,
+                _speechToText,
+                _ongoingDialog,
+                userStartPosition: widget.userStartPosition,
+                onSheepRegistered: (data) {
+                  int sheepAmountRegistered =
+                      int.parse(data['sheep'].toString());
+                  setState(() {
+                    if (sheepAmountRegistered > 0) {
+                      _sheepAmount += sheepAmountRegistered;
+                      widget.trip.registrations.add(data);
+                    }
+                  });
+                },
+                onNewPosition: (position) => widget.trip.track.add(position),
+              )),
       Positioned(
           top: 8 + MediaQuery.of(context).viewPadding.top,
           right: 8,
@@ -95,7 +114,7 @@ class _MapState extends State<MainPage> {
               Icons.cloud_upload,
               size: iconSize,
             ),
-            onPressed: () => debugPrint("End trip"),
+            onPressed: () => debugPrint(widget.trip.toString()),
           ))
     ]));
   }

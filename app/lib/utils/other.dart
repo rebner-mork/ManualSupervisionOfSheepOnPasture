@@ -19,7 +19,7 @@ void scrollToKey(ScrollController scrollController, GlobalKey key,
 
 Map<String, int> gatherRegisteredData(
     Map<String, TextEditingController> textControllers) {
-  final Map<String, int> data = <String, int>{};
+  final Map<String, int> data = {};
 
   textControllers.forEach((String key, TextEditingController controller) {
     data[key] = controller.text.isEmpty ? 0 : int.parse(controller.text);

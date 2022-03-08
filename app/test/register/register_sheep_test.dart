@@ -10,8 +10,7 @@ void main() {
     TestWidgetsFlutterBinding.ensureInitialized();
     testWidgets('Initial layout and content', (WidgetTester tester) async {
       await tester.pumpWidget(MaterialApp(
-          home:
-              RegisterSheep('testFile', SpeechToText(), ValueNotifier(false))));
+          home: RegisterSheep(SpeechToText(), ValueNotifier(false))));
 
       expect(find.byType(BackButton), findsOneWidget);
       expect(find.text('Registrer sau'), findsOneWidget);
@@ -31,8 +30,7 @@ void main() {
 
     testWidgets('Alert-dialog on back button', (WidgetTester tester) async {
       await tester.pumpWidget(MaterialApp(
-          home:
-              RegisterSheep('testFile', SpeechToText(), ValueNotifier(false))));
+          home: RegisterSheep(SpeechToText(), ValueNotifier(false))));
 
       expect(find.byType(AlertDialog), findsNothing);
 

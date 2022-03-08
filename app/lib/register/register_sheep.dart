@@ -14,12 +14,11 @@ import 'package:fluttericon/rpg_awesome_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 
 class RegisterSheep extends StatefulWidget {
-  const RegisterSheep(this.fileName, this.stt, this.ongoingDialog,
+  const RegisterSheep(this.stt, this.ongoingDialog,
       {this.onCompletedSuccessfully, Key? key})
       : super(key: key);
 
-  final ValueChanged<int>? onCompletedSuccessfully;
-  final String fileName;
+  final ValueChanged<Map<String, Object>>? onCompletedSuccessfully;
   final SpeechToText stt;
   final ValueNotifier<bool> ongoingDialog;
 
@@ -174,20 +173,12 @@ class _RegisterSheepState extends State<RegisterSheep> {
     await _tts.speak(text);
   }
 
-  void _registerSheep() async {
-    final Directory directory = await getApplicationDocumentsDirectory();
-    final String path = directory.path;
-
-    final File file = File('$path/${widget.fileName}.json');
-    final Map data = gatherRegisteredData(_textControllers);
-
-    file.writeAsString(json.encode(data));
+  void _registerSheep() {
+    Map<String, Object> data = {};
+    data.addAll(gatherRegisteredData(_textControllers));
 
     if (widget.onCompletedSuccessfully != null) {
-      int sheepAmount = _textControllers['sheep']!.text == ''
-          ? 0
-          : int.parse(_textControllers['sheep']!.text);
-      widget.onCompletedSuccessfully!(sheepAmount);
+      widget.onCompletedSuccessfully!(data);
     }
     if (Navigator.canPop(context)) {
       Navigator.pop(context);

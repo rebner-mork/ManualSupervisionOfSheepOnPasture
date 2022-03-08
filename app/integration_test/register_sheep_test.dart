@@ -8,8 +8,8 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   testWidgets('Floating button changes on keyboard up',
       (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-        home: RegisterSheep('testFile', SpeechToText(), ValueNotifier(false))));
+    await tester.pumpWidget(
+        MaterialApp(home: RegisterSheep(SpeechToText(), ValueNotifier(false))));
 
     expect(find.text('Fullfør registrering'), findsOneWidget);
     expect(find.byIcon(Icons.check), findsNothing);
