@@ -27,6 +27,7 @@ class _LoginWidgetState extends State<LoginWidget> {
   }
 
   // TOOD: remove!
+  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -47,7 +48,7 @@ class _LoginWidgetState extends State<LoginWidget> {
             ),
             inputFieldSpacer(),
             TextFormField(
-              initialValue: 'ragnar@gmail.com', // TODO: remove enirely
+              initialValue: 'ragnar@gmail.com', // TODO: remove
               key: const Key('inputEmail'),
               validator: (input) => validateEmail(input),
               onSaved: (input) => _email = input.toString(),
@@ -69,7 +70,7 @@ class _LoginWidgetState extends State<LoginWidget> {
             ),
             inputFieldSpacer(),
             TextFormField(
-              initialValue: '11111111', // TODO: remove entirely
+              initialValue: '11111111', // TODO: remove
               key: const Key('inputPassword'),
               validator: (input) => validatePassword(input),
               onSaved: (input) => _password = input.toString(),
