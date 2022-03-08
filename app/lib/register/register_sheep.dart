@@ -14,14 +14,17 @@ import 'package:fluttericon/rpg_awesome_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 
 class RegisterSheep extends StatefulWidget {
-  const RegisterSheep(this.fileName, this.stt, this.ongoingDialog,
-      {this.onCompletedSuccessfully, Key? key})
+  const RegisterSheep(
+      this.fileName, this.stt, this.ongoingDialog, this.isShortDistance,
+      {this.onCompletedSuccessfully, this.onWillPop, Key? key})
       : super(key: key);
 
-  final ValueChanged<int>? onCompletedSuccessfully;
   final String fileName;
   final SpeechToText stt;
   final ValueNotifier<bool> ongoingDialog;
+  final bool isShortDistance;
+  final ValueChanged<int>? onCompletedSuccessfully;
+  final VoidCallback? onWillPop;
 
   @override
   State<RegisterSheep> createState() => _RegisterSheepState();
@@ -29,6 +32,8 @@ class RegisterSheep extends StatefulWidget {
 
 class _RegisterSheepState extends State<RegisterSheep> {
   _RegisterSheepState();
+
+  late String title;
 
   int questionIndex = 0;
 
@@ -65,6 +70,10 @@ class _RegisterSheepState extends State<RegisterSheep> {
   @override
   void initState() {
     super.initState();
+
+    title = widget.isShortDistance
+        ? 'Nærregistrering sau'
+        : 'Avstandsregistrering sau';
     _initTextToSpeech();
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -153,6 +162,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
     }
   }
 
+  // TODO: init in parent to save time? how much time?
   void _initTextToSpeech() {
     _tts = FlutterTts();
 
@@ -208,24 +218,44 @@ class _RegisterSheepState extends State<RegisterSheep> {
     return Material(
         child: Form(
             key: _formKey,
+            onWillPop: () async {
+              if (widget.stt.isAvailable) {
+                widget.stt.stop();
+                _tts.stop();
+                setState(() {
+                  widget.ongoingDialog.value = false;
+                });
+              }
+              bool returnValue = false;
+              await cancelRegistrationDialog(context)
+                  .then((value) => {returnValue = value});
+
+              if (returnValue && widget.onWillPop != null) {
+                widget.onWillPop!();
+              }
+
+              return returnValue;
+            },
             child: Scaffold(
                 appBar: AppBar(
-                  title: const Text('Registrer sau'),
-                  leading: BackButton(
-                      onPressed: () => {
-                            if (widget.stt.isAvailable)
-                              {
-                                widget.stt.stop(),
-                                _tts.stop(),
-                                setState(() {
-                                  widget.ongoingDialog.value = false;
-                                }),
-                              },
-                            showDialog(
-                                context: context,
-                                builder: (_) =>
-                                    cancelRegistrationDialog(context))
-                          }),
+                  title: Text(title),
+                  leading: BackButton(onPressed: () async {
+                    if (widget.stt.isAvailable) {
+                      widget.stt.stop();
+                      _tts.stop();
+                      setState(() {
+                        widget.ongoingDialog.value = false;
+                      });
+                    }
+                    await cancelRegistrationDialog(context).then((value) => {
+                          if (value)
+                            {
+                              if (widget.onWillPop != null)
+                                {widget.onWillPop!()},
+                              Navigator.pop(context)
+                            }
+                        });
+                  }),
                 ),
                 body: SingleChildScrollView(
                     controller: scrollController,

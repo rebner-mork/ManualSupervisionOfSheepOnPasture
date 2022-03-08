@@ -44,6 +44,9 @@ class _MapState extends State<MapWidget> {
   late String urlTemplate;
   bool urlTemplateLoaded = false;
 
+  Distance distance = const Distance();
+  bool mapAlreadyTapped = false;
+
   @override
   void initState() {
     super.initState();
@@ -76,38 +79,49 @@ class _MapState extends State<MapWidget> {
   }
 
   void registerSheepByTap(LatLng targetPosition) async {
-    LatLng pos = userPosition;
-    map_utils.getDevicePosition().then((value) {
-      pos = value;
-      _movementPoints.add(pos);
-    });
+    debugPrint("mapAlreadyTapped: " + mapAlreadyTapped.toString());
+    if (!mapAlreadyTapped) {
+      mapAlreadyTapped = true;
 
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ValueListenableBuilder<bool>(
-                valueListenable: widget.ongoingDialog,
-                builder: (context, value, child) => RegisterSheep(
-                      'filename',
-                      widget.stt,
-                      widget.ongoingDialog,
-                      onCompletedSuccessfully: (int sheepAmountRegistered) {
-                        setState(() {
-                          if (sheepAmountRegistered > 0) {
-                            if (widget.onSheepRegistered != null) {
-                              widget.onSheepRegistered!(sheepAmountRegistered);
+      LatLng pos = userPosition;
+      map_utils.getDevicePosition().then((value) {
+        pos = value;
+        _movementPoints.add(pos);
+        debugPrint(distance.distance(pos, targetPosition).toString());
+
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ValueListenableBuilder<bool>(
+                    valueListenable: widget.ongoingDialog,
+                    builder: (context, value, child) => RegisterSheep(
+                            'filename',
+                            widget.stt,
+                            widget.ongoingDialog,
+                            distance.distance(pos, targetPosition) < 50,
+                            onCompletedSuccessfully:
+                                (int sheepAmountRegistered) {
+                          mapAlreadyTapped = false;
+                          setState(() {
+                            if (sheepAmountRegistered > 0) {
+                              if (widget.onSheepRegistered != null) {
+                                widget
+                                    .onSheepRegistered!(sheepAmountRegistered);
+                              }
+                              linesOfSight.add(Polyline(
+                                  points: [pos, targetPosition],
+                                  color: Colors.black,
+                                  isDotted: true,
+                                  strokeWidth: 5.0));
+                              registrationMarkers.add(
+                                  map_utils.getSheepMarker(targetPosition));
                             }
-                            linesOfSight.add(Polyline(
-                                points: [pos, targetPosition],
-                                color: Colors.black,
-                                isDotted: true,
-                                strokeWidth: 5.0));
-                            registrationMarkers
-                                .add(map_utils.getSheepMarker(targetPosition));
-                          }
-                        });
-                      },
-                    ))));
+                          });
+                        }, onWillPop: () {
+                          mapAlreadyTapped = false;
+                        }))));
+      });
+    }
   }
 
   @override

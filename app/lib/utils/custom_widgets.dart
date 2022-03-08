@@ -112,28 +112,29 @@ Column inputDividerWithHeadline(String headline, [GlobalKey? key]) {
   ]);
 }
 
-BackdropFilter cancelRegistrationDialog(BuildContext context) {
-  return BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-      child: AlertDialog(
-        title: const Text("Avbryte registrering?"),
-        content: const Text('Data i registreringen vil gå tapt.'),
-        actions: [
-          TextButton(
-              onPressed: () {
-                Navigator.of(context).pop('dialog');
-                if (Navigator.canPop(context)) {
-                  Navigator.of(context).pop();
-                }
-              },
-              child: const Text('Ja, avbryt')),
-          TextButton(
-              onPressed: () {
-                Navigator.of(context).pop('dialog');
-              },
-              child: const Text('Nei, fortsett'))
-        ],
-      ));
+Future<bool> cancelRegistrationDialog(BuildContext context) async {
+  return await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+            child: AlertDialog(
+              title: const Text("Avbryte registrering?"),
+              content: const Text('Data i registreringen vil gå tapt.'),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context, true);
+                    },
+                    child: const Text('Ja, avbryt')),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context, false);
+                    },
+                    child: const Text('Nei, fortsett'))
+              ],
+            ));
+      });
 }
 
 BackdropFilter speechNotEnabledDialog(
