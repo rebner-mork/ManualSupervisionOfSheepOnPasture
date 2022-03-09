@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:collection';
 
 import 'package:app/map/map_widget.dart';
 import 'package:app/providers/settings_provider.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/other.dart';
 import 'package:app/widgets/circular_buttons.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';

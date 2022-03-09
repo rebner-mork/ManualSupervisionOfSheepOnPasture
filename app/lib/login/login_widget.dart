@@ -3,7 +3,6 @@ import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/field_validation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as logger;
 
 class LoginWidget extends StatefulWidget {
   const LoginWidget({Key? key}) : super(key: key);
@@ -26,15 +25,6 @@ class _LoginWidgetState extends State<LoginWidget> {
     });
   }
 
-  // TOOD: remove!
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      signIn();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -48,7 +38,6 @@ class _LoginWidgetState extends State<LoginWidget> {
             ),
             inputFieldSpacer(),
             TextFormField(
-              initialValue: 'ragnar@gmail.com', // TODO: remove
               key: const Key('inputEmail'),
               validator: (input) => validateEmail(input),
               onSaved: (input) => _email = input.toString(),
@@ -70,7 +59,6 @@ class _LoginWidgetState extends State<LoginWidget> {
             ),
             inputFieldSpacer(),
             TextFormField(
-              initialValue: '11111111', // TODO: remove
               key: const Key('inputPassword'),
               validator: (input) => validatePassword(input),
               onSaved: (input) => _password = input.toString(),
@@ -126,13 +114,11 @@ class _LoginWidgetState extends State<LoginWidget> {
         UserCredential user = await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: _email, password: _password);
 
-        logger.log("Innlogget som: " + user.toString());
         setState(() {
           _loginFailed = false;
         });
         Navigator.popAndPushNamed(context, StartTripPage.route);
       } catch (e) {
-        logger.log("Ikke innlogget: " + e.toString());
         setState(() {
           _loginFailed = true;
         });
