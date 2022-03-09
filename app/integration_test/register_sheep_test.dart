@@ -8,13 +8,23 @@ import 'package:latlong2/latlong.dart';
 import 'package:fluttericon/rpg_awesome_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 
+final Map<String, bool> eartags = {
+  Colors.red.value.toRadixString(16): true,
+  Colors.blue.value.toRadixString(16): false
+};
+
+final Map<String, int> ties = {
+  Colors.transparent.value.toRadixString(16): 0,
+  Colors.yellow.value.toRadixString(16): 1
+};
+
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   testWidgets('Distance: Initial layout and content',
       (WidgetTester tester) async {
     await tester.pumpWidget(MaterialApp(
-        home: RegisterSheep(
-            'testFile', SpeechToText(), ValueNotifier(false), LatLng(40, 40))));
+        home: RegisterSheep('testFile', SpeechToText(), ValueNotifier(false),
+            LatLng(40, 40), eartags, ties)));
 
     expect(find.byType(BackButton), findsOneWidget);
     expect(find.text('Laster inn...'), findsOneWidget);
@@ -33,6 +43,7 @@ void main() {
     expect(find.text('Hvite'), findsOneWidget);
     expect(find.text('Svarte'), findsOneWidget);
     expect(find.text('Svart hode'), findsOneWidget);
+
     expect(find.byIcon(RpgAwesome.sheep), findsWidgets);
   });
 
@@ -40,8 +51,8 @@ void main() {
     LatLng devicePosition = await getDevicePosition();
 
     await tester.pumpWidget(MaterialApp(
-        home: RegisterSheep(
-            'testFile', SpeechToText(), ValueNotifier(false), devicePosition)));
+        home: RegisterSheep('testFile', SpeechToText(), ValueNotifier(false),
+            devicePosition, eartags, ties)));
 
     expect(find.byType(BackButton), findsOneWidget);
     expect(find.text('Laster inn...'), findsOneWidget);
@@ -64,9 +75,13 @@ void main() {
 
     expect(find.text('Slips'), findsOneWidget);
     expect(find.byIcon(FontAwesome5.black_tie), findsWidgets);
+    expect(find.text('Uten'), findsOneWidget);
+    expect(find.text('Gule'), findsOneWidget);
 
     expect(find.text('Øremerker'), findsOneWidget);
     expect(find.byIcon(Icons.local_offer), findsWidgets);
+    expect(find.text('Røde'), findsOneWidget);
+    expect(find.text('Blå'), findsOneWidget);
 
     expect(find.text('Fullfør registrering'), findsOneWidget);
     expect(find.byType(FloatingActionButton), findsOneWidget);
@@ -75,8 +90,8 @@ void main() {
   testWidgets('Floating button changes on keyboard up',
       (WidgetTester tester) async {
     await tester.pumpWidget(MaterialApp(
-        home: RegisterSheep(
-            'testFile', SpeechToText(), ValueNotifier(false), LatLng(40, 40))));
+        home: RegisterSheep('testFile', SpeechToText(), ValueNotifier(false),
+            LatLng(40, 40), eartags, ties)));
 
     await tester.pumpAndSettle();
 
@@ -93,8 +108,8 @@ void main() {
 
   testWidgets('Alert-dialog on back button', (WidgetTester tester) async {
     await tester.pumpWidget(MaterialApp(
-        home: RegisterSheep(
-            'testFile', SpeechToText(), ValueNotifier(false), LatLng(40, 40))));
+        home: RegisterSheep('testFile', SpeechToText(), ValueNotifier(false),
+            LatLng(40, 40), eartags, ties)));
 
     await tester.pumpAndSettle();
 
