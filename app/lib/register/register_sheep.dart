@@ -176,6 +176,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
   void _registerSheep() {
     Map<String, Object> data = {};
     data.addAll(gatherRegisteredData(_textControllers));
+    data['timeStamp'] = DateTime.now();
 
     if (widget.onCompletedSuccessfully != null) {
       widget.onCompletedSuccessfully!(data);

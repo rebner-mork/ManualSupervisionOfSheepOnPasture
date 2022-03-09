@@ -20,9 +20,12 @@ class MainPage extends StatefulWidget {
       required this.userStartPosition,
       required farm,
       required overseer,
+      required mapName,
       Key? key})
       : super(key: key) {
-    trip = TripDataManager.start(farm: farm, overseer: overseer);
+    trip =
+        //TODO change to mapId when maps are their own documents
+        TripDataManager.start(farm: farm, overseer: overseer, mapName: mapName);
     trip.track.add(userStartPosition);
   }
 
@@ -128,7 +131,6 @@ Future<void> _endTripButtonPressed(
     BuildContext context, TripDataManager trip) async {
   await showEndTripDialog(context).then((finished) {
     if (finished) {
-      trip.stop();
       trip.post();
       Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
     }

@@ -1,18 +1,17 @@
-import 'dart:typed_data';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/widgets.dart';
 import 'package:latlong2/latlong.dart';
 
 class TripDataManager {
-  TripDataManager.start({required this.farm, required this.overseer}) {
+  TripDataManager.start(
+      {required this.farm, required this.overseer, required this.mapName}) {
     _startTime = DateTime.now();
   }
 
   late String farm;
   String overseer;
+  String mapName;
   late DateTime _startTime;
-  late DateTime? _stopTime;
+  DateTime? _stopTime;
   List<Map<String, Object>> registrations = [];
   List<LatLng> track = [];
 
@@ -43,8 +42,9 @@ class TripDataManager {
       'farmId': farm,
       'personnelId': overseer,
       'startTime': _startTime,
-      'stopTime': _startTime,
+      'stopTime': _stopTime,
       'track': preparedTrack,
+      'mapName': mapName,
     });
 
     // --- REGISTRATIONS ---
