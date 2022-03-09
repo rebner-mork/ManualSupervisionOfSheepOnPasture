@@ -309,8 +309,8 @@ class _RegisterSheepState extends State<RegisterSheep> {
         ties.add(inputRow(
             colorValueStringToColorStringGui[tieColor]!,
             _textControllers['${colorValueStringToColorString[tieColor]}Tie']!,
-            FontAwesome5.black_tie,
-            colorStringToColor[tieColor]!));
+            tieColor == '0' ? Icons.close : FontAwesome5.black_tie,
+            tieColor == '0' ? Colors.grey : colorStringToColor[tieColor]!));
         ties.add(inputFieldSpacer());
       }
     }
@@ -323,8 +323,10 @@ class _RegisterSheepState extends State<RegisterSheep> {
             colorValueStringToColorStringGui[eartagColor]!,
             _textControllers[
                 '${colorValueStringToColorString[eartagColor]}Ear']!,
-            Icons.local_offer,
-            colorStringToColor[eartagColor]!));
+            eartagColor == '0' ? Icons.close : Icons.local_offer,
+            eartagColor == '0'
+                ? Colors.grey
+                : colorStringToColor[eartagColor]!));
         eartags.add(inputFieldSpacer());
       }
     }
