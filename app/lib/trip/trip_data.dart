@@ -1,3 +1,7 @@
+import 'dart:typed_data';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/widgets.dart';
 import 'package:latlong2/latlong.dart';
 
 class TripDataManager {
@@ -9,11 +13,55 @@ class TripDataManager {
   String overseer;
   late DateTime _startTime;
   late DateTime? _stopTime;
-  List<Object> registrations = [];
+  List<Map<String, Object>> registrations = [];
   List<LatLng> track = [];
 
+  void stop() {
+    _stopTime = DateTime.now();
+  }
+
   void post() {
-    print("post");
+    if (_stopTime == null) {
+      stop();
+    }
+
+    // --- TRIPS ---
+
+    CollectionReference tripCollection =
+        FirebaseFirestore.instance.collection("trips");
+
+    DocumentReference tripDocumentReference = tripCollection.doc();
+
+    List<Map<String, double>> preparedTrack = [];
+
+    for (var element in track) {
+      preparedTrack
+          .add({'latitude': element.latitude, 'longitude': element.longitude});
+    }
+
+    debugPrint(registrations.toString());
+
+    //TODO Registrations
+
+    tripDocumentReference.set({
+      'farmId': farm,
+      'personnelId': overseer,
+      'startTime': _startTime,
+      'stopTime': _startTime,
+      'track': preparedTrack,
+    });
+
+    // --- REGISTRATIONS ---
+
+    CollectionReference registrationCollection =
+        FirebaseFirestore.instance.collection("registrations");
+
+    DocumentReference registrationDocument = registrationCollection.doc();
+
+    for (var element in registrations) {
+      element['tripId'] = tripDocumentReference;
+      registrationDocument.set(element);
+    }
   }
 
   @override
@@ -22,7 +70,7 @@ class TripDataManager {
       'farm': farm,
       'overseer': overseer,
       'startTime': _startTime.toString(),
-      //'stopTime': _stopTime == Null ? 'Null' : _stopTime.toString(),
+      'stopTime': _stopTime.toString(),
     };
 
     List<String> stringRegistrations = [];

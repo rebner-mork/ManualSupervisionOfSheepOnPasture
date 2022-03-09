@@ -114,7 +114,10 @@ class _MapState extends State<MainPage> {
               Icons.cloud_upload,
               size: iconSize,
             ),
-            onPressed: () => debugPrint(widget.trip.toString()),
+            onPressed: () {
+              widget.trip.stop();
+              widget.trip.post();
+            },
           ))
     ]));
   }
