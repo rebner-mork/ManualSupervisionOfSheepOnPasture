@@ -96,12 +96,10 @@ class _MapState extends State<MapWidget> {
                           widget.ongoingDialog,
                           targetPosition,
                           widget.eartags,
-                          widget.ties, onCompletedSuccessfully:
-                              (Map<String, Object> returnedData) {
+                          widget.ties,
+                          onCompletedSuccessfully: (Map<String, Object> data) {
                         mapAlreadyTapped = false;
-                        int sheepAmount = returnedData['sheep'] == ''
-                            ? 0
-                            : returnedData['sheep'] as int;
+                        int sheepAmount = data['sheep']! as int;
                         setState(() {
                           if (sheepAmount > 0) {
                             if (widget.onSheepRegistered != null) {
@@ -109,7 +107,7 @@ class _MapState extends State<MapWidget> {
                             }
                             linesOfSight.add(Polyline(
                                 points: [
-                                  returnedData['devicePosition']! as LatLng,
+                                  data['devicePosition']! as LatLng,
                                   targetPosition
                                 ],
                                 color: Colors.black,

@@ -19,12 +19,16 @@ class MainPage extends StatefulWidget {
       {required this.northWest,
       required this.southEast,
       required this.farmId,
+      required this.eartags,
+      required this.ties,
       Key? key})
       : super(key: key);
 
   final LatLng northWest;
   final LatLng southEast;
   final String farmId;
+  final Map<String, bool> eartags;
+  final Map<String, int> ties;
 
   @override
   State<MainPage> createState() => _MapState();
@@ -34,13 +38,11 @@ class _MapState extends State<MainPage> {
   late SpeechToText _speechToText;
   final ValueNotifier<bool> _ongoingDialog = ValueNotifier<bool>(false);
 
-  late Map<String, bool> _eartags;
-  late Map<String, int> _ties;
-  late LatLng _userStartPosition;
+  late LatLng _deviceStartPosition;
 
   int _sheepAmount = 0;
   double iconSize = 42;
-  bool _loadingData = true;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -48,7 +50,7 @@ class _MapState extends State<MainPage> {
     _initSpeechToText();
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      _getPositionEartagsAndTies();
+      _setDeviceStartPosition();
     });
   }
 
@@ -65,28 +67,18 @@ class _MapState extends State<MainPage> {
     });
   }
 
-  Future<void> _getPositionEartagsAndTies() async {
-    _userStartPosition = await map_utils.getDevicePosition();
+  Future<void> _setDeviceStartPosition() async {
+    _deviceStartPosition = await map_utils.getDevicePosition();
 
-    CollectionReference farmCollection =
-        FirebaseFirestore.instance.collection('farms');
-    DocumentReference farmDoc = farmCollection.doc(widget.farmId);
-    DocumentSnapshot<Object?> doc = await farmDoc.get();
-
-    LinkedHashMap<String, dynamic> dbEartags = await doc.get('eartags');
-    LinkedHashMap<String, dynamic> dbTies = await doc.get('ties');
-
-    _eartags = dbEartags.map((key, value) => MapEntry(key, value as bool));
-    _ties = dbTies.map((key, value) => MapEntry(key, value as int));
     setState(() {
-      _loadingData = false;
+      _isLoading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Material(
-        child: _loadingData
+        child: _isLoading
             ? const LoadingData()
             : Stack(children: [
                 ValueListenableBuilder<bool>(
@@ -96,9 +88,9 @@ class _MapState extends State<MainPage> {
                             widget.southEast,
                             _speechToText,
                             _ongoingDialog,
-                            _eartags,
-                            _ties,
-                            userStartPosition: _userStartPosition,
+                            widget.eartags,
+                            widget.ties,
+                            userStartPosition: _deviceStartPosition,
                             onSheepRegistered: (int sheepAmountRegistered) {
                           setState(() {
                             if (sheepAmountRegistered > 0) {

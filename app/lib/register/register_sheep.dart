@@ -237,9 +237,8 @@ class _RegisterSheepState extends State<RegisterSheep> {
 
     if (widget.onCompletedSuccessfully != null) {
       Map<String, Object> dataToReturn = {};
-      data.addAll(gatherRegisteredData(_textControllers));
-      data['devicePosition'] = _devicePosition;
-      data.addAll(gatherRegisteredData(_textControllers));
+      dataToReturn.addAll(gatherRegisteredData(_textControllers));
+      dataToReturn['devicePosition'] = _devicePosition;
       widget.onCompletedSuccessfully!(dataToReturn);
     }
     if (Navigator.canPop(context)) {

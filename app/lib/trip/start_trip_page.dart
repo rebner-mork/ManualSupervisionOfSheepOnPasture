@@ -30,15 +30,19 @@ class _StartTripPageState extends State<StartTripPage>
 
   final List<String> _farmNames = [];
   late String _selectedFarmName;
+  late Map<String, bool> _eartags;
+  late Map<String, int> _ties;
 
   Map<String, Map<String, Map<String, double>>> _selectedFarmMaps = {};
   String _selectedFarmMap = '';
   Map<String, LatLng> mapBounds = {};
 
-  bool _loadingData = true;
+  bool _isLoading = true;
   bool _downloadingMap = false;
   bool _mapDownloaded = false;
   bool _noMapsDefined = false;
+  bool _noEartagsDefined = false;
+  bool _noTiesDefined = false;
 
   double _downloadProgress = 0.0;
 
@@ -85,7 +89,7 @@ class _StartTripPageState extends State<StartTripPage>
               centerTitle: true,
               actions: const [SettingsIconButton()],
             ),
-            body: _loadingData
+            body: _isLoading
                 ? const LoadingData()
                 : Column(
                     children: _farmNames.isEmpty
@@ -98,8 +102,8 @@ class _StartTripPageState extends State<StartTripPage>
                             appbarBodySpacer(),
                             _farmNameRow(),
                             inputFieldSpacer(),
-                            _farmMapRow(),
-                            inputFieldSpacer(),
+                            if (!_noMapsDefined) _farmMapRow(),
+                            if (!_noMapsDefined) inputFieldSpacer(),
                             Text(
                               _feedbackText,
                               style: feedbackTextStyle,
@@ -145,6 +149,9 @@ class _StartTripPageState extends State<StartTripPage>
                     .toList(),
                 onChanged: (String? newFarmName) {
                   if (_selectedFarmName != newFarmName) {
+                    _noMapsDefined = false;
+                    _noEartagsDefined = false;
+                    _noTiesDefined = false;
                     _readFarmMaps(_farmIDs[_farmNames.indexOf(newFarmName!)]);
                     setState(() {
                       _selectedFarmName = newFarmName;
@@ -273,10 +280,12 @@ class _StartTripPageState extends State<StartTripPage>
       style: ButtonStyle(
           fixedSize:
               MaterialStateProperty.all(Size.fromHeight(mainButtonHeight)),
-          backgroundColor:
-              MaterialStateProperty.all(_noMapsDefined ? Colors.grey : null)),
+          backgroundColor: MaterialStateProperty.all(
+              _noMapsDefined || _noEartagsDefined || _noTiesDefined
+                  ? Colors.grey
+                  : null)),
       onPressed: () async {
-        if (!_noMapsDefined) {
+        if (!_noMapsDefined && !_noEartagsDefined && !_noTiesDefined) {
           _startTrip();
         }
       },
@@ -313,9 +322,12 @@ class _StartTripPageState extends State<StartTripPage>
         context,
         MaterialPageRoute(
             builder: (context) => MainPage(
-                northWest: mapBounds['northWest']!,
-                southEast: mapBounds['southEast']!,
-                farmId: _farmIDs[_farmNames.indexOf(_selectedFarmName)])));
+                  northWest: mapBounds['northWest']!,
+                  southEast: mapBounds['southEast']!,
+                  farmId: _farmIDs[_farmNames.indexOf(_selectedFarmName)],
+                  eartags: _eartags,
+                  ties: _ties,
+                )));
   }
 
   Map<String, Map<String, Map<String, double>>> _castMapsFromDynamic(
@@ -334,15 +346,18 @@ class _StartTripPageState extends State<StartTripPage>
   }
 
   Future<void> _readFarmMaps(String farmId) async {
+    // TODO: feilmelding dersom øremerker/slips ikke definert
     CollectionReference farmCollection =
         FirebaseFirestore.instance.collection('farms');
     DocumentReference farmDoc = farmCollection.doc(farmId);
 
     DocumentSnapshot<Object?> doc = await farmDoc.get();
-    LinkedHashMap<String, dynamic>? maps = await doc.get('maps');
+    LinkedHashMap<String, dynamic>? dbMaps = await doc.get('maps');
+    LinkedHashMap<String, dynamic>? dbEartags = await doc.get('eartags');
+    LinkedHashMap<String, dynamic>? dbTies = await doc.get('ties');
 
-    if (maps != null) {
-      _selectedFarmMaps = _castMapsFromDynamic(maps);
+    if (dbMaps != null && dbMaps.isNotEmpty) {
+      _selectedFarmMaps = _castMapsFromDynamic(dbMaps);
 
       setState(() {
         _selectedFarmMap = _selectedFarmMaps.keys.first;
@@ -351,9 +366,31 @@ class _StartTripPageState extends State<StartTripPage>
     } else {
       setState(() {
         _noMapsDefined = true;
-        _selectedFarmMap = '';
-        _feedbackText =
-            'Gården \'$_selectedFarmName\' har ikke definert noen kart';
+        _feedbackText += 'Gården har ikke definert noen kart.\n';
+      });
+    }
+
+    if (dbEartags != null && dbEartags.isNotEmpty) {
+      _eartags = dbEartags.map((key, value) => MapEntry(key, value as bool));
+    } else {
+      setState(() {
+        _noEartagsDefined = true;
+        _feedbackText += 'Gården har ikke definert noen øremerker.\n';
+      });
+    }
+
+    if (dbTies != null && dbTies.isNotEmpty) {
+      _ties = dbTies.map((key, value) => MapEntry(key, value as int));
+    } else {
+      setState(() {
+        _noTiesDefined = true;
+        _feedbackText += 'Gården har ikke definert noen slips.\n';
+      });
+    }
+
+    if (_noMapsDefined || _noEartagsDefined || _noTiesDefined) {
+      setState(() {
+        _feedbackText += 'Oppsynstur kan dermed ikke starte.';
       });
     }
   }
@@ -393,7 +430,7 @@ class _StartTripPageState extends State<StartTripPage>
       }
     }
     setState(() {
-      _loadingData = false;
+      _isLoading = false;
     });
   }
 
