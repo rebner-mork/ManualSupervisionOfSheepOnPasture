@@ -15,33 +15,32 @@ Future<void> setConstants() async {
   applicationDocumentDirectoryPath = dir.path;
 }
 
-// TODO: se over riktig farger
 Map<String, String> colorValueStringToColorString = {
-  '0': 'transparent',
-  'fff44336': 'red',
-  'ff2196f3': 'blue',
-  'ffffeb3b': 'yellow',
-  'ff4caf50': 'green',
-  'ffff9800': 'orange',
-  'ffe91e63': 'pink'
+  Colors.transparent.value.toRadixString(16): 'transparent',
+  Colors.red.value.toRadixString(16): 'red',
+  Colors.blue.value.toRadixString(16): 'blue',
+  Colors.yellow.value.toRadixString(16): 'yellow',
+  Colors.green.value.toRadixString(16): 'green',
+  Colors.orange.value.toRadixString(16): 'orange',
+  Colors.pink.value.toRadixString(16): 'pink'
 };
 
 Map<String, String> colorValueStringToColorStringGui = {
-  '0': 'Uten',
-  'fff44336': 'Røde',
-  'ff2196f3': 'Blå',
-  'ffffeb3b': 'Gule',
-  'ff4caf50': 'Grønne',
-  'ffff9800': 'Oransje',
-  'ffe91e63': 'Rosa'
+  Colors.transparent.value.toRadixString(16): 'Uten',
+  Colors.red.value.toRadixString(16): 'Røde',
+  Colors.blue.value.toRadixString(16): 'Blå',
+  Colors.yellow.value.toRadixString(16): 'Gule',
+  Colors.green.value.toRadixString(16): 'Grønne',
+  Colors.orange.value.toRadixString(16): 'Oransje',
+  Colors.pink.value.toRadixString(16): 'Rosa'
 };
 
 Map<String, Color> colorStringToColor = {
-  '0': Colors.transparent,
-  'fff44336': Colors.red,
-  'ff2196f3': Colors.blue,
-  'ffffeb3b': Colors.yellow,
-  'ff4caf50': Colors.green,
-  'ffff9800': Colors.orange,
-  'ffe91e63': Colors.pink
+  Colors.transparent.value.toRadixString(16): Colors.transparent,
+  Colors.red.value.toRadixString(16): Colors.red,
+  Colors.blue.value.toRadixString(16): Colors.blue,
+  Colors.yellow.value.toRadixString(16): Colors.yellow,
+  Colors.green.value.toRadixString(16): Colors.green,
+  Colors.orange.value.toRadixString(16): Colors.orange,
+  Colors.pink.value.toRadixString(16): Colors.pink
 };

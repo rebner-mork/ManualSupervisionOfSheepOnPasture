@@ -51,14 +51,14 @@ class _RegisterSheepState extends State<RegisterSheep> {
 
   final scrollController = ScrollController();
   final List<GlobalKey> firstHeadlineFieldKeys = [GlobalKey(), GlobalKey()];
-  final List<int> firstHeadlineFieldIndexes = [5, 8];
+  final List<int> firstHeadlineFieldIndexes = [distanceSheepQuestions.length];
   int currentHeadlineIndex = 0;
 
   final _textControllers = <String, TextEditingController>{
     'sheep': TextEditingController(),
-    //'lambs': TextEditingController(),
-    //'white': TextEditingController(),
-    //'black': TextEditingController(),
+    'lambs': TextEditingController(),
+    'white': TextEditingController(),
+    'black': TextEditingController(),
     'blackHead': TextEditingController(),
   };
 
@@ -90,15 +90,14 @@ class _RegisterSheepState extends State<RegisterSheep> {
     _isShortDistance =
         distance.distance(_devicePosition, widget.sheepPosition) < 50;
 
-    questions =
-        distanceSheepQuestions; //sheepQuestions['distance']!.keys.toList();
+    questions = distanceSheepQuestions;
     questionContexts = [
       QuestionContext.numbers,
       QuestionContext.numbers,
       QuestionContext.numbers,
       QuestionContext.numbers,
       QuestionContext.numbers
-    ]; //sheepQuestions['distance']!.values.toList();
+    ];
 
     if (_isShortDistance) {
       title = 'Nærregistrering sau';
@@ -110,23 +109,15 @@ class _RegisterSheepState extends State<RegisterSheep> {
             TextEditingController();
       }
 
+      firstHeadlineFieldIndexes.add(questions.length);
+
       for (String tieColor in widget.ties.keys) {
         questions.add(closeSheepQuestions['ties']![tieColor]!);
         questionContexts.add(QuestionContext.numbers);
         _textControllers['${colorValueStringToColorString[tieColor]}Tie'] =
             TextEditingController();
       }
-      /*questions = [
-        ...sheepQuestions['distance']!.keys.toList(),
-        ...sheepQuestions['close']!.keys.toList()
-      ];
-      questionContexts = [
-        ...sheepQuestions['distance']!.values.toList(),
-        ...sheepQuestions['close']!.values.toList()
-      ];*/
     }
-
-    debugPrint(_textControllers.toString());
 
     setState(() {
       _loadingData = false;
@@ -196,7 +187,6 @@ class _RegisterSheepState extends State<RegisterSheep> {
 
           questionIndex++;
 
-// TODO
           if (questionIndex < questions.length) {
             if (firstHeadlineFieldIndexes.contains(questionIndex)) {
               scrollToKey(scrollController,
@@ -229,8 +219,6 @@ class _RegisterSheepState extends State<RegisterSheep> {
 
   Future<void> _setAwaitOptions() async {
     await _tts.awaitSpeakCompletion(true);
-    var engine = await _tts.getDefaultEngine;
-    debugPrint(engine);
   }
 
   Future<void> _speak(String text, {String language = 'nb-NO'}) async {
@@ -361,7 +349,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
                           inputRow('Sauer', _textControllers['sheep']!,
                               RpgAwesome.sheep, Colors.grey),
                           inputFieldSpacer(),
-                          /*inputRow('Lam', _textControllers['lambs']!,
+                          inputRow('Lam', _textControllers['lambs']!,
                               RpgAwesome.sheep, Colors.grey,
                               iconSize: 24),
                           inputFieldSpacer(),
@@ -378,11 +366,10 @@ class _RegisterSheepState extends State<RegisterSheep> {
                             RpgAwesome.sheep,
                             Colors.black,
                           ),
-                          inputFieldSpacer(),*/
+                          inputFieldSpacer(),
                           inputRow('Svart hode', _textControllers['blackHead']!,
                               RpgAwesome.sheep, Colors.black,
                               scrollController: scrollController,
-                              fieldAmount: 5,
                               key: firstHeadlineFieldKeys[0]),
                           if (_isShortDistance) ..._shortDistance(),
                           const SizedBox(height: 80),

@@ -87,7 +87,6 @@ class _LoadingDataState extends State<LoadingData>
 Row inputRow(String text, TextEditingController controller, IconData iconData,
     Color color,
     {double iconSize = defaultIconSize,
-    int fieldAmount = 1,
     ScrollController? scrollController,
     GlobalKey? key}) {
   return Row(mainAxisAlignment: MainAxisAlignment.center, children: [

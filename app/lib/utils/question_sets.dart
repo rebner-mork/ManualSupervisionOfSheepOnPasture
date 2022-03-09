@@ -1,18 +1,8 @@
-/*Map<String, Map<String, QuestionContext>> distanceSheepQuestions = {
-  'distance': {
-    'Hvor mange sauer?': QuestionContext.numbers,
-    'Hvor mange lam?': QuestionContext.numbers,
-    'Hvor mange hvite?': QuestionContext.numbers,
-    'Hvor mange svarte?': QuestionContext.numbers,
-    'Hvor mange med svart hode?': QuestionContext.numbers,
-  },
-};*/
-
 List<String> distanceSheepQuestions = [
   'Hvor mange sauer?',
-  //'Hvor mange lam?',
-  //'Hvor mange hvite?',
-  //'Hvor mange svarte?',
+  'Hvor mange lam?',
+  'Hvor mange hvite?',
+  'Hvor mange svarte?',
   'Hvor mange med svart hode?'
 ];
 
