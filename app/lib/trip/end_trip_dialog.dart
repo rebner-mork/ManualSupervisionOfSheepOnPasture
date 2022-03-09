@@ -6,17 +6,36 @@ class EndTripDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-        title: const Text("Avslutt oppsynstur og last opp data?"),
+        title: const Text("Avslutt og last opp data?"),
         children: [
-          const Icon(Icons.wifi),
-          const Text("Tilkoblet nettverk"),
+          const SizedBox(
+            height: 10,
+          ),
+          const Icon(
+            Icons.wifi,
+            size: 80,
+            color: Colors.grey,
+          ),
+          const Center(
+            child: Text("Tilkoblet nettverk"),
+          ),
+          const SizedBox(
+            height: 30,
+          ),
           SimpleDialogOption(
-              child: const Text("Fortsett oppsynstur"),
-              onPressed: () => Navigator.pop(context, false)),
-          SimpleDialogOption(
-            child: const Text("Avslutt oppsynstur"),
+            child: const Center(
+                child: Text(
+              "Avslutt oppsynstur",
+              style: TextStyle(
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20),
+            )),
             onPressed: () => Navigator.pop(context, true),
-          )
+          ),
+          SimpleDialogOption(
+              child: const Center(child: Text("Fortsett oppsynstur")),
+              onPressed: () => Navigator.pop(context, false)),
         ]);
   }
 }

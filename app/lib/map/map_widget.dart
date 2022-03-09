@@ -98,7 +98,7 @@ class _MapState extends State<MapWidget> {
                 builder: (context, value, child) => RegisterSheep(
                       widget.stt,
                       widget.ongoingDialog,
-                      onCompletedSuccessfully: (data) {
+                      onCompletedSuccessfully: (Map<String, Object> data) {
                         int sheepAmountRegistered =
                             //TODO fix jallavonvertering?
                             int.parse(data['sheep'].toString());
