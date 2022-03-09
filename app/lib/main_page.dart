@@ -1,3 +1,5 @@
+import 'package:app/trip/end_trip_dialog.dart';
+import 'package:app/trip/start_trip_page.dart';
 import 'package:app/trip/trip_data.dart';
 import 'package:app/map/map_widget.dart';
 import 'package:app/providers/settings_provider.dart';
@@ -107,18 +109,28 @@ class _MapState extends State<MainPage> {
         ),
       ),
       Positioned(
-          top: 8 + MediaQuery.of(context).viewPadding.top,
-          left: 8,
-          child: CircularButton(
+        top: 8 + MediaQuery.of(context).viewPadding.top,
+        left: 8,
+        child: CircularButton(
             child: Icon(
               Icons.cloud_upload,
               size: iconSize,
             ),
             onPressed: () {
-              widget.trip.stop();
-              widget.trip.post();
-            },
-          ))
+              _endTripButtonPressed(context, widget.trip);
+            }),
+      )
     ]));
   }
+}
+
+Future<void> _endTripButtonPressed(
+    BuildContext context, TripDataManager trip) async {
+  await showEndTripDialog(context).then((finished) {
+    if (finished) {
+      trip.stop();
+      trip.post();
+      Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
+    }
+  });
 }

@@ -316,7 +316,7 @@ class _StartTripPageState extends State<StartTripPage>
       _downloadProgress = 0;
     });
 
-    Navigator.pushReplacement(
+    Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => MainPage(
