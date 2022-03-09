@@ -34,13 +34,12 @@ class _MapState extends State<MainPage> {
   late SpeechToText _speechToText;
   final ValueNotifier<bool> _ongoingDialog = ValueNotifier<bool>(false);
 
-  int _sheepAmount = 0;
-  double iconSize = 42;
-
   late Map<String, bool> _eartags;
   late Map<String, int> _ties;
   late LatLng _userStartPosition;
 
+  int _sheepAmount = 0;
+  double iconSize = 42;
   bool _loadingData = true;
 
   @override
@@ -97,6 +96,8 @@ class _MapState extends State<MainPage> {
                             widget.southEast,
                             _speechToText,
                             _ongoingDialog,
+                            _eartags,
+                            _ties,
                             userStartPosition: _userStartPosition,
                             onSheepRegistered: (int sheepAmountRegistered) {
                           setState(() {

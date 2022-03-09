@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:app/utils/constants.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/other.dart';
 import 'package:app/utils/question_sets.dart';
@@ -16,8 +17,8 @@ import 'package:latlong2/latlong.dart';
 import '../utils/map_utils.dart' as map_utils;
 
 class RegisterSheep extends StatefulWidget {
-  const RegisterSheep(
-      this.fileName, this.stt, this.ongoingDialog, this.sheepPosition,
+  const RegisterSheep(this.fileName, this.stt, this.ongoingDialog,
+      this.sheepPosition, this.eartags, this.ties,
       {this.onCompletedSuccessfully, this.onWillPop, Key? key})
       : super(key: key);
 
@@ -25,7 +26,9 @@ class RegisterSheep extends StatefulWidget {
   final SpeechToText stt;
   final ValueNotifier<bool> ongoingDialog;
   final LatLng sheepPosition;
-  final ValueChanged<Map<String, Object>>? onCompletedSuccessfully; //int
+  final Map<String, bool> eartags;
+  final Map<String, int> ties;
+  final ValueChanged<Map<String, Object>>? onCompletedSuccessfully;
   final VoidCallback? onWillPop;
 
   @override
@@ -35,7 +38,7 @@ class RegisterSheep extends StatefulWidget {
 class _RegisterSheepState extends State<RegisterSheep> {
   _RegisterSheepState();
 
-  String title = '';
+  String title = 'Avstandsregistrering sau';
 
   int questionIndex = 0;
 
@@ -57,11 +60,11 @@ class _RegisterSheepState extends State<RegisterSheep> {
     'white': TextEditingController(),
     'black': TextEditingController(),
     'blackHead': TextEditingController(),
-    'redTie': TextEditingController(),
+    /*'redTie': TextEditingController(),
     'blueTie': TextEditingController(),
     'yellowTie': TextEditingController(),
     'redEar': TextEditingController(),
-    'blueEar': TextEditingController(),
+    'blueEar': TextEditingController(),*/
   };
 
   late LatLng _devicePosition;
@@ -92,21 +95,43 @@ class _RegisterSheepState extends State<RegisterSheep> {
     _isShortDistance =
         distance.distance(_devicePosition, widget.sheepPosition) < 50;
 
+    questions =
+        distanceSheepQuestions; //sheepQuestions['distance']!.keys.toList();
+    questionContexts = [
+      QuestionContext.numbers,
+      QuestionContext.numbers,
+      QuestionContext.numbers,
+      QuestionContext.numbers,
+      QuestionContext.numbers
+    ]; //sheepQuestions['distance']!.values.toList();
+
     if (_isShortDistance) {
       title = 'Nærregistrering sau';
-      questions = [
+
+      for (String eartagColor in widget.eartags.keys) {
+        questions.add(closeSheepQuestions['eartags']![eartagColor]!);
+        questionContexts.add(QuestionContext.numbers);
+        _textControllers['${colorValueStringToColorString[eartagColor]}Ear'] =
+            TextEditingController();
+      }
+
+      for (String tieColor in widget.ties.keys) {
+        questions.add(closeSheepQuestions['ties']![tieColor]!);
+        questionContexts.add(QuestionContext.numbers);
+        _textControllers['${colorValueStringToColorString[tieColor]}Tie'] =
+            TextEditingController();
+      }
+      /*questions = [
         ...sheepQuestions['distance']!.keys.toList(),
         ...sheepQuestions['close']!.keys.toList()
       ];
       questionContexts = [
         ...sheepQuestions['distance']!.values.toList(),
         ...sheepQuestions['close']!.values.toList()
-      ];
-    } else {
-      title = 'Avstandsregistrering sau';
-      questions = sheepQuestions['distance']!.keys.toList();
-      questionContexts = sheepQuestions['distance']!.values.toList();
+      ];*/
     }
+
+    debugPrint(_textControllers.toString());
 
     setState(() {
       _loadingData = false;
@@ -274,44 +299,37 @@ class _RegisterSheepState extends State<RegisterSheep> {
     return returnValue;
   }
 
-  List _shortDistance() {
-    return [
-      inputDividerWithHeadline('Slips', firstHeadlineFieldKeys[0]),
-      inputRow(
-        'Røde',
-        _textControllers['redTie']!,
-        FontAwesome5.black_tie,
-        Colors.red,
-      ),
-      inputFieldSpacer(),
-      inputRow(
-        'Blå',
-        _textControllers['blueTie']!,
-        FontAwesome5.black_tie,
-        Colors.blue,
-      ),
-      inputFieldSpacer(),
-      inputRow('Gule', _textControllers['yellowTie']!, FontAwesome5.black_tie,
-          Colors.yellow,
-          scrollController: scrollController,
-          fieldAmount: 3,
-          key: firstHeadlineFieldKeys[1]),
-      inputDividerWithHeadline('Øremerker', firstHeadlineFieldKeys[1]),
-      inputRow(
-        'Røde',
-        _textControllers['redEar']!,
-        Icons.local_offer,
-        Colors.red,
-      ),
-      inputFieldSpacer(),
-      inputRow(
-        'Blå',
-        _textControllers['blueEar']!,
-        Icons.local_offer,
-        Colors.blue,
-      ),
-      inputFieldSpacer()
-    ];
+  List<Widget> _shortDistance() {
+    List<Widget> ties = [];
+    List eartags = [];
+
+    if (widget.ties.isNotEmpty) {
+      ties.add(inputDividerWithHeadline('Slips', firstHeadlineFieldKeys[0]));
+      for (String tieColor in widget.ties.keys) {
+        ties.add(inputRow(
+            colorValueStringToColorStringGui[tieColor]!,
+            _textControllers['${colorValueStringToColorString[tieColor]}Tie']!,
+            FontAwesome5.black_tie,
+            colorStringToColor[tieColor]!));
+        ties.add(inputFieldSpacer());
+      }
+    }
+
+    if (widget.eartags.isNotEmpty) {
+      eartags.add(
+          inputDividerWithHeadline('Øremerker', firstHeadlineFieldKeys[1]));
+      for (String eartagColor in widget.eartags.keys) {
+        eartags.add(inputRow(
+            colorValueStringToColorStringGui[eartagColor]!,
+            _textControllers[
+                '${colorValueStringToColorString[eartagColor]}Ear']!,
+            Icons.local_offer,
+            colorStringToColor[eartagColor]!));
+        eartags.add(inputFieldSpacer());
+      }
+    }
+
+    return [...ties, ...eartags];
   }
 
   @override

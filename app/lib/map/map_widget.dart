@@ -11,6 +11,7 @@ import '../utils/constants.dart';
 
 class MapWidget extends StatefulWidget {
   MapWidget(LatLng northWest, LatLng southEast, this.stt, this.ongoingDialog,
+      this.eartags, this.ties,
       {required this.userStartPosition, this.onSheepRegistered, Key? key})
       : super(key: key) {
     southWest = LatLng(southEast.latitude, northWest.longitude);
@@ -22,6 +23,9 @@ class MapWidget extends StatefulWidget {
 
   final SpeechToText stt;
   final ValueNotifier<bool> ongoingDialog;
+
+  final Map<String, bool> eartags;
+  final Map<String, int> ties;
 
   final LatLng userStartPosition;
   final ValueChanged<int>? onSheepRegistered;
@@ -90,7 +94,9 @@ class _MapState extends State<MapWidget> {
                           'filename',
                           widget.stt,
                           widget.ongoingDialog,
-                          targetPosition, onCompletedSuccessfully:
+                          targetPosition,
+                          widget.eartags,
+                          widget.ties, onCompletedSuccessfully:
                               (Map<String, Object> returnedData) {
                         mapAlreadyTapped = false;
                         int sheepAmount = returnedData['sheep'] == ''
