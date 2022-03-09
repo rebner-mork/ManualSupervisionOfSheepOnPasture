@@ -56,15 +56,10 @@ class _RegisterSheepState extends State<RegisterSheep> {
 
   final _textControllers = <String, TextEditingController>{
     'sheep': TextEditingController(),
-    'lambs': TextEditingController(),
-    'white': TextEditingController(),
-    'black': TextEditingController(),
+    //'lambs': TextEditingController(),
+    //'white': TextEditingController(),
+    //'black': TextEditingController(),
     'blackHead': TextEditingController(),
-    /*'redTie': TextEditingController(),
-    'blueTie': TextEditingController(),
-    'yellowTie': TextEditingController(),
-    'redEar': TextEditingController(),
-    'blueEar': TextEditingController(),*/
   };
 
   late LatLng _devicePosition;
@@ -201,6 +196,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
 
           questionIndex++;
 
+// TODO
           if (questionIndex < questions.length) {
             if (firstHeadlineFieldIndexes.contains(questionIndex)) {
               scrollToKey(scrollController,
@@ -300,11 +296,27 @@ class _RegisterSheepState extends State<RegisterSheep> {
   }
 
   List<Widget> _shortDistance() {
-    List<Widget> ties = [];
     List eartags = [];
+    List<Widget> ties = [];
+
+    if (widget.eartags.isNotEmpty) {
+      eartags.add(
+          inputDividerWithHeadline('Øremerker', firstHeadlineFieldKeys[0]));
+      for (String eartagColor in widget.eartags.keys) {
+        eartags.add(inputRow(
+            colorValueStringToColorStringGui[eartagColor]!,
+            _textControllers[
+                '${colorValueStringToColorString[eartagColor]}Ear']!,
+            eartagColor == '0' ? Icons.close : Icons.local_offer,
+            eartagColor == '0' ? Colors.grey : colorStringToColor[eartagColor]!,
+            scrollController: widget.ties.isNotEmpty ? scrollController : null,
+            key: widget.ties.isNotEmpty ? firstHeadlineFieldKeys[1] : null));
+        eartags.add(inputFieldSpacer());
+      }
+    }
 
     if (widget.ties.isNotEmpty) {
-      ties.add(inputDividerWithHeadline('Slips', firstHeadlineFieldKeys[0]));
+      ties.add(inputDividerWithHeadline('Slips', firstHeadlineFieldKeys[1]));
       for (String tieColor in widget.ties.keys) {
         ties.add(inputRow(
             colorValueStringToColorStringGui[tieColor]!,
@@ -315,23 +327,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
       }
     }
 
-    if (widget.eartags.isNotEmpty) {
-      eartags.add(
-          inputDividerWithHeadline('Øremerker', firstHeadlineFieldKeys[1]));
-      for (String eartagColor in widget.eartags.keys) {
-        eartags.add(inputRow(
-            colorValueStringToColorStringGui[eartagColor]!,
-            _textControllers[
-                '${colorValueStringToColorString[eartagColor]}Ear']!,
-            eartagColor == '0' ? Icons.close : Icons.local_offer,
-            eartagColor == '0'
-                ? Colors.grey
-                : colorStringToColor[eartagColor]!));
-        eartags.add(inputFieldSpacer());
-      }
-    }
-
-    return [...ties, ...eartags];
+    return [...eartags, ...ties];
   }
 
   @override
@@ -365,7 +361,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
                           inputRow('Sauer', _textControllers['sheep']!,
                               RpgAwesome.sheep, Colors.grey),
                           inputFieldSpacer(),
-                          inputRow('Lam', _textControllers['lambs']!,
+                          /*inputRow('Lam', _textControllers['lambs']!,
                               RpgAwesome.sheep, Colors.grey,
                               iconSize: 24),
                           inputFieldSpacer(),
@@ -382,7 +378,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
                             RpgAwesome.sheep,
                             Colors.black,
                           ),
-                          inputFieldSpacer(),
+                          inputFieldSpacer(),*/
                           inputRow('Svart hode', _textControllers['blackHead']!,
                               RpgAwesome.sheep, Colors.black,
                               scrollController: scrollController,
