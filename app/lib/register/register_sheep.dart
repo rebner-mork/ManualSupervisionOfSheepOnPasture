@@ -90,7 +90,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
     _isShortDistance =
         distance.distance(_devicePosition, widget.sheepPosition) < 50;
 
-    questions = distanceSheepQuestions;
+    questions = List.from(distanceSheepQuestions);
     questionContexts = [
       QuestionContext.numbers,
       QuestionContext.numbers,
