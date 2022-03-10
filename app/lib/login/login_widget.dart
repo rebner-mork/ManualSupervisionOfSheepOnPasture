@@ -111,7 +111,7 @@ class _LoginWidgetState extends State<LoginWidget> {
     if (formState!.validate()) {
       formState.save();
       try {
-        UserCredential user = await FirebaseAuth.instance
+        await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: _email, password: _password);
 
         setState(() {
