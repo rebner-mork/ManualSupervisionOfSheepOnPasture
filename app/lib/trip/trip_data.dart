@@ -3,14 +3,14 @@ import 'package:latlong2/latlong.dart';
 
 class TripDataManager {
   TripDataManager.start(
-      {required this.farm, required this.overseer, required this.mapName}) {
+      {required this.farmId, required this.overseer, required this.mapName}) {
     _startTime = DateTime.now();
   }
 
-  late String farm;
-  String overseer;
-  String mapName;
-  late DateTime _startTime;
+  final String farmId;
+  final String overseer;
+  final String mapName;
+  late final DateTime _startTime;
   DateTime? _stopTime;
   List<Map<String, Object>> registrations = [];
   List<LatLng> track = [];
@@ -28,18 +28,17 @@ class TripDataManager {
 
     CollectionReference tripCollection =
         FirebaseFirestore.instance.collection("trips");
-
     DocumentReference tripDocument = tripCollection.doc();
 
     List<Map<String, double>> preparedTrack = [];
 
-    for (var element in track) {
-      preparedTrack
-          .add({'latitude': element.latitude, 'longitude': element.longitude});
+    for (LatLng coordinate in track) {
+      preparedTrack.add(
+          {'latitude': coordinate.latitude, 'longitude': coordinate.longitude});
     }
 
     tripDocument.set({
-      'farmId': farm,
+      'farmId': farmId,
       'personnelId': overseer,
       'startTime': _startTime,
       'stopTime': _stopTime,
@@ -52,33 +51,33 @@ class TripDataManager {
     CollectionReference registrationCollection =
         FirebaseFirestore.instance.collection("registrations");
 
-    for (var element in registrations) {
+    for (var registration in registrations) {
       DocumentReference registrationDocument = registrationCollection.doc();
-      element['tripId'] = tripDocument;
-      registrationDocument.set(element);
+      registration['tripId'] = tripDocument;
+      registrationDocument.set(registration);
     }
   }
 
   @override
   String toString() {
     Map<String, Object> data = {
-      'farm': farm,
+      'farmId': farmId,
       'overseer': overseer,
       'startTime': _startTime.toString(),
       'stopTime': _stopTime.toString(),
     };
 
     List<String> stringRegistrations = [];
-    registrations.forEach((element) {
-      stringRegistrations.add(element.toString());
-    });
+    for (Map<String, Object> registration in registrations) {
+      stringRegistrations.add(registration.toString());
+    }
     data['registrations'] = stringRegistrations.toString();
 
     List<String> stringTrack = [];
-    track.forEach((element) {
+    for (LatLng coordinates in track) {
       stringTrack.add(
-          "{latitude: ${element.latitude}, longitude: ${element.longitude}");
-    });
+          "{latitude: ${coordinates.latitude}, longitude: ${coordinates.longitude}");
+    }
     data['track'] = stringTrack.toString();
 
     return data.toString();

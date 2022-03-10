@@ -1,13 +1,9 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/other.dart';
 import 'package:app/utils/question_sets.dart';
 import 'package:app/utils/speech_input_filters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:fluttericon/rpg_awesome_icons.dart';
@@ -18,9 +14,9 @@ class RegisterSheep extends StatefulWidget {
       {this.onCompletedSuccessfully, Key? key})
       : super(key: key);
 
-  final ValueChanged<Map<String, Object>>? onCompletedSuccessfully;
   final SpeechToText stt;
   final ValueNotifier<bool> ongoingDialog;
+  final ValueChanged<Map<String, Object>>? onCompletedSuccessfully;
 
   @override
   State<RegisterSheep> createState() => _RegisterSheepState();
@@ -176,7 +172,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
   void _registerSheep() {
     Map<String, Object> data = {};
     data.addAll(gatherRegisteredData(_textControllers));
-    data['timeStamp'] = DateTime.now();
+    data['timestamp'] = DateTime.now();
 
     if (widget.onCompletedSuccessfully != null) {
       widget.onCompletedSuccessfully!(data);

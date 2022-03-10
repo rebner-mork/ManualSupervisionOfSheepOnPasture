@@ -99,9 +99,7 @@ class _MapState extends State<MapWidget> {
                       widget.stt,
                       widget.ongoingDialog,
                       onCompletedSuccessfully: (Map<String, Object> data) {
-                        int sheepAmountRegistered =
-                            //TODO fix jallavonvertering?
-                            int.parse(data['sheep'].toString());
+                        int sheepAmountRegistered = data['sheep']! as int;
                         setState(() {
                           if (sheepAmountRegistered > 0) {
                             if (widget.onSheepRegistered != null) {

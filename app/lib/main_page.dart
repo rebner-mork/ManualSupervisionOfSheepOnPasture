@@ -18,22 +18,16 @@ class MainPage extends StatefulWidget {
       {required this.northWest,
       required this.southEast,
       required this.userStartPosition,
-      required farm,
-      required overseer,
-      required mapName,
+      required this.trip,
       Key? key})
       : super(key: key) {
-    trip =
-        //TODO change to mapId when maps are their own documents
-        TripDataManager.start(farm: farm, overseer: overseer, mapName: mapName);
     trip.track.add(userStartPosition);
   }
 
   final LatLng northWest;
   final LatLng southEast;
   final LatLng userStartPosition;
-
-  late TripDataManager trip;
+  final TripDataManager trip;
 
   @override
   State<MainPage> createState() => _MapState();
@@ -44,7 +38,8 @@ class _MapState extends State<MainPage> {
   final ValueNotifier<bool> _ongoingDialog = ValueNotifier<bool>(false);
 
   int _sheepAmount = 0;
-  double iconSize = 42;
+  static const double iconSize = 42;
+  static const double buttonInset = 8;
 
   final Map<String, Object> tripData = {};
 
@@ -79,31 +74,42 @@ class _MapState extends State<MainPage> {
                 _speechToText,
                 _ongoingDialog,
                 userStartPosition: widget.userStartPosition,
-                onSheepRegistered: (data) {
-                  int sheepAmountRegistered =
-                      int.parse(data['sheep'].toString());
-                  setState(() {
-                    if (sheepAmountRegistered > 0) {
+                onSheepRegistered: (Map<String, Object> data) {
+                  int sheepAmountRegistered = data['sheep']! as int;
+                  if (sheepAmountRegistered > 0) {
+                    setState(() {
                       _sheepAmount += sheepAmountRegistered;
                       widget.trip.registrations.add(data);
-                    }
-                  });
+                    });
+                  }
                 },
                 onNewPosition: (position) => widget.trip.track.add(position),
               )),
       Positioned(
-          top: 8 + MediaQuery.of(context).viewPadding.top,
-          right: 8,
+        top: buttonInset + MediaQuery.of(context).viewPadding.top,
+        left: buttonInset,
+        child: CircularButton(
+            child: const Icon(
+              Icons.cloud_upload,
+              size: iconSize,
+            ),
+            onPressed: () {
+              _endTripButtonPressed(context, widget.trip);
+            }),
+      ),
+      Positioned(
+          top: buttonInset + MediaQuery.of(context).viewPadding.top,
+          right: buttonInset,
           child: CircularButton(
-            child: SettingsIcon(iconSize: iconSize),
+            child: const SettingsIcon(iconSize: iconSize),
             onPressed: () {
               showDialog(
                   context: context, builder: (_) => const SettingsDialog());
             },
           )),
       Positioned(
-        bottom: 8 + MediaQuery.of(context).viewPadding.bottom,
-        left: 8,
+        bottom: buttonInset + MediaQuery.of(context).viewPadding.bottom,
+        left: buttonInset,
         child: CircularButton(
           child: Sheepometer(sheepAmount: _sheepAmount, iconSize: iconSize),
           onPressed: () {},
@@ -111,26 +117,14 @@ class _MapState extends State<MainPage> {
               textSize(_sheepAmount.toString(), circularButtonTextStyle).width,
         ),
       ),
-      Positioned(
-        top: 8 + MediaQuery.of(context).viewPadding.top,
-        left: 8,
-        child: CircularButton(
-            child: Icon(
-              Icons.cloud_upload,
-              size: iconSize,
-            ),
-            onPressed: () {
-              _endTripButtonPressed(context, widget.trip);
-            }),
-      )
     ]));
   }
 }
 
 Future<void> _endTripButtonPressed(
     BuildContext context, TripDataManager trip) async {
-  await showEndTripDialog(context).then((finished) {
-    if (finished) {
+  await showEndTripDialog(context).then((isFinished) {
+    if (isFinished) {
       trip.post();
       Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
     }

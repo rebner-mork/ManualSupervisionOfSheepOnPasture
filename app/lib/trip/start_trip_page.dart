@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:app/main_page.dart';
+import 'package:app/trip/trip_data.dart';
 import 'package:app/utils/constants.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/map_utils.dart';
@@ -320,12 +321,14 @@ class _StartTripPageState extends State<StartTripPage>
         context,
         MaterialPageRoute(
             builder: (context) => MainPage(
-                farm: _farmIDs[_farmNames.indexOf(_selectedFarmName)],
-                mapName: _selectedFarmMap,
-                overseer: FirebaseAuth.instance.currentUser!.uid,
                 northWest: mapBounds['northWest']!,
                 southEast: mapBounds['southEast']!,
-                userStartPosition: userStartPosition)));
+                userStartPosition: userStartPosition,
+                //TODO change to mapId when maps are their own documents
+                trip: TripDataManager.start(
+                    farmId: _farmIDs[_farmNames.indexOf(_selectedFarmName)],
+                    overseer: FirebaseAuth.instance.currentUser!.uid,
+                    mapName: _selectedFarmMap))));
   }
 
   Map<String, Map<String, Map<String, double>>> _castMapsFromDynamic(
