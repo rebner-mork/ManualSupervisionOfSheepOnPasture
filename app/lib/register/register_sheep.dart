@@ -72,7 +72,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
   List<String> numbers = numbersFilter.keys.toList();
   List<String> colors = colorsFilter.keys.toList();
 
-  bool _loadingData = true;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -86,6 +86,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
   }
 
   Future<void> _initGpsQuestionsAndDialog() async {
+    // TODO: try/catch (Unhandled Exception: Location services does not have permissions)
     _devicePosition = await map_utils.getDevicePosition();
     _isShortDistance =
         distance.distance(_devicePosition, widget.sheepPosition) < 50;
@@ -120,7 +121,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
     }
 
     setState(() {
-      _loadingData = false;
+      _isLoading = false;
     });
 
     if (widget.stt.isAvailable) {
@@ -231,7 +232,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
     final String path = directory.path;
 
     final File file = File('$path/${widget.fileName}.json');
-    final Map data = {};
+    final Map data = gatherRegisteredData(_textControllers);
 
     file.writeAsString(json.encode(data));
 
@@ -337,7 +338,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
                   title: Text(title),
                   leading: BackButton(onPressed: _backButtonPressed),
                 ),
-                body: _loadingData
+                body: _isLoading
                     ? const LoadingData()
                     : SingleChildScrollView(
                         controller: scrollController,
@@ -373,8 +374,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
                           if (_isShortDistance) ..._shortDistance(),
                           const SizedBox(height: 80),
                         ]))),
-                floatingActionButton: !_loadingData &&
-                        !widget.ongoingDialog.value
+                floatingActionButton: !_isLoading && !widget.ongoingDialog.value
                     ? Row(
                         mainAxisAlignment:
                             MediaQuery.of(context).viewInsets.bottom == 0

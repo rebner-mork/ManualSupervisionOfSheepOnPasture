@@ -47,6 +47,7 @@ class _StartTripPageState extends State<StartTripPage>
   double _downloadProgress = 0.0;
 
   String _feedbackText = '';
+  String _eartagAndTieText = '';
 
   IconData _mapIcon = StartTripPage.notDownloadedIcon;
   late AnimationController _animationController;
@@ -106,7 +107,9 @@ class _StartTripPageState extends State<StartTripPage>
                             if (!_noMapsDefined) inputFieldSpacer(),
                             Text(
                               _feedbackText,
-                              style: feedbackTextStyle,
+                              style: _noMapsDefined
+                                  ? feedbackErrorTextStyle
+                                  : feedbackTextStyle,
                             ),
                             inputFieldSpacer(),
                             Visibility(
@@ -119,7 +122,9 @@ class _StartTripPageState extends State<StartTripPage>
                                       minHeight: 10,
                                     ))),
                             inputFieldSpacer(),
-                            startTripButton()
+                            startTripButton(),
+                            inputFieldSpacer(),
+                            Text(_eartagAndTieText, style: feedbackTextStyle),
                           ],
                   )));
   }
@@ -156,6 +161,7 @@ class _StartTripPageState extends State<StartTripPage>
                     setState(() {
                       _selectedFarmName = newFarmName;
                       _feedbackText = '';
+                      _eartagAndTieText = '';
                       updateIcon();
                     });
                   }
@@ -280,12 +286,10 @@ class _StartTripPageState extends State<StartTripPage>
       style: ButtonStyle(
           fixedSize:
               MaterialStateProperty.all(Size.fromHeight(mainButtonHeight)),
-          backgroundColor: MaterialStateProperty.all(
-              _noMapsDefined || _noEartagsDefined || _noTiesDefined
-                  ? Colors.grey
-                  : null)),
+          backgroundColor:
+              MaterialStateProperty.all(_noMapsDefined ? Colors.grey : null)),
       onPressed: () async {
-        if (!_noMapsDefined && !_noEartagsDefined && !_noTiesDefined) {
+        if (!_noMapsDefined) {
           _startTrip();
         }
       },
@@ -293,8 +297,6 @@ class _StartTripPageState extends State<StartTripPage>
   }
 
   Future<void> _startTrip() async {
-    // TODO: try/catch (Unhandled Exception: Location services does not have permissions)
-
     if (!_mapDownloaded) {
       setState(() {
         _feedbackText = 'Oppsynsturen starter når kartet er lastet ned';
@@ -313,6 +315,7 @@ class _StartTripPageState extends State<StartTripPage>
 
     setState(() {
       _feedbackText = '';
+      _eartagAndTieText = '';
       updateIcon();
       _downloadingMap = false;
       _downloadProgress = 0;
@@ -346,7 +349,6 @@ class _StartTripPageState extends State<StartTripPage>
   }
 
   Future<void> _readFarmMaps(String farmId) async {
-    // TODO: feilmelding dersom øremerker/slips ikke definert
     CollectionReference farmCollection =
         FirebaseFirestore.instance.collection('farms');
     DocumentReference farmDoc = farmCollection.doc(farmId);
@@ -366,31 +368,37 @@ class _StartTripPageState extends State<StartTripPage>
     } else {
       setState(() {
         _noMapsDefined = true;
-        _feedbackText += 'Gården har ikke definert noen kart.\n';
+        _feedbackText += 'Gården har ikke definert noen kart,\n'
+            'oppsynstur kan dermed ikke starte.';
       });
     }
 
     if (dbEartags != null && dbEartags.isNotEmpty) {
       _eartags = dbEartags.map((key, value) => MapEntry(key, value as bool));
     } else {
-      setState(() {
-        _noEartagsDefined = true;
-        _feedbackText += 'Gården har ikke definert noen øremerker.\n';
-      });
+      _noEartagsDefined = true;
     }
 
     if (dbTies != null && dbTies.isNotEmpty) {
       _ties = dbTies.map((key, value) => MapEntry(key, value as int));
     } else {
-      setState(() {
-        _noTiesDefined = true;
-        _feedbackText += 'Gården har ikke definert noen slips.\n';
-      });
+      _noTiesDefined = true;
     }
 
-    if (_noMapsDefined || _noEartagsDefined || _noTiesDefined) {
+    if (_noTiesDefined && _noEartagsDefined) {
       setState(() {
-        _feedbackText += 'Oppsynstur kan dermed ikke starte.';
+        _eartagAndTieText = 'Gården har ikke definert slips eller øremerker, \n'
+            'registrering vil dermed vise alle farger.';
+      });
+    } else if (_noTiesDefined && !_noEartagsDefined) {
+      setState(() {
+        _eartagAndTieText += 'Gården har ikke definert slips,\n'
+            'registrering vil vise alle øremerkefarger.\n';
+      });
+    } else if (!_noTiesDefined && _noEartagsDefined) {
+      setState(() {
+        _eartagAndTieText += 'Gården har ikke definert øremerker,\n'
+            'registrering vil vise alle øremerkefarger.\n';
       });
     }
   }
