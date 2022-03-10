@@ -54,15 +54,13 @@ class _MapState extends State<MapWidget> {
   void initState() {
     super.initState();
 
+    urlTemplate = map_utils.getLocalUrlTemplate();
+
     userPosition = widget.userStartPosition;
     _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition);
     _movementPoints.add(userPosition);
 
     timer = Timer.periodic(const Duration(seconds: 30), (_) => _updateMap());
-
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      _loadUrlTemplate();
-    });
   }
 
   Future<void> _updateMap() async {
@@ -71,13 +69,6 @@ class _MapState extends State<MapWidget> {
       //_mapController.move(pos, _mapController.zoom);
       _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition);
       _movementPoints.add(userPosition);
-    });
-  }
-
-  Future<void> _loadUrlTemplate() async {
-    urlTemplate = map_utils.getLocalUrlTemplate();
-    setState(() {
-      urlTemplateLoaded = true;
     });
   }
 
@@ -132,46 +123,44 @@ class _MapState extends State<MapWidget> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      child: urlTemplateLoaded
-          ? FlutterMap(
-              mapController: _mapController,
-              options: MapOptions(
-                onMapCreated: (c) {
-                  _mapController = c;
-                },
-                onTap: (_, point) => registerSheepByTap(point),
-                zoom: OfflineZoomLevels.min,
-                minZoom: OfflineZoomLevels.min,
-                maxZoom: OfflineZoomLevels.max,
-                swPanBoundary: widget.southWest,
-                nePanBoundary: widget.northEast,
-                center: LatLngBounds(widget.southWest, widget.northEast).center,
-              ),
-              layers: [
-                TileLayerOptions(
-                  tileProvider: const FileTileProvider(),
-                  urlTemplate: urlTemplate,
-                  errorImage: const AssetImage("images/stripes.png"),
-                  attributionBuilder: (_) {
-                    return const Text(
-                      "Kartverket",
-                      style: TextStyle(color: Colors.black, fontSize: 10),
-                    );
-                  },
-                ),
-                PolylineLayerOptions(polylines: [
-                  Polyline(
-                    points: _movementPoints,
-                    color: Colors.red,
-                    strokeWidth: 7.0,
-                  ),
-                  ...linesOfSight
-                ]),
-                MarkerLayerOptions(
-                    markers: [_currentPositionMarker, ...registrationMarkers])
-              ],
-            )
-          : null,
+      child: FlutterMap(
+        mapController: _mapController,
+        options: MapOptions(
+          onMapCreated: (c) {
+            _mapController = c;
+          },
+          onTap: (_, point) => registerSheepByTap(point),
+          zoom: OfflineZoomLevels.min,
+          minZoom: OfflineZoomLevels.min,
+          maxZoom: OfflineZoomLevels.max,
+          swPanBoundary: widget.southWest,
+          nePanBoundary: widget.northEast,
+          center: LatLngBounds(widget.southWest, widget.northEast).center,
+        ),
+        layers: [
+          TileLayerOptions(
+            tileProvider: const FileTileProvider(),
+            urlTemplate: urlTemplate,
+            errorImage: const AssetImage("images/stripes.png"),
+            attributionBuilder: (_) {
+              return const Text(
+                "Kartverket",
+                style: TextStyle(color: Colors.black, fontSize: 10),
+              );
+            },
+          ),
+          PolylineLayerOptions(polylines: [
+            Polyline(
+              points: _movementPoints,
+              color: Colors.red,
+              strokeWidth: 7.0,
+            ),
+            ...linesOfSight
+          ]),
+          MarkerLayerOptions(
+              markers: [_currentPositionMarker, ...registrationMarkers])
+        ],
+      ),
     );
   }
 }
