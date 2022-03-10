@@ -15,7 +15,7 @@ Future<void> setConstants() async {
   applicationDocumentDirectoryPath = dir.path;
 }
 
-Map<String, String> colorValueStringToColorString = {
+final Map<String, String> colorValueStringToColorString = {
   Colors.transparent.value.toRadixString(16): 'transparent',
   Colors.red.value.toRadixString(16): 'red',
   Colors.blue.value.toRadixString(16): 'blue',
@@ -25,7 +25,7 @@ Map<String, String> colorValueStringToColorString = {
   Colors.pink.value.toRadixString(16): 'pink'
 };
 
-Map<String, String> colorValueStringToColorStringGui = {
+final Map<String, String> colorValueStringToColorStringGui = {
   Colors.transparent.value.toRadixString(16): 'Uten',
   Colors.red.value.toRadixString(16): 'Røde',
   Colors.blue.value.toRadixString(16): 'Blå',
@@ -35,7 +35,7 @@ Map<String, String> colorValueStringToColorStringGui = {
   Colors.pink.value.toRadixString(16): 'Rosa'
 };
 
-Map<String, Color> colorStringToColor = {
+final Map<String, Color> colorStringToColor = {
   Colors.transparent.value.toRadixString(16): Colors.transparent,
   Colors.red.value.toRadixString(16): Colors.red,
   Colors.blue.value.toRadixString(16): Colors.blue,
@@ -45,7 +45,7 @@ Map<String, Color> colorStringToColor = {
   Colors.pink.value.toRadixString(16): Colors.pink
 };
 
-final Map<String, bool?> possibleEartags = {
+final Map<String, bool?> possibleEartagsWithoutDefinition = {
   Colors.red.value.toRadixString(16): null,
   Colors.blue.value.toRadixString(16): null,
   Colors.yellow.value.toRadixString(16): null,
@@ -54,7 +54,7 @@ final Map<String, bool?> possibleEartags = {
   Colors.pink.value.toRadixString(16): null
 };
 
-final Map<String, int?> possibleTies = {
+final Map<String, int?> possibleTiesWithoutDefinition = {
   Colors.transparent.value.toRadixString(16): null,
   Colors.red.value.toRadixString(16): null,
   Colors.blue.value.toRadixString(16): null,

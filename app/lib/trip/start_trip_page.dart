@@ -328,8 +328,10 @@ class _StartTripPageState extends State<StartTripPage>
                   northWest: mapBounds['northWest']!,
                   southEast: mapBounds['southEast']!,
                   farmId: _farmIDs[_farmNames.indexOf(_selectedFarmName)],
-                  eartags: _noEartagsDefined ? possibleEartags : _eartags!,
-                  ties: _noTiesDefined ? possibleTies : _ties!,
+                  eartags: _noEartagsDefined
+                      ? possibleEartagsWithoutDefinition
+                      : _eartags!,
+                  ties: _noTiesDefined ? possibleTiesWithoutDefinition : _ties!,
                 )));
   }
 
