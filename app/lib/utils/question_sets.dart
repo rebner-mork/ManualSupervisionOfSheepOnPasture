@@ -17,7 +17,6 @@ const Map<String, Map<String, String>> closeSheepQuestions = {
     'ffe91e63': 'Hvor mange rosa slips?'
   },
   'eartags': {
-    '0': 'Hvor mange uten øremerker?',
     'fff44336': 'Hvor mange røde øremerker?',
     'ff2196f3': 'Hvor mange blå øremerker?',
     'ffffeb3b': 'Hvor mange gule øremerker?',

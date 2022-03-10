@@ -44,3 +44,22 @@ Map<String, Color> colorStringToColor = {
   Colors.orange.value.toRadixString(16): Colors.orange,
   Colors.pink.value.toRadixString(16): Colors.pink
 };
+
+final Map<String, bool?> possibleEartags = {
+  Colors.red.value.toRadixString(16): null,
+  Colors.blue.value.toRadixString(16): null,
+  Colors.yellow.value.toRadixString(16): null,
+  Colors.green.value.toRadixString(16): null,
+  Colors.orange.value.toRadixString(16): null,
+  Colors.pink.value.toRadixString(16): null
+};
+
+final Map<String, int?> possibleTies = {
+  Colors.transparent.value.toRadixString(16): null,
+  Colors.red.value.toRadixString(16): null,
+  Colors.blue.value.toRadixString(16): null,
+  Colors.yellow.value.toRadixString(16): null,
+  Colors.green.value.toRadixString(16): null,
+  Colors.orange.value.toRadixString(16): null,
+  Colors.pink.value.toRadixString(16): null
+};

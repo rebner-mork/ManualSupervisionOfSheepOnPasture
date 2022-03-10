@@ -24,8 +24,8 @@ class MapWidget extends StatefulWidget {
   final SpeechToText stt;
   final ValueNotifier<bool> ongoingDialog;
 
-  final Map<String, bool> eartags;
-  final Map<String, int> ties;
+  final Map<String, bool?> eartags;
+  final Map<String, int?> ties;
 
   final LatLng userStartPosition;
   final ValueChanged<int>? onSheepRegistered;

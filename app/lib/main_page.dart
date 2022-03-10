@@ -25,8 +25,8 @@ class MainPage extends StatefulWidget {
   final LatLng northWest;
   final LatLng southEast;
   final String farmId;
-  final Map<String, bool> eartags;
-  final Map<String, int> ties;
+  final Map<String, bool?> eartags;
+  final Map<String, int?> ties;
 
   @override
   State<MainPage> createState() => _MapState();

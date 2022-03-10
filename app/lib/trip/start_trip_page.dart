@@ -30,8 +30,8 @@ class _StartTripPageState extends State<StartTripPage>
 
   final List<String> _farmNames = [];
   late String _selectedFarmName;
-  late Map<String, bool> _eartags;
-  late Map<String, int> _ties;
+  late Map<String, bool>? _eartags;
+  late Map<String, int>? _ties;
 
   Map<String, Map<String, Map<String, double>>> _selectedFarmMaps = {};
   String _selectedFarmMap = '';
@@ -328,8 +328,8 @@ class _StartTripPageState extends State<StartTripPage>
                   northWest: mapBounds['northWest']!,
                   southEast: mapBounds['southEast']!,
                   farmId: _farmIDs[_farmNames.indexOf(_selectedFarmName)],
-                  eartags: _eartags,
-                  ties: _ties,
+                  eartags: _noEartagsDefined ? possibleEartags : _eartags!,
+                  ties: _noTiesDefined ? possibleTies : _ties!,
                 )));
   }
 

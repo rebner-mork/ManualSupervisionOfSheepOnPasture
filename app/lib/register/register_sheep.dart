@@ -26,8 +26,8 @@ class RegisterSheep extends StatefulWidget {
   final SpeechToText stt;
   final ValueNotifier<bool> ongoingDialog;
   final LatLng sheepPosition;
-  final Map<String, bool> eartags;
-  final Map<String, int> ties;
+  final Map<String, bool?> eartags;
+  final Map<String, int?> ties;
   final ValueChanged<Map<String, Object>>? onCompletedSuccessfully;
   final VoidCallback? onWillPop;
 
