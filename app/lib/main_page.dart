@@ -2,20 +2,19 @@ import 'package:app/trip/end_trip_dialog.dart';
 import 'package:app/trip/start_trip_page.dart';
 import 'package:app/trip/trip_data.dart';
 import 'package:app/map/map_widget.dart';
-import 'package:app/providers/settings_provider.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/other.dart';
 import 'package:app/widgets/circular_buttons.dart';
 
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:provider/provider.dart';
-import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 class MainPage extends StatefulWidget {
   MainPage(
-      {required this.northWest,
+      {required this.speechToText,
+      required this.ongoingDialog,
+      required this.northWest,
       required this.southEast,
       required this.userStartPosition,
       required this.trip,
@@ -24,6 +23,8 @@ class MainPage extends StatefulWidget {
     trip.track.add(userStartPosition);
   }
 
+  final SpeechToText speechToText;
+  final ValueNotifier<bool> ongoingDialog;
   final LatLng northWest;
   final LatLng southEast;
   final LatLng userStartPosition;
@@ -34,9 +35,6 @@ class MainPage extends StatefulWidget {
 }
 
 class _MapState extends State<MainPage> {
-  late SpeechToText _speechToText;
-  final ValueNotifier<bool> _ongoingDialog = ValueNotifier<bool>(false);
-
   int _sheepAmount = 0;
   static const double iconSize = 42;
   static const double buttonInset = 8;
@@ -44,35 +42,16 @@ class _MapState extends State<MainPage> {
   final Map<String, Object> tripData = {};
 
   @override
-  void initState() {
-    super.initState();
-    _initSpeechToText();
-  }
-
-  void _initSpeechToText() async {
-    _speechToText = SpeechToText();
-    await _speechToText.initialize(onError: _speechToTextError);
-    Provider.of<SettingsProvider>(context, listen: false)
-        .setSttAvailability(_speechToText.isAvailable);
-  }
-
-  void _speechToTextError(SpeechRecognitionError error) {
-    setState(() {
-      _ongoingDialog.value = false;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Material(
         child: Stack(children: [
       ValueListenableBuilder<bool>(
-          valueListenable: _ongoingDialog,
+          valueListenable: widget.ongoingDialog,
           builder: (context, value, child) => MapWidget(
                 widget.northWest,
                 widget.southEast,
-                _speechToText,
-                _ongoingDialog,
+                widget.speechToText,
+                widget.ongoingDialog,
                 userStartPosition: widget.userStartPosition,
                 onSheepRegistered: (Map<String, Object> data) {
                   int sheepAmountRegistered = data['sheep']! as int;
