@@ -29,7 +29,7 @@ class _MyPageState extends State<MyPage> {
           });
         },
         selectedIndex: _selectedIndex,
-        labelType: NavigationRailLabelType.all, //label
+        labelType: NavigationRailLabelType.all,
         destinations: const <NavigationRailDestination>[
           NavigationRailDestination(
               icon: Icon(Icons.gite_outlined),

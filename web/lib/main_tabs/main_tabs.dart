@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web/my_page/my_page.dart';
+import 'package:web/trips/trip_overview_list.dart';
 
 class MainTabs extends StatefulWidget {
   const MainTabs({Key? key}) : super(key: key);
@@ -18,14 +19,14 @@ class _MainState extends State<MainTabs> {
     return Material(
       child: DefaultTabController(
           length: 3,
-          initialIndex: 2,
+          initialIndex: 1, // TODO: 2
           child: Scaffold(
             appBar: PreferredSize(
-              preferredSize: const Size.fromHeight(48),
+              preferredSize: const Size.fromHeight(50), // 55
               child: Container(
                   color: Colors.grey.shade800,
                   child: Padding(
-                      padding: const EdgeInsets.only(left: 128),
+                      padding: const EdgeInsets.only(left: 128), // bottom: 5
                       child: AppBar(
                         toolbarHeight: 0,
                         backgroundColor: Colors.grey.shade800,
@@ -47,7 +48,8 @@ class _MainState extends State<MainTabs> {
                             ]),
                       ))),
             ),
-            body: const TabBarView(children: [Text('1'), Text('2'), MyPage()]),
+            body: const TabBarView(
+                children: [Text('1'), TripOverviewList(), MyPage()]),
           )),
     );
   }
