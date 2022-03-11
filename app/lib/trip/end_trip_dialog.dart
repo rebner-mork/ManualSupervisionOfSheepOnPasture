@@ -6,7 +6,10 @@ class EndTripDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-        title: const Text("Avslutt og last opp data?"),
+        title: const Text(
+          "Avslutt og last opp oppsynstur?",
+          textAlign: TextAlign.center,
+        ),
         children: [
           const SizedBox(
             height: 10,
@@ -14,7 +17,7 @@ class EndTripDialog extends StatelessWidget {
           const Icon(
             Icons.wifi,
             size: 80,
-            color: Colors.grey,
+            color: Colors.green,
           ),
           const Center(
             child: Text("Tilkoblet nettverk"),
@@ -22,20 +25,22 @@ class EndTripDialog extends StatelessWidget {
           const SizedBox(
             height: 30,
           ),
-          SimpleDialogOption(
-            child: const Center(
-                child: Text(
-              "Avslutt oppsynstur",
-              style: TextStyle(
-                  color: Colors.green,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20),
-            )),
-            onPressed: () => Navigator.pop(context, true),
-          ),
-          SimpleDialogOption(
-              child: const Center(child: Text("Fortsett oppsynstur")),
-              onPressed: () => Navigator.pop(context, false)),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            SimpleDialogOption(
+              child: const Center(
+                  child: Text(
+                "Avslutt",
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+              )),
+              onPressed: () => Navigator.pop(context, true),
+            ),
+            SimpleDialogOption(
+                child: const Center(
+                    child: Text("Fortsett",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 20))),
+                onPressed: () => Navigator.pop(context, false))
+          ]),
         ]);
   }
 }
