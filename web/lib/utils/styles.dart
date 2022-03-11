@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 // Datatable
 TextStyle dataColumnTextStyle =
@@ -10,7 +11,6 @@ TextStyle dataCellBoldTextStyle =
 // Button
 TextStyle buttonTextStyle = const TextStyle(fontSize: 16);
 
-TextStyle mainTabsTextStyle = const TextStyle(fontSize: 20);
 TextStyle definePageHeadlineTextStyle =
     const TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
 TextStyle definePageInfoTextStyle = const TextStyle(fontSize: 16);
