@@ -11,7 +11,7 @@ class TripDataManager {
   final String overseer;
   final String mapName;
   late final DateTime _startTime;
-  DateTime? _stopTime;
+  late final DateTime? _stopTime;
   List<Map<String, Object>> registrations = [];
   List<LatLng> track = [];
 
