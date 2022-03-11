@@ -27,7 +27,7 @@ class TripDataManager {
     // --- TRIPS ---
 
     CollectionReference tripCollection =
-        FirebaseFirestore.instance.collection("trips");
+        FirebaseFirestore.instance.collection('trips');
     DocumentReference tripDocument = tripCollection.doc();
 
     List<Map<String, double>> preparedTrack = [];
@@ -48,12 +48,11 @@ class TripDataManager {
 
     // --- REGISTRATIONS ---
 
-    CollectionReference registrationCollection =
-        FirebaseFirestore.instance.collection("registrations");
+    CollectionReference registrationSubCollection =
+        tripDocument.collection('registrations');
 
     for (var registration in registrations) {
-      DocumentReference registrationDocument = registrationCollection.doc();
-      registration['tripId'] = tripDocument;
+      DocumentReference registrationDocument = registrationSubCollection.doc();
       registrationDocument.set(registration);
     }
   }
