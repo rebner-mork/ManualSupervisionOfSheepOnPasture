@@ -29,17 +29,14 @@ class _TripOverviewListState extends State<TripOverviewList> {
 
     CollectionReference tripsCollection =
         FirebaseFirestore.instance.collection('trips');
-    // sorter på startTime? limit?
     QuerySnapshot tripQuerySnapshot =
         await tripsCollection.where('farmId', isEqualTo: uid).get();
-    List<QueryDocumentSnapshot> tripDocs = tripQuerySnapshot.docs;
 
     _trips = [];
 
-    for (QueryDocumentSnapshot doc in tripDocs) {
+    for (QueryDocumentSnapshot doc in tripQuerySnapshot.docs) {
       _trips.add({
         'mapName': doc['mapName'],
-        'personnelId': doc['personnelId'],
         'startTime': doc['startTime'],
         'docReference': doc.reference
       });
@@ -49,7 +46,7 @@ class _TripOverviewListState extends State<TripOverviewList> {
     });
   }
 
-// TODO: endre personnelId til personnelEmail i Firestore?
+// TODO: Håndter ingen oppsynsturer gått
 // TODO: Begrense antall som hentes fra Firestore? Gjøres med limit
 // TODO: Dropdown for å filtrere på 'alle', 'kartnavn1', 'kartnavn2'
 
@@ -69,10 +66,8 @@ class _TripOverviewListState extends State<TripOverviewList> {
               return ListTile(
                 title: Text(startTimeString),
                 subtitle: Text(
-                  (_trips[index]['mapName']!.toString()) + '\n' + '...',
-                  maxLines: 2,
+                  '${_trips[index]['mapName']!}',
                 ),
-                isThreeLine: true,
                 onTap: () {
                   if (widget.onTripTapped != null) {
                     widget.onTripTapped!(
