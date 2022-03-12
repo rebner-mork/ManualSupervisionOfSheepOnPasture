@@ -3,15 +3,17 @@ import 'package:latlong2/latlong.dart';
 
 class TripDataManager {
   TripDataManager.start(
-      {required this.farmId, required this.overseer, required this.mapName}) {
+      {required this.farmId,
+      required this.personnelEmail,
+      required this.mapName}) {
     _startTime = DateTime.now();
   }
 
   final String farmId;
-  final String overseer;
+  final String personnelEmail;
   final String mapName;
   late final DateTime _startTime;
-  late final DateTime? _stopTime;
+  DateTime? _stopTime;
   List<Map<String, Object>> registrations = [];
   List<LatLng> track = [];
 
@@ -39,7 +41,7 @@ class TripDataManager {
 
     tripDocument.set({
       'farmId': farmId,
-      'personnelId': overseer,
+      'personnelEmail': personnelEmail,
       'startTime': _startTime,
       'stopTime': _stopTime,
       'track': preparedTrack,
@@ -61,7 +63,7 @@ class TripDataManager {
   String toString() {
     Map<String, Object> data = {
       'farmId': farmId,
-      'overseer': overseer,
+      'personnelEmail': personnelEmail,
       'startTime': _startTime.toString(),
       'stopTime': _stopTime.toString(),
     };

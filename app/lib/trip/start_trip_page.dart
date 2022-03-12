@@ -352,7 +352,8 @@ class _StartTripPageState extends State<StartTripPage>
                     //TODO change to mapId when maps are their own documents
                     trip: TripDataManager.start(
                         farmId: _farmIDs[_farmNames.indexOf(_selectedFarmName)],
-                        overseer: FirebaseAuth.instance.currentUser!.uid,
+                        personnelEmail:
+                            FirebaseAuth.instance.currentUser!.email!,
                         mapName: _selectedFarmMap)))));
   }
 
