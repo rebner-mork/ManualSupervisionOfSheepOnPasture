@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:web/my_page/my_page.dart';
-import 'package:web/trips/trip_overview_list.dart';
 import 'package:web/trips/trips.dart';
 
 class MainTabs extends StatefulWidget {
