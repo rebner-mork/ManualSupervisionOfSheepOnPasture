@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:web/my_page/my_page.dart';
 import 'package:web/trips/trip_overview_list.dart';
+import 'package:web/trips/trips.dart';
 
 class MainTabs extends StatefulWidget {
   const MainTabs({Key? key}) : super(key: key);
@@ -48,8 +49,8 @@ class _MainState extends State<MainTabs> {
                             ]),
                       ))),
             ),
-            body: const TabBarView(
-                children: [Text('1'), TripOverviewList(), MyPage()]),
+            body:
+                const TabBarView(children: [Text('1'), TripsPage(), MyPage()]),
           )),
     );
   }

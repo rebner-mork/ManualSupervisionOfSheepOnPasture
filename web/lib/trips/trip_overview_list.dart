@@ -3,7 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class TripOverviewList extends StatefulWidget {
-  const TripOverviewList({Key? key}) : super(key: key);
+  const TripOverviewList({this.onTripTapped, Key? key}) : super(key: key);
+
+  final Function(DocumentReference)? onTripTapped;
 
   @override
   State<TripOverviewList> createState() => _TripOverviewListState();
@@ -38,8 +40,8 @@ class _TripOverviewListState extends State<TripOverviewList> {
       _trips.add({
         'mapName': doc['mapName'],
         'personnelId': doc['personnelId'],
-        'startTime': doc['startTime'] as Timestamp,
-        'documentReference': doc.reference
+        'startTime': doc['startTime'],
+        'docReference': doc.reference
       });
     }
     setState(() {
@@ -56,17 +58,27 @@ class _TripOverviewListState extends State<TripOverviewList> {
     return _isLoading
         ? const Text('loading')
         : ListView.builder(
+            // shrinkWrap: true,
             itemCount: _trips.length,
             itemBuilder: (BuildContext context, int index) {
               DateTime startTime =
                   (_trips[index]['startTime']! as Timestamp).toDate();
               String startTimeString =
-                  '${startTime.day}/${startTime.month}/${startTime.year}'; //startTime.toIso8601String();
+                  '${startTime.day}/${startTime.month}/${startTime.year}';
 
               return ListTile(
-                title: Text(_trips[index]['mapName']!.toString()),
-                subtitle: Text((startTimeString)),
-                onTap: () {},
+                title: Text(startTimeString),
+                subtitle: Text(
+                  (_trips[index]['mapName']!.toString()) + '\n' + '...',
+                  maxLines: 2,
+                ),
+                isThreeLine: true,
+                onTap: () {
+                  if (widget.onTripTapped != null) {
+                    widget.onTripTapped!(
+                        _trips[index]['docReference']! as DocumentReference);
+                  }
+                },
               );
             });
   }
