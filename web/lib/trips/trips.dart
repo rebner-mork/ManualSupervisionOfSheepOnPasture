@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:web/trips/trip_overview_list.dart';
 
 class TripsPage extends StatefulWidget {
@@ -16,11 +16,16 @@ class _TripsPageState extends State<TripsPage> {
   @override
   Widget build(BuildContext context) {
     return Row(
+      //crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          child: TripOverviewList(onTripTapped: _showDetailedTripData),
-          width: 128,
-        ),
+            width: 128,
+            child: TripOverviewList(onTripTapped: _showDetailedTripData)),
+        const VerticalDivider(
+          width: 0,
+          indent: null,
+          endIndent: null,
+        )
       ],
     );
   }

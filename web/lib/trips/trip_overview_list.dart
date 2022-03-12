@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:web/utils/custom_widgets.dart';
 
 class TripOverviewList extends StatefulWidget {
   const TripOverviewList({this.onTripTapped, Key? key}) : super(key: key);
@@ -14,6 +15,7 @@ class TripOverviewList extends StatefulWidget {
 class _TripOverviewListState extends State<TripOverviewList> {
   late final List<Map<String, Object>> _trips;
   bool _isLoading = true;
+  int _selectedTripIndex = -1;
 
   @override
   void initState() {
@@ -41,40 +43,60 @@ class _TripOverviewListState extends State<TripOverviewList> {
         'docReference': doc.reference
       });
     }
+
     setState(() {
       _isLoading = false;
     });
   }
 
-// TODO: Håndter ingen oppsynsturer gått
 // TODO: Begrense antall som hentes fra Firestore? Gjøres med limit
 // TODO: Dropdown for å filtrere på 'alle', 'kartnavn1', 'kartnavn2'
 
   @override
   Widget build(BuildContext context) {
     return _isLoading
-        ? const Text('loading')
-        : ListView.builder(
-            // shrinkWrap: true,
-            itemCount: _trips.length,
-            itemBuilder: (BuildContext context, int index) {
-              DateTime startTime =
-                  (_trips[index]['startTime']! as Timestamp).toDate();
-              String startTimeString =
-                  '${startTime.day}/${startTime.month}/${startTime.year}';
+        ? const LoadingData()
+        : _trips.isEmpty
+            ? const Text(
+                'Det har ikke blitt gått noen oppsynstur enda',
+                style: TextStyle(fontSize: 16),
+              )
+            : ListView.builder(
+                // shrinkWrap: true,
+                itemCount: _trips.length,
+                itemBuilder: (BuildContext context, int index) {
+                  DateTime startTime =
+                      (_trips[index]['startTime']! as Timestamp).toDate();
+                  String startTimeString =
+                      '${startTime.day}/${startTime.month}/${startTime.year}';
 
-              return ListTile(
-                title: Text(startTimeString),
-                subtitle: Text(
-                  '${_trips[index]['mapName']!}',
-                ),
-                onTap: () {
-                  if (widget.onTripTapped != null) {
-                    widget.onTripTapped!(
-                        _trips[index]['docReference']! as DocumentReference);
-                  }
-                },
-              );
-            });
+                  return ListTile(
+                    tileColor:
+                        index == _selectedTripIndex ? Colors.green[400] : null,
+                    title: Text(startTimeString,
+                        style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: index == _selectedTripIndex
+                                ? FontWeight.bold
+                                : FontWeight.normal)),
+                    subtitle: Text(
+                      '${_trips[index]['mapName']!}',
+                      style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: index == _selectedTripIndex
+                              ? FontWeight.bold
+                              : FontWeight.normal),
+                    ),
+                    onTap: () {
+                      setState(() {
+                        _selectedTripIndex = index;
+                      });
+                      if (widget.onTripTapped != null) {
+                        widget.onTripTapped!(_trips[index]['docReference']!
+                            as DocumentReference);
+                      }
+                    },
+                  );
+                });
   }
 }
