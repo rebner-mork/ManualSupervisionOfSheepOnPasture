@@ -38,16 +38,22 @@ class _TripsPageState extends State<TripsPage> {
       registrations.add(registrationDoc.data());
     }
 
+    QuerySnapshot userDocsSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('email', isEqualTo: tripDoc['personnelEmail'])
+        .get();
+    QueryDocumentSnapshot userDoc = userDocsSnapshot.docs.first;
+
+    // TODO: add personnelPhone (where-query i users-collection)
     _selectedTripData = {
       'mapName': tripDoc['mapName'],
       'personnelEmail': tripDoc['personnelEmail'],
+      'personnelPhone': userDoc['phone'],
       'startTime': tripDoc['startTime'],
       'stopTime': tripDoc['stopTime'],
       'track': track,
       'registrations': registrations
     };
-
-    debugPrint(_selectedTripData!['registrations'].runtimeType.toString());
 
     setState(() {
       _isLoadingDetailedTrip = false;

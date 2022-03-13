@@ -95,7 +95,10 @@ class _DetailedTripState extends State<DetailedTrip> {
         ]),
         TableRow(children: [
           Text('Gått av', style: tableRowDescription),
-          Text(widget.tripData['personnelEmail']!.toString(),
+          Text(
+              widget.tripData['personnelEmail']!.toString() +
+                  '\n' +
+                  widget.tripData['personnelPhone'].toString(),
               style: tableRowText)
         ]),
       ],
