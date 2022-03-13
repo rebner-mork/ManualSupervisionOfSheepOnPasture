@@ -64,38 +64,40 @@ class _DetailedTripState extends State<DetailedTrip> {
   @override
   Widget build(BuildContext context) {
     return Column(children: [
-      Flexible(
-          child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 30),
-              child: MainTripInfoTable(
-                startTime: startTime,
-                stopTime: stopTime,
-                email: widget.tripData['personnelEmail']! as String,
-                phone: widget.tripData['personnelPhone']! as String,
-              ))),
+      Padding(
+          padding: const EdgeInsets.symmetric(vertical: 30),
+          child: MainTripInfoTable(
+            startTime: startTime,
+            stopTime: stopTime,
+            email: widget.tripData['personnelEmail']! as String,
+            phone: widget.tripData['personnelPhone']! as String,
+          )),
       Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Flexible(
               child: Padding(
-            padding: tableCellPadding,
+            padding: const EdgeInsets.all(10),
             child: SheepInfoTable(
               sheepData: sheepData,
             ),
           )),
           Flexible(
               child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 0),
+                  padding: const EdgeInsets.all(10),
                   child: EartagInfoTable(
                     eartagData: eartagData,
                   ))),
         ],
       ),
-      Flexible(
-          child: MapOfTripWidget(
-              mapCenter: widget.tripData['mapCenter']! as LatLng,
-              track: widget.tripData['track']! as List<Map<String, double>>,
-              registrations: widget.tripData['registrations']!
-                  as List<Map<String, dynamic>>))
+      Expanded(
+          child: Padding(
+              padding: const EdgeInsets.only(left: 30, bottom: 20, right: 30),
+              child: MapOfTripWidget(
+                  mapCenter: widget.tripData['mapCenter']! as LatLng,
+                  track: widget.tripData['track']! as List<Map<String, double>>,
+                  registrations: widget.tripData['registrations']!
+                      as List<Map<String, dynamic>>)))
     ]);
   }
 }
