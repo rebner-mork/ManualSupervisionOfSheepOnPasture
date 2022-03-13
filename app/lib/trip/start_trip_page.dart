@@ -349,12 +349,11 @@ class _StartTripPageState extends State<StartTripPage>
                     northWest: mapBounds['northWest']!,
                     southEast: mapBounds['southEast']!,
                     userStartPosition: userStartPosition,
-                    //TODO change to mapId when maps are their own documents
-                    trip: TripDataManager.start(
-                        farmId: _farmIDs[_farmNames.indexOf(_selectedFarmName)],
-                        personnelEmail:
-                            FirebaseAuth.instance.currentUser!.email!,
-                        mapName: _selectedFarmMap)))));
+                    farmId: _farmIDs[_farmNames.indexOf(_selectedFarmName)],
+                    personnelEmail: FirebaseAuth.instance.currentUser!.email!,
+                    mapName:
+                        _selectedFarmMap //TODO change to mapId when maps are their own documents
+                    ))));
   }
 
   Map<String, Map<String, Map<String, double>>> _castMapsFromDynamic(

@@ -1,7 +1,7 @@
+import 'package:app/map/map_widget.dart';
 import 'package:app/trip/end_trip_dialog.dart';
 import 'package:app/trip/start_trip_page.dart';
 import 'package:app/trip/trip_data.dart';
-import 'package:app/map/map_widget.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/other.dart';
 import 'package:app/widgets/circular_buttons.dart';
@@ -11,24 +11,26 @@ import 'package:latlong2/latlong.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 class MainPage extends StatefulWidget {
-  MainPage(
+  const MainPage(
       {required this.speechToText,
       required this.ongoingDialog,
       required this.northWest,
       required this.southEast,
       required this.userStartPosition,
-      required this.trip,
+      required this.farmId,
+      required this.personnelEmail,
+      required this.mapName,
       Key? key})
-      : super(key: key) {
-    trip.track.add(userStartPosition);
-  }
+      : super(key: key);
 
   final SpeechToText speechToText;
   final ValueNotifier<bool> ongoingDialog;
   final LatLng northWest;
   final LatLng southEast;
+  final String farmId;
+  final String personnelEmail;
+  final String mapName;
   final LatLng userStartPosition;
-  final TripDataManager trip;
 
   @override
   State<MainPage> createState() => _MapState();
@@ -38,8 +40,17 @@ class _MapState extends State<MainPage> {
   int _sheepAmount = 0;
   static const double iconSize = 42;
   static const double buttonInset = 8;
+  late final TripDataManager _tripData;
 
-  final Map<String, Object> tripData = {};
+  @override
+  void initState() {
+    super.initState();
+    _tripData = TripDataManager.start(
+        farmId: widget.farmId,
+        personnelEmail: widget.personnelEmail,
+        mapName: widget.mapName);
+    _tripData.track.add(widget.userStartPosition);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,13 +67,13 @@ class _MapState extends State<MainPage> {
                 onSheepRegistered: (Map<String, Object> data) {
                   int sheepAmountRegistered = data['sheep']! as int;
                   if (sheepAmountRegistered > 0) {
+                    _tripData.registrations.add(data);
                     setState(() {
                       _sheepAmount += sheepAmountRegistered;
-                      widget.trip.registrations.add(data);
                     });
                   }
                 },
-                onNewPosition: (position) => widget.trip.track.add(position),
+                onNewPosition: (position) => _tripData.track.add(position),
               )),
       Positioned(
         top: buttonInset + MediaQuery.of(context).viewPadding.top,
@@ -73,7 +84,7 @@ class _MapState extends State<MainPage> {
               size: iconSize,
             ),
             onPressed: () {
-              _endTripButtonPressed(context, widget.trip);
+              _endTripButtonPressed(context, _tripData);
             }),
       ),
       Positioned(
@@ -101,10 +112,10 @@ class _MapState extends State<MainPage> {
 }
 
 Future<void> _endTripButtonPressed(
-    BuildContext context, TripDataManager trip) async {
+    BuildContext context, TripDataManager _trip) async {
   await showEndTripDialog(context).then((isFinished) {
     if (isFinished) {
-      trip.post();
+      _trip.post();
       Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
     }
   });
