@@ -44,7 +44,6 @@ class _TripsPageState extends State<TripsPage> {
         .get();
     QueryDocumentSnapshot userDoc = userDocsSnapshot.docs.first;
 
-    // TODO: add personnelPhone (where-query i users-collection)
     _selectedTripData = {
       'mapName': tripDoc['mapName'],
       'personnelEmail': tripDoc['personnelEmail'],

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:web/utils/other.dart';
 import 'package:web/utils/styles.dart';
 
 class DetailedTrip extends StatefulWidget {
@@ -80,26 +81,49 @@ class _DetailedTripState extends State<DetailedTrip> {
   @override
   Widget build(BuildContext context) {
     return Table(
-      //border: TableBorder.all(),
-      columnWidths: const {0: FixedColumnWidth(70), 1: FixedColumnWidth(300)},
+      border: TableBorder.symmetric(
+          outside: const BorderSide(), inside: const BorderSide(width: 0.5)),
+      columnWidths: {
+        0: const FixedColumnWidth(70),
+        1: textSize(widget.tripData['personnelEmail'].toString(), tableRowText)
+                    .width >
+                310
+            ? FixedColumnWidth(textSize(
+                    widget.tripData['personnelEmail'].toString(), tableRowText)
+                .width)
+            : const FixedColumnWidth(310)
+      }, // FlexColumnWidths
+      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
       children: [
         TableRow(children: [
-          Text('Dato', style: tableRowDescription),
-          Text(dateText(), style: tableRowText)
+          Padding(
+              padding: const EdgeInsets.all(8),
+              child: Text('Dato', style: tableRowDescription)),
+          Padding(
+              padding: const EdgeInsets.all(8),
+              child: Text(dateText(), style: tableRowText))
         ]),
         TableRow(children: [
-          Text('Tid', style: tableRowDescription),
-          Text(
-              '${startTime.hour}:${startTime.minute} - ${stopTime.hour}:${stopTime.minute}',
-              style: tableRowText)
+          Padding(
+              padding: const EdgeInsets.all(8),
+              child: Text('Tid', style: tableRowDescription)),
+          Padding(
+              padding: const EdgeInsets.all(8),
+              child: Text(
+                  '${startTime.hour}:${startTime.minute} - ${stopTime.hour}:${stopTime.minute}',
+                  style: tableRowText))
         ]),
         TableRow(children: [
-          Text('Gått av', style: tableRowDescription),
-          Text(
-              widget.tripData['personnelEmail']!.toString() +
-                  '\n' +
-                  widget.tripData['personnelPhone'].toString(),
-              style: tableRowText)
+          Padding(
+              padding: const EdgeInsets.all(8),
+              child: Text('Gått av', style: tableRowDescription)),
+          Padding(
+              padding: const EdgeInsets.all(8),
+              child: Text(
+                  widget.tripData['personnelEmail']!.toString() +
+                      '\n' +
+                      widget.tripData['personnelPhone'].toString(),
+                  style: tableRowText))
         ]),
       ],
     );
