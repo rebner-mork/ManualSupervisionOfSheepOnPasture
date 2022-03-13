@@ -2,7 +2,6 @@ import 'dart:collection';
 
 import 'package:app/main_page.dart';
 import 'package:app/providers/settings_provider.dart';
-import 'package:app/trip/trip_data.dart';
 import 'package:app/utils/constants.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/map_utils.dart';

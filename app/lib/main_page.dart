@@ -27,10 +27,10 @@ class MainPage extends StatefulWidget {
   final ValueNotifier<bool> ongoingDialog;
   final LatLng northWest;
   final LatLng southEast;
+  final LatLng userStartPosition;
   final String farmId;
   final String personnelEmail;
   final String mapName;
-  final LatLng userStartPosition;
 
   @override
   State<MainPage> createState() => _MapState();
