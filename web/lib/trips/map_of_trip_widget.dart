@@ -21,6 +21,7 @@ class _MapOfTripWidgetState extends State<MapOfTripWidget> {
 
   MapController _mapController = MapController();
   late List<Polyline> linesOfSight;
+  late List<Marker> registrationMarkers;
 
   @override
   void initState() {
@@ -34,6 +35,12 @@ class _MapOfTripWidgetState extends State<MapOfTripWidget> {
                   registration['registrationPosition']['latitude']! as double,
                   registration['registrationPosition']['longitude']! as double),
             ], color: Colors.black, isDotted: true, strokeWidth: 5.0))
+        .toList();
+
+    registrationMarkers = widget.registrations
+        .map((Map<String, dynamic> registration) => map_utils.getSheepMarker(
+            LatLng(registration['registrationPosition']['latitude']! as double,
+                registration['registrationPosition']['longitude']! as double)))
         .toList();
   }
 
@@ -72,7 +79,8 @@ class _MapOfTripWidgetState extends State<MapOfTripWidget> {
                 color: Colors.red,
                 strokeWidth: 7.0),
             ...linesOfSight
-          ])
+          ]),
+          MarkerLayerOptions(markers: registrationMarkers)
         ],
       ),
     );
