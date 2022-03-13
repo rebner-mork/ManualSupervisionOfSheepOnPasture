@@ -6,9 +6,13 @@ import '../../utils/map_utils.dart' as map_utils;
 
 class MapOfTripWidget extends StatefulWidget {
   const MapOfTripWidget(
-      {required this.track, required this.registrations, Key? key})
+      {required this.mapCenter,
+      required this.track,
+      required this.registrations,
+      Key? key})
       : super(key: key);
 
+  final LatLng mapCenter;
   final List<Map<String, double>> track;
   final List<Map<String, dynamic>> registrations;
 
@@ -53,10 +57,10 @@ class _MapOfTripWidgetState extends State<MapOfTripWidget> {
           onMapCreated: (c) {
             _mapController = c;
           },
-          zoom: 5,
+          zoom: 13,
           minZoom: 5,
           maxZoom: 18,
-          center: LatLng(65, 13),
+          center: widget.mapCenter,
         ),
         layers: [
           TileLayerOptions(

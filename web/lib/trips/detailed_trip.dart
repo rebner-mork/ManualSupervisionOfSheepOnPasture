@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:web/trips/main_trip_info_table.dart';
 import 'package:web/trips/map_of_trip_widget.dart';
+import 'package:latlong2/latlong.dart';
 
 class DetailedTrip extends StatefulWidget {
   const DetailedTrip(this.tripData, {Key? key}) : super(key: key);
@@ -37,6 +38,7 @@ class _DetailedTripState extends State<DetailedTrip> {
               ))),
       Flexible(
           child: MapOfTripWidget(
+              mapCenter: widget.tripData['mapCenter']! as LatLng,
               track: widget.tripData['track']! as List<Map<String, double>>,
               registrations: widget.tripData['registrations']!
                   as List<Map<String, dynamic>>))
