@@ -31,6 +31,8 @@ class _MainState extends State<MainTabs> {
                         toolbarHeight: 0,
                         backgroundColor: Colors.grey.shade800,
                         bottom: TabBar(
+                            overlayColor: MaterialStateProperty.all(
+                                Colors.green.shade700),
                             labelStyle: const TextStyle(
                               fontSize: 24,
                             ),

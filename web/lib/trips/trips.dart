@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:web/trips/detailed_trip.dart';
 import 'package:web/trips/trip_overview_list.dart';
+import 'package:web/utils/custom_widgets.dart';
+import 'package:web/utils/styles.dart';
 
 class TripsPage extends StatefulWidget {
   const TripsPage({Key? key}) : super(key: key);
@@ -10,8 +13,34 @@ class TripsPage extends StatefulWidget {
 }
 
 class _TripsPageState extends State<TripsPage> {
-  Future<void> _showDetailedTripData(
-      DocumentReference tripDocReference) async {}
+  bool _isLoadingDetailedTrip = false;
+  //bool _isTripSelected = false;
+  Map<String, Object>? _selectedTripData;
+
+  Future<void> _showDetailedTripData(DocumentReference tripDocReference) async {
+    setState(() {
+      _isLoadingDetailedTrip = true;
+    });
+
+    DocumentSnapshot tripDoc = await tripDocReference.get();
+
+    List<Map<String, double>> track = (tripDoc['track'] as List<dynamic>)
+        .map((dynamic trackElement) => (trackElement as Map<String, dynamic>)
+            .map((key, value) => MapEntry(key, value as double)))
+        .toList();
+
+    _selectedTripData = {
+      'mapName': tripDoc['mapName'],
+      'personnelEmail': tripDoc['personnelEmail'],
+      'startTime': tripDoc['startTime'],
+      'track': track
+    };
+
+    setState(() {
+      //_isTripSelected = true;
+      _isLoadingDetailedTrip = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +54,16 @@ class _TripsPageState extends State<TripsPage> {
           width: 0,
           indent: null,
           endIndent: null,
-        )
+        ),
+        Expanded(
+            child: Center(
+                child: _isLoadingDetailedTrip
+                    ? const LoadingData()
+                    : _selectedTripData != null //_isTripSelected
+                        ? DetailedTrip(_selectedTripData!)
+                        : Text(
+                            'Klikk på en oppsynstur i lista til venstre for å se detaljer.',
+                            style: feedbackTextStyle))),
       ],
     );
   }
