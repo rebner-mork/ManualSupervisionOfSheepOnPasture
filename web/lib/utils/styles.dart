@@ -15,3 +15,8 @@ TextStyle feedbackTextStyle = const TextStyle(fontSize: 18);
 TextStyle definePageHeadlineTextStyle =
     const TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
 TextStyle definePageInfoTextStyle = const TextStyle(fontSize: 16);
+
+// Table
+TextStyle tableRowDescription =
+    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold);
+TextStyle tableRowText = const TextStyle(fontSize: 16);

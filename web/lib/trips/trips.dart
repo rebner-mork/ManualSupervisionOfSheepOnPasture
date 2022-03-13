@@ -14,7 +14,6 @@ class TripsPage extends StatefulWidget {
 
 class _TripsPageState extends State<TripsPage> {
   bool _isLoadingDetailedTrip = false;
-  //bool _isTripSelected = false;
   Map<String, Object>? _selectedTripData;
 
   Future<void> _showDetailedTripData(DocumentReference tripDocReference) async {
@@ -36,18 +35,21 @@ class _TripsPageState extends State<TripsPage> {
 
     for (QueryDocumentSnapshot<Map<String, dynamic>> registrationDoc
         in registrationDocs.docs) {
-      debugPrint(registrationDoc.data().toString());
+      registrations.add(registrationDoc.data());
     }
 
     _selectedTripData = {
       'mapName': tripDoc['mapName'],
       'personnelEmail': tripDoc['personnelEmail'],
       'startTime': tripDoc['startTime'],
-      'track': track
+      'stopTime': tripDoc['stopTime'],
+      'track': track,
+      'registrations': registrations
     };
 
+    debugPrint(_selectedTripData!['registrations'].runtimeType.toString());
+
     setState(() {
-      //_isTripSelected = true;
       _isLoadingDetailedTrip = false;
     });
   }
@@ -69,7 +71,7 @@ class _TripsPageState extends State<TripsPage> {
             child: Center(
                 child: _isLoadingDetailedTrip
                     ? const LoadingData()
-                    : _selectedTripData != null //_isTripSelected
+                    : _selectedTripData != null
                         ? DetailedTrip(_selectedTripData!)
                         : Text(
                             'Klikk på en oppsynstur i lista til venstre for å se detaljer.',
