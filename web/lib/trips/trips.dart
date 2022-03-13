@@ -29,6 +29,16 @@ class _TripsPageState extends State<TripsPage> {
             .map((key, value) => MapEntry(key, value as double)))
         .toList();
 
+    QuerySnapshot<Map<String, dynamic>> registrationDocs =
+        await tripDocReference.collection('registrations').get();
+
+    List<Map<String, dynamic>> registrations = [];
+
+    for (QueryDocumentSnapshot<Map<String, dynamic>> registrationDoc
+        in registrationDocs.docs) {
+      debugPrint(registrationDoc.data().toString());
+    }
+
     _selectedTripData = {
       'mapName': tripDoc['mapName'],
       'personnelEmail': tripDoc['personnelEmail'],
