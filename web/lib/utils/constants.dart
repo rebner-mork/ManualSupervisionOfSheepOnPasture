@@ -26,6 +26,41 @@ const List<Color> possibleEartagColors = [
   Color(0xFFE91E63), // Pink
 ];
 
+/*const List<String> possibleEartagKeys = [
+  'redEar',
+  'blueEar',
+  'yellowEar',
+  'greenEar',
+  'orangeEar',
+  'pinkEar'
+];*/
+
+final Map<String, String> colorStringToPossibleEartagKeys = {
+  Colors.red.value.toRadixString(16): 'redEar',
+  Colors.blue.value.toRadixString(16): 'blueEar',
+  Colors.yellow.value.toRadixString(16): 'yellowEar',
+  Colors.green.value.toRadixString(16): 'greenEar',
+  Colors.orange.value.toRadixString(16): 'orangeEar',
+  Colors.pink.value.toRadixString(16): 'pinkEar'
+};
+
+const Map<String, String> possibleSheepKeysAndStrings = {
+  'sheep': 'Totalt',
+  'lambs': 'Lam',
+  'white': 'Hvite',
+  'black': 'Svarte',
+  'blackHead': 'Svart hode'
+};
+
+/*const Map<int, String> colorValueToEartagKey = {
+  4294198070: 'redEar',
+  4280391411: 'blueEar',
+  4294961979: 'yellowEar',
+  4283215696: 'greenEar',
+  4294940672: 'orangeEar',
+  4293467747: 'pinkEar'
+};*/
+
 const Map<int, Color> colorValueToColor = {
   4294198070: Colors.red,
   4280391411: Colors.blue,

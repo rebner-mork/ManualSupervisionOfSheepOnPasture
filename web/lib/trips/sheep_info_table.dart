@@ -1,21 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:web/utils/constants.dart';
 import 'package:web/utils/styles.dart';
 
 class SheepInfoTable extends StatelessWidget {
-  const SheepInfoTable(
-      {required this.sheepAmount,
-      required this.lambAmount,
-      required this.whiteAmount,
-      required this.blackAmount,
-      required this.blackHeadAmount,
-      Key? key})
-      : super(key: key);
+  const SheepInfoTable({required this.sheepData, Key? key}) : super(key: key);
 
-  final int sheepAmount;
-  final int lambAmount;
-  final int whiteAmount;
-  final int blackAmount;
-  final int blackHeadAmount;
+  final Map<String, int> sheepData;
 
   @override
   Widget build(BuildContext context) {
@@ -43,91 +33,28 @@ class SheepInfoTable extends StatelessWidget {
               ),
             )
           ]),
-          TableRow(children: [
-            Padding(
-              padding: tableCellPadding,
-              child: Text(
-                'Totalt',
-                style: tableRowDescriptionTextStyle,
-              ),
-            ),
-            Padding(
-              padding: tableCellPadding,
-              child: Text(
-                sheepAmount.toString(),
-                style: tableRowDescriptionTextStyle,
-                textAlign: TextAlign.center,
-              ),
-            )
-          ]),
-          TableRow(children: [
-            Padding(
-              padding: tableCellPadding,
-              child: Text(
-                'Lam',
-                style: tableRowDescriptionTextStyle,
-              ),
-            ),
-            Padding(
-              padding: tableCellPadding,
-              child: Text(
-                lambAmount.toString(),
-                style: tableRowTextStyle,
-                textAlign: TextAlign.center,
-              ),
-            )
-          ]),
-          TableRow(children: [
-            Padding(
-              padding: tableCellPadding,
-              child: Text(
-                'Hvite',
-                style: tableRowDescriptionTextStyle,
-              ),
-            ),
-            Padding(
-              padding: tableCellPadding,
-              child: Text(
-                whiteAmount.toString(),
-                style: tableRowTextStyle,
-                textAlign: TextAlign.center,
-              ),
-            )
-          ]),
-          TableRow(children: [
-            Padding(
-              padding: tableCellPadding,
-              child: Text(
-                'Svarte',
-                style: tableRowDescriptionTextStyle,
-              ),
-            ),
-            Padding(
-              padding: tableCellPadding,
-              child: Text(
-                blackAmount.toString(),
-                style: tableRowTextStyle,
-                textAlign: TextAlign.center,
-              ),
-            )
-          ]),
-          TableRow(children: [
-            Padding(
-              padding: tableCellPadding,
-              child: Text(
-                'Svart hode',
-                style: tableRowDescriptionTextStyle,
-              ),
-            ),
-            Padding(
-              padding: tableCellPadding,
-              child: Text(
-                blackHeadAmount.toString(),
-                style: tableRowTextStyle,
-                textAlign: TextAlign.center,
-              ),
-            )
-          ]),
+          ...sheepData.entries
+              .map(
+                (MapEntry<String, int> mapEntry) => TableRow(children: [
+                  Padding(
+                    padding: tableCellPadding,
+                    child: Text(
+                      possibleSheepKeysAndStrings[mapEntry.key]!,
+                      style:
+                          tableRowDescriptionTextStyle, // TODO: bold på alle eller bare første eller ingen?
+                    ),
+                  ),
+                  Padding(
+                    padding: tableCellPadding,
+                    child: Text(
+                      mapEntry.value.toString(),
+                      style: tableRowDescriptionTextStyle,
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                ]),
+              )
+              .toList(),
         ]);
   }
 }

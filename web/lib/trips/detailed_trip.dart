@@ -5,6 +5,7 @@ import 'package:web/trips/map_of_trip_widget.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:web/trips/eartag_info_table.dart';
 import 'package:web/trips/sheep_info_table.dart';
+import 'package:web/utils/constants.dart';
 import 'package:web/utils/styles.dart';
 
 class DetailedTrip extends StatefulWidget {
@@ -19,11 +20,8 @@ class DetailedTrip extends StatefulWidget {
 class _DetailedTripState extends State<DetailedTrip> {
   late DateTime startTime;
   late DateTime stopTime;
-  int sheepAmount = 0;
-  int lambAmount = 0;
-  int whiteAmount = 0;
-  int blackAmount = 0;
-  int blackHeadAmount = 0;
+  Map<String, int> sheepData = {};
+  Map<String, int> eartagData = {};
 
   @override
   void initState() {
@@ -31,13 +29,35 @@ class _DetailedTripState extends State<DetailedTrip> {
     startTime = (widget.tripData['startTime']! as Timestamp).toDate();
     stopTime = (widget.tripData['stopTime']! as Timestamp).toDate();
 
+    extractSheepAndEartagData();
+  }
+
+  void extractSheepAndEartagData() {
+    for (String sheepKey in possibleSheepKeysAndStrings.keys) {
+      sheepData[sheepKey] = 0;
+    }
+
+    for (String eartagColor in colorStringToPossibleEartagKeys.keys) {
+      if ((widget.tripData['definedEartagColors'] as List<String>)
+          .contains(eartagColor)) {
+        eartagData[eartagColor] = 0;
+      }
+    }
+
     for (Map<String, dynamic> registration
         in (widget.tripData['registrations']! as List<Map<String, dynamic>>)) {
-      sheepAmount += registration['sheep']! as int;
-      lambAmount += registration['lambs']! as int;
-      whiteAmount += registration['white']! as int;
-      blackAmount += registration['black']! as int;
-      blackHeadAmount += registration['blackHead']! as int;
+      for (String sheepKey in possibleSheepKeysAndStrings.keys) {
+        sheepData[sheepKey] =
+            sheepData[sheepKey]! + registration[sheepKey] as int;
+      }
+
+      for (String eartagColor in colorStringToPossibleEartagKeys.keys) {
+        if (eartagData[eartagColor] != null) {
+          eartagData[eartagColor] = eartagData[eartagColor]! +
+                  registration[colorStringToPossibleEartagKeys[eartagColor]!]!
+              as int;
+        }
+      }
     }
   }
 
@@ -59,23 +79,14 @@ class _DetailedTripState extends State<DetailedTrip> {
               child: Padding(
             padding: tableCellPadding,
             child: SheepInfoTable(
-              sheepAmount: sheepAmount,
-              lambAmount: lambAmount,
-              whiteAmount: whiteAmount,
-              blackAmount: blackAmount,
-              blackHeadAmount: blackHeadAmount,
+              sheepData: sheepData,
             ),
           )),
           Flexible(
               child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 0),
                   child: EartagInfoTable(
-                    registrations: widget.tripData['registrations']!
-                        as List<Map<String, dynamic>>,
-                    definedEartagColors:
-                        widget.tripData['definedEartagColors']! as List<String>,
-                    definedTieColors:
-                        widget.tripData['definedTieColors']! as List<String>,
+                    eartagData: eartagData,
                   ))),
         ],
       ),

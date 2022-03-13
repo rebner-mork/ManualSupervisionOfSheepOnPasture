@@ -62,19 +62,9 @@ class _TripsPageState extends State<TripsPage> {
 
     List<String> definedEartagColors =
         (farmDoc['eartags']! as Map<String, dynamic>).keys.toList();
+
     List<String> definedTieColors =
         (farmDoc['ties']! as Map<String, dynamic>).keys.toList();
-
-    /*
-    for (String colorString
-        in (farmDoc['eartags']! as Map<String, dynamic>).keys) {
-      definedEartagColors.add(colorStringToColor[colorString]!);
-    }
-
-    for (String colorString
-        in (farmDoc['ties']! as Map<String, dynamic>).keys) {
-      definedTieColors.add(colorStringToColor[colorString]!);
-    }*/
 
     _selectedTripData = {
       'mapName': tripDoc['mapName'],

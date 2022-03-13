@@ -3,59 +3,57 @@ import 'package:web/utils/constants.dart';
 import 'package:web/utils/styles.dart';
 
 class EartagInfoTable extends StatelessWidget {
-  const EartagInfoTable(
-      {required this.registrations,
-      required this.definedEartagColors,
-      required this.definedTieColors,
-      Key? key})
-      : super(key: key);
+  const EartagInfoTable({required this.eartagData, Key? key}) : super(key: key);
 
-  final List<Map<String, dynamic>> registrations;
-  final List<String> definedEartagColors;
-  final List<String> definedTieColors;
+  final Map<String, int> eartagData;
 
   @override
   Widget build(BuildContext context) {
     return Table(
         border: TableBorder.symmetric(
             outside: const BorderSide(), inside: const BorderSide(width: 0.5)),
-        //columnWidths,
+        columnWidths: const {
+          0: FixedColumnWidth(95),
+          1: FixedColumnWidth(70)
+        },
         children: [
           TableRow(children: [
             Padding(
-              padding: const EdgeInsets.all(8),
-              child: Text('Øremerker', style: tableRowDescriptionTextStyle),
+              padding: tableCellPadding,
+              child: Text('Øremerker',
+                  style: tableRowDescriptionTextStyle,
+                  textAlign: TextAlign.center),
             ),
             Padding(
-              padding: const EdgeInsets.all(8),
-              child: Text('Antall', style: tableRowDescriptionTextStyle),
+              padding: tableCellPadding,
+              child: Text('Antall',
+                  style: tableRowDescriptionTextStyle,
+                  textAlign: TextAlign.center),
             )
           ]),
-          ...definedEartagColors
-              .asMap()
-              .entries
-              .map((MapEntry<int, String> mapEntry) => TableRow(children: [
+          ...eartagData.entries
+              .map((MapEntry<String, int> mapEntry) => TableRow(children: [
                     Padding(
-                      padding: const EdgeInsets.all(8),
+                      padding: tableCellPadding,
                       child: Row(children: [
                         Icon(
                           Icons.local_offer,
-                          color: colorStringToColor[
-                              definedEartagColors[mapEntry.key]],
+                          color: colorStringToColor[mapEntry.key],
                         ),
                         Text(
-                            colorValueToString[int.parse(
-                                definedEartagColors[mapEntry.key],
-                                radix: 16)]!,
-                            style: tableRowTextStyle)
+                            colorValueToString[
+                                int.parse(mapEntry.key, radix: 16)]!,
+                            style: tableRowTextStyle,
+                            textAlign: TextAlign.center)
                       ]),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Text('', style: tableRowTextStyle),
+                      padding: tableCellPadding,
+                      child: Text(mapEntry.value.toString(),
+                          style: tableRowTextStyle),
                     )
                   ]))
-              .toList()
+              .toList(),
         ]);
   }
 }
