@@ -26,14 +26,20 @@ class _DetailedTripState extends State<DetailedTrip> {
   @override
   Widget build(BuildContext context) {
     return Column(children: [
-      const SizedBox(height: 30),
-      MainTripInfoTable(
-        startTime: startTime,
-        stopTime: stopTime,
-        email: widget.tripData['personnelEmail']! as String,
-        phone: widget.tripData['personnelPhone']! as String,
-      ),
-      Flexible(child: MapOfTripWidget())
+      Flexible(
+          child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 30),
+              child: MainTripInfoTable(
+                startTime: startTime,
+                stopTime: stopTime,
+                email: widget.tripData['personnelEmail']! as String,
+                phone: widget.tripData['personnelPhone']! as String,
+              ))),
+      Flexible(
+          child: MapOfTripWidget(
+              track: widget.tripData['track']! as List<Map<String, double>>,
+              registrations: widget.tripData['registrations']!
+                  as List<Map<String, dynamic>>))
     ]);
   }
 }

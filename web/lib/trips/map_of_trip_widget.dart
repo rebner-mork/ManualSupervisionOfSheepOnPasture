@@ -5,7 +5,12 @@ import 'package:latlong2/latlong.dart';
 import '../../utils/map_utils.dart' as map_utils;
 
 class MapOfTripWidget extends StatefulWidget {
-  const MapOfTripWidget({Key? key}) : super(key: key);
+  const MapOfTripWidget(
+      {required this.track, required this.registrations, Key? key})
+      : super(key: key);
+
+  final List<Map<String, double>> track;
+  final List<Map<String, dynamic>> registrations;
 
   @override
   State<MapOfTripWidget> createState() => _MapOfTripWidgetState();
@@ -15,6 +20,22 @@ class _MapOfTripWidgetState extends State<MapOfTripWidget> {
   _MapOfTripWidgetState();
 
   MapController _mapController = MapController();
+  late List<Polyline> linesOfSight;
+
+  @override
+  void initState() {
+    super.initState();
+
+    linesOfSight = widget.registrations
+        .map((Map<String, dynamic> registration) => Polyline(points: [
+              LatLng(registration['devicePosition']['latitude']! as double,
+                  registration['devicePosition']['longitude']! as double),
+              LatLng(
+                  registration['registrationPosition']['latitude']! as double,
+                  registration['registrationPosition']['longitude']! as double),
+            ], color: Colors.black, isDotted: true, strokeWidth: 5.0))
+        .toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +62,17 @@ class _MapOfTripWidgetState extends State<MapOfTripWidget> {
               );
             },
           ),
+          PolylineLayerOptions(polylines: [
+            Polyline(
+                points: widget.track
+                    .map((Map<String, dynamic> point) => LatLng(
+                        point['latitude']! as double,
+                        point['longitude']! as double))
+                    .toList(),
+                color: Colors.red,
+                strokeWidth: 7.0),
+            ...linesOfSight
+          ])
         ],
       ),
     );
