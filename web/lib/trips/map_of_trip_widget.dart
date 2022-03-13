@@ -48,6 +48,7 @@ class _MapOfTripWidgetState extends State<MapOfTripWidget> {
         .toList();
   }
 
+  // TODO: skal kartområdet outlines?
   @override
   Widget build(BuildContext context) {
     return Material(

@@ -17,6 +17,8 @@ TextStyle definePageHeadlineTextStyle =
 TextStyle definePageInfoTextStyle = const TextStyle(fontSize: 16);
 
 // Table
-TextStyle tableRowDescription =
+TextStyle tableRowDescriptionTextStyle =
     const TextStyle(fontSize: 16, fontWeight: FontWeight.bold);
-TextStyle tableRowText = const TextStyle(fontSize: 16);
+TextStyle tableRowTextStyle = const TextStyle(fontSize: 16);
+
+EdgeInsets tableCellPadding = const EdgeInsets.all(8);

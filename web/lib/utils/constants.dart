@@ -64,3 +64,13 @@ final Map<Color, String> dialogColorToString = <Color, String>{
   const Color(0xFFE91E63): 'rosa',
   const Color(0x00000000): '\'ingen\''
 };
+
+final Map<String, Color> colorStringToColor = {
+  Colors.transparent.value.toRadixString(16): Colors.transparent,
+  Colors.red.value.toRadixString(16): Colors.red,
+  Colors.blue.value.toRadixString(16): Colors.blue,
+  Colors.yellow.value.toRadixString(16): Colors.yellow,
+  Colors.green.value.toRadixString(16): Colors.green,
+  Colors.orange.value.toRadixString(16): Colors.orange,
+  Colors.pink.value.toRadixString(16): Colors.pink
+};

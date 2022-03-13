@@ -1,6 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:web/trips/detailed_trip.dart';
@@ -50,7 +48,7 @@ class _TripsPageState extends State<TripsPage> {
 
     DocumentSnapshot farmDoc = await FirebaseFirestore.instance
         .collection('farms')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .doc(tripDoc['farmId'])
         .get();
 
     LatLng northWest = LatLng(
@@ -62,17 +60,35 @@ class _TripsPageState extends State<TripsPage> {
         farmDoc['maps'][tripDoc['mapName']]['southEast']['longitude']!
             as double);
 
+    List<String> definedEartagColors =
+        (farmDoc['eartags']! as Map<String, dynamic>).keys.toList();
+    List<String> definedTieColors =
+        (farmDoc['ties']! as Map<String, dynamic>).keys.toList();
+
+    /*
+    for (String colorString
+        in (farmDoc['eartags']! as Map<String, dynamic>).keys) {
+      definedEartagColors.add(colorStringToColor[colorString]!);
+    }
+
+    for (String colorString
+        in (farmDoc['ties']! as Map<String, dynamic>).keys) {
+      definedTieColors.add(colorStringToColor[colorString]!);
+    }*/
+
     _selectedTripData = {
       'mapName': tripDoc['mapName'],
       'personnelEmail': tripDoc['personnelEmail'],
       'personnelPhone': userDoc['phone'],
       'startTime': tripDoc['startTime'],
       'stopTime': tripDoc['stopTime'],
-      'track': track,
-      'registrations': registrations,
       'mapCenter': LatLngBounds(LatLng(southEast.latitude, northWest.longitude),
               LatLng(northWest.latitude, southEast.longitude))
-          .center
+          .center,
+      'track': track,
+      'registrations': registrations,
+      'definedEartagColors': definedEartagColors,
+      'definedTieColors': definedTieColors
     };
 
     setState(() {

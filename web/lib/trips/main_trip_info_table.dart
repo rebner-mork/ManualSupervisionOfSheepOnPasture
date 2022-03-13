@@ -78,37 +78,37 @@ class MainTripInfoTable extends StatelessWidget {
           outside: const BorderSide(), inside: const BorderSide(width: 0.5)),
       columnWidths: {
         0: const FixedColumnWidth(70),
-        1: textSize(email, tableRowText).width > 310
-            ? FixedColumnWidth(textSize(email, tableRowText).width)
+        1: textSize(email, tableRowTextStyle).width > 310
+            ? FixedColumnWidth(textSize(email, tableRowTextStyle).width)
             : const FixedColumnWidth(310)
       }, // FlexColumnWidths
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
       children: [
         TableRow(children: [
           Padding(
-              padding: const EdgeInsets.all(8),
-              child: Text('Dato', style: tableRowDescription)),
+              padding: tableCellPadding,
+              child: Text('Dato', style: tableRowDescriptionTextStyle)),
           Padding(
-              padding: const EdgeInsets.all(8),
-              child: Text(dateText(), style: tableRowText))
+              padding: tableCellPadding,
+              child: Text(dateText(), style: tableRowTextStyle))
         ]),
         TableRow(children: [
           Padding(
-              padding: const EdgeInsets.all(8),
-              child: Text('Tid', style: tableRowDescription)),
+              padding: tableCellPadding,
+              child: Text('Tid', style: tableRowDescriptionTextStyle)),
           Padding(
-              padding: const EdgeInsets.all(8),
+              padding: tableCellPadding,
               child: Text(
                   '${startTime.hour}:${startTime.minute} - ${stopTime.hour}:${stopTime.minute}',
-                  style: tableRowText))
+                  style: tableRowTextStyle))
         ]),
         TableRow(children: [
           Padding(
-              padding: const EdgeInsets.all(8),
-              child: Text('Gått av', style: tableRowDescription)),
+              padding: tableCellPadding,
+              child: Text('Gått av', style: tableRowDescriptionTextStyle)),
           Padding(
-              padding: const EdgeInsets.all(8),
-              child: Text(email + '\n' + phone, style: tableRowText))
+              padding: tableCellPadding,
+              child: Text(email + '\n' + phone, style: tableRowTextStyle))
         ]),
       ],
     );
