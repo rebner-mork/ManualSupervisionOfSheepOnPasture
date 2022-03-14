@@ -9,8 +9,8 @@ import 'package:web/trips/detailed/info_table.dart';
 import 'package:web/utils/constants.dart';
 import 'package:web/utils/other.dart';
 
-const double idealWidth =
-    410; // combined width of both InfoTables and their padding
+// combined width of both InfoTables and their padding
+const double idealWidth = 410;
 
 class DetailedTrip extends StatefulWidget {
   const DetailedTrip(this.tripData, {Key? key}) : super(key: key);
