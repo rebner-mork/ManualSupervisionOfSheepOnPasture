@@ -6,7 +6,7 @@ class SheepInfoTable extends StatelessWidget {
   const SheepInfoTable({required this.sheepData, Key? key}) : super(key: key);
 
   final Map<String, int> sheepData;
-
+// TODO: bold? ikke-bold? blanding?
   @override
   Widget build(BuildContext context) {
     return Table(

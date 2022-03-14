@@ -2,10 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:web/utils/constants.dart';
 import 'package:web/utils/styles.dart';
 
-class EartagInfoTable extends StatelessWidget {
-  const EartagInfoTable({required this.eartagData, Key? key}) : super(key: key);
+class InfoTable extends StatelessWidget {
+  const InfoTable(
+      {required this.data,
+      required this.headerText,
+      required this.iconData,
+      Key? key})
+      : super(key: key);
 
-  final Map<String, int> eartagData;
+  final Map<String, int> data;
+  final String headerText;
+  final IconData iconData;
 
   @override
   Widget build(BuildContext context) {
@@ -13,14 +20,14 @@ class EartagInfoTable extends StatelessWidget {
         border: TableBorder.symmetric(
             outside: const BorderSide(), inside: const BorderSide(width: 0.5)),
         columnWidths: const {
-          0: FixedColumnWidth(95),
+          0: FixedColumnWidth(100),
           1: FixedColumnWidth(70)
         },
         children: [
           TableRow(children: [
             Padding(
               padding: tableCellPadding,
-              child: Text('Øremerker',
+              child: Text(headerText,
                   style: tableRowDescriptionTextStyle,
                   textAlign: TextAlign.center),
             ),
@@ -31,15 +38,17 @@ class EartagInfoTable extends StatelessWidget {
                   textAlign: TextAlign.center),
             )
           ]),
-          ...eartagData.entries
+          ...data.entries
               .map((MapEntry<String, int> mapEntry) => TableRow(children: [
                     Padding(
                       padding: tableCellPadding,
                       child: Row(children: [
-                        Icon(
-                          Icons.local_offer,
-                          color: colorStringToColor[mapEntry.key],
-                        ),
+                        Padding(
+                            padding: const EdgeInsets.only(right: 5),
+                            child: Icon(
+                              iconData,
+                              color: colorStringToColor[mapEntry.key],
+                            )),
                         Text(
                             colorValueToString[
                                 int.parse(mapEntry.key, radix: 16)]!,

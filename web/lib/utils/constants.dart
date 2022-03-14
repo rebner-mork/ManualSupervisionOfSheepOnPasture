@@ -17,6 +17,17 @@ const List<Color> possibleTieColors = [
   Color(0x00000000), // Transparent
 ];
 
+final Map<String, String> colorStringToPossibleTieKeys = {
+  Colors.red.value.toRadixString(16): 'redTie',
+  Colors.blue.value.toRadixString(16): 'blueTie',
+  Colors.yellow.value.toRadixString(16): 'yellowTie',
+  Colors.green.value.toRadixString(16): 'greenTie',
+  Colors.orange.value.toRadixString(16): 'orangeTie',
+  Colors.pink.value.toRadixString(16): 'pinkTie',
+  Colors.transparent.value.toRadixString(16):
+      'transparentTie' // TODO: check key in frontend!
+};
+
 const List<Color> possibleEartagColors = [
   Color(0xFFF44336), // Red
   Color(0xFF2196F3), // Blue

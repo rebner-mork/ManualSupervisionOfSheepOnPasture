@@ -3,6 +3,6 @@ import 'package:web/utils/constants.dart';
 
 void main() {
   test('possibleEartagColors and possibleEartagKeys are same length', () {
-    expect(possibleEartagColors.length, possibleEartagaKeys.length);
+    expect(possibleEartagColors.length, possibleEartagKeys.length);
   });
 }

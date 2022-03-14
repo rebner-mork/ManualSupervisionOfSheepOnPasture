@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:web/trips/detailed/main_trip_info_table.dart';
 import 'package:web/trips/detailed/map_of_trip_widget.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:web/trips/detailed/eartag_info_table.dart';
 import 'package:web/trips/detailed/sheep_info_table.dart';
+import 'package:web/trips/detailed/info_table.dart';
 import 'package:web/utils/constants.dart';
 
 class DetailedTrip extends StatefulWidget {
@@ -21,6 +22,7 @@ class _DetailedTripState extends State<DetailedTrip> {
   late DateTime stopTime;
   Map<String, int> sheepData = {};
   Map<String, int> eartagData = {};
+  Map<String, int> tieData = {};
 
   @override
   void initState() {
@@ -43,6 +45,13 @@ class _DetailedTripState extends State<DetailedTrip> {
       }
     }
 
+    for (String tieColor in colorStringToPossibleTieKeys.keys) {
+      if ((widget.tripData['definedTieColors'] as List<String>)
+          .contains(tieColor)) {
+        tieData[tieColor] = 0;
+      }
+    }
+
     for (Map<String, dynamic> registration
         in (widget.tripData['registrations']! as List<Map<String, dynamic>>)) {
       for (String sheepKey in possibleSheepKeysAndStrings.keys) {
@@ -55,6 +64,13 @@ class _DetailedTripState extends State<DetailedTrip> {
           eartagData[eartagColor] = eartagData[eartagColor]! +
                   registration[colorStringToPossibleEartagKeys[eartagColor]!]!
               as int;
+        }
+      }
+
+      for (String tieColor in colorStringToPossibleTieKeys.keys) {
+        if (tieData[tieColor] != null) {
+          tieData[tieColor] = tieData[tieColor]! +
+              registration[colorStringToPossibleTieKeys[tieColor]!]! as int;
         }
       }
     }
@@ -84,9 +100,18 @@ class _DetailedTripState extends State<DetailedTrip> {
           Flexible(
               child: Padding(
                   padding: const EdgeInsets.all(10),
-                  child: EartagInfoTable(
-                    eartagData: eartagData,
+                  child: InfoTable(
+                    data: eartagData,
+                    headerText: 'Øremerker',
+                    iconData: Icons.local_offer,
                   ))),
+          Flexible(
+              child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: InfoTable(
+                      data: tieData,
+                      headerText: 'Slips',
+                      iconData: FontAwesome5.black_tie)))
         ],
       ),
       Expanded(
