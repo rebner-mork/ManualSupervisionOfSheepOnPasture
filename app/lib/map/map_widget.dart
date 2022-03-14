@@ -112,7 +112,6 @@ class _MapState extends State<MapWidget> {
                                 'longitude': targetPosition.longitude
                               };
                               widget.onSheepRegistered!(data);
-                              //TODO legg inn callback til registration page her
                             }
                             linesOfSight.add(Polyline(
                                 points: [pos, targetPosition],

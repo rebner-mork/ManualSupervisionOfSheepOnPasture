@@ -17,14 +17,8 @@ class TripDataManager {
   List<Map<String, Object>> registrations = [];
   List<LatLng> track = [];
 
-  void stop() {
-    _stopTime = DateTime.now();
-  }
-
   void post() {
-    if (_stopTime == null) {
-      stop();
-    }
+    _stopTime ??= DateTime.now();
 
     // --- TRIPS ---
 
