@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:web/trips/detailed_trip.dart';
+import 'package:web/trips/detailed/detailed_trip.dart';
 import 'package:web/trips/trip_overview_list.dart';
 import 'package:web/utils/custom_widgets.dart';
 import 'package:web/utils/styles.dart';

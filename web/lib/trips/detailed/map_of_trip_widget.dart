@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
-import '../../utils/map_utils.dart' as map_utils;
+import '../../../utils/map_utils.dart' as map_utils;
 
 class MapOfTripWidget extends StatefulWidget {
   const MapOfTripWidget(

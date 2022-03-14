@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:web/trips/main_trip_info_table.dart';
-import 'package:web/trips/map_of_trip_widget.dart';
+import 'package:web/trips/detailed/main_trip_info_table.dart';
+import 'package:web/trips/detailed/map_of_trip_widget.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:web/trips/eartag_info_table.dart';
-import 'package:web/trips/sheep_info_table.dart';
+import 'package:web/trips/detailed/eartag_info_table.dart';
+import 'package:web/trips/detailed/sheep_info_table.dart';
 import 'package:web/utils/constants.dart';
-import 'package:web/utils/styles.dart';
 
 class DetailedTrip extends StatefulWidget {
   const DetailedTrip(this.tripData, {Key? key}) : super(key: key);
