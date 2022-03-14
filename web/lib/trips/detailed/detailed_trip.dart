@@ -9,6 +9,9 @@ import 'package:web/trips/detailed/info_table.dart';
 import 'package:web/utils/constants.dart';
 import 'package:web/utils/other.dart';
 
+const double idealWidth =
+    410; // combined width of both InfoTables and their padding
+
 class DetailedTrip extends StatefulWidget {
   const DetailedTrip(this.tripData, {Key? key}) : super(key: key);
 
@@ -154,10 +157,10 @@ class _DetailedTripState extends State<DetailedTrip> {
               SizedBox(
                   width: textSize(dateText(), const TextStyle(fontSize: 50))
                               .width >
-                          410
+                          idealWidth
                       ? textSize(dateText(), const TextStyle(fontSize: 50))
                           .width
-                      : 410, // combined width of both InfoTables and their padding
+                      : idealWidth, // combined width of both InfoTables and their padding
                   child: Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
@@ -169,7 +172,7 @@ class _DetailedTripState extends State<DetailedTrip> {
                       ))),
               SizedBox(
                   width:
-                      410, // combined width of both InfoTables and their padding
+                      idealWidth, // combined width of both InfoTables and their padding
                   child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(

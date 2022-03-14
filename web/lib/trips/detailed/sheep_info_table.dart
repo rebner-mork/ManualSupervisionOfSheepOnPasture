@@ -11,6 +11,7 @@ class SheepInfoTable extends StatelessWidget {
     return Table(
         border: const TableBorder(horizontalInside: BorderSide(width: 0.5)),
         columnWidths: const {
+          // Combined width should match 'idealWidth' (410) in detailed_trip.dart
           0: FixedColumnWidth(76),
           1: FixedColumnWidth(76),
           2: FixedColumnWidth(76),
