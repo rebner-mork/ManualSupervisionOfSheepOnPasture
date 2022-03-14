@@ -25,27 +25,30 @@ class _TripsPageState extends State<TripsPage> {
 
     DocumentSnapshot tripDoc = await tripDocReference.get();
 
+    // Extract track
     List<Map<String, double>> track = (tripDoc['track'] as List<dynamic>)
         .map((dynamic trackElement) => (trackElement as Map<String, dynamic>)
             .map((key, value) => MapEntry(key, value as double)))
         .toList();
 
+    // Extract data from registrations
+    List<Map<String, dynamic>> registrations = [];
     QuerySnapshot<Map<String, dynamic>> registrationDocs =
         await tripDocReference.collection('registrations').get();
-
-    List<Map<String, dynamic>> registrations = [];
 
     for (QueryDocumentSnapshot<Map<String, dynamic>> registrationDoc
         in registrationDocs.docs) {
       registrations.add(registrationDoc.data());
     }
 
+    // Get personnel-info
     QuerySnapshot userDocsSnapshot = await FirebaseFirestore.instance
         .collection('users')
         .where('email', isEqualTo: tripDoc['personnelEmail'])
         .get();
     QueryDocumentSnapshot userDoc = userDocsSnapshot.docs.first;
 
+    // Get map center coordinates
     DocumentSnapshot farmDoc = await FirebaseFirestore.instance
         .collection('farms')
         .doc(tripDoc['farmId'])
@@ -59,10 +62,14 @@ class _TripsPageState extends State<TripsPage> {
         farmDoc['maps'][tripDoc['mapName']]['southEast']['latitude']! as double,
         farmDoc['maps'][tripDoc['mapName']]['southEast']['longitude']!
             as double);
+    LatLng mapCenter = LatLngBounds(
+            LatLng(southEast.latitude, northWest.longitude),
+            LatLng(northWest.latitude, southEast.longitude))
+        .center;
 
+    // Get defined colors for eartag and ties
     List<String> definedEartagColors =
         (farmDoc['eartags']! as Map<String, dynamic>).keys.toList();
-
     List<String> definedTieColors =
         (farmDoc['ties']! as Map<String, dynamic>).keys.toList();
 
@@ -72,9 +79,7 @@ class _TripsPageState extends State<TripsPage> {
       'personnelPhone': userDoc['phone'],
       'startTime': tripDoc['startTime'],
       'stopTime': tripDoc['stopTime'],
-      'mapCenter': LatLngBounds(LatLng(southEast.latitude, northWest.longitude),
-              LatLng(northWest.latitude, southEast.longitude))
-          .center,
+      'mapCenter': mapCenter,
       'track': track,
       'registrations': registrations,
       'definedEartagColors': definedEartagColors,
@@ -89,7 +94,6 @@ class _TripsPageState extends State<TripsPage> {
   @override
   Widget build(BuildContext context) {
     return Row(
-      //crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
             width: 128,

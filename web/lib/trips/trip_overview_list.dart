@@ -13,7 +13,7 @@ class TripOverviewList extends StatefulWidget {
 }
 
 class _TripOverviewListState extends State<TripOverviewList> {
-  late final List<Map<String, Object>> _trips;
+  final List<Map<String, Object>> _trips = [];
   bool _isLoading = true;
   int _selectedTripIndex = -1;
 
@@ -33,8 +33,6 @@ class _TripOverviewListState extends State<TripOverviewList> {
         FirebaseFirestore.instance.collection('trips');
     QuerySnapshot tripQuerySnapshot =
         await tripsCollection.where('farmId', isEqualTo: uid).get();
-
-    _trips = [];
 
     for (QueryDocumentSnapshot doc in tripQuerySnapshot.docs) {
       _trips.add({

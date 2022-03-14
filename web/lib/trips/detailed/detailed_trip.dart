@@ -30,10 +30,11 @@ class _DetailedTripState extends State<DetailedTrip> {
     startTime = (widget.tripData['startTime']! as Timestamp).toDate();
     stopTime = (widget.tripData['stopTime']! as Timestamp).toDate();
 
-    extractSheepAndEartagData();
+    _initDataMaps();
+    _fillDataMaps();
   }
 
-  void extractSheepAndEartagData() {
+  void _initDataMaps() {
     for (String sheepKey in possibleSheepKeysAndStrings.keys) {
       sheepData[sheepKey] = 0;
     }
@@ -51,7 +52,9 @@ class _DetailedTripState extends State<DetailedTrip> {
         tieData[tieColor] = 0;
       }
     }
+  }
 
+  void _fillDataMaps() {
     for (Map<String, dynamic> registration
         in (widget.tripData['registrations']! as List<Map<String, dynamic>>)) {
       for (String sheepKey in possibleSheepKeysAndStrings.keys) {

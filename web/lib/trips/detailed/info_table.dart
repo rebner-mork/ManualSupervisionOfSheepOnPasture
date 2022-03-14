@@ -20,7 +20,7 @@ class InfoTable extends StatelessWidget {
         border: TableBorder.symmetric(
             outside: const BorderSide(), inside: const BorderSide(width: 0.5)),
         columnWidths: const {
-          0: FixedColumnWidth(100),
+          0: FixedColumnWidth(105),
           1: FixedColumnWidth(70)
         },
         children: [
@@ -44,7 +44,7 @@ class InfoTable extends StatelessWidget {
                       padding: tableCellPadding,
                       child: Row(children: [
                         Padding(
-                            padding: const EdgeInsets.only(right: 5),
+                            padding: const EdgeInsets.only(right: 8),
                             child: Icon(
                               iconData,
                               color: colorStringToColor[mapEntry.key],
@@ -58,8 +58,11 @@ class InfoTable extends StatelessWidget {
                     ),
                     Padding(
                       padding: tableCellPadding,
-                      child: Text(mapEntry.value.toString(),
-                          style: tableRowTextStyle),
+                      child: Text(
+                        mapEntry.value.toString(),
+                        style: tableRowTextStyle,
+                        textAlign: TextAlign.center,
+                      ),
                     )
                   ]))
               .toList(),
