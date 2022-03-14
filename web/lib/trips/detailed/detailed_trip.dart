@@ -46,7 +46,7 @@ class _DetailedTripState extends State<DetailedTrip> {
       }
     }
 
-    for (String tieColor in colorStringToPossibleTieKeys.keys) {
+    for (String tieColor in possibleTieColorStringToKey.keys) {
       if ((widget.tripData['definedTieColors'] as List<String>)
           .contains(tieColor)) {
         tieData[tieColor] = 0;
@@ -70,10 +70,10 @@ class _DetailedTripState extends State<DetailedTrip> {
         }
       }
 
-      for (String tieColor in colorStringToPossibleTieKeys.keys) {
+      for (String tieColor in possibleTieColorStringToKey.keys) {
         if (tieData[tieColor] != null) {
           tieData[tieColor] = tieData[tieColor]! +
-              registration[colorStringToPossibleTieKeys[tieColor]!]! as int;
+              registration[possibleTieColorStringToKey[tieColor]!]! as int;
         }
       }
     }

@@ -7,17 +7,7 @@ final Map<Color, int> defaultTieMap = <Color, int>{
   const Color(0xFF4CAF50): 3, // Green
 };
 
-const List<Color> possibleTieColors = [
-  Color(0xFFF44336), // Red
-  Color(0xFF2196F3), // Blue
-  Color(0xFFFFEB3B), // Yellow
-  Color(0xFF4CAF50), // Green
-  Color(0xFFFF9800), // Orange
-  Color(0xFFE91E63), // Pink
-  Color(0x00000000), // Transparent
-];
-
-final Map<String, String> colorStringToPossibleTieKeys = {
+final Map<String, String> possibleTieColorStringToKey = {
   Colors.red.value.toRadixString(16): 'redTie',
   Colors.blue.value.toRadixString(16): 'blueTie',
   Colors.yellow.value.toRadixString(16): 'yellowTie',

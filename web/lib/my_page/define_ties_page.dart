@@ -40,6 +40,12 @@ class _MyTiesState extends State<MyTies> {
   @override
   void initState() {
     super.initState();
+    debugPrint("HER: " + Colors.red.value.toRadixString(16));
+    debugPrint(Color(int.parse(Colors.red.value.toRadixString(16), radix: 16))
+        .toString());
+    debugPrint(Color(int.parse(Colors.red.value.toRadixString(16), radix: 16))
+        .runtimeType
+        .toString());
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _readTieData();
@@ -79,7 +85,7 @@ class _MyTiesState extends State<MyTies> {
                   )),
                   const DataColumn(label: Text('')),
                 ],
-                rows: _tieColors.length < possibleTieColors.length
+                rows: _tieColors.length < possibleTieColorStringToKey.length
                     ? _tieRows() + _newTieRow()
                     : _tieRows(),
               )
@@ -108,10 +114,13 @@ class _MyTiesState extends State<MyTies> {
         child: Row(children: [
           DropdownButton<DropdownIcon>(
               value: DropdownIcon(FontAwesome5.black_tie, color),
-              items: possibleTieColors
-                  .map((Color color) => DropdownMenuItem<DropdownIcon>(
-                      value: DropdownIcon(FontAwesome5.black_tie, color),
-                      child: DropdownIcon(FontAwesome5.black_tie, color).icon))
+              items: possibleTieColorStringToKey.keys
+                  .map((String colorString) => DropdownMenuItem<DropdownIcon>(
+                      value: DropdownIcon(FontAwesome5.black_tie,
+                          Color(int.parse(colorString, radix: 16))),
+                      child: DropdownIcon(FontAwesome5.black_tie,
+                              Color(int.parse(colorString, radix: 16)))
+                          .icon))
                   .toList(),
               onChanged: (DropdownIcon? newIcon) {
                 _onColorChanged(newIcon!.icon.color!, index, color);
@@ -324,7 +333,8 @@ class _MyTiesState extends State<MyTies> {
 
   void _onTieAdded() {
     setState(() {
-      _tieColors.add(possibleTieColors.last);
+      _tieColors.add(
+          Color(int.parse(possibleTieColorStringToKey.keys.last, radix: 16)));
       _tieMeaning.add(0);
       _valuesChanged = true;
       _tiesAdded = true;
