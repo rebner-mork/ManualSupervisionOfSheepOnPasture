@@ -74,9 +74,10 @@ class _MyEartagsState extends State<MyEartags> {
                   )),
                   const DataColumn(label: Text('')),
                 ],
-                rows: _eartagColors.length < possibleEartagColors.length
-                    ? _eartagRows() + [_newEartagRow()]
-                    : _eartagRows(),
+                rows:
+                    _eartagColors.length < possibleEartagColorStringToKey.length
+                        ? _eartagRows() + [_newEartagRow()]
+                        : _eartagRows(),
               )
             ]),
       const SizedBox(height: 10),
@@ -136,10 +137,13 @@ class _MyEartagsState extends State<MyEartags> {
         child: Row(children: [
           DropdownButton<DropdownIcon>(
               value: DropdownIcon(Icons.local_offer, color),
-              items: possibleEartagColors
-                  .map((Color color) => DropdownMenuItem<DropdownIcon>(
-                      value: DropdownIcon(Icons.local_offer, color),
-                      child: DropdownIcon(Icons.local_offer, color).icon))
+              items: possibleEartagColorStringToKey.keys
+                  .map((String colorString) => DropdownMenuItem<DropdownIcon>(
+                      value: DropdownIcon(Icons.local_offer,
+                          Color(int.parse(colorString, radix: 16))),
+                      child: DropdownIcon(Icons.local_offer,
+                              Color(int.parse(colorString, radix: 16)))
+                          .icon))
                   .toList(),
               onChanged: (DropdownIcon? newIcon) {
                 _onColorChanged(newIcon!.icon.color!, index, color);
@@ -202,7 +206,8 @@ class _MyEartagsState extends State<MyEartags> {
 
   void _onEartagAdded() {
     setState(() {
-      _eartagColors.add(possibleEartagColors.first);
+      _eartagColors.add(Color(
+          int.parse(possibleEartagColorStringToKey.keys.first, radix: 16)));
       _eartagOwners.add(true);
       _valuesChanged = true;
       _eartagsAdded = true;

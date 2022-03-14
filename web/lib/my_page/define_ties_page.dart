@@ -40,12 +40,6 @@ class _MyTiesState extends State<MyTies> {
   @override
   void initState() {
     super.initState();
-    debugPrint("HER: " + Colors.red.value.toRadixString(16));
-    debugPrint(Color(int.parse(Colors.red.value.toRadixString(16), radix: 16))
-        .toString());
-    debugPrint(Color(int.parse(Colors.red.value.toRadixString(16), radix: 16))
-        .runtimeType
-        .toString());
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _readTieData();

@@ -47,7 +47,7 @@ class InfoTable extends StatelessWidget {
                             padding: const EdgeInsets.only(right: 8),
                             child: Icon(
                               iconData,
-                              color: colorStringToColor[mapEntry.key],
+                              color: Color(int.parse(mapEntry.key, radix: 16)),
                             )),
                         Text(
                             colorValueToString[

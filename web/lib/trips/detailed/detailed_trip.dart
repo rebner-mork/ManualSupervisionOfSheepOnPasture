@@ -39,7 +39,7 @@ class _DetailedTripState extends State<DetailedTrip> {
       sheepData[sheepKey] = 0;
     }
 
-    for (String eartagColor in colorStringToPossibleEartagKeys.keys) {
+    for (String eartagColor in possibleEartagColorStringToKey.keys) {
       if ((widget.tripData['definedEartagColors'] as List<String>)
           .contains(eartagColor)) {
         eartagData[eartagColor] = 0;
@@ -62,10 +62,10 @@ class _DetailedTripState extends State<DetailedTrip> {
             sheepData[sheepKey]! + registration[sheepKey] as int;
       }
 
-      for (String eartagColor in colorStringToPossibleEartagKeys.keys) {
+      for (String eartagColor in possibleEartagColorStringToKey.keys) {
         if (eartagData[eartagColor] != null) {
           eartagData[eartagColor] = eartagData[eartagColor]! +
-                  registration[colorStringToPossibleEartagKeys[eartagColor]!]!
+                  registration[possibleEartagColorStringToKey[eartagColor]!]!
               as int;
         }
       }
