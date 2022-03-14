@@ -7,6 +7,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:web/trips/detailed/sheep_info_table.dart';
 import 'package:web/trips/detailed/info_table.dart';
 import 'package:web/utils/constants.dart';
+import 'package:web/utils/other.dart';
 
 class DetailedTrip extends StatefulWidget {
   const DetailedTrip(this.tripData, {Key? key}) : super(key: key);
@@ -151,8 +152,12 @@ class _DetailedTripState extends State<DetailedTrip> {
           child: Column(
             children: [
               SizedBox(
-                  width:
-                      410, // combined width of both InfoTables and their padding
+                  width: textSize(dateText(), const TextStyle(fontSize: 50))
+                              .width >
+                          410
+                      ? textSize(dateText(), const TextStyle(fontSize: 50))
+                          .width
+                      : 410, // combined width of both InfoTables and their padding
                   child: Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(

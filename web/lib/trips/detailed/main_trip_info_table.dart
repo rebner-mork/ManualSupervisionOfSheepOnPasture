@@ -62,7 +62,7 @@ class MainTripInfoTable extends StatelessWidget {
     else if (startTime.year == stopTime.year &&
         startTime.month == stopTime.month &&
         startTime.day != stopTime.day) {
-      return '${startTime.day}.-${stopTime.day}. ${intToMonth(startTime.month)} ${startTime.year}';
+      return '${startTime.day}-${stopTime.day}. ${intToMonth(startTime.month)} ${startTime.year}';
     }
     // Different month, same year
     else if (startTime.year == stopTime.year &&
