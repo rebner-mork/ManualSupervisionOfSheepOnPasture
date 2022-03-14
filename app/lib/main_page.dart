@@ -33,10 +33,10 @@ class MainPage extends StatefulWidget {
   final String mapName;
 
   @override
-  State<MainPage> createState() => _MapState();
+  State<MainPage> createState() => _MainPageState();
 }
 
-class _MapState extends State<MainPage> {
+class _MainPageState extends State<MainPage> {
   int _sheepAmount = 0;
   static const double iconSize = 42;
   static const double buttonInset = 8;

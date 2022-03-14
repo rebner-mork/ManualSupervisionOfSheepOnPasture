@@ -1,3 +1,4 @@
+import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
 
 class EndTripDialog extends StatelessWidget {
@@ -17,7 +18,7 @@ class EndTripDialog extends StatelessWidget {
           const Icon(
             Icons.wifi,
             size: 80,
-            color: Colors.green,
+            color: Colors.grey,
           ),
           const Center(
             child: Text("Tilkoblet nettverk"),
@@ -27,20 +28,19 @@ class EndTripDialog extends StatelessWidget {
           ),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             SimpleDialogOption(
-              child: const Center(
+                child: Center(
+                    child: Text("Nei, fortsett",
+                        style: cancelDialogButtonTextStyle)),
+                onPressed: () => Navigator.pop(context, false)),
+            SimpleDialogOption(
+              child: Center(
                   child: Text(
-                "Avslutt",
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+                "Ja, avslutt",
+                style: okDialogButtonTextStyle,
               )),
               onPressed: () => Navigator.pop(context, true),
             ),
-            SimpleDialogOption(
-                child: const Center(
-                    child: Text("Fortsett",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 20))),
-                onPressed: () => Navigator.pop(context, false))
-          ]),
+          ])
         ]);
   }
 }

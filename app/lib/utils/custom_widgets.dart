@@ -116,22 +116,36 @@ BackdropFilter cancelRegistrationDialog(BuildContext context) {
   return BackdropFilter(
       filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
       child: AlertDialog(
-        title: const Text("Avbryte registrering?"),
-        content: const Text('Data i registreringen vil gå tapt.'),
+        title: const Text(
+          "Avbryte registrering?",
+          textAlign: TextAlign.center,
+        ),
+        content: const Text(
+          'Data i registreringen vil gå tapt.',
+          textAlign: TextAlign.center,
+        ),
         actions: [
-          TextButton(
-              onPressed: () {
-                Navigator.of(context).pop('dialog');
-                if (Navigator.canPop(context)) {
-                  Navigator.of(context).pop();
-                }
-              },
-              child: const Text('Ja, avbryt')),
-          TextButton(
-              onPressed: () {
-                Navigator.of(context).pop('dialog');
-              },
-              child: const Text('Nei, fortsett'))
+          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+            SimpleDialogOption(
+                onPressed: () {
+                  Navigator.of(context).pop('dialog');
+                },
+                child: Text(
+                  'Nei, fortsett',
+                  style: cancelDialogButtonTextStyle,
+                )),
+            SimpleDialogOption(
+                onPressed: () {
+                  Navigator.of(context).pop('dialog');
+                  if (Navigator.canPop(context)) {
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: Text(
+                  'Ja, avbryt',
+                  style: okDialogButtonTextStyle,
+                )),
+          ])
         ],
       ));
 }
