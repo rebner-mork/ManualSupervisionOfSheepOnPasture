@@ -18,7 +18,7 @@ TextStyle definePageInfoTextStyle = const TextStyle(fontSize: 16);
 
 // Table
 TextStyle tableRowDescriptionTextStyle =
-    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold);
-TextStyle tableRowTextStyle = const TextStyle(fontSize: 16);
+    const TextStyle(fontSize: 17, fontWeight: FontWeight.bold);
+TextStyle tableRowTextStyle = const TextStyle(fontSize: 17);
 
 EdgeInsets tableCellPadding = const EdgeInsets.all(8);

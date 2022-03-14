@@ -17,10 +17,9 @@ class InfoTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Table(
-        border: TableBorder.symmetric(
-            outside: const BorderSide(), inside: const BorderSide(width: 0.5)),
+        border: TableBorder.symmetric(inside: const BorderSide(width: 0.5)),
         columnWidths: const {
-          0: FixedColumnWidth(105),
+          0: FixedColumnWidth(110),
           1: FixedColumnWidth(70)
         },
         children: [

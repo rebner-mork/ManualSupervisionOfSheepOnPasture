@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:web/utils/other.dart';
 import 'package:web/utils/styles.dart';
 
+TextStyle textStyle = const TextStyle(fontSize: 19);
+TextStyle decsriptionTextStyle =
+    const TextStyle(fontSize: 19, fontWeight: FontWeight.bold);
+
 class MainTripInfoTable extends StatelessWidget {
   const MainTripInfoTable(
       {required this.startTime,
@@ -74,41 +78,34 @@ class MainTripInfoTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Table(
-      border: TableBorder.symmetric(
-          outside: const BorderSide(), inside: const BorderSide(width: 0.5)),
       columnWidths: {
-        0: const FixedColumnWidth(70),
-        1: textSize(email, tableRowTextStyle).width > 310
+        0: const FixedColumnWidth(80),
+        1: textSize(email, tableRowTextStyle).width > 330
             ? FixedColumnWidth(textSize(email, tableRowTextStyle).width)
-            : const FixedColumnWidth(310)
-      }, // FlexColumnWidths
+            : const FixedColumnWidth(330)
+      },
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
       children: [
         TableRow(children: [
           Padding(
               padding: tableCellPadding,
-              child: Text('Dato', style: tableRowDescriptionTextStyle)),
-          Padding(
-              padding: tableCellPadding,
-              child: Text(dateText(), style: tableRowTextStyle))
-        ]),
-        TableRow(children: [
-          Padding(
-              padding: tableCellPadding,
-              child: Text('Tid', style: tableRowDescriptionTextStyle)),
+              child: Text('Tid', style: decsriptionTextStyle)),
           Padding(
               padding: tableCellPadding,
               child: Text(
                   '${startTime.hour}:${startTime.minute} - ${stopTime.hour}:${stopTime.minute}',
-                  style: tableRowTextStyle))
+                  style: textStyle))
         ]),
         TableRow(children: [
           Padding(
               padding: tableCellPadding,
-              child: Text('Gått av', style: tableRowDescriptionTextStyle)),
+              child: Text('Gått av', style: decsriptionTextStyle)),
           Padding(
               padding: tableCellPadding,
-              child: Text(email + '\n' + phone, style: tableRowTextStyle))
+              child: Text(
+                email,
+                style: textStyle,
+              ))
         ]),
       ],
     );

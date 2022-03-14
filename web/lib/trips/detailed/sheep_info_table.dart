@@ -1,60 +1,79 @@
 import 'package:flutter/material.dart';
-import 'package:web/utils/constants.dart';
 import 'package:web/utils/styles.dart';
 
 class SheepInfoTable extends StatelessWidget {
   const SheepInfoTable({required this.sheepData, Key? key}) : super(key: key);
 
   final Map<String, int> sheepData;
-// TODO: bold? ikke-bold? blanding?
+
   @override
   Widget build(BuildContext context) {
     return Table(
-        border: TableBorder.symmetric(
-            outside: const BorderSide(), inside: const BorderSide(width: 0.5)),
+        border: const TableBorder(horizontalInside: BorderSide(width: 0.5)),
         columnWidths: const {
-          0: FixedColumnWidth(95),
-          1: FixedColumnWidth(70)
+          0: FixedColumnWidth(76),
+          1: FixedColumnWidth(76),
+          2: FixedColumnWidth(76),
+          3: FixedColumnWidth(76),
+          4: FixedColumnWidth(106)
         },
         children: [
           TableRow(children: [
             Padding(
               padding: tableCellPadding,
-              child: const Text(
-                '',
+              child: Text(
+                'Totalt',
+                style: tableRowDescriptionTextStyle,
+                textAlign: TextAlign.center,
               ),
             ),
             Padding(
               padding: tableCellPadding,
               child: Text(
-                'Antall',
+                'Lam',
                 style: tableRowDescriptionTextStyle,
                 textAlign: TextAlign.center,
               ),
-            )
+            ),
+            Padding(
+              padding: tableCellPadding,
+              child: Text(
+                'Hvite',
+                style: tableRowDescriptionTextStyle,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Padding(
+              padding: tableCellPadding,
+              child: Text(
+                'Svarte',
+                style: tableRowDescriptionTextStyle,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Padding(
+              padding: tableCellPadding,
+              child: Text(
+                'Svart hode',
+                style: tableRowDescriptionTextStyle,
+                textAlign: TextAlign.center,
+              ),
+            ),
           ]),
-          ...sheepData.entries
-              .map(
-                (MapEntry<String, int> mapEntry) => TableRow(children: [
-                  Padding(
-                    padding: tableCellPadding,
-                    child: Text(
-                      possibleSheepKeysAndStrings[mapEntry.key]!,
-                      style:
-                          tableRowDescriptionTextStyle, // TODO: bold på alle eller bare første eller ingen?
-                    ),
-                  ),
-                  Padding(
-                    padding: tableCellPadding,
-                    child: Text(
-                      mapEntry.value.toString(),
-                      style: tableRowDescriptionTextStyle,
-                      textAlign: TextAlign.center,
-                    ),
-                  )
-                ]),
-              )
-              .toList(),
+          TableRow(children: [
+            ...sheepData.entries
+                .map((MapEntry<String, int> mapEntry) => Padding(
+                      padding: tableCellPadding,
+                      child: Text(
+                        mapEntry.value.toString(),
+                        style: mapEntry.key == sheepData.keys.first
+                            ? tableRowDescriptionTextStyle
+                            : tableRowTextStyle,
+                        textAlign: TextAlign.center,
+                      ),
+                    ))
+                .toList(),
+          ]),
         ]);
   }
 }

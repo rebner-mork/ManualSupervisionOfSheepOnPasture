@@ -79,52 +79,139 @@ class _DetailedTripState extends State<DetailedTrip> {
     }
   }
 
+  String intToMonth(int month) {
+    switch (month) {
+      case 1:
+        return 'Januar';
+      case 2:
+        return 'Februar';
+      case 3:
+        return 'Mars';
+      case 4:
+        return 'April';
+      case 5:
+        return 'Mai';
+      case 6:
+        return 'Juni';
+      case 7:
+        return 'Juli';
+      case 8:
+        return 'August';
+      case 9:
+        return 'September';
+      case 10:
+        return 'Oktober';
+      case 11:
+        return 'November';
+      case 12:
+        return 'Desember';
+      default:
+        return '';
+    }
+  }
+
+  String dateText() {
+    // Same day
+    if (startTime.year == stopTime.year &&
+        startTime.month == stopTime.month &&
+        startTime.day == stopTime.day) {
+      return '${startTime.day}. ${intToMonth(startTime.month)} ${startTime.year}';
+    }
+    // Different day, same month
+    else if (startTime.year == stopTime.year &&
+        startTime.month == stopTime.month &&
+        startTime.day != stopTime.day) {
+      return '${startTime.day}.-${stopTime.day}. ${intToMonth(startTime.month)} ${startTime.year}';
+    }
+    // Different month, same year
+    else if (startTime.year == stopTime.year &&
+        startTime.month != stopTime.month) {
+      return '${startTime.day}. ${intToMonth(startTime.month)} - ${stopTime.day}. ${intToMonth(stopTime.month)} ${stopTime.year}';
+    }
+    // Different year
+    else {
+      return '${startTime.day}. ${intToMonth(startTime.month)} ${startTime.year} - ${stopTime.day}. ${intToMonth(stopTime.month)} ${stopTime.year}';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Padding(
-          padding: const EdgeInsets.symmetric(vertical: 30),
-          child: MainTripInfoTable(
-            startTime: startTime,
-            stopTime: stopTime,
-            email: widget.tripData['personnelEmail']! as String,
-            phone: widget.tripData['personnelPhone']! as String,
-          )),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Flexible(
-              child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: SheepInfoTable(
-              sheepData: sheepData,
-            ),
-          )),
-          Flexible(
-              child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: InfoTable(
-                    data: eartagData,
-                    headerText: 'Øremerker',
-                    iconData: Icons.local_offer,
-                  ))),
-          Flexible(
-              child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: InfoTable(
-                      data: tieData,
-                      headerText: 'Slips',
-                      iconData: FontAwesome5.black_tie)))
-        ],
-      ),
-      Expanded(
+    return Row(children: [
+      Flexible(
+          flex: 3,
           child: Padding(
-              padding: const EdgeInsets.only(left: 30, bottom: 20, right: 30),
+              padding: const EdgeInsets.only(top: 20, left: 20, bottom: 20),
               child: MapOfTripWidget(
                   mapCenter: widget.tripData['mapCenter']! as LatLng,
                   track: widget.tripData['track']! as List<Map<String, double>>,
                   registrations: widget.tripData['registrations']!
-                      as List<Map<String, dynamic>>)))
+                      as List<Map<String, dynamic>>))),
+      Flexible(
+          flex: 2,
+          child: Column(
+            children: [
+              SizedBox(
+                  width:
+                      410, // combined width of both InfoTables and their padding
+                  child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Text(
+                          dateText(),
+                          style: const TextStyle(fontSize: 50),
+                        ),
+                      ))),
+              SizedBox(
+                  width:
+                      410, // combined width of both InfoTables and their padding
+                  child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        widget.tripData['mapName']! as String,
+                        style: const TextStyle(
+                          fontSize: 30,
+                        ),
+                      ))),
+              Flexible(
+                  child: Padding(
+                      padding: const EdgeInsets.only(top: 30, bottom: 25),
+                      child: MainTripInfoTable(
+                        startTime: startTime,
+                        stopTime: stopTime,
+                        email: widget.tripData['personnelEmail']! as String,
+                        phone: widget.tripData['personnelPhone']! as String,
+                      ))),
+              Flexible(
+                  child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 30),
+                child: SheepInfoTable(
+                  sheepData: sheepData,
+                ),
+              )),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Flexible(
+                      child: Padding(
+                          padding: const EdgeInsets.only(right: 25),
+                          child: InfoTable(
+                              data: tieData,
+                              headerText: 'Slips',
+                              iconData: FontAwesome5.black_tie))),
+                  Flexible(
+                      child: Padding(
+                          padding: const EdgeInsets.only(left: 25),
+                          child: InfoTable(
+                            data: eartagData,
+                            headerText: 'Øremerker',
+                            iconData: Icons.local_offer,
+                          ))),
+                ],
+              ),
+            ],
+          )),
     ]);
   }
 }

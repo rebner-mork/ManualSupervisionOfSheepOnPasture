@@ -47,9 +47,6 @@ class _TripOverviewListState extends State<TripOverviewList> {
     });
   }
 
-// TODO: Begrense antall som hentes fra Firestore? Gjøres med limit
-// TODO: Dropdown for å filtrere på 'alle', 'kartnavn1', 'kartnavn2'
-
   @override
   Widget build(BuildContext context) {
     return _isLoading
