@@ -110,7 +110,8 @@ class _DetailedTripState extends State<DetailedTrip> {
       case 12:
         return 'Desember';
       default:
-        return '';
+        throw Exception(
+            'Invalid month: Month has to be in inclusive range 1-12 (was $month)');
     }
   }
 
