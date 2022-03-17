@@ -10,7 +10,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import '../utils/map_utils.dart' as map_utils;
 
 class StartTripPage extends StatefulWidget {
   const StartTripPage({Key? key}) : super(key: key);
@@ -31,19 +30,24 @@ class _StartTripPageState extends State<StartTripPage>
 
   final List<String> _farmNames = [];
   late String _selectedFarmName;
+  late Map<String, bool>? _eartags;
+  late Map<String, int>? _ties;
 
   Map<String, Map<String, Map<String, double>>> _selectedFarmMaps = {};
   String _selectedFarmMap = '';
   Map<String, LatLng> mapBounds = {};
 
-  bool _loadingData = true;
+  bool _isLoading = true;
   bool _downloadingMap = false;
   bool _mapDownloaded = false;
   bool _noMapsDefined = false;
+  bool _noEartagsDefined = false;
+  bool _noTiesDefined = false;
 
   double _downloadProgress = 0.0;
 
   String _feedbackText = '';
+  String _eartagAndTieText = '';
 
   IconData _mapIcon = StartTripPage.notDownloadedIcon;
   late AnimationController _animationController;
@@ -86,46 +90,43 @@ class _StartTripPageState extends State<StartTripPage>
               centerTitle: true,
               actions: const [SettingsIconButton()],
             ),
-            body: Column(
-              children: _loadingData
-                  ? [
-                      appbarBodySpacer(),
-                      Center(
-                          child: Text(
-                        'Laster inn...',
-                        style: feedbackTextStyle,
-                      ))
-                    ]
-                  : _farmNames.isEmpty
-                      ? [
-                          Text(
-                              'Du er ikke registrert som oppsynspersonell hos noen gård. Ta kontakt med sauebonde.',
-                              style: feedbackTextStyle)
-                        ]
-                      : [
-                          appbarBodySpacer(),
-                          _farmNameRow(),
-                          inputFieldSpacer(),
-                          _farmMapRow(),
-                          inputFieldSpacer(),
-                          Text(
-                            _feedbackText,
-                            style: feedbackTextStyle,
-                          ),
-                          inputFieldSpacer(),
-                          Visibility(
-                              visible: _downloadingMap,
-                              child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 40),
-                                  child: LinearProgressIndicator(
-                                    value: _downloadProgress,
-                                    minHeight: 10,
-                                  ))),
-                          inputFieldSpacer(),
-                          startTripButton()
-                        ],
-            )));
+            body: _isLoading
+                ? const LoadingData()
+                : Column(
+                    children: _farmNames.isEmpty
+                        ? [
+                            Text(
+                                'Du er ikke registrert som oppsynspersonell hos noen gård. Ta kontakt med sauebonde.',
+                                style: feedbackTextStyle)
+                          ]
+                        : [
+                            appbarBodySpacer(),
+                            _farmNameRow(),
+                            inputFieldSpacer(),
+                            if (!_noMapsDefined) _farmMapRow(),
+                            if (!_noMapsDefined) inputFieldSpacer(),
+                            Text(
+                              _feedbackText,
+                              style: _noMapsDefined
+                                  ? feedbackErrorTextStyle
+                                  : feedbackTextStyle,
+                            ),
+                            inputFieldSpacer(),
+                            Visibility(
+                                visible: _downloadingMap,
+                                child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 40),
+                                    child: LinearProgressIndicator(
+                                      value: _downloadProgress,
+                                      minHeight: 10,
+                                    ))),
+                            inputFieldSpacer(),
+                            startTripButton(),
+                            inputFieldSpacer(),
+                            Text(_eartagAndTieText, style: feedbackTextStyle),
+                          ],
+                  )));
   }
 
   Row _farmNameRow() {
@@ -153,10 +154,14 @@ class _StartTripPageState extends State<StartTripPage>
                     .toList(),
                 onChanged: (String? newFarmName) {
                   if (_selectedFarmName != newFarmName) {
+                    _noMapsDefined = false;
+                    _noEartagsDefined = false;
+                    _noTiesDefined = false;
                     _readFarmMaps(_farmIDs[_farmNames.indexOf(newFarmName!)]);
                     setState(() {
                       _selectedFarmName = newFarmName;
                       _feedbackText = '';
+                      _eartagAndTieText = '';
                       updateIcon();
                     });
                   }
@@ -292,8 +297,6 @@ class _StartTripPageState extends State<StartTripPage>
   }
 
   Future<void> _startTrip() async {
-    // TODO: try/catch (Unhandled Exception: Location services does not have permissions)
-    LatLng userStartPosition = await map_utils.getDevicePosition();
     if (!_mapDownloaded) {
       setState(() {
         _feedbackText = 'Oppsynsturen starter når kartet er lastet ned';
@@ -309,8 +312,10 @@ class _StartTripPageState extends State<StartTripPage>
         });
       });
     }
+
     setState(() {
       _feedbackText = '';
+      _eartagAndTieText = '';
       updateIcon();
       _downloadingMap = false;
       _downloadProgress = 0;
@@ -320,9 +325,14 @@ class _StartTripPageState extends State<StartTripPage>
         context,
         MaterialPageRoute(
             builder: (context) => MainPage(
-                northWest: mapBounds['northWest']!,
-                southEast: mapBounds['southEast']!,
-                userStartPosition: userStartPosition)));
+                  northWest: mapBounds['northWest']!,
+                  southEast: mapBounds['southEast']!,
+                  farmId: _farmIDs[_farmNames.indexOf(_selectedFarmName)],
+                  eartags: _noEartagsDefined
+                      ? possibleEartagsWithoutDefinition
+                      : _eartags!,
+                  ties: _noTiesDefined ? possibleTiesWithoutDefinition : _ties!,
+                )));
   }
 
   Map<String, Map<String, Map<String, double>>> _castMapsFromDynamic(
@@ -346,10 +356,12 @@ class _StartTripPageState extends State<StartTripPage>
     DocumentReference farmDoc = farmCollection.doc(farmId);
 
     DocumentSnapshot<Object?> doc = await farmDoc.get();
-    LinkedHashMap<String, dynamic>? maps = await doc.get('maps');
+    LinkedHashMap<String, dynamic>? dbMaps = await doc.get('maps');
+    LinkedHashMap<String, dynamic>? dbEartags = await doc.get('eartags');
+    LinkedHashMap<String, dynamic>? dbTies = await doc.get('ties');
 
-    if (maps != null) {
-      _selectedFarmMaps = _castMapsFromDynamic(maps);
+    if (dbMaps != null && dbMaps.isNotEmpty) {
+      _selectedFarmMaps = _castMapsFromDynamic(dbMaps);
 
       setState(() {
         _selectedFarmMap = _selectedFarmMaps.keys.first;
@@ -358,9 +370,37 @@ class _StartTripPageState extends State<StartTripPage>
     } else {
       setState(() {
         _noMapsDefined = true;
-        _selectedFarmMap = '';
-        _feedbackText =
-            'Gården \'$_selectedFarmName\' har ikke definert noen kart';
+        _feedbackText += 'Gården har ikke definert noen kart,\n'
+            'oppsynstur kan dermed ikke starte.';
+      });
+    }
+
+    if (dbEartags != null && dbEartags.isNotEmpty) {
+      _eartags = dbEartags.map((key, value) => MapEntry(key, value as bool));
+    } else {
+      _noEartagsDefined = true;
+    }
+
+    if (dbTies != null && dbTies.isNotEmpty) {
+      _ties = dbTies.map((key, value) => MapEntry(key, value as int));
+    } else {
+      _noTiesDefined = true;
+    }
+
+    if (_noTiesDefined && _noEartagsDefined) {
+      setState(() {
+        _eartagAndTieText = 'Gården har ikke definert slips eller øremerker, \n'
+            'registrering vil dermed vise alle farger.';
+      });
+    } else if (_noTiesDefined && !_noEartagsDefined) {
+      setState(() {
+        _eartagAndTieText += 'Gården har ikke definert slips,\n'
+            'registrering vil vise alle øremerkefarger.\n';
+      });
+    } else if (!_noTiesDefined && _noEartagsDefined) {
+      setState(() {
+        _eartagAndTieText += 'Gården har ikke definert øremerker,\n'
+            'registrering vil vise alle øremerkefarger.\n';
       });
     }
   }
@@ -400,7 +440,7 @@ class _StartTripPageState extends State<StartTripPage>
       }
     }
     setState(() {
-      _loadingData = false;
+      _isLoading = false;
     });
   }
 

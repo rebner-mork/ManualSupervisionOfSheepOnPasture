@@ -26,23 +26,23 @@ const List<Color> possibleEartagColors = [
   Color(0xFFE91E63), // Pink
 ];
 
-const Map<int, Color> colorValueToColor = {
-  4294198070: Colors.red,
-  4280391411: Colors.blue,
-  4294961979: Colors.yellow,
-  4283215696: Colors.green,
-  4294940672: Colors.orange,
-  4293467747: Colors.pink
+final Map<int, Color> colorValueToColor = {
+  Colors.red.value: Colors.red,
+  Colors.blue.value: Colors.blue,
+  Colors.yellow.value: Colors.yellow,
+  Colors.green.value: Colors.green,
+  Colors.orange.value: Colors.orange,
+  Colors.pink.value: Colors.pink
 };
 
-const Map<int, String> colorValueToString = {
-  4294198070: 'Rød',
-  4280391411: 'Blå',
-  4294961979: 'Gul',
-  4283215696: 'Grønn',
-  4294940672: 'Oransje',
-  4293467747: 'Rosa',
-  0: 'Ingen'
+final Map<int, String> colorValueToString = {
+  Colors.red.value: 'Rød',
+  Colors.blue.value: 'Blå',
+  Colors.yellow.value: 'Gul',
+  Colors.green.value: 'Grønn',
+  Colors.orange.value: 'Oransje',
+  Colors.pink.value: 'Rosa',
+  Colors.transparent.value: 'Ingen'
 };
 
 final Map<Color, String> colorToString = <Color, String>{

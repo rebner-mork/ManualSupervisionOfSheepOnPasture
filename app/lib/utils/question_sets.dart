@@ -1,14 +1,27 @@
-import 'package:app/utils/speech_input_filters.dart';
+const List<String> distanceSheepQuestions = [
+  'Hvor mange sauer?',
+  'Hvor mange lam?',
+  'Hvor mange hvite?',
+  'Hvor mange svarte?',
+  'Hvor mange med svart hode?'
+];
 
-Map<String, QuestionContext> allSheepQuestions = {
-  'Hvor mange sauer?': QuestionContext.numbers,
-  'Hvor mange lam?': QuestionContext.numbers,
-  'Hvor mange hvite?': QuestionContext.numbers,
-  'Hvor mange svarte?': QuestionContext.numbers,
-  'Hvor mange med svart hode?': QuestionContext.numbers,
-  'Hvor mange røde slips?': QuestionContext.numbers,
-  'Hvor mange blå slips?': QuestionContext.numbers,
-  'Hvor mange gule slips?': QuestionContext.numbers,
-  'Hvor mange røde øremerker?': QuestionContext.numbers,
-  'Hvor mange blå øremerker?': QuestionContext.numbers
+const Map<String, Map<String, String>> closeSheepQuestions = {
+  'ties': {
+    '0': 'Hvor mange uten slips?',
+    'fff44336': 'Hvor mange røde slips?',
+    'ff2196f3': 'Hvor mange blå slips?',
+    'ffffeb3b': 'Hvor mange gule slips?',
+    'ff4caf50': 'Hvor mange grønne slips?',
+    'ffff9800': 'Hvor mange oransje slips?',
+    'ffe91e63': 'Hvor mange rosa slips?'
+  },
+  'eartags': {
+    'fff44336': 'Hvor mange røde øremerker?',
+    'ff2196f3': 'Hvor mange blå øremerker?',
+    'ffffeb3b': 'Hvor mange gule øremerker?',
+    'ff4caf50': 'Hvor mange grønne øremerker?',
+    'ffff9800': 'Hvor mange oransje øremerker?',
+    'ffe91e63': 'Hvor mange rosa øremerker?'
+  }
 };

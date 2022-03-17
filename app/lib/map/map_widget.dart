@@ -11,6 +11,7 @@ import '../utils/constants.dart';
 
 class MapWidget extends StatefulWidget {
   MapWidget(LatLng northWest, LatLng southEast, this.stt, this.ongoingDialog,
+      this.eartags, this.ties,
       {required this.userStartPosition, this.onSheepRegistered, Key? key})
       : super(key: key) {
     southWest = LatLng(southEast.latitude, northWest.longitude);
@@ -22,6 +23,9 @@ class MapWidget extends StatefulWidget {
 
   final SpeechToText stt;
   final ValueNotifier<bool> ongoingDialog;
+
+  final Map<String, bool?> eartags;
+  final Map<String, int?> ties;
 
   final LatLng userStartPosition;
   final ValueChanged<int>? onSheepRegistered;
@@ -44,19 +48,19 @@ class _MapState extends State<MapWidget> {
   late String urlTemplate;
   bool urlTemplateLoaded = false;
 
+  bool mapAlreadyTapped = false;
+
   @override
   void initState() {
     super.initState();
+
+    urlTemplate = map_utils.getLocalUrlTemplate();
 
     userPosition = widget.userStartPosition;
     _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition);
     _movementPoints.add(userPosition);
 
     timer = Timer.periodic(const Duration(seconds: 30), (_) => _updateMap());
-
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      _loadUrlTemplate();
-    });
   }
 
   Future<void> _updateMap() async {
@@ -68,37 +72,35 @@ class _MapState extends State<MapWidget> {
     });
   }
 
-  Future<void> _loadUrlTemplate() async {
-    urlTemplate = map_utils.getLocalUrlTemplate();
-    setState(() {
-      urlTemplateLoaded = true;
-    });
-  }
-
   void registerSheepByTap(LatLng targetPosition) async {
-    LatLng pos = userPosition;
-    map_utils.getDevicePosition().then((value) {
-      pos = value;
-      _movementPoints.add(pos);
-    });
+    if (!mapAlreadyTapped) {
+      mapAlreadyTapped = true;
 
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ValueListenableBuilder<bool>(
-                valueListenable: widget.ongoingDialog,
-                builder: (context, value, child) => RegisterSheep(
-                      'filename',
-                      widget.stt,
-                      widget.ongoingDialog,
-                      onCompletedSuccessfully: (int sheepAmountRegistered) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ValueListenableBuilder<bool>(
+                  valueListenable: widget.ongoingDialog,
+                  builder: (context, value, child) => RegisterSheep(
+                          'filename',
+                          widget.stt,
+                          widget.ongoingDialog,
+                          targetPosition,
+                          widget.eartags,
+                          widget.ties,
+                          onCompletedSuccessfully: (Map<String, Object> data) {
+                        mapAlreadyTapped = false;
+                        int sheepAmount = data['sheep']! as int;
                         setState(() {
-                          if (sheepAmountRegistered > 0) {
+                          if (sheepAmount > 0) {
                             if (widget.onSheepRegistered != null) {
-                              widget.onSheepRegistered!(sheepAmountRegistered);
+                              widget.onSheepRegistered!(sheepAmount);
                             }
                             linesOfSight.add(Polyline(
-                                points: [pos, targetPosition],
+                                points: [
+                                  data['devicePosition']! as LatLng,
+                                  targetPosition
+                                ],
                                 color: Colors.black,
                                 isDotted: true,
                                 strokeWidth: 5.0));
@@ -106,8 +108,10 @@ class _MapState extends State<MapWidget> {
                                 .add(map_utils.getSheepMarker(targetPosition));
                           }
                         });
-                      },
-                    ))));
+                      }, onWillPop: () {
+                        mapAlreadyTapped = false;
+                      }))));
+    }
   }
 
   @override
@@ -119,46 +123,44 @@ class _MapState extends State<MapWidget> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      child: urlTemplateLoaded
-          ? FlutterMap(
-              mapController: _mapController,
-              options: MapOptions(
-                onMapCreated: (c) {
-                  _mapController = c;
-                },
-                onTap: (_, point) => registerSheepByTap(point),
-                zoom: OfflineZoomLevels.min,
-                minZoom: OfflineZoomLevels.min,
-                maxZoom: OfflineZoomLevels.max,
-                swPanBoundary: widget.southWest,
-                nePanBoundary: widget.northEast,
-                center: LatLngBounds(widget.southWest, widget.northEast).center,
-              ),
-              layers: [
-                TileLayerOptions(
-                  tileProvider: const FileTileProvider(),
-                  urlTemplate: urlTemplate,
-                  errorImage: const AssetImage("images/stripes.png"),
-                  attributionBuilder: (_) {
-                    return const Text(
-                      "Kartverket",
-                      style: TextStyle(color: Colors.black, fontSize: 10),
-                    );
-                  },
-                ),
-                PolylineLayerOptions(polylines: [
-                  Polyline(
-                    points: _movementPoints,
-                    color: Colors.red,
-                    strokeWidth: 7.0,
-                  ),
-                  ...linesOfSight
-                ]),
-                MarkerLayerOptions(
-                    markers: [_currentPositionMarker, ...registrationMarkers])
-              ],
-            )
-          : const Center(child: Text("Laster inn")),
+      child: FlutterMap(
+        mapController: _mapController,
+        options: MapOptions(
+          onMapCreated: (c) {
+            _mapController = c;
+          },
+          onTap: (_, point) => registerSheepByTap(point),
+          zoom: OfflineZoomLevels.min,
+          minZoom: OfflineZoomLevels.min,
+          maxZoom: OfflineZoomLevels.max,
+          swPanBoundary: widget.southWest,
+          nePanBoundary: widget.northEast,
+          center: LatLngBounds(widget.southWest, widget.northEast).center,
+        ),
+        layers: [
+          TileLayerOptions(
+            tileProvider: const FileTileProvider(),
+            urlTemplate: urlTemplate,
+            errorImage: const AssetImage("images/stripes.png"),
+            attributionBuilder: (_) {
+              return const Text(
+                "Kartverket",
+                style: TextStyle(color: Colors.black, fontSize: 10),
+              );
+            },
+          ),
+          PolylineLayerOptions(polylines: [
+            Polyline(
+              points: _movementPoints,
+              color: Colors.red,
+              strokeWidth: 7.0,
+            ),
+            ...linesOfSight
+          ]),
+          MarkerLayerOptions(
+              markers: [_currentPositionMarker, ...registrationMarkers])
+        ],
+      ),
     );
   }
 }
