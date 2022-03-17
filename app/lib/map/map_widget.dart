@@ -10,8 +10,14 @@ import '../utils/map_utils.dart' as map_utils;
 import '../utils/constants.dart';
 
 class MapWidget extends StatefulWidget {
-  MapWidget(LatLng northWest, LatLng southEast, this.stt, this.ongoingDialog,
-      {required this.userStartPosition,
+  MapWidget(
+      {required LatLng northWest,
+      required LatLng southEast,
+      required this.stt,
+      required this.ongoingDialog,
+      required this.deviceStartPosition,
+      required this.eartags,
+      required this.ties,
       this.onSheepRegistered,
       this.onNewPosition,
       Key? key})
@@ -26,7 +32,10 @@ class MapWidget extends StatefulWidget {
   final SpeechToText stt;
   final ValueNotifier<bool> ongoingDialog;
 
-  final LatLng userStartPosition;
+  final Map<String, bool?> eartags;
+  final Map<String, int?> ties;
+
+  final LatLng deviceStartPosition;
 
   final ValueChanged<Map<String, Object>>? onSheepRegistered;
   final ValueChanged<LatLng>? onNewPosition;
@@ -49,19 +58,19 @@ class _MapState extends State<MapWidget> {
   late String urlTemplate;
   bool urlTemplateLoaded = false;
 
+  bool mapAlreadyTapped = false;
+
   @override
   void initState() {
     super.initState();
 
-    userPosition = widget.userStartPosition;
+    urlTemplate = map_utils.getLocalUrlTemplate();
+
+    userPosition = widget.deviceStartPosition;
     _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition);
     _movementPoints.add(userPosition);
 
     timer = Timer.periodic(const Duration(seconds: 30), (_) => _updateMap());
-
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      _loadUrlTemplate();
-    });
   }
 
   Future<void> _updateMap() async {
@@ -76,54 +85,49 @@ class _MapState extends State<MapWidget> {
     });
   }
 
-  Future<void> _loadUrlTemplate() async {
-    urlTemplate = map_utils.getLocalUrlTemplate();
-    setState(() {
-      urlTemplateLoaded = true;
-    });
-  }
-
   void registerSheepByTap(LatLng targetPosition) async {
-    LatLng pos = userPosition;
-    map_utils.getDevicePosition().then((value) {
-      pos = value;
-      _movementPoints.add(pos);
-    });
+    if (!mapAlreadyTapped) {
+      mapAlreadyTapped = true;
 
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ValueListenableBuilder<bool>(
-                valueListenable: widget.ongoingDialog,
-                builder: (context, value, child) => RegisterSheep(
-                      widget.stt,
-                      widget.ongoingDialog,
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ValueListenableBuilder<bool>(
+                  valueListenable: widget.ongoingDialog,
+                  builder: (context, value, child) => RegisterSheep(
+                      stt: widget.stt,
+                      ongoingDialog: widget.ongoingDialog,
+                      sheepPosition: targetPosition,
+                      eartags: widget.eartags,
+                      ties: widget.ties,
                       onCompletedSuccessfully: (Map<String, Object> data) {
-                        int sheepAmountRegistered = data['sheep']! as int;
-                        setState(() {
-                          if (sheepAmountRegistered > 0) {
+                        mapAlreadyTapped = false;
+
+                        if (data['sheep']! as int > 0) {
+                          setState(() {
                             if (widget.onSheepRegistered != null) {
-                              data['devicePosition'] = {
-                                'latitude': pos.latitude,
-                                'longitude': pos.longitude
-                              };
-                              data['registrationPosition'] = {
-                                'latitude': targetPosition.latitude,
-                                'longitude': targetPosition.longitude
-                              };
                               widget.onSheepRegistered!(data);
                             }
+                            LatLng devicePosition = LatLng(
+                                (data['devicePosition']!
+                                    as Map<String, double>)['latitude']!,
+                                (data['devicePosition']!
+                                    as Map<String, double>)['longitude']!);
+
                             linesOfSight.add(Polyline(
-                                points: [pos, targetPosition],
+                                points: [devicePosition, targetPosition],
                                 color: Colors.black,
                                 isDotted: true,
                                 strokeWidth: 5.0));
                             registrationMarkers
                                 .add(map_utils.getSheepMarker(targetPosition));
-                          }
-                        });
+                          });
+                        }
                       },
-                    ))));
+                      onWillPop: () {
+                        mapAlreadyTapped = false;
+                      }))));
+    }
   }
 
   @override
@@ -135,46 +139,44 @@ class _MapState extends State<MapWidget> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      child: urlTemplateLoaded
-          ? FlutterMap(
-              mapController: _mapController,
-              options: MapOptions(
-                onMapCreated: (c) {
-                  _mapController = c;
-                },
-                onTap: (_, point) => registerSheepByTap(point),
-                zoom: OfflineZoomLevels.min,
-                minZoom: OfflineZoomLevels.min,
-                maxZoom: OfflineZoomLevels.max,
-                swPanBoundary: widget.southWest,
-                nePanBoundary: widget.northEast,
-                center: LatLngBounds(widget.southWest, widget.northEast).center,
-              ),
-              layers: [
-                TileLayerOptions(
-                  tileProvider: const FileTileProvider(),
-                  urlTemplate: urlTemplate,
-                  errorImage: const AssetImage("images/stripes.png"),
-                  attributionBuilder: (_) {
-                    return const Text(
-                      "Kartverket",
-                      style: TextStyle(color: Colors.black, fontSize: 10),
-                    );
-                  },
-                ),
-                PolylineLayerOptions(polylines: [
-                  Polyline(
-                    points: _movementPoints,
-                    color: Colors.red,
-                    strokeWidth: 7.0,
-                  ),
-                  ...linesOfSight
-                ]),
-                MarkerLayerOptions(
-                    markers: [_currentPositionMarker, ...registrationMarkers])
-              ],
-            )
-          : const Center(child: Text("Laster inn")),
+      child: FlutterMap(
+        mapController: _mapController,
+        options: MapOptions(
+          onMapCreated: (c) {
+            _mapController = c;
+          },
+          onTap: (_, point) => registerSheepByTap(point),
+          zoom: OfflineZoomLevels.min,
+          minZoom: OfflineZoomLevels.min,
+          maxZoom: OfflineZoomLevels.max,
+          swPanBoundary: widget.southWest,
+          nePanBoundary: widget.northEast,
+          center: LatLngBounds(widget.southWest, widget.northEast).center,
+        ),
+        layers: [
+          TileLayerOptions(
+            tileProvider: const FileTileProvider(),
+            urlTemplate: urlTemplate,
+            errorImage: const AssetImage("images/stripes.png"),
+            attributionBuilder: (_) {
+              return const Text(
+                "Kartverket",
+                style: TextStyle(color: Colors.black, fontSize: 10),
+              );
+            },
+          ),
+          PolylineLayerOptions(polylines: [
+            Polyline(
+              points: _movementPoints,
+              color: Colors.red,
+              strokeWidth: 7.0,
+            ),
+            ...linesOfSight
+          ]),
+          MarkerLayerOptions(
+              markers: [_currentPositionMarker, ...registrationMarkers])
+        ],
+      ),
     );
   }
 }

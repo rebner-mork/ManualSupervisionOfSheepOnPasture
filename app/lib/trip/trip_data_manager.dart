@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
 class TripDataManager {
@@ -49,6 +50,7 @@ class TripDataManager {
 
     for (var registration in registrations) {
       DocumentReference registrationDocument = registrationSubCollection.doc();
+      debugPrint(registration.toString());
       registrationDocument.set(registration);
     }
   }
