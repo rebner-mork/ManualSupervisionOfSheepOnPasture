@@ -10,9 +10,17 @@ import '../utils/map_utils.dart' as map_utils;
 import '../utils/constants.dart';
 
 class MapWidget extends StatefulWidget {
-  MapWidget(LatLng northWest, LatLng southEast, this.stt, this.ongoingDialog,
-      this.eartags, this.ties,
-      {required this.userStartPosition, this.onSheepRegistered, Key? key})
+  MapWidget(
+      {required LatLng northWest,
+      required LatLng southEast,
+      required this.stt,
+      required this.ongoingDialog,
+      required this.deviceStartPosition,
+      required this.eartags,
+      required this.ties,
+      this.onSheepRegistered,
+      this.onNewPosition,
+      Key? key})
       : super(key: key) {
     southWest = LatLng(southEast.latitude, northWest.longitude);
     northEast = LatLng(northWest.latitude, southEast.longitude);
@@ -27,8 +35,10 @@ class MapWidget extends StatefulWidget {
   final Map<String, bool?> eartags;
   final Map<String, int?> ties;
 
-  final LatLng userStartPosition;
-  final ValueChanged<int>? onSheepRegistered;
+  final LatLng deviceStartPosition;
+
+  final ValueChanged<Map<String, Object>>? onSheepRegistered;
+  final ValueChanged<LatLng>? onNewPosition;
 
   @override
   State<MapWidget> createState() => _MapState();
@@ -56,7 +66,7 @@ class _MapState extends State<MapWidget> {
 
     urlTemplate = map_utils.getLocalUrlTemplate();
 
-    userPosition = widget.userStartPosition;
+    userPosition = widget.deviceStartPosition;
     _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition);
     _movementPoints.add(userPosition);
 
@@ -65,6 +75,9 @@ class _MapState extends State<MapWidget> {
 
   Future<void> _updateMap() async {
     userPosition = await map_utils.getDevicePosition();
+    if (widget.onNewPosition != null) {
+      widget.onNewPosition!(userPosition);
+    }
     setState(() {
       //_mapController.move(pos, _mapController.zoom);
       _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition);
@@ -82,33 +95,36 @@ class _MapState extends State<MapWidget> {
               builder: (context) => ValueListenableBuilder<bool>(
                   valueListenable: widget.ongoingDialog,
                   builder: (context, value, child) => RegisterSheep(
-                          'filename',
-                          widget.stt,
-                          widget.ongoingDialog,
-                          targetPosition,
-                          widget.eartags,
-                          widget.ties,
-                          onCompletedSuccessfully: (Map<String, Object> data) {
+                      stt: widget.stt,
+                      ongoingDialog: widget.ongoingDialog,
+                      sheepPosition: targetPosition,
+                      eartags: widget.eartags,
+                      ties: widget.ties,
+                      onCompletedSuccessfully: (Map<String, Object> data) {
                         mapAlreadyTapped = false;
-                        int sheepAmount = data['sheep']! as int;
-                        setState(() {
-                          if (sheepAmount > 0) {
+
+                        if (data['sheep']! as int > 0) {
+                          setState(() {
                             if (widget.onSheepRegistered != null) {
-                              widget.onSheepRegistered!(sheepAmount);
+                              widget.onSheepRegistered!(data);
                             }
+                            LatLng devicePosition = LatLng(
+                                (data['devicePosition']!
+                                    as Map<String, double>)['latitude']!,
+                                (data['devicePosition']!
+                                    as Map<String, double>)['longitude']!);
+
                             linesOfSight.add(Polyline(
-                                points: [
-                                  data['devicePosition']! as LatLng,
-                                  targetPosition
-                                ],
+                                points: [devicePosition, targetPosition],
                                 color: Colors.black,
                                 isDotted: true,
                                 strokeWidth: 5.0));
                             registrationMarkers
                                 .add(map_utils.getSheepMarker(targetPosition));
-                          }
-                        });
-                      }, onWillPop: () {
+                          });
+                        }
+                      },
+                      onWillPop: () {
                         mapAlreadyTapped = false;
                       }))));
     }

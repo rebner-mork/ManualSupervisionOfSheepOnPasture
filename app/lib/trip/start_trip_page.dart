@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:app/main_page.dart';
+import 'package:app/providers/settings_provider.dart';
 import 'package:app/utils/constants.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/map_utils.dart';
@@ -10,6 +11,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
+import 'package:speech_to_text/speech_recognition_error.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 class StartTripPage extends StatefulWidget {
   const StartTripPage({Key? key}) : super(key: key);
@@ -25,6 +29,9 @@ class StartTripPage extends StatefulWidget {
 class _StartTripPageState extends State<StartTripPage>
     with TickerProviderStateMixin {
   _StartTripPageState();
+
+  late SpeechToText _speechToText;
+  final ValueNotifier<bool> _ongoingDialog = ValueNotifier<bool>(false);
 
   late List<String> _farmIDs;
 
@@ -64,7 +71,21 @@ class _StartTripPageState extends State<StartTripPage>
     _animationSetup();
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _initSpeechToText();
       _readFarms();
+    });
+  }
+
+  void _initSpeechToText() async {
+    _speechToText = SpeechToText();
+    await _speechToText.initialize(onError: _speechToTextError);
+    Provider.of<SettingsProvider>(context, listen: false)
+        .setSttAvailability(_speechToText.isAvailable);
+  }
+
+  void _speechToTextError(SpeechRecognitionError error) {
+    setState(() {
+      _ongoingDialog.value = false;
     });
   }
 
@@ -321,18 +342,27 @@ class _StartTripPageState extends State<StartTripPage>
       _downloadProgress = 0;
     });
 
-    Navigator.pushReplacement(
+    Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => MainPage(
-                  northWest: mapBounds['northWest']!,
-                  southEast: mapBounds['southEast']!,
-                  farmId: _farmIDs[_farmNames.indexOf(_selectedFarmName)],
-                  eartags: _noEartagsDefined
-                      ? possibleEartagsWithoutDefinition
-                      : _eartags!,
-                  ties: _noTiesDefined ? possibleTiesWithoutDefinition : _ties!,
-                )));
+            builder: (context) => ValueListenableBuilder<bool>(
+                valueListenable: _ongoingDialog,
+                builder: (context, value, child) => MainPage(
+                      speechToText: _speechToText,
+                      ongoingDialog: _ongoingDialog,
+                      northWest: mapBounds['northWest']!,
+                      southEast: mapBounds['southEast']!,
+                      farmId: _farmIDs[_farmNames.indexOf(_selectedFarmName)],
+                      personnelEmail: FirebaseAuth.instance.currentUser!.email!,
+                      mapName:
+                          _selectedFarmMap, //TODO change to mapId when maps are their own documents
+                      eartags: _noEartagsDefined
+                          ? possibleEartagsWithoutDefinition
+                          : _eartags!,
+                      ties: _noTiesDefined
+                          ? possibleTiesWithoutDefinition
+                          : _ties!,
+                    ))));
   }
 
   Map<String, Map<String, Map<String, double>>> _castMapsFromDynamic(

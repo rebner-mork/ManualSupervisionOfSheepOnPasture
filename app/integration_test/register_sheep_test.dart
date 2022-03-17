@@ -1,8 +1,10 @@
+import 'package:app/providers/settings_provider.dart';
 import 'package:app/register/register_sheep.dart';
 import 'package:app/utils/map_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:provider/provider.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:fluttericon/rpg_awesome_icons.dart';
@@ -22,9 +24,17 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   testWidgets('Distance: Initial layout and content',
       (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-        home: RegisterSheep('testFile', SpeechToText(), ValueNotifier(false),
-            LatLng(40, 40), eartags, ties)));
+    await tester.pumpWidget(MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => SettingsProvider())
+        ],
+        child: MaterialApp(
+            home: RegisterSheep(
+                stt: SpeechToText(),
+                ongoingDialog: ValueNotifier(false),
+                sheepPosition: LatLng(40, 40),
+                eartags: eartags,
+                ties: ties))));
 
     expect(find.byType(BackButton), findsOneWidget);
     expect(find.text('Laster inn...'), findsOneWidget);
@@ -50,9 +60,17 @@ void main() {
   testWidgets('Close: Initial layout and content', (WidgetTester tester) async {
     LatLng devicePosition = await getDevicePosition();
 
-    await tester.pumpWidget(MaterialApp(
-        home: RegisterSheep('testFile', SpeechToText(), ValueNotifier(false),
-            devicePosition, eartags, ties)));
+    await tester.pumpWidget(MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => SettingsProvider())
+        ],
+        child: MaterialApp(
+            home: RegisterSheep(
+                stt: SpeechToText(),
+                ongoingDialog: ValueNotifier(false),
+                sheepPosition: devicePosition,
+                eartags: eartags,
+                ties: ties))));
 
     expect(find.byType(BackButton), findsOneWidget);
     expect(find.text('Laster inn...'), findsOneWidget);
@@ -89,9 +107,17 @@ void main() {
 
   testWidgets('Floating button changes on keyboard up',
       (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-        home: RegisterSheep('testFile', SpeechToText(), ValueNotifier(false),
-            LatLng(40, 40), eartags, ties)));
+    await tester.pumpWidget(MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => SettingsProvider())
+        ],
+        child: MaterialApp(
+            home: RegisterSheep(
+                stt: SpeechToText(),
+                ongoingDialog: ValueNotifier(false),
+                sheepPosition: LatLng(40, 40),
+                eartags: eartags,
+                ties: ties))));
 
     await tester.pumpAndSettle();
 
@@ -107,9 +133,17 @@ void main() {
   });
 
   testWidgets('Alert-dialog on back button', (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-        home: RegisterSheep('testFile', SpeechToText(), ValueNotifier(false),
-            LatLng(40, 40), eartags, ties)));
+    await tester.pumpWidget(MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => SettingsProvider())
+        ],
+        child: MaterialApp(
+            home: RegisterSheep(
+                stt: SpeechToText(),
+                ongoingDialog: ValueNotifier(false),
+                sheepPosition: LatLng(40, 40),
+                eartags: eartags,
+                ties: ties))));
 
     await tester.pumpAndSettle();
 

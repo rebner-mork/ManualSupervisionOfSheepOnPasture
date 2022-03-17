@@ -1,6 +1,4 @@
-import 'dart:convert';
-import 'dart:io';
-
+import 'package:app/providers/settings_provider.dart';
 import 'package:app/utils/constants.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/other.dart';
@@ -8,7 +6,7 @@ import 'package:app/utils/question_sets.dart';
 import 'package:app/utils/speech_input_filters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:fluttericon/rpg_awesome_icons.dart';
@@ -17,17 +15,25 @@ import 'package:latlong2/latlong.dart';
 import '../utils/map_utils.dart' as map_utils;
 
 class RegisterSheep extends StatefulWidget {
-  const RegisterSheep(this.fileName, this.stt, this.ongoingDialog,
-      this.sheepPosition, this.eartags, this.ties,
-      {this.onCompletedSuccessfully, this.onWillPop, Key? key})
+  const RegisterSheep(
+      {required this.stt,
+      required this.ongoingDialog,
+      required this.sheepPosition,
+      required this.eartags,
+      required this.ties,
+      this.onCompletedSuccessfully,
+      this.onWillPop,
+      Key? key})
       : super(key: key);
 
-  final String fileName;
   final SpeechToText stt;
   final ValueNotifier<bool> ongoingDialog;
+
   final LatLng sheepPosition;
+
   final Map<String, bool?> eartags;
   final Map<String, int?> ties;
+
   final ValueChanged<Map<String, Object>>? onCompletedSuccessfully;
   final VoidCallback? onWillPop;
 
@@ -124,8 +130,10 @@ class _RegisterSheepState extends State<RegisterSheep> {
       _isLoading = false;
     });
 
-    if (widget.stt.isAvailable) {
-      _startDialog(questions, questionContexts);
+    if (Provider.of<SettingsProvider>(context, listen: false).autoDialog) {
+      if (widget.stt.isAvailable) {
+        _startDialog(questions, questionContexts);
+      }
     }
   }
 
@@ -227,20 +235,21 @@ class _RegisterSheepState extends State<RegisterSheep> {
     await _tts.speak(text);
   }
 
-  void _registerSheep() async {
-    final Directory directory = await getApplicationDocumentsDirectory();
-    final String path = directory.path;
-
-    final File file = File('$path/${widget.fileName}.json');
-    final Map data = gatherRegisteredData(_textControllers);
-
-    file.writeAsString(json.encode(data));
+  void _registerSheep() {
+    Map<String, Object> data = {};
+    data.addAll(gatherRegisteredData(_textControllers));
+    data['timestamp'] = DateTime.now();
+    data['devicePosition'] = {
+      'latitude': _devicePosition.latitude,
+      'longitude': _devicePosition.longitude
+    };
+    data['registrationPosition'] = {
+      'latitude': widget.sheepPosition.latitude,
+      'longitude': widget.sheepPosition.longitude
+    };
 
     if (widget.onCompletedSuccessfully != null) {
-      Map<String, Object> dataToReturn = {};
-      dataToReturn.addAll(gatherRegisteredData(_textControllers));
-      dataToReturn['devicePosition'] = _devicePosition;
-      widget.onCompletedSuccessfully!(dataToReturn);
+      widget.onCompletedSuccessfully!(data);
     }
     if (Navigator.canPop(context)) {
       Navigator.pop(context);

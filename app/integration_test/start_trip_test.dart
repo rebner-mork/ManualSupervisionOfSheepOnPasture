@@ -1,9 +1,11 @@
+import 'package:app/providers/settings_provider.dart';
 import 'package:app/trip/start_trip_page.dart';
 import 'package:app/utils/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:provider/provider.dart';
 
 import 'firebase_setup.dart';
 
@@ -15,7 +17,9 @@ void main() async {
 
   group('Start trip happy day scenario', () {
     testWidgets('Initial layout', (WidgetTester tester) async {
-      await tester.pumpWidget(const MaterialApp(home: StartTripPage()));
+      await tester.pumpWidget(MultiProvider(providers: [
+        ChangeNotifierProvider(create: (context) => SettingsProvider())
+      ], child: const MaterialApp(home: StartTripPage())));
 
       expect(find.text('Start oppsynstur'), findsOneWidget);
       expect(find.text('Laster inn...'), findsOneWidget);
@@ -37,7 +41,9 @@ void main() async {
     });
 
     testWidgets('Download map', (WidgetTester tester) async {
-      await tester.pumpWidget(const MaterialApp(home: StartTripPage()));
+      await tester.pumpWidget(MultiProvider(providers: [
+        ChangeNotifierProvider(create: (context) => SettingsProvider())
+      ], child: const MaterialApp(home: StartTripPage())));
       await tester.pumpAndSettle();
       await tester.pump(const Duration(milliseconds: 300));
 
@@ -67,7 +73,9 @@ void main() async {
   group('Start trip with no maps defined', () {
     testWidgets('Initial layout', (WidgetTester tester) async {
       await setUpFarm(maps: null);
-      await tester.pumpWidget(const MaterialApp(home: StartTripPage()));
+      await tester.pumpWidget(MultiProvider(providers: [
+        ChangeNotifierProvider(create: (context) => SettingsProvider())
+      ], child: const MaterialApp(home: StartTripPage())));
 
       expect(find.text('Start oppsynstur'), findsOneWidget);
       expect(find.text('Laster inn...'), findsOneWidget);
@@ -80,8 +88,10 @@ void main() async {
       expect(find.text('Laster inn...'), findsNothing);
       expect(find.text('Start oppsynstur'), findsNWidgets(2));
       expect(find.text('Gård'), findsOneWidget);
-      expect(find.text('Kart'), findsOneWidget);
-      expect(find.text('Gården \'$farmName\' har ikke definert noen kart'),
+      expect(find.text('Kart'), findsNothing);
+      expect(
+          find.text(
+              'Gården har ikke definert noen kart,\noppsynstur kan dermed ikke starte.'),
           findsOneWidget);
     });
   });
@@ -96,7 +106,9 @@ void main() async {
             email: 'testing@gmail.no', password: password);
       }
 
-      await tester.pumpWidget(const MaterialApp(home: StartTripPage()));
+      await tester.pumpWidget(MultiProvider(providers: [
+        ChangeNotifierProvider(create: (context) => SettingsProvider())
+      ], child: const MaterialApp(home: StartTripPage())));
       await tester.pumpAndSettle();
       await tester.pump(const Duration(milliseconds: 300));
 
