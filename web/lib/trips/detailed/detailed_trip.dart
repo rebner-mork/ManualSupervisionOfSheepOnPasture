@@ -161,7 +161,7 @@ class _DetailedTripState extends State<DetailedTrip> {
                           idealWidth
                       ? textSize(dateText(), const TextStyle(fontSize: 50))
                           .width
-                      : idealWidth, // combined width of both InfoTables and their padding
+                      : idealWidth,
                   child: Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
@@ -172,8 +172,7 @@ class _DetailedTripState extends State<DetailedTrip> {
                         ),
                       ))),
               SizedBox(
-                  width:
-                      idealWidth, // combined width of both InfoTables and their padding
+                  width: idealWidth,
                   child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
