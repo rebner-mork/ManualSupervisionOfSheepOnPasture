@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web/my_page/my_page.dart';
-import 'package:web/utils/styles.dart';
+import 'package:web/trips/trips.dart';
 
 class MainTabs extends StatefulWidget {
   const MainTabs({Key? key}) : super(key: key);
@@ -22,37 +22,34 @@ class _MainState extends State<MainTabs> {
           initialIndex: 2,
           child: Scaffold(
             appBar: PreferredSize(
-              preferredSize: const Size.fromHeight(48),
+              preferredSize: const Size.fromHeight(50), // 55
               child: Container(
-                  color: Colors.grey[800],
+                  color: Colors.grey.shade800,
                   child: Padding(
-                      padding: const EdgeInsets.only(left: 128),
+                      padding: const EdgeInsets.only(left: 128), // bottom: 5
                       child: AppBar(
                         toolbarHeight: 0,
-                        backgroundColor: Colors.grey[800],
+                        backgroundColor: Colors.grey.shade800,
                         bottom: TabBar(
-                            unselectedLabelColor: Colors.grey[400],
+                            labelStyle: const TextStyle(
+                              fontSize: 24,
+                            ),
+                            labelColor: Colors.white,
+                            unselectedLabelColor: Colors.grey.shade200, // 300
                             indicator: const UnderlineTabIndicator(
-                              borderSide: BorderSide(
-                                  width: 3, color: Colors.green), //Colors.red
+                              borderSide:
+                                  BorderSide(width: 5, color: Colors.green),
                             ),
                             //indicatorSize: TabBarIndicatorSize.label,
-                            tabs: [
-                              Tab(
-                                  child: Text(
-                                'Årsrapporter',
-                                style: mainTabsTextStyle,
-                              )),
-                              Tab(
-                                  child: Text('Oppsynsturer',
-                                      style: mainTabsTextStyle)),
-                              Tab(
-                                  child: Text('Min side',
-                                      style: mainTabsTextStyle)),
+                            tabs: const [
+                              Tab(child: Text('Årsrapporter')),
+                              Tab(child: Text('Oppsynsturer')),
+                              Tab(child: Text('Min side')),
                             ]),
                       ))),
             ),
-            body: const TabBarView(children: [Text('1'), Text('2'), MyPage()]),
+            body:
+                const TabBarView(children: [Text('1'), TripsPage(), MyPage()]),
           )),
     );
   }
