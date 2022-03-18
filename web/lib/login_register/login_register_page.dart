@@ -30,7 +30,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
             margin: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
-                const Spacer(flex: 5),
+                Spacer(flex: _isLogin ? 5 : 1),
                 _isLogin ? const LoginForm() : const RegisterUserWidget(),
                 Spacer(flex: _isLogin ? 10 : 1),
                 Flexible(
@@ -53,6 +53,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
                                 : const Size(250, 55),
                             textStyle:
                                 TextStyle(fontSize: _isLogin ? 24 : 20)))),
+                const SizedBox(height: 10)
               ],
             ),
           ))),
