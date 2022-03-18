@@ -1,85 +1,132 @@
+import 'dart:async';
+
 import 'package:app/map/map_widget.dart';
-import 'package:app/providers/settings_provider.dart';
+import 'package:app/trip/end_trip_dialog.dart';
+import 'package:app/trip/start_trip_page.dart';
+import 'package:app/trip/trip_data_manager.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/other.dart';
 import 'package:app/widgets/circular_buttons.dart';
+
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:provider/provider.dart';
-import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+import '../utils/map_utils.dart' as map_utils;
 
 class MainPage extends StatefulWidget {
   const MainPage(
-      {required this.northWest,
+      {required this.speechToText,
+      required this.ongoingDialog,
+      required this.northWest,
       required this.southEast,
-      required this.userStartPosition,
+      required this.mapName,
+      required this.farmId,
+      required this.personnelEmail,
+      required this.eartags,
+      required this.ties,
       Key? key})
       : super(key: key);
 
+  final SpeechToText speechToText;
+  final ValueNotifier<bool> ongoingDialog;
+
   final LatLng northWest;
   final LatLng southEast;
-  final LatLng userStartPosition;
+
+  final String mapName;
+
+  final String farmId;
+  final String personnelEmail;
+
+  final Map<String, bool?> eartags;
+  final Map<String, int?> ties;
 
   @override
-  State<MainPage> createState() => _MapState();
+  State<MainPage> createState() => _MainPageState();
 }
 
-class _MapState extends State<MainPage> {
-  late SpeechToText _speechToText;
-  final ValueNotifier<bool> _ongoingDialog = ValueNotifier<bool>(false);
+class _MainPageState extends State<MainPage> {
+  static const double buttonInset = 8;
+  late final TripDataManager _tripData;
+
+  late LatLng _deviceStartPosition;
 
   int _sheepAmount = 0;
   double iconSize = 42;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _initSpeechToText();
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _setDeviceStartPosition();
+    });
   }
 
-  void _initSpeechToText() async {
-    _speechToText = SpeechToText();
-    await _speechToText.initialize(onError: _speechToTextError);
-    Provider.of<SettingsProvider>(context, listen: false)
-        .setSttAvailability(_speechToText.isAvailable);
-  }
+  Future<void> _setDeviceStartPosition() async {
+    _deviceStartPosition = await map_utils.getDevicePosition();
 
-  void _speechToTextError(SpeechRecognitionError error) {
+    _tripData = TripDataManager.start(
+        farmId: widget.farmId,
+        personnelEmail: widget.personnelEmail,
+        mapName: widget.mapName);
+    _tripData.track.add(_deviceStartPosition);
+
     setState(() {
-      _ongoingDialog.value = false;
+      _isLoading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Material(
-        child: Stack(children: [
+/*<<<<<<< HEAD
+        child: _isLoading ? const LoadingData() : Stack(children: [
       ValueListenableBuilder<bool>(
-          valueListenable: _ongoingDialog,
-          builder: (context, value, child) => MapWidget(widget.northWest,
-                  widget.southEast, _speechToText, _ongoingDialog,
-                  userStartPosition: widget.userStartPosition,
-                  onSheepRegistered: (int sheepAmountRegistered) {
-                setState(() {
+          valueListenable: widget.ongoingDialog,
+          builder: (context, value, child) => MapWidget(
+                widget.northWest,
+                widget.southEast,
+                widget.speechToText,
+                widget.ongoingDialog,
+                deviceStartPosition: widget.deviceStartPosition,
+                onSheepRegistered: (Map<String, Object> data) {
+                  int sheepAmountRegistered = data['sheep']! as int;
                   if (sheepAmountRegistered > 0) {
-                    _sheepAmount += sheepAmountRegistered;
+                    _tripData.registrations.add(data);
+                    setState(() {
+                      _sheepAmount += sheepAmountRegistered;
+                    });
                   }
-                });
-              })),
+                },
+                onNewPosition: (position) => _tripData.track.add(position),
+              )),
       Positioned(
-          top: 8 + MediaQuery.of(context).viewPadding.top,
-          right: 8,
+        top: buttonInset + MediaQuery.of(context).viewPadding.top,
+        left: buttonInset,
+        child: CircularButton(
+            child: const Icon(
+              Icons.cloud_upload,
+              size: iconSize,
+            ),
+            onPressed: () {
+              _endTripButtonPressed(context, _tripData);
+            }),
+      ),
+      Positioned(
+          top: buttonInset + MediaQuery.of(context).viewPadding.top,
+          right: buttonInset,
           child: CircularButton(
-            child: SettingsIcon(iconSize: iconSize),
+            child: const SettingsIcon(iconSize: iconSize),
             onPressed: () {
               showDialog(
                   context: context, builder: (_) => const SettingsDialog());
             },
           )),
       Positioned(
-        bottom: 8 + MediaQuery.of(context).viewPadding.bottom,
-        left: 8,
+        bottom: buttonInset + MediaQuery.of(context).viewPadding.bottom,
+        left: buttonInset,
         child: CircularButton(
           child: Sheepometer(sheepAmount: _sheepAmount, iconSize: iconSize),
           onPressed: () {},
@@ -88,5 +135,78 @@ class _MapState extends State<MainPage> {
         ),
       ),
     ]));
+=======*/
+        child: _isLoading
+            ? const LoadingData()
+            : Stack(children: [
+                ValueListenableBuilder<bool>(
+                    valueListenable: widget.ongoingDialog,
+                    builder: (context, value, child) => MapWidget(
+                          northWest: widget.northWest,
+                          southEast: widget.southEast,
+                          stt: widget.speechToText,
+                          ongoingDialog: widget.ongoingDialog,
+                          eartags: widget.eartags,
+                          ties: widget.ties,
+                          deviceStartPosition: _deviceStartPosition,
+                          onSheepRegistered: (Map<String, Object> data) {
+                            int sheepAmountRegistered = data['sheep']! as int;
+                            if (sheepAmountRegistered > 0) {
+                              _tripData.registrations.add(data);
+                              setState(() {
+                                _sheepAmount += sheepAmountRegistered;
+                              });
+                            }
+                          },
+                        )),
+                Positioned(
+                  top: buttonInset + MediaQuery.of(context).viewPadding.top,
+                  left: buttonInset,
+                  child: CircularButton(
+                      child: Icon(
+                        Icons.cloud_upload,
+                        size: iconSize,
+                      ),
+                      onPressed: () {
+                        _endTripButtonPressed(context, _tripData);
+                      }),
+                ),
+                Positioned(
+                    top: buttonInset + MediaQuery.of(context).viewPadding.top,
+                    right: buttonInset,
+                    child: CircularButton(
+                      child: SettingsIcon(iconSize: iconSize),
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (_) => const SettingsDialog());
+                      },
+                    )),
+                Positioned(
+                  bottom:
+                      buttonInset + MediaQuery.of(context).viewPadding.bottom,
+                  left: buttonInset,
+                  child: CircularButton(
+                    child: Sheepometer(
+                        sheepAmount: _sheepAmount, iconSize: iconSize),
+                    onPressed: () {},
+                    width: 62 +
+                        textSize(_sheepAmount.toString(),
+                                circularButtonTextStyle)
+                            .width,
+                  ),
+                ),
+              ]));
+//>>>>>>> main
   }
+}
+
+Future<void> _endTripButtonPressed(
+    BuildContext context, TripDataManager _trip) async {
+  await showEndTripDialog(context).then((isFinished) {
+    if (isFinished) {
+      _trip.post();
+      Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
+    }
+  });
 }

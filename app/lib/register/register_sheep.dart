@@ -1,27 +1,41 @@
-import 'dart:convert';
-import 'dart:io';
-
+import 'package:app/providers/settings_provider.dart';
+import 'package:app/utils/constants.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/other.dart';
 import 'package:app/utils/question_sets.dart';
 import 'package:app/utils/speech_input_filters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:fluttericon/rpg_awesome_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:latlong2/latlong.dart';
+import '../utils/map_utils.dart' as map_utils;
 
 class RegisterSheep extends StatefulWidget {
-  const RegisterSheep(this.fileName, this.stt, this.ongoingDialog,
-      {this.onCompletedSuccessfully, Key? key})
+  const RegisterSheep(
+      {required this.stt,
+      required this.ongoingDialog,
+      required this.sheepPosition,
+      required this.eartags,
+      required this.ties,
+      this.onCompletedSuccessfully,
+      this.onWillPop,
+      Key? key})
       : super(key: key);
 
-  final ValueChanged<int>? onCompletedSuccessfully;
-  final String fileName;
   final SpeechToText stt;
   final ValueNotifier<bool> ongoingDialog;
+
+  final LatLng sheepPosition;
+
+  final Map<String, bool?> eartags;
+  final Map<String, int?> ties;
+
+  final ValueChanged<Map<String, Object>>? onCompletedSuccessfully;
+  final VoidCallback? onWillPop;
 
   @override
   State<RegisterSheep> createState() => _RegisterSheepState();
@@ -29,6 +43,8 @@ class RegisterSheep extends StatefulWidget {
 
 class _RegisterSheepState extends State<RegisterSheep> {
   _RegisterSheepState();
+
+  String title = 'Avstandsregistrering sau';
 
   int questionIndex = 0;
 
@@ -41,7 +57,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
 
   final scrollController = ScrollController();
   final List<GlobalKey> firstHeadlineFieldKeys = [GlobalKey(), GlobalKey()];
-  final List<int> firstHeadlineFieldIndexes = [5, 8];
+  final List<int> firstHeadlineFieldIndexes = [distanceSheepQuestions.length];
   int currentHeadlineIndex = 0;
 
   final _textControllers = <String, TextEditingController>{
@@ -50,28 +66,75 @@ class _RegisterSheepState extends State<RegisterSheep> {
     'white': TextEditingController(),
     'black': TextEditingController(),
     'blackHead': TextEditingController(),
-    'redTie': TextEditingController(),
-    'blueTie': TextEditingController(),
-    'yellowTie': TextEditingController(),
-    'redEar': TextEditingController(),
-    'blueEar': TextEditingController(),
   };
 
-  List<String> questions = allSheepQuestions.keys.toList();
-  List<QuestionContext> questionContexts = allSheepQuestions.values.toList();
+  late LatLng _devicePosition;
+  final Distance distance = const Distance();
+  late bool _isShortDistance;
+
+  late List<String> questions;
+  late List<QuestionContext> questionContexts;
+
   List<String> numbers = numbersFilter.keys.toList();
   List<String> colors = colorsFilter.keys.toList();
+
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+
     _initTextToSpeech();
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _initGpsQuestionsAndDialog();
+    });
+  }
+
+  Future<void> _initGpsQuestionsAndDialog() async {
+    // TODO: try/catch (Unhandled Exception: Location services does not have permissions)
+    _devicePosition = await map_utils.getDevicePosition();
+    _isShortDistance =
+        distance.distance(_devicePosition, widget.sheepPosition) < 50;
+
+    questions = List.from(distanceSheepQuestions);
+    questionContexts = [
+      QuestionContext.numbers,
+      QuestionContext.numbers,
+      QuestionContext.numbers,
+      QuestionContext.numbers,
+      QuestionContext.numbers
+    ];
+
+    if (_isShortDistance) {
+      title = 'Nærregistrering sau';
+
+      for (String eartagColor in widget.eartags.keys) {
+        questions.add(closeSheepQuestions['eartags']![eartagColor]!);
+        questionContexts.add(QuestionContext.numbers);
+        _textControllers['${colorValueStringToColorString[eartagColor]}Ear'] =
+            TextEditingController();
+      }
+
+      firstHeadlineFieldIndexes.add(questions.length);
+
+      for (String tieColor in widget.ties.keys) {
+        questions.add(closeSheepQuestions['ties']![tieColor]!);
+        questionContexts.add(QuestionContext.numbers);
+        _textControllers['${colorValueStringToColorString[tieColor]}Tie'] =
+            TextEditingController();
+      }
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (Provider.of<SettingsProvider>(context, listen: false).autoDialog) {
       if (widget.stt.isAvailable) {
         _startDialog(questions, questionContexts);
       }
-    });
+    }
   }
 
   void _startDialog(
@@ -133,7 +196,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
 
           questionIndex++;
 
-          if (questionIndex < allSheepQuestions.length) {
+          if (questionIndex < questions.length) {
             if (firstHeadlineFieldIndexes.contains(questionIndex)) {
               scrollToKey(scrollController,
                   firstHeadlineFieldKeys[currentHeadlineIndex++]);
@@ -165,8 +228,6 @@ class _RegisterSheepState extends State<RegisterSheep> {
 
   Future<void> _setAwaitOptions() async {
     await _tts.awaitSpeakCompletion(true);
-    var engine = await _tts.getDefaultEngine;
-    debugPrint(engine);
   }
 
   Future<void> _speak(String text, {String language = 'nb-NO'}) async {
@@ -174,24 +235,96 @@ class _RegisterSheepState extends State<RegisterSheep> {
     await _tts.speak(text);
   }
 
-  void _registerSheep() async {
-    final Directory directory = await getApplicationDocumentsDirectory();
-    final String path = directory.path;
-
-    final File file = File('$path/${widget.fileName}.json');
-    final Map data = gatherRegisteredData(_textControllers);
-
-    file.writeAsString(json.encode(data));
+  void _registerSheep() {
+    Map<String, Object> data = {};
+    data.addAll(gatherRegisteredData(_textControllers));
+    data['timestamp'] = DateTime.now();
+    data['devicePosition'] = {
+      'latitude': _devicePosition.latitude,
+      'longitude': _devicePosition.longitude
+    };
+    data['registrationPosition'] = {
+      'latitude': widget.sheepPosition.latitude,
+      'longitude': widget.sheepPosition.longitude
+    };
 
     if (widget.onCompletedSuccessfully != null) {
-      int sheepAmount = _textControllers['sheep']!.text == ''
-          ? 0
-          : int.parse(_textControllers['sheep']!.text);
-      widget.onCompletedSuccessfully!(sheepAmount);
+      widget.onCompletedSuccessfully!(data);
     }
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
     }
+  }
+
+  Future<void> _backButtonPressed() async {
+    if (widget.stt.isAvailable) {
+      widget.stt.stop();
+      _tts.stop();
+      setState(() {
+        widget.ongoingDialog.value = false;
+      });
+    }
+    await cancelRegistrationDialog(context).then((value) => {
+          if (value)
+            {
+              if (widget.onWillPop != null) {widget.onWillPop!()},
+              Navigator.pop(context)
+            }
+        });
+  }
+
+  Future<bool> _onWillPop() async {
+    bool returnValue = false;
+
+    if (widget.stt.isAvailable) {
+      widget.stt.stop();
+      _tts.stop();
+      setState(() {
+        widget.ongoingDialog.value = false;
+      });
+    }
+
+    await cancelRegistrationDialog(context)
+        .then((value) => {returnValue = value});
+    if (returnValue && widget.onWillPop != null) {
+      widget.onWillPop!();
+    }
+    return returnValue;
+  }
+
+  List<Widget> _shortDistance() {
+    List eartags = [];
+    List<Widget> ties = [];
+
+    if (widget.eartags.isNotEmpty) {
+      eartags.add(
+          inputDividerWithHeadline('Øremerker', firstHeadlineFieldKeys[0]));
+      for (String eartagColor in widget.eartags.keys) {
+        eartags.add(inputRow(
+            colorValueStringToColorStringGui[eartagColor]!,
+            _textControllers[
+                '${colorValueStringToColorString[eartagColor]}Ear']!,
+            eartagColor == '0' ? Icons.close : Icons.local_offer,
+            eartagColor == '0' ? Colors.grey : colorStringToColor[eartagColor]!,
+            scrollController: widget.ties.isNotEmpty ? scrollController : null,
+            key: widget.ties.isNotEmpty ? firstHeadlineFieldKeys[1] : null));
+        eartags.add(inputFieldSpacer());
+      }
+    }
+
+    if (widget.ties.isNotEmpty) {
+      ties.add(inputDividerWithHeadline('Slips', firstHeadlineFieldKeys[1]));
+      for (String tieColor in widget.ties.keys) {
+        ties.add(inputRow(
+            colorValueStringToColorStringGui[tieColor]!,
+            _textControllers['${colorValueStringToColorString[tieColor]}Tie']!,
+            tieColor == '0' ? Icons.close : FontAwesome5.black_tie,
+            tieColor == '0' ? Colors.grey : colorStringToColor[tieColor]!));
+        ties.add(inputFieldSpacer());
+      }
+    }
+
+    return [...eartags, ...ties];
   }
 
   @override
@@ -208,97 +341,49 @@ class _RegisterSheepState extends State<RegisterSheep> {
     return Material(
         child: Form(
             key: _formKey,
+            onWillPop: _onWillPop,
             child: Scaffold(
                 appBar: AppBar(
-                  title: const Text('Registrer sau'),
-                  leading: BackButton(
-                      onPressed: () => {
-                            if (widget.stt.isAvailable)
-                              {
-                                widget.stt.stop(),
-                                _tts.stop(),
-                                setState(() {
-                                  widget.ongoingDialog.value = false;
-                                }),
-                              },
-                            showDialog(
-                                context: context,
-                                builder: (_) =>
-                                    cancelRegistrationDialog(context))
-                          }),
+                  title: Text(title),
+                  leading: BackButton(onPressed: _backButtonPressed),
                 ),
-                body: SingleChildScrollView(
-                    controller: scrollController,
-                    child: Center(
-                        child: Column(children: [
-                      const SizedBox(height: 10),
-                      inputDividerWithHeadline('Antall'),
-                      inputRow('Sauer', _textControllers['sheep']!,
-                          RpgAwesome.sheep, Colors.grey),
-                      inputFieldSpacer(),
-                      inputRow('Lam', _textControllers['lambs']!,
-                          RpgAwesome.sheep, Colors.grey,
-                          iconSize: 24),
-                      inputFieldSpacer(),
-                      inputRow(
-                        'Hvite',
-                        _textControllers['white']!,
-                        RpgAwesome.sheep,
-                        Colors.white,
-                      ),
-                      inputFieldSpacer(),
-                      inputRow(
-                        'Svarte',
-                        _textControllers['black']!,
-                        RpgAwesome.sheep,
-                        Colors.black,
-                      ),
-                      inputFieldSpacer(),
-                      inputRow('Svart hode', _textControllers['blackHead']!,
-                          RpgAwesome.sheep, Colors.black,
-                          scrollController: scrollController,
-                          fieldAmount: 5,
-                          key: firstHeadlineFieldKeys[0]),
-                      inputDividerWithHeadline(
-                          'Slips', firstHeadlineFieldKeys[0]),
-                      inputRow(
-                        'Røde',
-                        _textControllers['redTie']!,
-                        FontAwesome5.black_tie,
-                        Colors.red,
-                      ),
-                      inputFieldSpacer(),
-                      inputRow(
-                        'Blå',
-                        _textControllers['blueTie']!,
-                        FontAwesome5.black_tie,
-                        Colors.blue,
-                      ),
-                      inputFieldSpacer(),
-                      inputRow('Gule', _textControllers['yellowTie']!,
-                          FontAwesome5.black_tie, Colors.yellow,
-                          scrollController: scrollController,
-                          fieldAmount: 3,
-                          key: firstHeadlineFieldKeys[1]),
-                      inputDividerWithHeadline(
-                          'Øremerker', firstHeadlineFieldKeys[1]),
-                      inputRow(
-                        'Røde',
-                        _textControllers['redEar']!,
-                        Icons.local_offer,
-                        Colors.red,
-                      ),
-                      inputFieldSpacer(),
-                      inputRow(
-                        'Blå',
-                        _textControllers['blueEar']!,
-                        Icons.local_offer,
-                        Colors.blue,
-                      ),
-                      inputFieldSpacer(),
-                      const SizedBox(height: 80),
-                    ]))),
-                floatingActionButton: !widget.ongoingDialog.value
+                body: _isLoading
+                    ? const LoadingData()
+                    : SingleChildScrollView(
+                        controller: scrollController,
+                        child: Center(
+                            child: Column(children: [
+                          const SizedBox(height: 10),
+                          inputDividerWithHeadline('Antall'),
+                          inputRow('Sauer', _textControllers['sheep']!,
+                              RpgAwesome.sheep, Colors.grey),
+                          inputFieldSpacer(),
+                          inputRow('Lam', _textControllers['lambs']!,
+                              RpgAwesome.sheep, Colors.grey,
+                              iconSize: 24),
+                          inputFieldSpacer(),
+                          inputRow(
+                            'Hvite',
+                            _textControllers['white']!,
+                            RpgAwesome.sheep,
+                            Colors.white,
+                          ),
+                          inputFieldSpacer(),
+                          inputRow(
+                            'Svarte',
+                            _textControllers['black']!,
+                            RpgAwesome.sheep,
+                            Colors.black,
+                          ),
+                          inputFieldSpacer(),
+                          inputRow('Svart hode', _textControllers['blackHead']!,
+                              RpgAwesome.sheep, Colors.black,
+                              scrollController: scrollController,
+                              key: firstHeadlineFieldKeys[0]),
+                          if (_isShortDistance) ..._shortDistance(),
+                          const SizedBox(height: 80),
+                        ]))),
+                floatingActionButton: !_isLoading && !widget.ongoingDialog.value
                     ? Row(
                         mainAxisAlignment:
                             MediaQuery.of(context).viewInsets.bottom == 0

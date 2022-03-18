@@ -3,7 +3,6 @@ import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/field_validation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as logger;
 
 class LoginWidget extends StatefulWidget {
   const LoginWidget({Key? key}) : super(key: key);
@@ -112,16 +111,14 @@ class _LoginWidgetState extends State<LoginWidget> {
     if (formState!.validate()) {
       formState.save();
       try {
-        UserCredential user = await FirebaseAuth.instance
+        await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: _email, password: _password);
 
-        logger.log("Innlogget som: " + user.toString());
         setState(() {
           _loginFailed = false;
         });
         Navigator.popAndPushNamed(context, StartTripPage.route);
       } catch (e) {
-        logger.log("Ikke innlogget: " + e.toString());
         setState(() {
           _loginFailed = true;
         });

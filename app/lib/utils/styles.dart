@@ -14,8 +14,18 @@ double mainButtonHeight = 50;
 
 // Feedback
 TextStyle feedbackTextStyle = const TextStyle(fontSize: 16);
+TextStyle feedbackErrorTextStyle =
+    const TextStyle(fontSize: 16, color: Colors.red);
 
 TextStyle settingsHeadlineTextStyle =
     const TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
 TextStyle settingsHeadlineTwoTextStyle = const TextStyle(fontSize: 20);
 TextStyle settingsTextStyle = const TextStyle(fontSize: 18);
+
+// Dialog
+TextStyle okDialogButtonTextStyle = const TextStyle(
+    fontWeight: FontWeight.w600, fontSize: 18, color: Colors.green);
+TextStyle cancelDialogButtonTextStyle = const TextStyle(
+  fontWeight: FontWeight.w600,
+  fontSize: 18,
+);

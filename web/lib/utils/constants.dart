@@ -34,14 +34,14 @@ const Map<String, String> possibleSheepKeysAndStrings = {
   'blackHead': 'Svart hode'
 };
 
-const Map<int, String> colorValueToString = {
-  4294198070: 'Rød',
-  4280391411: 'Blå',
-  4294961979: 'Gul',
-  4283215696: 'Grønn',
-  4294940672: 'Oransje',
-  4293467747: 'Rosa',
-  0: 'Ingen'
+final Map<int, String> colorValueToString = {
+  Colors.red.value: 'Rød',
+  Colors.blue.value: 'Blå',
+  Colors.yellow.value: 'Gul',
+  Colors.green.value: 'Grønn',
+  Colors.orange.value: 'Oransje',
+  Colors.pink.value: 'Rosa',
+  Colors.transparent.value: 'Ingen'
 };
 
 final Map<Color, String> dialogColorToString = <Color, String>{
