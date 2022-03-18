@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:web/main_tabs/main_tabs.dart';
 import 'package:web/utils/authentication.dart' as authentication;
+import 'package:web/utils/custom_widgets.dart';
 import '../utils/validation.dart' as validation;
 
 class LoginForm extends StatefulWidget {
@@ -57,6 +58,7 @@ class _LoginFormState extends State<LoginForm> {
           const Icon(
             Icons.account_circle,
             size: 200,
+            color: Colors.black,
           ),
           const SizedBox(
             height: 15,
@@ -78,9 +80,7 @@ class _LoginFormState extends State<LoginForm> {
                     hintText: "E-post",
                     border: OutlineInputBorder()),
               )),
-          const SizedBox(
-            height: 10,
-          ),
+          inputFieldSpacer(),
           Container(
               constraints: const BoxConstraints(maxWidth: 400),
               child: TextFormField(
@@ -93,16 +93,10 @@ class _LoginFormState extends State<LoginForm> {
                   onFieldSubmitted: (_) {
                     _logIn();
                   },
-                  decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.lock),
-                      hintText: "Passord",
-                      suffixIcon: IconButton(
-                          icon: Icon(_visiblePassword
-                              ? Icons.visibility_off
-                              : Icons.visibility),
-                          onPressed: _toggleVisiblePassword,
-                          color: _visiblePassword ? Colors.grey : Colors.green),
-                      border: const OutlineInputBorder()))),
+                  decoration: customInputDecoration('Passord', Icons.lock,
+                      passwordField: true,
+                      isVisible: !_visiblePassword,
+                      onPressed: _toggleVisiblePassword))),
           const SizedBox(
             height: 5,
           ),
@@ -117,9 +111,8 @@ class _LoginFormState extends State<LoginForm> {
             onPressed: _logIn,
             child: const Text("Logg inn"),
             style: ElevatedButton.styleFrom(
-              fixedSize: const Size(300, 60),
-              textStyle: const TextStyle(
-                  fontSize: 30, fontWeight: FontWeight.bold, letterSpacing: 2),
+              fixedSize: const Size(250, 60),
+              textStyle: const TextStyle(fontSize: 28),
             ),
           ),
         ]));

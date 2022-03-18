@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:web/register/register_user_page.dart';
+import 'package:web/login_register/register_user_widget.dart';
 
 void main() {
   group('Widget tests', () {
     TestWidgetsFlutterBinding.ensureInitialized();
     testWidgets('Initial layout and content', (WidgetTester tester) async {
-      await tester.pumpWidget(
-          const MaterialApp(home: Material(child: RegisterUserPage())));
+      await tester.pumpWidget(const MaterialApp(home: RegisterUserWidget()));
       TestWidgetsFlutterBinding.ensureInitialized();
 
       expect(find.text('E-post'), findsOneWidget);
@@ -38,8 +37,9 @@ void main() {
     });
 
     testWidgets('Invalid inputs', (WidgetTester tester) async {
+      await tester.pumpWidget(const MaterialApp(
+          home: SingleChildScrollView(child: RegisterUserWidget())));
       TestWidgetsFlutterBinding.ensureInitialized();
-      await tester.pumpWidget(const MaterialApp(home: RegisterUserPage()));
 
       var registerButton = find.text('Opprett bruker');
       var emailField = find.byKey(const Key('inputEmail'));
@@ -55,21 +55,21 @@ void main() {
 
       // One empty input at a time
       await tester.enterText(emailField, 'test@gmail.com');
-      await pressRegisterButton(tester, registerButton);
+      await tester.pump();
       expect(find.text('Skriv e-post'), findsNothing);
       expect(find.text('Skriv passord'), findsNWidgets(2));
       expect(find.text('Skriv telefonnummer'), findsOneWidget);
 
       await tester.enterText(emailField, '');
       await tester.enterText(passwordOneField, '12345678');
-      await pressRegisterButton(tester, registerButton);
+      await tester.pump();
       expect(find.text('Skriv e-post'), findsOneWidget);
       expect(find.text('Skriv passord'), findsNothing);
       expect(find.text('Skriv telefonnummer'), findsOneWidget);
 
       await tester.enterText(passwordOneField, '');
       await tester.enterText(passwordTwoField, '12345678');
-      await pressRegisterButton(tester, registerButton);
+      await tester.pump();
       expect(find.text('Skriv e-post'), findsOneWidget);
       expect(find.text('Skriv passord'), findsOneWidget);
       expect(find.text('Passordene er ikke like'), findsOneWidget);
@@ -77,7 +77,7 @@ void main() {
 
       await tester.enterText(phoneField, '12345678');
       await tester.enterText(passwordTwoField, '');
-      await pressRegisterButton(tester, registerButton);
+      await tester.pump();
       expect(find.text('Skriv e-post'), findsOneWidget);
       expect(find.text('Skriv passord'), findsNWidgets(2));
       expect(find.text('Skriv telefonnummer'), findsNothing);
@@ -85,7 +85,9 @@ void main() {
   });
 
   testWidgets('Password obscurity', (WidgetTester tester) async {
-    await tester.pumpWidget(const MaterialApp(home: RegisterUserPage()));
+    await tester.pumpWidget(const MaterialApp(home: RegisterUserWidget()));
+    TestWidgetsFlutterBinding.ensureInitialized();
+
     await tester.enterText(
         find.byKey(const Key('inputPasswordOne')), '12345678');
     await tester.enterText(
