@@ -81,61 +81,6 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Material(
-/*<<<<<<< HEAD
-        child: _isLoading ? const LoadingData() : Stack(children: [
-      ValueListenableBuilder<bool>(
-          valueListenable: widget.ongoingDialog,
-          builder: (context, value, child) => MapWidget(
-                widget.northWest,
-                widget.southEast,
-                widget.speechToText,
-                widget.ongoingDialog,
-                deviceStartPosition: widget.deviceStartPosition,
-                onSheepRegistered: (Map<String, Object> data) {
-                  int sheepAmountRegistered = data['sheep']! as int;
-                  if (sheepAmountRegistered > 0) {
-                    _tripData.registrations.add(data);
-                    setState(() {
-                      _sheepAmount += sheepAmountRegistered;
-                    });
-                  }
-                },
-                onNewPosition: (position) => _tripData.track.add(position),
-              )),
-      Positioned(
-        top: buttonInset + MediaQuery.of(context).viewPadding.top,
-        left: buttonInset,
-        child: CircularButton(
-            child: const Icon(
-              Icons.cloud_upload,
-              size: iconSize,
-            ),
-            onPressed: () {
-              _endTripButtonPressed(context, _tripData);
-            }),
-      ),
-      Positioned(
-          top: buttonInset + MediaQuery.of(context).viewPadding.top,
-          right: buttonInset,
-          child: CircularButton(
-            child: const SettingsIcon(iconSize: iconSize),
-            onPressed: () {
-              showDialog(
-                  context: context, builder: (_) => const SettingsDialog());
-            },
-          )),
-      Positioned(
-        bottom: buttonInset + MediaQuery.of(context).viewPadding.bottom,
-        left: buttonInset,
-        child: CircularButton(
-          child: Sheepometer(sheepAmount: _sheepAmount, iconSize: iconSize),
-          onPressed: () {},
-          width: 62 +
-              textSize(_sheepAmount.toString(), circularButtonTextStyle).width,
-        ),
-      ),
-    ]));
-=======*/
         child: _isLoading
             ? const LoadingData()
             : Stack(children: [
@@ -197,7 +142,6 @@ class _MainPageState extends State<MainPage> {
                   ),
                 ),
               ]));
-//>>>>>>> main
   }
 }
 

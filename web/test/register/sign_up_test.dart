@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:web/login_register/register_user_widget.dart';
+import 'package:web/login_and_sign_up/sign_up_widget.dart';
 
 void main() {
   group('Widget tests', () {
     TestWidgetsFlutterBinding.ensureInitialized();
     testWidgets('Initial layout and content', (WidgetTester tester) async {
-      await tester.pumpWidget(const MaterialApp(home: RegisterUserWidget()));
+      await tester.pumpWidget(const MaterialApp(home: SignUpWidget()));
       TestWidgetsFlutterBinding.ensureInitialized();
 
       expect(find.text('E-post'), findsOneWidget);
@@ -38,7 +38,7 @@ void main() {
 
     testWidgets('Invalid inputs', (WidgetTester tester) async {
       await tester.pumpWidget(const MaterialApp(
-          home: SingleChildScrollView(child: RegisterUserWidget())));
+          home: SingleChildScrollView(child: SignUpWidget())));
       TestWidgetsFlutterBinding.ensureInitialized();
 
       var registerButton = find.text('Opprett bruker');
@@ -85,7 +85,7 @@ void main() {
   });
 
   testWidgets('Password obscurity', (WidgetTester tester) async {
-    await tester.pumpWidget(const MaterialApp(home: RegisterUserWidget()));
+    await tester.pumpWidget(const MaterialApp(home: SignUpWidget()));
     TestWidgetsFlutterBinding.ensureInitialized();
 
     await tester.enterText(

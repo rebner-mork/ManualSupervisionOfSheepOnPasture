@@ -4,14 +4,14 @@ import 'package:web/utils/authentication.dart' as authentication;
 import 'package:web/utils/custom_widgets.dart';
 import '../utils/validation.dart' as validation;
 
-class LoginForm extends StatefulWidget {
-  const LoginForm({Key? key}) : super(key: key);
+class LoginWidget extends StatefulWidget {
+  const LoginWidget({Key? key}) : super(key: key);
 
   @override
-  State<LoginForm> createState() => _LoginFormState();
+  State<LoginWidget> createState() => _LoginWidgetState();
 }
 
-class _LoginFormState extends State<LoginForm> {
+class _LoginWidgetState extends State<LoginWidget> {
   final _formKey = GlobalKey<FormState>();
   bool _visiblePassword = true;
   String _email = '';

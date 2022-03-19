@@ -19,9 +19,9 @@ void main() async {
         home:
             Material(child: Row(children: const [Expanded(child: MyFarm())]))));
 
-    expect(find.text('Laster data...'), findsOneWidget);
+    expect(find.text('Laster gårdsinformasjon...'), findsOneWidget);
     await tester.pump(const Duration(seconds: 5));
-    expect(find.text('Laster data...'), findsNothing);
+    expect(find.text('Laster gårdsinformasjon...'), findsNothing);
 
     expect(find.text('Gårdsnavn'), findsOneWidget);
     expect(find.text('Navn'), findsOneWidget);
@@ -73,7 +73,7 @@ void main() async {
     await tester.tap(find.text('Lagre'));
     await tester.pump(waitDuration);
 
-    expect(find.text('Gårdsinfo lagret'), findsOneWidget);
+    expect(find.text('Gårdsinformasjon lagret'), findsOneWidget);
   });
 
   testWidgets('Farm info exists', (WidgetTester tester) async {

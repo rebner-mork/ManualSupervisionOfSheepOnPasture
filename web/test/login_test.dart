@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:web/login_register/login_widget.dart';
+import 'package:web/login_and_sign_up/login_widget.dart';
 
 void main() {
   group('Widget tests', () {
     testWidgets('Initial layout and content', (WidgetTester tester) async {
       await tester
-          .pumpWidget(const MaterialApp(home: Material(child: LoginForm())));
+          .pumpWidget(const MaterialApp(home: Material(child: LoginWidget())));
 
       // input fieds and buttons
       expect(find.text('Logg inn'), findsOneWidget);
@@ -32,7 +32,7 @@ void main() {
 
     testWidgets('Invalid inputs', (WidgetTester tester) async {
       await tester
-          .pumpWidget(const MaterialApp(home: Material(child: LoginForm())));
+          .pumpWidget(const MaterialApp(home: Material(child: LoginWidget())));
 
       var loginButton = find.text('Logg inn');
       var emailField = find.byKey(const Key('inputEmail'));
@@ -76,7 +76,7 @@ void main() {
       tester.binding.window.physicalSizeTestValue = const Size(1024, 768);
       tester.binding.window.devicePixelRatioTestValue = 1.0;
       await tester
-          .pumpWidget(const MaterialApp(home: Material(child: LoginForm())));
+          .pumpWidget(const MaterialApp(home: Material(child: LoginWidget())));
       await tester.enterText(
           find.byKey(const Key('inputPassword')), '12345678');
 

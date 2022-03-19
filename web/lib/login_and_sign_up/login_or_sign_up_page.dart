@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:web/login_register/register_user_widget.dart';
+import 'package:web/login_and_sign_up/sign_up_widget.dart';
 import 'login_widget.dart';
 
-class LoginRegisterPage extends StatefulWidget {
-  const LoginRegisterPage({Key? key}) : super(key: key);
+class LoginOrSignUpPage extends StatefulWidget {
+  const LoginOrSignUpPage({Key? key}) : super(key: key);
 
   static const String route = 'login-register-page';
 
   @override
-  State<LoginRegisterPage> createState() => _LoginRegisterPageState();
+  State<LoginOrSignUpPage> createState() => _LoginOrSignUpPageState();
 }
 
-class _LoginRegisterPageState extends State<LoginRegisterPage> {
+class _LoginOrSignUpPageState extends State<LoginOrSignUpPage> {
   bool _isLogin = true;
 
   @override
@@ -31,15 +31,20 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
             child: Column(
               children: [
                 Spacer(flex: _isLogin ? 5 : 1),
-                _isLogin ? const LoginForm() : const RegisterUserWidget(),
+                _isLogin ? const LoginWidget() : const SignUpWidget(),
                 Spacer(flex: _isLogin ? 10 : 1),
+                if (!_isLogin)
+                  const Text(
+                    'Har du allerede brukerkonto?',
+                    style: TextStyle(fontSize: 16),
+                  ),
                 Flexible(
                     flex: 5,
                     child: ElevatedButton(
                         child: _isLogin
-                            ? const Text("Opprett bruker")
+                            ? const Text("Opprett brukerkonto")
                             : const Text(
-                                'Har du allerede bruker?\nLogg inn',
+                                'Logg inn',
                                 textAlign: TextAlign.center,
                               ),
                         onPressed: () => {
@@ -48,11 +53,8 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
                               })
                             },
                         style: ElevatedButton.styleFrom(
-                            fixedSize: _isLogin
-                                ? const Size(250, 45)
-                                : const Size(250, 55),
-                            textStyle:
-                                TextStyle(fontSize: _isLogin ? 24 : 20)))),
+                            fixedSize: const Size(250, 45),
+                            textStyle: const TextStyle(fontSize: 24)))),
                 const SizedBox(height: 10)
               ],
             ),

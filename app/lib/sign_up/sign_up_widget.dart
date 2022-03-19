@@ -4,15 +4,15 @@ import 'package:app/utils/field_validation.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:flutter/material.dart';
 
-class RegisterUserWidget extends StatefulWidget {
-  const RegisterUserWidget({Key? key}) : super(key: key);
+class SignUpWidget extends StatefulWidget {
+  const SignUpWidget({Key? key}) : super(key: key);
 
   @override
-  State<RegisterUserWidget> createState() => _RegisterUserWidgetState();
+  State<SignUpWidget> createState() => _SignUpWidgetState();
 }
 
-class _RegisterUserWidgetState extends State<RegisterUserWidget> {
-  _RegisterUserWidgetState();
+class _SignUpWidgetState extends State<SignUpWidget> {
+  _SignUpWidgetState();
 
   final _formKey = GlobalKey<FormState>();
   bool _visiblePassword = false;

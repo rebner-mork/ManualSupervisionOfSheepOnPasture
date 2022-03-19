@@ -1,4 +1,4 @@
-import 'package:app/register_user/register_user_page.dart';
+import 'package:app/sign_up/sign_up_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +14,7 @@ void main() async {
   await firebaseSetup();
 
   testWidgets('Integration test register', (WidgetTester tester) async {
-    await tester.pumpWidget(const MaterialApp(home: RegisterUserPage()));
+    await tester.pumpWidget(const MaterialApp(home: SignUpPage()));
 
     var registerButton = find.text('Opprett bruker');
     var emailField = find.byKey(const Key('inputEmail'));
