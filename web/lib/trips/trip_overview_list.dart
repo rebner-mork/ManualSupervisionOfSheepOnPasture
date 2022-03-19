@@ -13,7 +13,7 @@ class TripOverviewList extends StatefulWidget {
 }
 
 class _TripOverviewListState extends State<TripOverviewList> {
-  late final List<Map<String, Object>> _trips;
+  final List<Map<String, Object>> _trips = [];
   bool _isLoading = true;
   int _selectedTripIndex = -1;
 
@@ -34,8 +34,6 @@ class _TripOverviewListState extends State<TripOverviewList> {
     QuerySnapshot tripQuerySnapshot =
         await tripsCollection.where('farmId', isEqualTo: uid).get();
 
-    _trips = [];
-
     for (QueryDocumentSnapshot doc in tripQuerySnapshot.docs) {
       _trips.add({
         'mapName': doc['mapName'],
@@ -48,9 +46,6 @@ class _TripOverviewListState extends State<TripOverviewList> {
       _isLoading = false;
     });
   }
-
-// TODO: Begrense antall som hentes fra Firestore? Gjøres med limit
-// TODO: Dropdown for å filtrere på 'alle', 'kartnavn1', 'kartnavn2'
 
   @override
   Widget build(BuildContext context) {

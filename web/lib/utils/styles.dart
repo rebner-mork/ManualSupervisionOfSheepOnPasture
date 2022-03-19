@@ -11,6 +11,14 @@ TextStyle dataCellBoldTextStyle =
 // Button
 TextStyle buttonTextStyle = const TextStyle(fontSize: 16);
 
+TextStyle feedbackTextStyle = const TextStyle(fontSize: 18);
 TextStyle definePageHeadlineTextStyle =
     const TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
 TextStyle definePageInfoTextStyle = const TextStyle(fontSize: 16);
+
+// Table
+TextStyle tableRowDescriptionTextStyle =
+    const TextStyle(fontSize: 17, fontWeight: FontWeight.bold);
+TextStyle tableRowTextStyle = const TextStyle(fontSize: 17);
+
+EdgeInsets tableCellPadding = const EdgeInsets.all(8);

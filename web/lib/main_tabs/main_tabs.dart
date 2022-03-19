@@ -22,23 +22,25 @@ class _MainState extends State<MainTabs> {
           initialIndex: 2,
           child: Scaffold(
             appBar: PreferredSize(
-              preferredSize: const Size.fromHeight(50), // 55
+              preferredSize: const Size.fromHeight(50),
               child: Container(
                   color: Colors.grey.shade800,
                   child: Padding(
-                      padding: const EdgeInsets.only(left: 128), // bottom: 5
+                      padding: const EdgeInsets.only(left: 128),
                       child: AppBar(
                         toolbarHeight: 0,
                         backgroundColor: Colors.grey.shade800,
                         bottom: TabBar(
+                            overlayColor: MaterialStateProperty.all(
+                                Colors.green.shade700),
                             labelStyle: const TextStyle(
                               fontSize: 24,
                             ),
                             labelColor: Colors.white,
-                            unselectedLabelColor: Colors.grey.shade200, // 300
+                            unselectedLabelColor: Colors.grey.shade200,
                             indicator: const UnderlineTabIndicator(
                               borderSide:
-                                  BorderSide(width: 5, color: Colors.green),
+                                  BorderSide(width: 7, color: Colors.green),
                             ),
                             //indicatorSize: TabBarIndicatorSize.label,
                             tabs: const [

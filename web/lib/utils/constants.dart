@@ -7,32 +7,31 @@ final Map<Color, int> defaultTieMap = <Color, int>{
   const Color(0xFF4CAF50): 3, // Green
 };
 
-const List<Color> possibleTieColors = [
-  Color(0xFFF44336), // Red
-  Color(0xFF2196F3), // Blue
-  Color(0xFFFFEB3B), // Yellow
-  Color(0xFF4CAF50), // Green
-  Color(0xFFFF9800), // Orange
-  Color(0xFFE91E63), // Pink
-  Color(0x00000000), // Transparent
-];
+final Map<String, String> possibleTieColorStringToKey = {
+  Colors.red.value.toRadixString(16): 'redTie',
+  Colors.blue.value.toRadixString(16): 'blueTie',
+  Colors.yellow.value.toRadixString(16): 'yellowTie',
+  Colors.green.value.toRadixString(16): 'greenTie',
+  Colors.orange.value.toRadixString(16): 'orangeTie',
+  Colors.pink.value.toRadixString(16): 'pinkTie',
+  Colors.transparent.value.toRadixString(16): 'transparentTie'
+};
 
-const List<Color> possibleEartagColors = [
-  Color(0xFFF44336), // Red
-  Color(0xFF2196F3), // Blue
-  Color(0xFFFFEB3B), // Yellow
-  Color(0xFF4CAF50), // Green
-  Color(0xFFFF9800), // Orange
-  Color(0xFFE91E63), // Pink
-];
+final Map<String, String> possibleEartagColorStringToKey = {
+  Colors.red.value.toRadixString(16): 'redEar',
+  Colors.blue.value.toRadixString(16): 'blueEar',
+  Colors.yellow.value.toRadixString(16): 'yellowEar',
+  Colors.green.value.toRadixString(16): 'greenEar',
+  Colors.orange.value.toRadixString(16): 'orangeEar',
+  Colors.pink.value.toRadixString(16): 'pinkEar'
+};
 
-final Map<int, Color> colorValueToColor = {
-  Colors.red.value: Colors.red,
-  Colors.blue.value: Colors.blue,
-  Colors.yellow.value: Colors.yellow,
-  Colors.green.value: Colors.green,
-  Colors.orange.value: Colors.orange,
-  Colors.pink.value: Colors.pink
+const Map<String, String> possibleSheepKeysAndStrings = {
+  'sheep': 'Totalt',
+  'lambs': 'Lam',
+  'white': 'Hvite',
+  'black': 'Svarte',
+  'blackHead': 'Svart hode'
 };
 
 final Map<int, String> colorValueToString = {
@@ -43,16 +42,6 @@ final Map<int, String> colorValueToString = {
   Colors.orange.value: 'Oransje',
   Colors.pink.value: 'Rosa',
   Colors.transparent.value: 'Ingen'
-};
-
-final Map<Color, String> colorToString = <Color, String>{
-  Colors.red: 'Rød',
-  Colors.blue: 'Blå',
-  Colors.yellow: 'Gul',
-  Colors.green: 'Grønn',
-  Colors.orange: 'Oransje',
-  Colors.pink: 'Rosa',
-  Colors.transparent: 'Ingen'
 };
 
 final Map<Color, String> dialogColorToString = <Color, String>{
