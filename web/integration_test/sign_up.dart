@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:web/register/register_user_page.dart';
+import 'package:web/login_and_sign_up/sign_up_widget.dart';
 
 import 'firebase_setup.dart';
 
@@ -14,7 +14,7 @@ void main() async {
   await firebaseSetup();
 
   testWidgets('Integration test register', (WidgetTester tester) async {
-    await tester.pumpWidget(const MaterialApp(home: RegisterUserPage()));
+    await tester.pumpWidget(const MaterialApp(home: SignUpWidget()));
 
     var registerButton = find.text('Opprett bruker');
     var emailField = find.byKey(const Key('inputEmail'));
@@ -52,7 +52,7 @@ void main() async {
   });
 
   testWidgets('Register same mail twice', (WidgetTester tester) async {
-    await tester.pumpWidget(const MaterialApp(home: RegisterUserPage()));
+    await tester.pumpWidget(const MaterialApp(home: SignUpWidget()));
 
     var registerButton = find.text('Opprett bruker');
     var emailField = find.byKey(const Key('inputEmail'));
