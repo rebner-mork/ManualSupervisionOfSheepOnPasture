@@ -29,6 +29,8 @@ class _DefineMapPageState extends State<DefineMapPage> {
   late String _newCoordinatesText;
   static const String coordinatesPlaceholder = "(?, ?), (?, ?)";
 
+  final ScrollController _scrollController = ScrollController();
+
   bool showMap = false;
   bool _loadingData = true;
 
@@ -77,21 +79,26 @@ class _DefineMapPageState extends State<DefineMapPage> {
                   'Laster data...',
                   style: largerTextStyle,
                 )
-              : SingleChildScrollView(
-                  child: Column(children: [
-                  const SizedBox(height: 20),
-                  Text('Mine beiteområder', style: definePageHeadlineTextStyle),
-                  const SizedBox(height: 10),
-                  Text(
-                      'Her kan du legge til beiteområder. I appen laster oppsynspersonell ned\nkart over et av områdene for å gå oppsynstur uten nettverksforbindelse.',
-                      style: definePageInfoTextStyle),
-                  DataTable(
-                      dataRowHeight: _rowHeight,
-                      border: TableBorder.symmetric(),
-                      showCheckboxColumn: false,
-                      columns: _tableColumns(),
-                      rows: _existingMapRows() + [_newMapRow()])
-                ]))),
+              : Scrollbar(
+                  controller: _scrollController,
+                  isAlwaysShown: true,
+                  child: SingleChildScrollView(
+                      controller: _scrollController,
+                      child: Column(children: [
+                        const SizedBox(height: 20),
+                        Text('Mine beiteområder',
+                            style: definePageHeadlineTextStyle),
+                        const SizedBox(height: 10),
+                        Text(
+                            'Her kan du legge til beiteområder. I appen laster oppsynspersonell ned\nkart over et av områdene for å gå oppsynstur uten nettverksforbindelse.',
+                            style: definePageInfoTextStyle),
+                        DataTable(
+                            dataRowHeight: _rowHeight,
+                            border: TableBorder.symmetric(),
+                            showCheckboxColumn: false,
+                            columns: _tableColumns(),
+                            rows: _existingMapRows() + [_newMapRow()])
+                      ])))),
       const SizedBox(height: 10),
       _helpTextWidgets(),
       const SizedBox(height: 10),
