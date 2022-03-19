@@ -104,8 +104,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
       const SizedBox(height: 10),
       if (showMap)
         Flexible(
-            flex: 5,
-            fit: FlexFit.tight,
+            flex: 3,
             child:
                 DefineMap(_onCornerMarked, _secondMarkerIncorrectlyPlacedText))
     ]));
@@ -428,6 +427,12 @@ class _DefineMapPageState extends State<DefineMapPage> {
                 _rowHeight = rowHeightSmall;
                 showMap = true;
                 _helpText = helpTextNorthWest;
+              });
+              WidgetsBinding.instance!.addPostFrameCallback((_) {
+                _scrollController.animateTo(
+                    _scrollController.position.maxScrollExtent,
+                    duration: const Duration(seconds: 1),
+                    curve: Curves.fastLinearToSlowEaseIn);
               });
             },
           );
