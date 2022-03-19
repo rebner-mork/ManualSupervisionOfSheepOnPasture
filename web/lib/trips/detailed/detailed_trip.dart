@@ -9,9 +9,6 @@ import 'package:web/trips/detailed/info_table.dart';
 import 'package:web/utils/constants.dart';
 import 'package:web/utils/other.dart';
 
-// combined width of both InfoTables and their padding
-const double idealWidth = 410;
-
 class DetailedTrip extends StatefulWidget {
   const DetailedTrip(this.tripData, {Key? key}) : super(key: key);
 
@@ -24,9 +21,12 @@ class DetailedTrip extends StatefulWidget {
 class _DetailedTripState extends State<DetailedTrip> {
   late DateTime startTime;
   late DateTime stopTime;
+
   Map<String, int> sheepData = {};
   Map<String, int> eartagData = {};
   Map<String, int> tieData = {};
+
+  final double infoTablePadding = 25;
 
   @override
   void initState() {
@@ -158,10 +158,10 @@ class _DetailedTripState extends State<DetailedTrip> {
               SizedBox(
                   width: textSize(dateText(), const TextStyle(fontSize: 50))
                               .width >
-                          idealWidth
+                          (2 * (infoTableWidth + infoTablePadding))
                       ? textSize(dateText(), const TextStyle(fontSize: 50))
                           .width
-                      : idealWidth,
+                      : (2 * (infoTableWidth + infoTablePadding)),
                   child: Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
@@ -172,7 +172,7 @@ class _DetailedTripState extends State<DetailedTrip> {
                         ),
                       ))),
               SizedBox(
-                  width: idealWidth,
+                  width: (2 * (infoTableWidth + infoTablePadding)),
                   child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
