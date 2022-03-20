@@ -55,6 +55,10 @@ class TripDataManager {
     }
   }
 
+  void archive() {
+    //TODO write to disk
+  }
+
   @override
   String toString() {
     Map<String, Object> data = {
