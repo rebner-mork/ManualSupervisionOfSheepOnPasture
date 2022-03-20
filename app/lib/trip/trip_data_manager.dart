@@ -1,6 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
+
+import '../utils/constants.dart';
 
 class TripDataManager {
   TripDataManager.start(
@@ -27,12 +31,7 @@ class TripDataManager {
         FirebaseFirestore.instance.collection('trips');
     DocumentReference tripDocument = tripCollection.doc();
 
-    List<Map<String, double>> preparedTrack = [];
-
-    for (LatLng coordinate in track) {
-      preparedTrack.add(
-          {'latitude': coordinate.latitude, 'longitude': coordinate.longitude});
-    }
+    List<Map<String, double>> preparedTrack = _getPreparedTrack();
 
     tripDocument.set({
       'farmId': farmId,
@@ -55,8 +54,46 @@ class TripDataManager {
     }
   }
 
+  List<Map<String, double>> _getPreparedTrack() {
+    List<Map<String, double>> preparedTrack = [];
+
+    for (LatLng coordinate in track) {
+      preparedTrack.add(
+          {'latitude': coordinate.latitude, 'longitude': coordinate.longitude});
+    }
+    return preparedTrack;
+  }
+
   void archive() {
-    //TODO write to disk
+    _stopTime ??= DateTime.now();
+
+    var preparedRegistrations = [];
+    preparedRegistrations.addAll(registrations);
+
+    for (var entry in preparedRegistrations) {
+      entry['timestamp'] = entry['timestamp'].toString();
+    }
+
+    Map<String, Object?> data = {
+      'farmId': farmId,
+      'personnelEmail': personnelEmail,
+      'mapName': mapName,
+      'startTime': _startTime.toString(),
+      'stopTime': _stopTime.toString(),
+      'registrations': preparedRegistrations,
+      'track': _getPreparedTrack(),
+    };
+
+    String jsonData = jsonEncode(data);
+
+    String path = applicationDocumentDirectoryPath + "/trips";
+
+    Directory(path).create(recursive: true);
+
+    String fileName =
+        path + mapName + "_" + _startTime.toString().replaceAll(" ", "_");
+
+    File(fileName).writeAsStringSync(jsonData);
   }
 
   @override
