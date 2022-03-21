@@ -13,8 +13,9 @@ class ReportsPage extends StatefulWidget {
 
 class _ReportsPageState extends State<ReportsPage> {
   bool _isLoading = true;
-  late final Set<int> years = {}; //LinkedHashSet();
+  late final Set<int> years = {};
   late int _selectedYear;
+  late bool _tripsExist;
 
   @override
   void initState() {
@@ -34,17 +35,27 @@ class _ReportsPageState extends State<ReportsPage> {
         await tripsCollection.where('farmId', isEqualTo: uid).get();
     List<QueryDocumentSnapshot<Object?>> tripDocs = tripsSnapshot.docs;
 
-    for (QueryDocumentSnapshot tripDoc in tripDocs) {
-      years.add((tripDoc['startTime'] as Timestamp).toDate().year);
+    if (tripDocs.isNotEmpty) {
+      for (QueryDocumentSnapshot tripDoc in tripDocs) {
+        years.add((tripDoc['startTime'] as Timestamp).toDate().year);
+      }
+
+      debugPrint(years.toString());
+
+      setState(() {
+        _tripsExist = true;
+        _selectedYear = years.last;
+        _isLoading = false;
+      });
+    } else {
+      setState(() {
+        _tripsExist = false;
+        _isLoading = false;
+      });
     }
-
-    debugPrint(years.toString());
-
-    setState(() {
-      _selectedYear = years.last;
-      _isLoading = false;
-    });
   }
+
+  void _generateReport() {}
 
   // TODO: håndter ingen oppsynsturer
   // TODO: sorter årstall
@@ -52,27 +63,40 @@ class _ReportsPageState extends State<ReportsPage> {
   Widget build(BuildContext context) {
     return _isLoading
         ? const LoadingData()
-        : Column(
-            children: [
-              const Text('Her kan du generere og laste ned årsrapporter',
-                  style: pageInfoTextStyle),
-              DropdownButton<int>(
-                  value: _selectedYear,
-                  items: years
-                      .map<DropdownMenuItem<int>>(
-                          (int year) => DropdownMenuItem(
-                              value: year,
-                              child: Text(
-                                year.toString(),
-                                style: const TextStyle(fontSize: 26),
-                              )))
-                      .toList(),
-                  onChanged: (int? newYear) {
-                    setState(() {
-                      _selectedYear = newYear!;
-                    });
-                  })
-            ],
-          );
+        : _tripsExist
+            ? Column(
+                children: [
+                  const Text('Her kan du generere og laste ned årsrapporter',
+                      style: pageInfoTextStyle),
+                  DropdownButton<int>(
+                      value: _selectedYear,
+                      items: years
+                          .map<DropdownMenuItem<int>>(
+                              (int year) => DropdownMenuItem(
+                                  value: year,
+                                  child: Text(
+                                    year.toString(),
+                                    style: const TextStyle(fontSize: 26),
+                                  )))
+                          .toList(),
+                      onChanged: (int? newYear) {
+                        setState(() {
+                          _selectedYear = newYear!;
+                        });
+                      }),
+                  ElevatedButton(
+                      onPressed: _generateReport,
+                      child: const Text(
+                        "Generer rapport",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: const Size(180, 50),
+                      ))
+                ],
+              )
+            : const Center(
+                child: Text('Ingen turer har blitt gått',
+                    style: feedbackTextStyle));
   }
 }
