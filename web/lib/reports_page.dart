@@ -4,6 +4,8 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:pdf/pdf.dart';
 import 'package:web/utils/custom_widgets.dart';
 import 'package:web/utils/styles.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -61,7 +63,7 @@ class _ReportsPageState extends State<ReportsPage> {
     }
   }
 
-  Future<Uint8List> _createReport() async {
+  Future<Uint8List> _generateReport() async {
     String uid = FirebaseAuth.instance.currentUser!.uid;
 
     CollectionReference farmsCollection =
@@ -76,19 +78,29 @@ class _ReportsPageState extends State<ReportsPage> {
     DocumentSnapshot farmOwnerDoc = farmOwnerQuerySnapshot.docs.first;
 
     int tripAmount = 0;
-    Set<String> personnell = {};
+    Set<String> personnel = {};
 
     for (DocumentSnapshot tripDoc in _allTripDocuments) {
       if ((tripDoc['startTime'] as Timestamp).toDate().year == _selectedYear) {
         tripAmount++;
-        personnell.add(tripDoc[
+        personnel.add(tripDoc[
             'personnelEmail']); // TODO: Change to full name when available
       }
     }
-    debugPrint(personnell.toString());
 
     final pw.Document pdf = pw.Document();
-    pdf.addPage(pw.Page(build: (pw.Context context) {
+
+    var logoImage = pw.MemoryImage(
+        (await rootBundle.load('images/app_icon.png')).buffer.asUint8List());
+
+    pdf.addPage(
+        metaPdfPage(logoImage, farmDoc, farmOwnerDoc, personnel, tripAmount));
+
+    return pdf.save();
+  }
+
+  pw.Page metaPdfPage(logoImage, farmDoc, farmOwnerDoc, personnel, tripAmount) {
+    return pw.Page(build: (pw.Context context) {
       return pw.Center(
           child: pw.Column(children: [
         pw.Padding(
@@ -96,6 +108,7 @@ class _ReportsPageState extends State<ReportsPage> {
             child: pw.Text('Årsrapport $_selectedYear',
                 style: const pw.TextStyle(fontSize: 30),
                 textAlign: pw.TextAlign.center)),
+        pw.Image(logoImage, width: 80),
         pw.Table(
             border: pw.TableBorder.symmetric(
                 inside: const pw.BorderSide(width: 0.5)),
@@ -137,7 +150,7 @@ class _ReportsPageState extends State<ReportsPage> {
                     child: pw.Text('Oppsynspersonell')),
                 pw.Padding(
                     padding: const pw.EdgeInsets.all(8),
-                    child: pw.Text(personnell
+                    child: pw.Text(personnel
                         .toString()
                         .replaceAll(', ', '\n')
                         .replaceAll('{', '')
@@ -153,13 +166,11 @@ class _ReportsPageState extends State<ReportsPage> {
               ]),
             ])
       ]));
-    }));
-
-    return pdf.save();
+    });
   }
 
-  Future<void> _generateReport() async {
-    Uint8List pdfInBytes = await _createReport();
+  Future<void> _downloadReport() async {
+    Uint8List pdfInBytes = await _generateReport();
 
     final blob = html.Blob([pdfInBytes], 'application/pdf');
     final url = html.Url.createObjectUrlFromBlob(blob);
@@ -198,7 +209,7 @@ class _ReportsPageState extends State<ReportsPage> {
                         });
                       }),
                   ElevatedButton(
-                      onPressed: _generateReport,
+                      onPressed: _downloadReport,
                       child: const Text(
                         "Generer rapport",
                         style: TextStyle(fontSize: 20),
@@ -212,4 +223,9 @@ class _ReportsPageState extends State<ReportsPage> {
                 child: Text('Ingen turer har blitt gått',
                     style: feedbackTextStyle));
   }
+}
+
+class FirstPdfPage extends pw.Page {
+  FirstPdfPage({required pw.BuildCallback build, Key? key})
+      : super(build: build);
 }
