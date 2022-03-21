@@ -48,7 +48,7 @@ class _MyFarmState extends State<MyFarm> {
         key: _formKey,
         child: Column(children: [
           const SizedBox(height: 20),
-          Text('Min gård', style: definePageHeadlineTextStyle),
+          const Text('Min gård', style: pageHeadlineTextStyle),
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,

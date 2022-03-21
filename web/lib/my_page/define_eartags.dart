@@ -51,17 +51,17 @@ class _MyEartagsState extends State<MyEartags> {
             )
           : Column(children: [
               const SizedBox(height: 20),
-              Text('Øremerker', style: definePageHeadlineTextStyle),
+              const Text('Øremerker', style: pageHeadlineTextStyle),
               const SizedBox(height: 10),
-              Text(
+              const Text(
                   'Her kan du legge til øremerker som oppsynspersonell kan møte på under oppsynstur.',
-                  style: definePageInfoTextStyle),
-              Text(
+                  style: pageInfoTextStyle),
+              const Text(
                   'Oppsynspersonell kan ikke registrere andre øremerker enn de som er lagt til her.',
-                  style: definePageInfoTextStyle),
+                  style: pageInfoTextStyle),
               DataTable(
                 border: TableBorder.symmetric(),
-                columns: [
+                columns: const [
                   DataColumn(
                       label: Text(
                     'Øremerke',
@@ -72,7 +72,7 @@ class _MyEartagsState extends State<MyEartags> {
                     'Eier',
                     style: dataColumnTextStyle,
                   )),
-                  const DataColumn(label: Text('')),
+                  DataColumn(label: Text('')),
                 ],
                 rows:
                     _eartagColors.length < possibleEartagColorStringToKey.length
@@ -245,7 +245,7 @@ class _MyEartagsState extends State<MyEartags> {
                 fixedSize: MaterialStateProperty.all(const Size.fromHeight(35)),
                 backgroundColor: MaterialStateProperty.all(
                     _equalValues ? Colors.grey : Colors.green)),
-            child: Text(
+            child: const Text(
               "Lagre",
               style: buttonTextStyle,
               textAlign: TextAlign.center,
@@ -269,7 +269,7 @@ class _MyEartagsState extends State<MyEartags> {
           style: ButtonStyle(
               fixedSize: MaterialStateProperty.all(const Size.fromHeight(35)),
               backgroundColor: MaterialStateProperty.all(Colors.red)),
-          child: Text(
+          child: const Text(
             "Avbryt",
             style: buttonTextStyle,
           ),

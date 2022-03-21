@@ -32,7 +32,7 @@ class InfoTable extends StatelessWidget {
                   style: tableRowDescriptionTextStyle,
                   textAlign: TextAlign.center),
             ),
-            Padding(
+            const Padding(
               padding: tableCellPadding,
               child: Text('Antall',
                   style: tableRowDescriptionTextStyle,
