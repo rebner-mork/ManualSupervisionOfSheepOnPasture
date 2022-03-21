@@ -77,24 +77,35 @@ class _ReportsPageState extends State<ReportsPage> {
         .get();
     DocumentSnapshot farmOwnerDoc = farmOwnerQuerySnapshot.docs.first;
 
-    int tripAmount = 0;
     Set<String> personnel = {};
 
-    for (DocumentSnapshot tripDoc in _allTripDocuments) {
+    List<QueryDocumentSnapshot<Object?>?> tripsFromYear =
+        []; // TODO: order by date (and possibly startTime)
+    _allTripDocuments.map((QueryDocumentSnapshot tripDoc) {
       if ((tripDoc['startTime'] as Timestamp).toDate().year == _selectedYear) {
-        tripAmount++;
+        personnel.add(tripDoc[
+            'personnelEmail']); // TODO: Change to full name when available
+        tripsFromYear.add(tripDoc);
+      }
+    }).toList();
+
+    /*for (DocumentSnapshot tripDoc in _allTripDocuments) {
+      if ((tripDoc['startTime'] as Timestamp).toDate().year == _selectedYear) {
+        //_tripsFromYear.add()
+        //tripAmount++;
         personnel.add(tripDoc[
             'personnelEmail']); // TODO: Change to full name when available
       }
-    }
+    }*/
 
     final pw.Document pdf = pw.Document();
 
     var logoImage = pw.MemoryImage(
         (await rootBundle.load('images/app_icon.png')).buffer.asUint8List());
 
-    pdf.addPage(
-        metaPdfPage(logoImage, farmDoc, farmOwnerDoc, personnel, tripAmount));
+    pdf.addPage(metaPdfPage(
+        logoImage, farmDoc, farmOwnerDoc, personnel, tripsFromYear.length));
+    pdf.addPage(pdfTripsTable(tripsFromYear));
 
     return pdf.save();
   }
@@ -167,6 +178,116 @@ class _ReportsPageState extends State<ReportsPage> {
             ])
       ]));
     });
+  }
+
+  pw.Page pdfTripsTable(List<QueryDocumentSnapshot<Object?>?> trips) {
+    final pw.TextStyle columnHeaderTextStyle =
+        pw.TextStyle(fontSize: 13, fontWeight: pw.FontWeight.bold);
+
+    return pw.Page(
+        pageFormat: PdfPageFormat(
+            PdfPageFormat.a4.width, PdfPageFormat.a4.height,
+            marginAll: 1 * PdfPageFormat.cm // 2 default
+            ),
+        build: (pw.Context context) {
+          return pw.Center(
+              child: pw.Table(
+                  border: pw.TableBorder.symmetric(
+                      inside: const pw.BorderSide(width: 0.5),
+                      outside: const pw.BorderSide(width: 0.5)),
+                  columnWidths: const {
+                0: pw.FixedColumnWidth(46),
+                1: pw.FixedColumnWidth(55),
+                2: pw.FixedColumnWidth(35),
+                3: pw.FixedColumnWidth(40),
+                4: pw.FixedColumnWidth(35),
+                5: pw.FixedColumnWidth(38),
+                6: pw.FixedColumnWidth(35),
+                7: pw.FixedColumnWidth(40),
+              },
+                  children: [
+                pw.TableRow(children: [
+                  pw.Padding(
+                      padding: const pw.EdgeInsets.all(8),
+                      child: pw.Text('Dato',
+                          style: columnHeaderTextStyle,
+                          textAlign: pw.TextAlign.center)),
+                  pw.Padding(
+                      padding: const pw.EdgeInsets.all(8),
+                      child: pw.Text('Tidsperiode',
+                          style: columnHeaderTextStyle,
+                          textAlign: pw.TextAlign.center)),
+                  pw.Padding(
+                      padding: const pw.EdgeInsets.all(8),
+                      child: pw.Text('Sauer\ntotalt',
+                          style: columnHeaderTextStyle,
+                          textAlign: pw.TextAlign.center)),
+                  pw.Padding(
+                      padding: const pw.EdgeInsets.all(8),
+                      child: pw.Text('Voksne',
+                          style: columnHeaderTextStyle,
+                          textAlign: pw.TextAlign.center)),
+                  pw.Padding(
+                      padding: const pw.EdgeInsets.all(8),
+                      child: pw.Text('Lam',
+                          style: columnHeaderTextStyle,
+                          textAlign: pw.TextAlign.center)),
+                  pw.Padding(
+                      padding: const pw.EdgeInsets.all(8),
+                      child: pw.Text('Skadde',
+                          style: columnHeaderTextStyle,
+                          textAlign: pw.TextAlign.center)),
+                  pw.Padding(
+                      padding: const pw.EdgeInsets.all(8),
+                      child: pw.Text('Døde',
+                          style: columnHeaderTextStyle,
+                          textAlign: pw.TextAlign.center)),
+                  pw.Padding(
+                      padding: const pw.EdgeInsets.all(8),
+                      child: pw.Text('Rovdyr',
+                          style: columnHeaderTextStyle,
+                          textAlign: pw.TextAlign.center)),
+                ]),
+                ...trips.map((QueryDocumentSnapshot<Object?>? tripDoc) {
+                  DateTime startTime =
+                      (tripDoc!['startTime']! as Timestamp).toDate();
+                  DateTime stopTime =
+                      (tripDoc['stopTime']! as Timestamp).toDate();
+
+                  return pw.TableRow(children: [
+                    pw.Padding(
+                        padding: const pw.EdgeInsets.all(8),
+                        child: pw.Text(
+                            '${startTime.day.toString().padLeft(2, '0')}/${startTime.month.toString().padLeft(2, '0')}/${startTime.year}',
+                            textAlign: pw.TextAlign.center)),
+                    pw.Padding(
+                        padding: const pw.EdgeInsets.all(8),
+                        child: pw.Text(
+                            // Klokkeslett rett fra db er feil? Blir riktig etter å ha endret dem i Firestore(?)
+                            '${startTime.hour}:${startTime.minute.toString().padLeft(2, '0')}-${stopTime.hour}:${stopTime.minute.toString().padLeft(2, '0')}',
+                            textAlign: pw.TextAlign.center)),
+                    pw.Padding(
+                        padding: const pw.EdgeInsets.all(8),
+                        child: pw.Text('0', textAlign: pw.TextAlign.center)),
+                    pw.Padding(
+                        padding: const pw.EdgeInsets.all(8),
+                        child: pw.Text('1', textAlign: pw.TextAlign.center)),
+                    pw.Padding(
+                        padding: const pw.EdgeInsets.all(8),
+                        child: pw.Text('2', textAlign: pw.TextAlign.center)),
+                    pw.Padding(
+                        padding: const pw.EdgeInsets.all(8),
+                        child: pw.Text('3', textAlign: pw.TextAlign.center)),
+                    pw.Padding(
+                        padding: const pw.EdgeInsets.all(8),
+                        child: pw.Text('4', textAlign: pw.TextAlign.center)),
+                    pw.Padding(
+                        padding: const pw.EdgeInsets.all(8),
+                        child: pw.Text('5', textAlign: pw.TextAlign.center)),
+                  ]);
+                }).toList()
+              ]));
+        });
   }
 
   Future<void> _downloadReport() async {
