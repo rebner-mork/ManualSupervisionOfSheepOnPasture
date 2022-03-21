@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web/my_page/my_page.dart';
+import 'package:web/reports_page.dart';
 import 'package:web/trips/trips.dart';
 
 class MainTabs extends StatefulWidget {
@@ -19,7 +20,7 @@ class _MainState extends State<MainTabs> {
     return Material(
       child: DefaultTabController(
           length: 3,
-          initialIndex: 2,
+          initialIndex: 0, // TODO: 2
           child: Scaffold(
             appBar: PreferredSize(
               preferredSize: const Size.fromHeight(50),
@@ -50,8 +51,18 @@ class _MainState extends State<MainTabs> {
                             ]),
                       ))),
             ),
-            body:
-                const TabBarView(children: [Text('1'), TripsPage(), MyPage()]),
+            body: TabBarView(children: [
+              Row(mainAxisSize: MainAxisSize.max, children: [
+                Container(
+                    // Eller sizedbox uten farge
+                    constraints:
+                        const BoxConstraints(minWidth: 128, maxWidth: 128),
+                    color: Colors.grey.shade800),
+                const Expanded(child: ReportsPage())
+              ]),
+              const TripsPage(),
+              const MyPage()
+            ]),
           )),
     );
   }
