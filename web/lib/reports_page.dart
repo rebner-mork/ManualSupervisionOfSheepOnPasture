@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +15,7 @@ class ReportsPage extends StatefulWidget {
 
 class _ReportsPageState extends State<ReportsPage> {
   bool _isLoading = true;
-  late final Set<int> years = {};
+  late final SplayTreeSet<int> years = SplayTreeSet((a, b) => a.compareTo(b));
   late int _selectedYear;
   late bool _tripsExist;
 
@@ -40,8 +42,6 @@ class _ReportsPageState extends State<ReportsPage> {
         years.add((tripDoc['startTime'] as Timestamp).toDate().year);
       }
 
-      debugPrint(years.toString());
-
       setState(() {
         _tripsExist = true;
         _selectedYear = years.last;
@@ -57,8 +57,6 @@ class _ReportsPageState extends State<ReportsPage> {
 
   void _generateReport() {}
 
-  // TODO: håndter ingen oppsynsturer
-  // TODO: sorter årstall
   @override
   Widget build(BuildContext context) {
     return _isLoading
