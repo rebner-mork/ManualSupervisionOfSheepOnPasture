@@ -13,7 +13,6 @@ import 'dart:html' as html;
 
 final pw.TextStyle columnHeaderTextStyle =
     pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold);
-const int tripsPerPage = 25;
 
 class ReportsPage extends StatefulWidget {
   const ReportsPage({Key? key}) : super(key: key);
@@ -25,22 +24,25 @@ class ReportsPage extends StatefulWidget {
 class _ReportsPageState extends State<ReportsPage> {
   bool _isLoading = true;
   bool _isGeneratingReport = false;
-  late final SplayTreeSet<int> years = SplayTreeSet((a, b) => a.compareTo(b));
-  late int _selectedYear;
   late bool _tripsExist;
+
+  late final List<QueryDocumentSnapshot<Object?>> _allTripDocuments;
+  late final SplayTreeSet<int> availableYears =
+      SplayTreeSet((a, b) => a.compareTo(b));
+  late int _selectedYear;
+
   html.AnchorElement? anchorElement;
-  late List<QueryDocumentSnapshot<Object?>> _allTripDocuments;
 
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      _readTrips();
+      _readAllTrips();
     });
   }
 
-  void _readTrips() async {
+  void _readAllTrips() async {
     String uid = FirebaseAuth.instance.currentUser!.uid;
 
     CollectionReference tripsCollection =
@@ -52,12 +54,12 @@ class _ReportsPageState extends State<ReportsPage> {
 
     if (_allTripDocuments.isNotEmpty) {
       for (QueryDocumentSnapshot tripDoc in _allTripDocuments) {
-        years.add((tripDoc['startTime'] as Timestamp).toDate().year);
+        availableYears.add((tripDoc['startTime'] as Timestamp).toDate().year);
       }
 
       setState(() {
+        _selectedYear = availableYears.last;
         _tripsExist = true;
-        _selectedYear = years.last;
         _isLoading = false;
       });
     } else {
@@ -122,7 +124,7 @@ class _ReportsPageState extends State<ReportsPage> {
 
     for (int i = 0; i < tripDocuments.length; i++) {
       // If this trip will cause a page-wrap, add null to make pdfTripsTablePages-function add columnHeaderRow
-      if (i != 0 && i % tripsPerPage == 0) {
+      if (i != 0 && i % 25 == 0) {
         tripSummaries.add(null);
       } else {
         CollectionReference registrationsCollection = FirebaseFirestore.instance
@@ -367,7 +369,7 @@ class _ReportsPageState extends State<ReportsPage> {
                     const Text('Velg år:  ', style: TextStyle(fontSize: 24)),
                     DropdownButton<int>(
                         value: _selectedYear,
-                        items: years
+                        items: availableYears
                             .map<DropdownMenuItem<int>>(
                                 (int year) => DropdownMenuItem(
                                     value: year,
