@@ -13,6 +13,7 @@ import 'dart:html' as html;
 
 final pw.TextStyle columnHeaderTextStyle =
     pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold);
+final int tripsPerPage = 24;
 
 class ReportsPage extends StatefulWidget {
   const ReportsPage({Key? key}) : super(key: key);
@@ -28,6 +29,7 @@ class _ReportsPageState extends State<ReportsPage> {
   late bool _tripsExist;
   html.AnchorElement? anchorElement;
   late List<QueryDocumentSnapshot<Object?>> _allTripDocuments;
+  int _pdfTripsTableHeadersAdded = 0;
 
   @override
   void initState() {
@@ -85,27 +87,20 @@ class _ReportsPageState extends State<ReportsPage> {
 // TODO: order by date (and possibly startTime)
     List<QueryDocumentSnapshot<Object?>?> tripsFromYear = [];
 
-    _allTripDocuments.map((QueryDocumentSnapshot tripDoc) {
-      if ((tripDoc['startTime'] as Timestamp).toDate().year == _selectedYear) {
-        personnel.add(tripDoc[
+    _allTripDocuments
+        .asMap()
+        .entries
+        .map((MapEntry<int, QueryDocumentSnapshot> tripDocMap) {
+      if ((tripDocMap.value['startTime'] as Timestamp).toDate().year ==
+          _selectedYear) {
+        personnel.add(tripDocMap.value[
             'personnelEmail']); // TODO: Change to full name when available
-        tripsFromYear.add(tripDoc);
-        tripsFromYear.add(tripDoc);
-        tripsFromYear.add(tripDoc);
-        tripsFromYear.add(tripDoc);
-        tripsFromYear.add(tripDoc);
-        tripsFromYear.add(tripDoc);
-        tripsFromYear.add(tripDoc);
-        tripsFromYear.add(tripDoc);
-        tripsFromYear.add(tripDoc);
-        tripsFromYear.add(tripDoc);
-        tripsFromYear.add(tripDoc);
-        tripsFromYear.add(tripDoc);
-        tripsFromYear.add(tripDoc);
-        tripsFromYear.add(tripDoc);
-        tripsFromYear.add(tripDoc);
-        tripsFromYear.add(tripDoc);
-        tripsFromYear.add(tripDoc);
+
+        if (tripDocMap.key != 0 && tripDocMap.key % tripsPerPage == 0) {
+          tripsFromYear.add(null);
+          _pdfTripsTableHeadersAdded++;
+        }
+        tripsFromYear.add(tripDocMap.value);
       }
     }).toList();
 
@@ -114,8 +109,9 @@ class _ReportsPageState extends State<ReportsPage> {
     var logoImage = pw.MemoryImage(
         (await rootBundle.load('images/app_icon.png')).buffer.asUint8List());
 
-    pdf.addPage(metaPdfPage(
-        logoImage, farmDoc, farmOwnerDoc, personnel, tripsFromYear.length));
+    pdf.addPage(metaPdfPage(logoImage, farmDoc, farmOwnerDoc, personnel,
+        tripsFromYear.length - _pdfTripsTableHeadersAdded));
+    debugPrint(tripsFromYear.length.toString());
     pdf.addPage(pdfTripsTable(tripsFromYear));
 
     return pdf.save();
@@ -129,11 +125,11 @@ class _ReportsPageState extends State<ReportsPage> {
             child: pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
-                  pw.Image(logoImage, width: 60),
+                  pw.Image(logoImage, width: 45),
                   pw.Text('Årsrapport $_selectedYear',
                       style: const pw.TextStyle(fontSize: 30),
                       textAlign: pw.TextAlign.center),
-                  pw.SizedBox(width: 60)
+                  pw.SizedBox(width: 45)
                 ])),
         pw.Table(
             tableWidth: pw.TableWidth.min,
@@ -215,88 +211,92 @@ class _ReportsPageState extends State<ReportsPage> {
                   7: pw.FixedColumnWidth(35),
                 },
                 children: [
-                  pw.TableRow(children: [
-                    pw.Padding(
-                        padding: const pw.EdgeInsets.all(8),
-                        child: pw.Text('Dato',
-                            style: columnHeaderTextStyle,
-                            textAlign: pw.TextAlign.center)),
-                    pw.Padding(
-                        padding: const pw.EdgeInsets.all(8),
-                        child: pw.Text('Tid',
-                            style: columnHeaderTextStyle,
-                            textAlign: pw.TextAlign.center)),
-                    pw.Padding(
-                        padding: const pw.EdgeInsets.all(8),
-                        child: pw.Text('Sauer\ntotalt',
-                            style: columnHeaderTextStyle,
-                            textAlign: pw.TextAlign.center)),
-                    pw.Padding(
-                        padding: const pw.EdgeInsets.all(8),
-                        child: pw.Text('Voksne',
-                            style: columnHeaderTextStyle,
-                            textAlign: pw.TextAlign.center)),
-                    pw.Padding(
-                        padding: const pw.EdgeInsets.all(8),
-                        child: pw.Text('Lam',
-                            style: columnHeaderTextStyle,
-                            textAlign: pw.TextAlign.center)),
-                    pw.Padding(
-                        padding: const pw.EdgeInsets.all(8),
-                        child: pw.Text('Skadde',
-                            style: columnHeaderTextStyle,
-                            textAlign: pw.TextAlign.center)),
-                    pw.Padding(
-                        padding: const pw.EdgeInsets.all(8),
-                        child: pw.Text('Døde',
-                            style: columnHeaderTextStyle,
-                            textAlign: pw.TextAlign.center)),
-                    pw.Padding(
-                        padding: const pw.EdgeInsets.all(8),
-                        child: pw.Text('Rovdyr',
-                            style: columnHeaderTextStyle,
-                            textAlign: pw.TextAlign.center)),
-                  ]),
-                  ...trips.map((QueryDocumentSnapshot<Object?>? tripDoc) {
-                    DateTime startTime =
-                        (tripDoc!['startTime']! as Timestamp).toDate();
-                    DateTime stopTime =
-                        (tripDoc['stopTime']! as Timestamp).toDate();
-
-                    return pw.TableRow(children: [
-                      pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text(
-                              '${startTime.day.toString().padLeft(2, '0')}/${startTime.month.toString().padLeft(2, '0')}/${startTime.year}',
-                              textAlign: pw.TextAlign.center)),
-                      pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text(
-                              '${startTime.hour}:${startTime.minute.toString().padLeft(2, '0')} - ${stopTime.hour}:${stopTime.minute.toString().padLeft(2, '0')}',
-                              textAlign: pw.TextAlign.center)),
-                      pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text('0', textAlign: pw.TextAlign.center)),
-                      pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text('1', textAlign: pw.TextAlign.center)),
-                      pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text('2', textAlign: pw.TextAlign.center)),
-                      pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text('3', textAlign: pw.TextAlign.center)),
-                      pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text('4', textAlign: pw.TextAlign.center)),
-                      pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text('5', textAlign: pw.TextAlign.center)),
-                    ]);
-                  }).toList()
+                  pdfTripsTableHeaders(),
+                  ...trips.asMap().entries.map(
+                      (MapEntry<int, QueryDocumentSnapshot<Object?>?> tripMap) {
+                    debugPrint((tripMap.value == null).toString());
+                    //if (tripMap.key != 0 && tripMap.key % tripsPerPage == 0) {
+                    if (tripMap.value == null) {
+                      return pdfTripsTableHeaders();
+                    } else {
+                      return pdfTripsTableRow(
+                          (tripMap.value!['startTime']! as Timestamp).toDate(),
+                          (tripMap.value!['stopTime']! as Timestamp).toDate());
+                    }
+                  }) //.toList()
                 ])
           ];
         });
+  }
+
+  pw.TableRow pdfTripsTableRow(DateTime startTime, DateTime stopTime) {
+    return pw.TableRow(children: [
+      pw.Padding(
+          padding: const pw.EdgeInsets.all(8),
+          child: pw.Text(
+              '${startTime.day.toString().padLeft(2, '0')}/${startTime.month.toString().padLeft(2, '0')}/${startTime.year}',
+              textAlign: pw.TextAlign.center)),
+      pw.Padding(
+          padding: const pw.EdgeInsets.all(8),
+          child: pw.Text(
+              '${startTime.hour}:${startTime.minute.toString().padLeft(2, '0')} - ${stopTime.hour}:${stopTime.minute.toString().padLeft(2, '0')}',
+              textAlign: pw.TextAlign.center)),
+      pw.Padding(
+          padding: const pw.EdgeInsets.all(8),
+          child: pw.Text('0', textAlign: pw.TextAlign.center)),
+      pw.Padding(
+          padding: const pw.EdgeInsets.all(8),
+          child: pw.Text('1', textAlign: pw.TextAlign.center)),
+      pw.Padding(
+          padding: const pw.EdgeInsets.all(8),
+          child: pw.Text('2', textAlign: pw.TextAlign.center)),
+      pw.Padding(
+          padding: const pw.EdgeInsets.all(8),
+          child: pw.Text('3', textAlign: pw.TextAlign.center)),
+      pw.Padding(
+          padding: const pw.EdgeInsets.all(8),
+          child: pw.Text('4', textAlign: pw.TextAlign.center)),
+      pw.Padding(
+          padding: const pw.EdgeInsets.all(8),
+          child: pw.Text('5', textAlign: pw.TextAlign.center)),
+    ]);
+  }
+
+  pw.TableRow pdfTripsTableHeaders() {
+    return pw.TableRow(children: [
+      pw.Padding(
+          padding: const pw.EdgeInsets.all(8),
+          child: pw.Text('Dato',
+              style: columnHeaderTextStyle, textAlign: pw.TextAlign.center)),
+      pw.Padding(
+          padding: const pw.EdgeInsets.all(8),
+          child: pw.Text('Tid',
+              style: columnHeaderTextStyle, textAlign: pw.TextAlign.center)),
+      pw.Padding(
+          padding: const pw.EdgeInsets.all(8),
+          child: pw.Text('Sauer\ntotalt',
+              style: columnHeaderTextStyle, textAlign: pw.TextAlign.center)),
+      pw.Padding(
+          padding: const pw.EdgeInsets.all(8),
+          child: pw.Text('Voksne',
+              style: columnHeaderTextStyle, textAlign: pw.TextAlign.center)),
+      pw.Padding(
+          padding: const pw.EdgeInsets.all(8),
+          child: pw.Text('Lam',
+              style: columnHeaderTextStyle, textAlign: pw.TextAlign.center)),
+      pw.Padding(
+          padding: const pw.EdgeInsets.all(8),
+          child: pw.Text('Skadde',
+              style: columnHeaderTextStyle, textAlign: pw.TextAlign.center)),
+      pw.Padding(
+          padding: const pw.EdgeInsets.all(8),
+          child: pw.Text('Døde',
+              style: columnHeaderTextStyle, textAlign: pw.TextAlign.center)),
+      pw.Padding(
+          padding: const pw.EdgeInsets.all(8),
+          child: pw.Text('Rovdyr',
+              style: columnHeaderTextStyle, textAlign: pw.TextAlign.center)),
+    ]);
   }
 
   Future<void> _downloadReport() async {
