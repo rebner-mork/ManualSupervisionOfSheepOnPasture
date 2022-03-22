@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:web/utils/custom_widgets.dart';
 import 'package:web/utils/styles.dart';
@@ -14,7 +13,7 @@ import 'dart:html' as html;
 
 final pw.TextStyle columnHeaderTextStyle =
     pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold);
-const int tripsPerPage = 24;
+const int tripsPerPage = 25;
 
 class ReportsPage extends StatefulWidget {
   const ReportsPage({Key? key}) : super(key: key);
@@ -101,24 +100,16 @@ class _ReportsPageState extends State<ReportsPage> {
         personnelFromYear.add(tripDocMap.value['personnelEmail']);
         tripsFromYear.add(tripDocMap.value);
       }
-    });
+    }).toList();
 
     // Summarize each trip
     List<Map<String, Object>?> tripSummaries =
         await _summarizeTrips(tripsFromYear);
 
-    // Create PDF-image of logo
-    var logoImage = pw.MemoryImage(
-        (await rootBundle.load('images/app_icon.png')).buffer.asUint8List());
-
     // Create PDF-document
     final pw.Document pdf = pw.Document();
-    pdf.addPage(metaPdfPage(
-        logoImage,
-        farmDoc,
-        farmOwnerQuerySnapshot.docs.first,
-        personnelFromYear,
-        tripAmountFromYear));
+    pdf.addPage(metaPdfPage(farmDoc, farmOwnerQuerySnapshot.docs.first,
+        personnelFromYear, tripAmountFromYear));
     pdf.addPage(pdfTripsTablePages(tripSummaries));
 
     return pdf.save();
@@ -161,20 +152,16 @@ class _ReportsPageState extends State<ReportsPage> {
     return tripSummaries;
   }
 
-  pw.Page metaPdfPage(logoImage, farmDoc, farmOwnerDoc, personnel, tripAmount) {
+  pw.Page metaPdfPage(farmDoc, farmOwnerDoc, personnel, tripAmount) {
     return pw.Page(build: (pw.Context context) {
       return pw.Column(children: [
         pw.Padding(
-            padding: const pw.EdgeInsets.only(bottom: 20),
-            child: pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                children: [
-                  pw.Image(logoImage, width: 45),
-                  pw.Text('Årsrapport $_selectedYear',
-                      style: const pw.TextStyle(fontSize: 30),
-                      textAlign: pw.TextAlign.center),
-                  pw.SizedBox(width: 45)
-                ])),
+          padding: const pw.EdgeInsets.only(bottom: 20),
+          child: pw.Center(
+              child: pw.Text('Årsrapport $_selectedYear',
+                  style: const pw.TextStyle(fontSize: 30),
+                  textAlign: pw.TextAlign.center)),
+        ),
         pw.Table(
             tableWidth: pw.TableWidth.min,
             border: pw.TableBorder.all(width: 0.5),
@@ -320,7 +307,7 @@ class _ReportsPageState extends State<ReportsPage> {
               style: columnHeaderTextStyle, textAlign: pw.TextAlign.center)),
       pw.Padding(
           padding: const pw.EdgeInsets.all(8),
-          child: pw.Text('Sauer\ntotalt',
+          child: pw.Text('Sauer',
               style: columnHeaderTextStyle, textAlign: pw.TextAlign.center)),
       pw.Padding(
           padding: const pw.EdgeInsets.all(8),

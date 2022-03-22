@@ -20,7 +20,7 @@ class _MainState extends State<MainTabs> {
     return Material(
       child: DefaultTabController(
           length: 3,
-          initialIndex: 0, // TODO: 2
+          initialIndex: 2,
           child: Scaffold(
             appBar: PreferredSize(
               preferredSize: const Size.fromHeight(50),
