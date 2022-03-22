@@ -8,8 +8,7 @@ import 'package:pdf/pdf.dart';
 import 'package:web/utils/custom_widgets.dart';
 import 'package:web/utils/styles.dart';
 import 'package:pdf/widgets.dart' as pw;
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
+import 'package:universal_html/html.dart' as html;
 
 final pw.TextStyle columnHeaderTextStyle =
     pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold);
