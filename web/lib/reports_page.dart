@@ -29,7 +29,6 @@ class _ReportsPageState extends State<ReportsPage> {
   late bool _tripsExist;
   html.AnchorElement? anchorElement;
   late List<QueryDocumentSnapshot<Object?>> _allTripDocuments;
-  int _pdfTripsTableHeadersAdded = 0;
 
   @override
   void initState() {
@@ -84,8 +83,11 @@ class _ReportsPageState extends State<ReportsPage> {
 
     Set<String> personnel = {};
 
-// TODO: order by date (and possibly startTime)
-    List<QueryDocumentSnapshot<Object?>?> tripsFromYear = [];
+    SplayTreeSet<QueryDocumentSnapshot> tripsFromYear = SplayTreeSet(((a, b) =>
+        (a['startTime'] as Timestamp)
+            .toDate()
+            .compareTo((b['startTime'] as Timestamp).toDate())));
+    int tripAmountFromYear = 0;
 
     _allTripDocuments
         .asMap()
@@ -93,13 +95,9 @@ class _ReportsPageState extends State<ReportsPage> {
         .map((MapEntry<int, QueryDocumentSnapshot> tripDocMap) {
       if ((tripDocMap.value['startTime'] as Timestamp).toDate().year ==
           _selectedYear) {
-        personnel.add(tripDocMap.value[
-            'personnelEmail']); // TODO: Change to full name when available
-
-        if (tripDocMap.key != 0 && tripDocMap.key % tripsPerPage == 0) {
-          tripsFromYear.add(null);
-          _pdfTripsTableHeadersAdded++;
-        }
+        tripAmountFromYear++;
+        // TODO: Change to full name when available
+        personnel.add(tripDocMap.value['personnelEmail']);
         tripsFromYear.add(tripDocMap.value);
       }
     }).toList();
@@ -109,16 +107,29 @@ class _ReportsPageState extends State<ReportsPage> {
     var logoImage = pw.MemoryImage(
         (await rootBundle.load('images/app_icon.png')).buffer.asUint8List());
 
-    pdf.addPage(metaPdfPage(logoImage, farmDoc, farmOwnerDoc, personnel,
-        tripsFromYear.length - _pdfTripsTableHeadersAdded));
+    pdf.addPage(metaPdfPage(
+        logoImage, farmDoc, farmOwnerDoc, personnel, tripAmountFromYear));
 
-    // Loop registreringer
+    List<Map<String, Object>?> tripSummaries =
+        await _summarizeTrips(tripsFromYear);
+
+    pdf.addPage(pdfTripsTablePages(tripSummaries));
+
+    return pdf.save();
+  }
+
+  Future<List<Map<String, Object>?>> _summarizeTrips(
+      SplayTreeSet<QueryDocumentSnapshot<Object?>?> tripDocuments) async {
     List<Map<String, Object>?> tripSummaries = [];
-    for (QueryDocumentSnapshot<Object?>? tripDoc in tripsFromYear) {
-      if (tripDoc != null) {
+
+    for (int i = 0; i < tripDocuments.length; i++) {
+      // If this trip will cause a page-wrap, add null to make pdfTripsTablePages-function add columnHeaderRow
+      if (i != 0 && i % tripsPerPage == 0) {
+        tripSummaries.add(null);
+      } else {
         CollectionReference registrationsCollection = FirebaseFirestore.instance
             .collection('trips')
-            .doc(tripDoc.id)
+            .doc(tripDocuments.elementAt(i)!.id)
             .collection('registrations');
         QuerySnapshot registrationsQuerySnapshot =
             await registrationsCollection.get();
@@ -132,20 +143,16 @@ class _ReportsPageState extends State<ReportsPage> {
           totalLambAmount += registrationDoc['lambs'] as int;
         }
         tripSummaries.add({
-          'startTime': tripDoc['startTime'],
-          'stopTime': tripDoc['stopTime'],
+          'startTime': tripDocuments.elementAt(i)!['startTime'],
+          'stopTime': tripDocuments.elementAt(i)!['stopTime'],
           'sheep': totalSheepAmount,
           'adults': totalSheepAmount - totalLambAmount,
           'lambs': totalLambAmount
         });
-      } else {
-        tripSummaries.add(null);
       }
     }
 
-    pdf.addPage(pdfTripsTable(tripSummaries));
-
-    return pdf.save();
+    return tripSummaries;
   }
 
   pw.Page metaPdfPage(logoImage, farmDoc, farmOwnerDoc, personnel, tripAmount) {
@@ -220,7 +227,7 @@ class _ReportsPageState extends State<ReportsPage> {
     });
   }
 
-  pw.MultiPage pdfTripsTable(List<Map<String, Object>?> tripSummaries) {
+  pw.MultiPage pdfTripsTablePages(List<Map<String, Object>?> tripSummaries) {
     //List<QueryDocumentSnapshot<Object?>?> trips) {
     return pw.MultiPage(
         pageFormat: PdfPageFormat(
