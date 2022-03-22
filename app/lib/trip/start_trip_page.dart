@@ -1,4 +1,7 @@
 import 'dart:collection';
+import 'dart:io';
+import 'dart:convert';
+import 'dart:async';
 
 import 'package:app/main_page.dart';
 import 'package:app/providers/settings_provider.dart';
@@ -14,6 +17,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+import 'trip_data_manager.dart';
+import '../utils/other.dart';
 
 class StartTripPage extends StatefulWidget {
   const StartTripPage({Key? key}) : super(key: key);
@@ -29,6 +34,11 @@ class StartTripPage extends StatefulWidget {
 class _StartTripPageState extends State<StartTripPage>
     with TickerProviderStateMixin {
   _StartTripPageState();
+
+  Map<String, dynamic> _syncStatus = {
+    'text': "Laster...",
+    'color': Colors.grey
+  };
 
   late SpeechToText _speechToText;
   final ValueNotifier<bool> _ongoingDialog = ValueNotifier<bool>(false);
@@ -64,11 +74,17 @@ class _StartTripPageState extends State<StartTripPage>
   static const double fieldNameWidth = 50;
   static const double dropdownWidth = 190;
 
+  late Timer timer;
+
   @override
   void initState() {
     super.initState();
 
     _animationSetup();
+
+    trySynchronize();
+
+    timer = Timer.periodic(const Duration(seconds: 5), (_) => trySynchronize());
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _initSpeechToText();
@@ -111,43 +127,56 @@ class _StartTripPageState extends State<StartTripPage>
               centerTitle: true,
               actions: const [SettingsIconButton()],
             ),
-            body: _isLoading
-                ? const LoadingData()
-                : Column(
-                    children: _farmNames.isEmpty
-                        ? [
-                            Text(
-                                'Du er ikke registrert som oppsynspersonell hos noen gård. Ta kontakt med sauebonde.',
-                                style: feedbackTextStyle)
-                          ]
-                        : [
-                            appbarBodySpacer(),
-                            _farmNameRow(),
-                            inputFieldSpacer(),
-                            if (!_noMapsDefined) _farmMapRow(),
-                            if (!_noMapsDefined) inputFieldSpacer(),
-                            Text(
-                              _feedbackText,
-                              style: _noMapsDefined
-                                  ? feedbackErrorTextStyle
-                                  : feedbackTextStyle,
-                            ),
-                            inputFieldSpacer(),
-                            Visibility(
-                                visible: _downloadingMap,
-                                child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 40),
-                                    child: LinearProgressIndicator(
-                                      value: _downloadProgress,
-                                      minHeight: 10,
-                                    ))),
-                            inputFieldSpacer(),
-                            startTripButton(),
-                            inputFieldSpacer(),
-                            Text(_eartagAndTieText, style: feedbackTextStyle),
-                          ],
-                  )));
+            body: Stack(children: [
+              _isLoading
+                  ? const LoadingData()
+                  : Column(
+                      children: _farmNames.isEmpty
+                          ? [
+                              Text(
+                                  'Du er ikke registrert som oppsynspersonell hos noen gård. Ta kontakt med sauebonde.',
+                                  style: feedbackTextStyle)
+                            ]
+                          : [
+                              appbarBodySpacer(),
+                              _farmNameRow(),
+                              inputFieldSpacer(),
+                              if (!_noMapsDefined) _farmMapRow(),
+                              if (!_noMapsDefined) inputFieldSpacer(),
+                              Text(
+                                _feedbackText,
+                                style: _noMapsDefined
+                                    ? feedbackErrorTextStyle
+                                    : feedbackTextStyle,
+                              ),
+                              inputFieldSpacer(),
+                              Visibility(
+                                  visible: _downloadingMap,
+                                  child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 40),
+                                      child: LinearProgressIndicator(
+                                        value: _downloadProgress,
+                                        minHeight: 10,
+                                      ))),
+                              inputFieldSpacer(),
+                              startTripButton(),
+                              inputFieldSpacer(),
+                              Text(_eartagAndTieText, style: feedbackTextStyle),
+                            ],
+                    ),
+              Positioned(
+                  bottom: MediaQuery.of(context).viewPadding.bottom,
+                  child: Container(
+                      color: _syncStatus['color'],
+                      height: 20,
+                      width: MediaQuery.of(context).size.width,
+                      child: Center(
+                          child: Text(
+                        _syncStatus['text'],
+                        style: const TextStyle(color: Colors.white),
+                      ))))
+            ])));
   }
 
   Row _farmNameRow() {
@@ -474,9 +503,77 @@ class _StartTripPageState extends State<StartTripPage>
     });
   }
 
+  void synchronize() {
+    setState(() {
+      _syncStatus['color'] = Colors.orange;
+      _syncStatus['text'] = "Synkroniserer...";
+    });
+
+    List<FileSystemEntity> files =
+        Directory(applicationDocumentDirectoryPath + "/trips")
+            .listSync(recursive: false);
+
+    for (FileSystemEntity file in files) {
+      if (file.path.endsWith(".json")) {
+        var data = jsonDecode(File(file.path).readAsStringSync());
+        debugPrint(
+            data); /*
+
+        TODO sliter her med innlesning
+
+        TripDataManager trip = TripDataManager();
+        trip.post();
+        File(file.path).delete();
+        */
+      }
+    }
+    setState(() {
+      _syncStatus['color'] = Colors.green;
+      _syncStatus['text'] = "Synkronisert";
+    });
+  }
+
+  bool isSynchronized() {
+    List<FileSystemEntity> files =
+        Directory(applicationDocumentDirectoryPath + "/trips")
+            .listSync(recursive: false);
+
+    List<String> relevantFiles = [];
+    for (FileSystemEntity file in files) {
+      if (file.path.endsWith(".json")) {
+        relevantFiles.add(file.path);
+      }
+    }
+
+    if (relevantFiles.isEmpty) {
+      return true;
+    }
+    return false;
+  }
+
+  Future<void> trySynchronize() async {
+    bool connected = await isConnectedToInternett();
+    bool synchronized = isSynchronized();
+
+    if (!synchronized && connected) {
+      synchronize();
+    } else if (!synchronized && !connected) {
+      setState(() {
+        _syncStatus['color'] = Colors.red;
+        _syncStatus['text'] = "Ikke synkronisert";
+      });
+    } else {
+      setState(() {
+        _syncStatus['color'] = Colors.green;
+        _syncStatus['text'] = "Synkronisert";
+      });
+    }
+  }
+
   @override
   void dispose() {
     _animationController.dispose();
+    timer.cancel();
     super.dispose();
   }
 }

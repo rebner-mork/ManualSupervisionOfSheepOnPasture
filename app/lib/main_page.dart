@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:http/http.dart' as http;
 import 'package:app/map/map_widget.dart';
 import 'package:app/trip/end_trip_dialog.dart';
 import 'package:app/trip/start_trip_page.dart';
@@ -198,15 +197,6 @@ class _MainPageState extends State<MainPage> {
                 ),
               ]));
 //>>>>>>> main
-  }
-}
-
-Future<bool> isConnectedToInternett() async {
-  try {
-    await http.get(Uri.parse("https://www.regjeringen.no"));
-    return true;
-  } catch (_) {
-    return false;
   }
 }
 

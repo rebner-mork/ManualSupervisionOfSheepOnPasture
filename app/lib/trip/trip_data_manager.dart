@@ -14,9 +14,26 @@ class TripDataManager {
     _startTime = DateTime.now();
   }
 
-  final String farmId;
-  final String personnelEmail;
-  final String mapName;
+  TripDataManager(Map<String, dynamic> data) {
+    try {
+      farmId = data['farmId'].toString();
+      personnelEmail = data['personnelEmail'].toString();
+      mapName = data['mapName'].toString();
+      _startTime = DateTime.parse(data['startTime'].toString());
+      _stopTime = DateTime.parse(data[['stopTime']].toString());
+      registrations.addAll(data['registrations']);
+      track.addAll(data['track']);
+
+      for (int i = 0; i < registrations.length; i++) {
+        registrations[i]['timestamp'] =
+            DateTime.parse(registrations[i]['timestamp'].toString());
+      }
+    } catch (_) {}
+  }
+
+  late String farmId;
+  late String personnelEmail;
+  late String mapName;
   late final DateTime _startTime;
   DateTime? _stopTime;
   List<Map<String, Object>> registrations = [];
@@ -49,7 +66,6 @@ class TripDataManager {
 
     for (var registration in registrations) {
       DocumentReference registrationDocument = registrationSubCollection.doc();
-      debugPrint(registration.toString());
       registrationDocument.set(registration);
     }
   }
@@ -90,8 +106,12 @@ class TripDataManager {
 
     Directory(path).create(recursive: true);
 
-    String fileName =
-        path + mapName + "_" + _startTime.toString().replaceAll(" ", "_");
+    String fileName = path +
+        "/" +
+        mapName +
+        "_" +
+        _startTime.toString().replaceAll(" ", "_").split(".")[0] +
+        ".json";
 
     File(fileName).writeAsStringSync(jsonData);
   }
