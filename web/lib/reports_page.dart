@@ -13,7 +13,7 @@ import 'dart:html' as html;
 
 final pw.TextStyle columnHeaderTextStyle =
     pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold);
-final int tripsPerPage = 24;
+const int tripsPerPage = 24;
 
 class ReportsPage extends StatefulWidget {
   const ReportsPage({Key? key}) : super(key: key);
@@ -68,26 +68,26 @@ class _ReportsPageState extends State<ReportsPage> {
   }
 
   Future<Uint8List> _generateReport() async {
+    // Get farm-document
     String uid = FirebaseAuth.instance.currentUser!.uid;
-
     CollectionReference farmsCollection =
         FirebaseFirestore.instance.collection('farms');
     DocumentSnapshot farmDoc = await farmsCollection.doc(uid).get();
 
+    // Get user-document of farm-owner
     CollectionReference usersCollection =
         FirebaseFirestore.instance.collection('users');
     QuerySnapshot farmOwnerQuerySnapshot = await usersCollection
         .where('email', isEqualTo: FirebaseAuth.instance.currentUser!.email)
         .get();
-    DocumentSnapshot farmOwnerDoc = farmOwnerQuerySnapshot.docs.first;
 
-    Set<String> personnel = {};
-
+    // Extract data from trips from selected year
+    int tripAmountFromYear = 0;
+    Set<String> personnelFromYear = {};
     SplayTreeSet<QueryDocumentSnapshot> tripsFromYear = SplayTreeSet(((a, b) =>
         (a['startTime'] as Timestamp)
             .toDate()
             .compareTo((b['startTime'] as Timestamp).toDate())));
-    int tripAmountFromYear = 0;
 
     _allTripDocuments
         .asMap()
@@ -97,22 +97,27 @@ class _ReportsPageState extends State<ReportsPage> {
           _selectedYear) {
         tripAmountFromYear++;
         // TODO: Change to full name when available
-        personnel.add(tripDocMap.value['personnelEmail']);
+        personnelFromYear.add(tripDocMap.value['personnelEmail']);
         tripsFromYear.add(tripDocMap.value);
       }
-    }).toList();
+    });
 
-    final pw.Document pdf = pw.Document();
-
-    var logoImage = pw.MemoryImage(
-        (await rootBundle.load('images/app_icon.png')).buffer.asUint8List());
-
-    pdf.addPage(metaPdfPage(
-        logoImage, farmDoc, farmOwnerDoc, personnel, tripAmountFromYear));
-
+    // Summarize each trip
     List<Map<String, Object>?> tripSummaries =
         await _summarizeTrips(tripsFromYear);
 
+    // Create PDF-image of logo
+    var logoImage = pw.MemoryImage(
+        (await rootBundle.load('images/app_icon.png')).buffer.asUint8List());
+
+    // Create PDF-document
+    final pw.Document pdf = pw.Document();
+    pdf.addPage(metaPdfPage(
+        logoImage,
+        farmDoc,
+        farmOwnerQuerySnapshot.docs.first,
+        personnelFromYear,
+        tripAmountFromYear));
     pdf.addPage(pdfTripsTablePages(tripSummaries));
 
     return pdf.save();
@@ -228,7 +233,6 @@ class _ReportsPageState extends State<ReportsPage> {
   }
 
   pw.MultiPage pdfTripsTablePages(List<Map<String, Object>?> tripSummaries) {
-    //List<QueryDocumentSnapshot<Object?>?> trips) {
     return pw.MultiPage(
         pageFormat: PdfPageFormat(
             PdfPageFormat.a4.width, PdfPageFormat.a4.height,
@@ -251,17 +255,14 @@ class _ReportsPageState extends State<ReportsPage> {
                 },
                 children: [
                   pdfTripsTableHeaders(),
-                  ...tripSummaries
-                      .asMap()
-                      .entries
-                      .map((MapEntry<int, Map<String, Object>?> tripMap) {
-                    if (tripMap.value == null) {
+                  ...tripSummaries.map((tripMap) {
+                    if (tripMap == null) {
                       return pdfTripsTableHeaders();
                     } else {
                       DateTime startTime =
-                          (tripMap.value!['startTime']! as Timestamp).toDate();
+                          (tripMap['startTime']! as Timestamp).toDate();
                       DateTime stopTime =
-                          (tripMap.value!['stopTime']! as Timestamp).toDate();
+                          (tripMap['stopTime']! as Timestamp).toDate();
 
                       return pw.TableRow(children: [
                         pw.Padding(
@@ -276,15 +277,15 @@ class _ReportsPageState extends State<ReportsPage> {
                                 textAlign: pw.TextAlign.center)),
                         pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
-                            child: pw.Text('${tripMap.value!['sheep']}',
+                            child: pw.Text('${tripMap['sheep']}',
                                 textAlign: pw.TextAlign.center)),
                         pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
-                            child: pw.Text('${tripMap.value!['adults']}',
+                            child: pw.Text('${tripMap['adults']}',
                                 textAlign: pw.TextAlign.center)),
                         pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
-                            child: pw.Text('${tripMap.value!['lambs']}',
+                            child: pw.Text('${tripMap['lambs']}',
                                 textAlign: pw.TextAlign.center)),
                         pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
@@ -306,7 +307,6 @@ class _ReportsPageState extends State<ReportsPage> {
         });
   }
 
-// TODO: subclass?
   pw.TableRow pdfTripsTableHeaders() {
     return pw.TableRow(children: [
       pw.Padding(
