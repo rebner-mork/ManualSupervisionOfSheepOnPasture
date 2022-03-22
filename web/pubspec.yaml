@@ -35,7 +35,6 @@ dependencies:
   email_validator: ^2.0.1
   fluttericon: ^2.0.0
   flutter_map: ^0.14.0
-  location: ^4.3.0 # TODO: Hvorfor er denne i web?
   pdf: ^3.7.3
 
 dev_dependencies:

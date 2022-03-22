@@ -54,7 +54,6 @@ class _MainState extends State<MainTabs> {
             body: TabBarView(children: [
               Row(mainAxisSize: MainAxisSize.max, children: [
                 Container(
-                    // Eller sizedbox uten farge
                     constraints:
                         const BoxConstraints(minWidth: 128, maxWidth: 128),
                     color: Colors.grey.shade800),
