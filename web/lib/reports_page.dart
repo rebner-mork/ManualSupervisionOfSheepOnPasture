@@ -24,6 +24,7 @@ class ReportsPage extends StatefulWidget {
 
 class _ReportsPageState extends State<ReportsPage> {
   bool _isLoading = true;
+  bool _isGeneratingReport = false;
   late final SplayTreeSet<int> years = SplayTreeSet((a, b) => a.compareTo(b));
   late int _selectedYear;
   late bool _tripsExist;
@@ -333,7 +334,13 @@ class _ReportsPageState extends State<ReportsPage> {
   }
 
   Future<void> _downloadReport() async {
+    setState(() {
+      _isGeneratingReport = true;
+    });
     Uint8List pdfInBytes = await _generateReport();
+    setState(() {
+      _isGeneratingReport = false;
+    });
 
     final blob = html.Blob([pdfInBytes], 'application/pdf');
     final url = html.Url.createObjectUrlFromBlob(blob);
@@ -352,25 +359,30 @@ class _ReportsPageState extends State<ReportsPage> {
         : _tripsExist
             ? Column(
                 children: [
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 30),
                   const Text('Her kan du generere og laste ned årsrapporter',
-                      style: pageInfoTextStyle),
-                  DropdownButton<int>(
-                      value: _selectedYear,
-                      items: years
-                          .map<DropdownMenuItem<int>>(
-                              (int year) => DropdownMenuItem(
-                                  value: year,
-                                  child: Text(
-                                    year.toString(),
-                                    style: const TextStyle(fontSize: 26),
-                                  )))
-                          .toList(),
-                      onChanged: (int? newYear) {
-                        setState(() {
-                          _selectedYear = newYear!;
-                        });
-                      }),
+                      style: TextStyle(fontSize: 18)),
+                  const SizedBox(height: 20),
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    const Text('Velg år:  ', style: TextStyle(fontSize: 24)),
+                    DropdownButton<int>(
+                        value: _selectedYear,
+                        items: years
+                            .map<DropdownMenuItem<int>>(
+                                (int year) => DropdownMenuItem(
+                                    value: year,
+                                    child: Text(
+                                      year.toString(),
+                                      style: const TextStyle(fontSize: 26),
+                                    )))
+                            .toList(),
+                        onChanged: (int? newYear) {
+                          setState(() {
+                            _selectedYear = newYear!;
+                          });
+                        })
+                  ]),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                       onPressed: _downloadReport,
                       child: const Text(
@@ -379,7 +391,13 @@ class _ReportsPageState extends State<ReportsPage> {
                       ),
                       style: ElevatedButton.styleFrom(
                         fixedSize: const Size(230, 60),
-                      ))
+                      )),
+                  if (_isGeneratingReport)
+                    const Padding(
+                        padding: EdgeInsets.only(top: 30),
+                        child: LoadingData(
+                          text: 'Genererer rapport...',
+                        ))
                 ],
               )
             : const Center(
