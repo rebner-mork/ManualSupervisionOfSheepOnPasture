@@ -50,7 +50,6 @@ class TripDataManager {
 
     for (var registration in registrations) {
       DocumentReference registrationDocument = registrationSubCollection.doc();
-      debugPrint(registration.toString());
       registrationDocument.set(registration);
     }
   }
