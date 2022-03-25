@@ -10,13 +10,11 @@ class MainTripInfoTable extends StatelessWidget {
   const MainTripInfoTable(
       {required this.startTime,
       required this.stopTime,
-      required this.email,
-      required this.phone,
+      required this.personnelName,
       Key? key})
       : super(key: key);
 
-  final String email;
-  final String phone;
+  final String personnelName;
   final DateTime startTime;
   final DateTime stopTime;
 
@@ -26,8 +24,8 @@ class MainTripInfoTable extends StatelessWidget {
       columnWidths: {
         // Combined width should match 'idealWidth' (410) in detailed_trip.dart
         0: const FixedColumnWidth(80),
-        1: textSize(email, tableRowTextStyle).width > 330
-            ? FixedColumnWidth(textSize(email, tableRowTextStyle).width)
+        1: textSize(personnelName, tableRowTextStyle).width > 330
+            ? FixedColumnWidth(textSize(personnelName, tableRowTextStyle).width)
             : const FixedColumnWidth(330)
       },
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
@@ -49,7 +47,7 @@ class MainTripInfoTable extends StatelessWidget {
           Padding(
               padding: tableCellPadding,
               child: Text(
-                email,
+                personnelName,
                 style: textStyle,
               ))
         ]),

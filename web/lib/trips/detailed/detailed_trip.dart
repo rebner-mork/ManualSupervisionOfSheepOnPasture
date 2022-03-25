@@ -67,7 +67,9 @@ class _DetailedTripState extends State<DetailedTrip> {
       }
 
       for (String eartagColor in possibleEartagColorStringToKey.keys) {
-        if (eartagData[eartagColor] != null) {
+        if (eartagData[eartagColor] != null &&
+            registration[possibleEartagColorStringToKey[eartagColor]!] !=
+                null) {
           eartagData[eartagColor] = eartagData[eartagColor]! +
                   registration[possibleEartagColorStringToKey[eartagColor]!]!
               as int;
@@ -75,7 +77,8 @@ class _DetailedTripState extends State<DetailedTrip> {
       }
 
       for (String tieColor in possibleTieColorStringToKey.keys) {
-        if (tieData[tieColor] != null) {
+        if (tieData[tieColor] != null &&
+            registration[possibleTieColorStringToKey[tieColor]!] != null) {
           tieData[tieColor] = tieData[tieColor]! +
               registration[possibleTieColorStringToKey[tieColor]!]! as int;
         }
@@ -185,11 +188,10 @@ class _DetailedTripState extends State<DetailedTrip> {
                   child: Padding(
                       padding: const EdgeInsets.only(top: 30, bottom: 25),
                       child: MainTripInfoTable(
-                        startTime: startTime,
-                        stopTime: stopTime,
-                        email: widget.tripData['personnelEmail']! as String,
-                        phone: widget.tripData['personnelPhone']! as String,
-                      ))),
+                          startTime: startTime,
+                          stopTime: stopTime,
+                          personnelName:
+                              widget.tripData['personnelName']! as String))),
               Flexible(
                   child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 30),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web/my_page/my_page.dart';
-import 'package:web/trips/trips.dart';
+import 'package:web/trips/trips_page.dart';
 
 class MainTabs extends StatefulWidget {
   const MainTabs({Key? key}) : super(key: key);

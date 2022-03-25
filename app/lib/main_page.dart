@@ -68,8 +68,8 @@ class _MainPageState extends State<MainPage> {
     _deviceStartPosition = await map_utils.getDevicePosition();
 
     _tripData = TripDataManager.start(
-        farmId: widget.farmId,
         personnelEmail: widget.personnelEmail,
+        farmId: widget.farmId,
         mapName: widget.mapName);
     _tripData.track.add(_deviceStartPosition);
 
