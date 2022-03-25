@@ -108,7 +108,7 @@ class _TripsPageState extends State<TripsPage> {
                     ? const LoadingData()
                     : _selectedTripData != null
                         ? DetailedTrip(_selectedTripData!)
-                        : Text(
+                        : const Text(
                             'Klikk på en oppsynstur i lista til venstre for å se detaljer.',
                             style: feedbackTextStyle))),
       ],

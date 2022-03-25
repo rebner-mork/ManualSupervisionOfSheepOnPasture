@@ -19,7 +19,7 @@ class SheepInfoTable extends StatelessWidget {
           4: FixedColumnWidth(106)
         },
         children: [
-          TableRow(children: [
+          const TableRow(children: [
             Padding(
               padding: tableCellPadding,
               child: Text(

@@ -86,12 +86,12 @@ class _DefineMapPageState extends State<DefineMapPage> {
                       controller: _scrollController,
                       child: Column(children: [
                         const SizedBox(height: 20),
-                        Text('Mine beiteområder',
-                            style: definePageHeadlineTextStyle),
+                        const Text('Mine beiteområder',
+                            style: pageHeadlineTextStyle),
                         const SizedBox(height: 10),
-                        Text(
+                        const Text(
                             'Her kan du legge til beiteområder. I appen laster oppsynspersonell ned\nkart over et av områdene for å gå oppsynstur uten nettverksforbindelse.',
-                            style: definePageInfoTextStyle),
+                            style: pageInfoTextStyle),
                         DataTable(
                             dataRowHeight: _rowHeight,
                             border: TableBorder.symmetric(),

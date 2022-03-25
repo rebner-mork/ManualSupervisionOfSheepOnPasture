@@ -2,23 +2,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // Datatable
-TextStyle dataColumnTextStyle =
-    const TextStyle(fontSize: 19, fontWeight: FontWeight.bold);
-TextStyle dataCellTextStyle = const TextStyle(fontSize: 16);
-TextStyle dataCellBoldTextStyle =
-    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold);
+const TextStyle dataColumnTextStyle =
+    TextStyle(fontSize: 19, fontWeight: FontWeight.bold);
+const TextStyle dataCellTextStyle = TextStyle(fontSize: 16);
+const TextStyle dataCellBoldTextStyle =
+    TextStyle(fontSize: 16, fontWeight: FontWeight.bold);
 
 // Button
-TextStyle buttonTextStyle = const TextStyle(fontSize: 16);
+const TextStyle buttonTextStyle = TextStyle(fontSize: 16);
 
-TextStyle feedbackTextStyle = const TextStyle(fontSize: 18);
-TextStyle definePageHeadlineTextStyle =
-    const TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
-TextStyle definePageInfoTextStyle = const TextStyle(fontSize: 16);
+const TextStyle feedbackTextStyle = TextStyle(fontSize: 18);
+const TextStyle pageHeadlineTextStyle =
+    TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
+const TextStyle pageInfoTextStyle = TextStyle(fontSize: 16);
 
 // Table
-TextStyle tableRowDescriptionTextStyle =
-    const TextStyle(fontSize: 17, fontWeight: FontWeight.bold);
-TextStyle tableRowTextStyle = const TextStyle(fontSize: 17);
+const TextStyle tableRowDescriptionTextStyle =
+    TextStyle(fontSize: 17, fontWeight: FontWeight.bold);
+const TextStyle tableRowTextStyle = TextStyle(fontSize: 17);
 
-EdgeInsets tableCellPadding = const EdgeInsets.all(8);
+const EdgeInsets tableCellPadding = EdgeInsets.all(8);

@@ -63,7 +63,7 @@ class _TripOverviewListState extends State<TripOverviewList> {
                   DateTime startTime =
                       (_trips[index]['startTime']! as Timestamp).toDate();
                   String startTimeString =
-                      '${startTime.day}/${startTime.month}/${startTime.year}';
+                      '${startTime.day.toString().padLeft(2, '0')}/${startTime.month.toString().padLeft(2, '0')}/${startTime.year}';
 
                   return ListTile(
                     tileColor:
