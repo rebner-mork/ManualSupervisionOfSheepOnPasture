@@ -23,11 +23,14 @@ class MainPage extends StatefulWidget {
       required this.personnelEmail,
       required this.eartags,
       required this.ties,
+      this.onCompleted,
       Key? key})
       : super(key: key);
 
   final SpeechToText speechToText;
   final ValueNotifier<bool> ongoingDialog;
+
+  final VoidCallback? onCompleted;
 
   final LatLng northWest;
   final LatLng southEast;
@@ -157,6 +160,8 @@ class _MainPageState extends State<MainPage> {
                               });
                             }
                           },
+                          onNewPosition: (position) =>
+                              _tripData.track.add(position),
                         )),
                 Positioned(
                   top: buttonInset + MediaQuery.of(context).viewPadding.top,
@@ -198,19 +203,22 @@ class _MainPageState extends State<MainPage> {
               ]));
 //>>>>>>> main
   }
-}
 
-Future<void> _endTripButtonPressed(
-    BuildContext context, TripDataManager _trip) async {
-  bool isConnected = await isConnectedToInternett();
-  await showEndTripDialog(context, isConnected).then((isFinished) {
-    if (isFinished) {
-      if (isConnected) {
-        _trip.post();
-      } else {
-        _trip.archive();
+  Future<void> _endTripButtonPressed(
+      BuildContext context, TripDataManager _trip) async {
+    bool isConnected = await isConnectedToInternett();
+    await showEndTripDialog(context, isConnected).then((isFinished) {
+      if (isFinished) {
+        if (isConnected) {
+          _trip.post();
+        } else {
+          _trip.archive();
+        }
+        if (widget.onCompleted != null) {
+          widget.onCompleted!();
+        }
+        Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
       }
-      Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
-    }
-  });
+    });
+  }
 }

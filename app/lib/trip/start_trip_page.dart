@@ -84,7 +84,8 @@ class _StartTripPageState extends State<StartTripPage>
 
     trySynchronize();
 
-    timer = Timer.periodic(const Duration(seconds: 5), (_) => trySynchronize());
+    timer =
+        Timer.periodic(const Duration(seconds: 60), (_) => trySynchronize());
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _initSpeechToText();
@@ -379,6 +380,9 @@ class _StartTripPageState extends State<StartTripPage>
                 builder: (context, value, child) => MainPage(
                       speechToText: _speechToText,
                       ongoingDialog: _ongoingDialog,
+                      onCompleted: () {
+                        trySynchronize();
+                      },
                       northWest: mapBounds['northWest']!,
                       southEast: mapBounds['southEast']!,
                       farmId: _farmIDs[_farmNames.indexOf(_selectedFarmName)],
@@ -504,33 +508,30 @@ class _StartTripPageState extends State<StartTripPage>
   }
 
   void synchronize() {
-    setState(() {
-      _syncStatus['color'] = Colors.orange;
-      _syncStatus['text'] = "Synkroniserer...";
-    });
-
+    if (mounted) {
+      setState(() {
+        _syncStatus['color'] = Colors.orange;
+        _syncStatus['text'] = "Synkroniserer...";
+      });
+    }
     List<FileSystemEntity> files =
         Directory(applicationDocumentDirectoryPath + "/trips")
             .listSync(recursive: false);
 
     for (FileSystemEntity file in files) {
       if (file.path.endsWith(".json")) {
-        var data = jsonDecode(File(file.path).readAsStringSync());
-        debugPrint(
-            data); /*
-
-        TODO sliter her med innlesning
-
-        TripDataManager trip = TripDataManager();
+        String json = File(file.path).readAsStringSync();
+        TripDataManager trip = TripDataManager.fromJson(json);
         trip.post();
         File(file.path).delete();
-        */
       }
     }
-    setState(() {
-      _syncStatus['color'] = Colors.green;
-      _syncStatus['text'] = "Synkronisert";
-    });
+    if (mounted) {
+      setState(() {
+        _syncStatus['color'] = Colors.green;
+        _syncStatus['text'] = "Synkronisert";
+      });
+    }
   }
 
   bool isSynchronized() {
@@ -552,21 +553,25 @@ class _StartTripPageState extends State<StartTripPage>
   }
 
   Future<void> trySynchronize() async {
-    bool connected = await isConnectedToInternett();
-    bool synchronized = isSynchronized();
-
-    if (!synchronized && connected) {
-      synchronize();
-    } else if (!synchronized && !connected) {
-      setState(() {
-        _syncStatus['color'] = Colors.red;
-        _syncStatus['text'] = "Ikke synkronisert";
-      });
+    if (isSynchronized()) {
+      if (mounted) {
+        setState(() {
+          _syncStatus['color'] = Colors.green;
+          _syncStatus['text'] = "Synkronisert";
+        });
+      }
     } else {
-      setState(() {
-        _syncStatus['color'] = Colors.green;
-        _syncStatus['text'] = "Synkronisert";
-      });
+      bool connected = await isConnectedToInternett();
+      if (connected) {
+        synchronize();
+      } else {
+        if (mounted) {
+          setState(() {
+            _syncStatus['color'] = Colors.red;
+            _syncStatus['text'] = "Ikke synkronisert";
+          });
+        }
+      }
     }
   }
 

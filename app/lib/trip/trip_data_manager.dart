@@ -14,21 +14,30 @@ class TripDataManager {
     _startTime = DateTime.now();
   }
 
-  TripDataManager(Map<String, dynamic> data) {
+  TripDataManager.fromJson(String json) {
     try {
+      Map<String, dynamic> data = jsonDecode(json);
+
       farmId = data['farmId'].toString();
       personnelEmail = data['personnelEmail'].toString();
       mapName = data['mapName'].toString();
-      _startTime = DateTime.parse(data['startTime'].toString());
-      _stopTime = DateTime.parse(data[['stopTime']].toString());
-      registrations.addAll(data['registrations']);
-      track.addAll(data['track']);
 
+      _startTime = DateTime.parse(data['startTime']);
+      _stopTime = DateTime.parse(data['stopTime']);
+
+      registrations.addAll(data['registrations']);
       for (int i = 0; i < registrations.length; i++) {
         registrations[i]['timestamp'] =
-            DateTime.parse(registrations[i]['timestamp'].toString());
+            DateTime.parse(registrations[i]['timestamp']);
       }
-    } catch (_) {}
+
+      for (int i = 0; i < data['track'].length; i++) {
+        track.add(LatLng(
+            data['track'][i]['latitude'], data['track'][i]['longitude']));
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 
   late String farmId;
@@ -36,7 +45,7 @@ class TripDataManager {
   late String mapName;
   late final DateTime _startTime;
   DateTime? _stopTime;
-  List<Map<String, Object>> registrations = [];
+  List<dynamic> registrations = [];
   List<LatLng> track = [];
 
   void post() {

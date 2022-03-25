@@ -24,11 +24,13 @@ class EndTripDialog extends StatelessWidget {
             size: 80,
             color: Colors.grey,
           ),
-          Center(
-            child: Text(isConnected
-                ? "Tilkoblet nettverk"
-                : "Oppsynsturen lagres på applikasjonen og lastes opp neste gang enheten er tilkoblet nettverk."), //TODO beskrive det faktisk ender opp med
-          ),
+          Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              child: Center(
+                child: Text(isConnected
+                    ? "Tilkoblet nettverk"
+                    : "Oppsynsturen lagres i applikasjonen og lastes opp når gang enheten er tilkoblet nettverk."), //TODO beskrive det faktisk ender opp med
+              )),
           const SizedBox(
             height: 30,
           ),
