@@ -19,7 +19,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   bool _registerFailed = false;
   String _feedback = '';
   bool _validationActivated = false;
-  late String _email, _password, _phone;
+  late String _name, _email, _password, _phone;
   final passwordOneController = TextEditingController();
 
   void _toggleVisiblePassword() {
@@ -51,10 +51,22 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                 child: Column(
                   children: [
                     const Icon(Icons.account_circle,
-                        size: 200, color: Colors.black),
+                        size: 130, color: Colors.black),
                     const SizedBox(
                       height: 15,
                     ),
+                    TextFormField(
+                        key: const Key('inputName'),
+                        validator: (input) => validateName(input),
+                        onSaved: (input) => _name = input.toString(),
+                        onChanged: (_) {
+                          _onFieldChanged();
+                        },
+                        textInputAction: TextInputAction.go,
+                        onFieldSubmitted: (value) => _createUserAndSignIn(),
+                        decoration:
+                            customInputDecoration('Fullt navn', Icons.badge)),
+                    inputFieldSpacer(),
                     TextFormField(
                         key: const Key('inputEmail'),
                         validator: (input) => validateEmail(input),
@@ -123,8 +135,8 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                     const SizedBox(height: 10),
                     ElevatedButton(
                         onPressed: _createUserAndSignIn,
-                        child: const Text('Opprett bruker',
-                            style: TextStyle(fontSize: 26, letterSpacing: 0)),
+                        child: const Text('Opprett brukerkonto',
+                            style: TextStyle(fontSize: 24)),
                         style: ElevatedButton.styleFrom(
                             fixedSize: const Size(250, 60)))
                   ],
@@ -141,7 +153,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
     if (formState!.validate()) {
       formState.save();
       try {
-        String? response = await createUser(_email, _password, _phone);
+        String? response = await createUser(_name, _email, _password, _phone);
 
         setState(() {
           _registerFailed = response == null ? false : true;
