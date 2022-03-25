@@ -25,3 +25,5 @@ To manually deploy the latest version of the app to Firebase hosting run these c
 `flutter build web`
 
 `firebase deploy`
+
+:)
