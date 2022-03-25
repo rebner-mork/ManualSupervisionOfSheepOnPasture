@@ -1,6 +1,5 @@
 import 'dart:collection';
 import 'dart:io';
-import 'dart:convert';
 import 'dart:async';
 
 import 'package:app/main_page.dart';
@@ -35,7 +34,7 @@ class _StartTripPageState extends State<StartTripPage>
     with TickerProviderStateMixin {
   _StartTripPageState();
 
-  Map<String, dynamic> _syncStatus = {
+  final Map<String, dynamic> _syncStatus = {
     'text': "Laster...",
     'color': Colors.grey
   };

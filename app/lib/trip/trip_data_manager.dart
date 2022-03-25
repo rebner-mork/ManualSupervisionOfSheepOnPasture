@@ -1,7 +1,7 @@
 import 'dart:convert';
+import 'dart:developer' as developer;
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../utils/constants.dart';
@@ -36,7 +36,7 @@ class TripDataManager {
             data['track'][i]['latitude'], data['track'][i]['longitude']));
       }
     } catch (e) {
-      debugPrint(e.toString());
+      developer.log(e.toString());
     }
   }
 
