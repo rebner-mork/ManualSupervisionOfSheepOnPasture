@@ -18,6 +18,7 @@ void main() {
 
       expect(find.byIcon(Icons.account_circle), findsOneWidget);
       expect(find.byIcon(Icons.visibility_off), findsNWidgets(2));
+      expect(find.byIcon(Icons.badge), findsOneWidget);
       expect(find.byIcon(Icons.mail), findsOneWidget);
       expect(find.byIcon(Icons.lock), findsNWidgets(2));
       expect(find.byIcon(Icons.phone), findsOneWidget);

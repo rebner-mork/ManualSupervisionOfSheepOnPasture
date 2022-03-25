@@ -8,6 +8,7 @@ import 'package:web/login_and_sign_up/sign_up_widget.dart';
 import 'firebase_setup.dart';
 
 const _email = 'testregister@gmail.com';
+const _name = 'Fornavn Etternavn';
 
 void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +17,8 @@ void main() async {
   testWidgets('Integration test register', (WidgetTester tester) async {
     await tester.pumpWidget(const MaterialApp(home: SignUpWidget()));
 
-    var registerButton = find.text('Opprett bruker');
+    var registerButton = find.text('Opprett brukerkonto');
+    var nameField = find.byKey(const Key('inputName'));
     var emailField = find.byKey(const Key('inputEmail'));
     var passwordOneField = find.byKey(const Key('inputPasswordOne'));
     var passwordTwoField = find.byKey(const Key('inputPasswordTwo'));
@@ -34,6 +36,7 @@ void main() async {
     }
 
     // Register user
+    await tester.enterText(nameField, _name);
     await tester.enterText(emailField, _email);
     await tester.enterText(passwordOneField, password);
     await tester.enterText(passwordTwoField, password);
@@ -54,7 +57,8 @@ void main() async {
   testWidgets('Register same mail twice', (WidgetTester tester) async {
     await tester.pumpWidget(const MaterialApp(home: SignUpWidget()));
 
-    var registerButton = find.text('Opprett bruker');
+    var registerButton = find.text('Opprett brukerkonto');
+    var nameField = find.byKey(const Key('inputName'));
     var emailField = find.byKey(const Key('inputEmail'));
     var passwordOneField = find.byKey(const Key('inputPasswordOne'));
     var passwordTwoField = find.byKey(const Key('inputPasswordTwo'));
@@ -62,6 +66,7 @@ void main() async {
 
     expect(find.text('E-posten er allerede i bruk'), findsNothing);
 
+    await tester.enterText(nameField, _name);
     await tester.enterText(emailField, _email);
     await tester.enterText(passwordOneField, password);
     await tester.enterText(passwordTwoField, password);
