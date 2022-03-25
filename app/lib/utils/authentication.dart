@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 Future<String?> createUser(
     String name, String email, String password, String phone) async {
   try {
-    UserCredential user = await FirebaseAuth.instance
+    await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password);
 
     CollectionReference users = FirebaseFirestore.instance.collection('users');

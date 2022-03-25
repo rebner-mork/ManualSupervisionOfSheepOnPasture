@@ -46,6 +46,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
         child: Form(
             key: _formKey,
             child: SingleChildScrollView(
+                key: const Key('scrollView'),
                 child: SizedBox(
                     height: MediaQuery.of(context).size.height -
                         MediaQuery.of(context).viewPadding.top -
@@ -126,6 +127,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         ),
                         const SizedBox(height: 10),
                         ElevatedButton(
+                            key: const Key('registerUserButton'),
                             onPressed: _createUser,
                             child: const Text('Opprett bruker',
                                 style: TextStyle(fontSize: 20)),
