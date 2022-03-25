@@ -39,7 +39,7 @@ class MainTripInfoTable extends StatelessWidget {
           Padding(
               padding: tableCellPadding,
               child: Text(
-                  '${startTime.hour}:${startTime.minute} - ${stopTime.hour}:${stopTime.minute}',
+                  '${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')} - ${stopTime.hour.toString().padLeft(2, '0')}:${stopTime.minute.toString().padLeft(2, '0')}',
                   style: textStyle))
         ]),
         TableRow(children: [

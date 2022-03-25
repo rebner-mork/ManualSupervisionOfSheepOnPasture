@@ -35,7 +35,8 @@ dependencies:
   email_validator: ^2.0.1
   fluttericon: ^2.0.0
   flutter_map: ^0.14.0
-  location: ^4.3.0
+  pdf: ^3.7.3
+  universal_html: ^2.0.8
 
 dev_dependencies:
   flutter_test:
