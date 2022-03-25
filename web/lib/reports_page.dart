@@ -348,7 +348,7 @@ class _ReportsPageState extends State<ReportsPage> {
     anchorElement = html.document.createElement('a') as html.AnchorElement
       ..href = url
       ..style.display = 'none'
-      ..download = 'report.pdf';
+      ..download = 'Årsrapport$_selectedYear.pdf';
     html.document.body?.children.add(anchorElement!);
     anchorElement!.click();
   }
