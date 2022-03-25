@@ -21,6 +21,8 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
   bool _showNewPersonnelRow = false;
 
   final List<String> _personnelEmails = [];
+  final List<String> _personnelNames = [];
+  final List<String> _personnelPhones = [];
   List<String> _oldEmails = [];
   TextEditingController _newEmailController = TextEditingController();
 
@@ -58,6 +60,16 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                           columns: const [
                             DataColumn(
                                 label: Text(
+                              'Navn',
+                              style: dataColumnTextStyle,
+                            )),
+                            DataColumn(
+                                label: Text(
+                              'Telefon',
+                              style: dataColumnTextStyle,
+                            )),
+                            DataColumn(
+                                label: Text(
                               'E-post',
                               style: dataColumnTextStyle,
                             )),
@@ -82,6 +94,14 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
         .entries
         .map((MapEntry<int, String> data) => DataRow(cells: [
               DataCell(Text(
+                _personnelNames[data.key],
+                style: const TextStyle(fontSize: 16),
+              )),
+              DataCell(Text(
+                _personnelPhones[data.key],
+                style: const TextStyle(fontSize: 16),
+              )),
+              DataCell(Text(
                 _personnelEmails[data.key],
                 style: const TextStyle(fontSize: 16),
               )),
@@ -99,7 +119,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                           builder: (_) =>
                               _deletePersonnelDialog(context, data.key));
                     },
-                  )))
+                  ))),
             ]))
         .toList();
   }
@@ -108,6 +128,8 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
     return DataRow(
         cells: _showNewPersonnelRow
             ? [
+                DataCell.empty,
+                DataCell.empty,
                 DataCell(
                     TextField(
                       controller: _newEmailController,
@@ -143,6 +165,8 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                 ])),
               ]
             : [
+                DataCell.empty,
+                DataCell.empty,
                 DataCell.empty,
                 DataCell(FloatingActionButton(
                   mini: true,
@@ -254,8 +278,14 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
     if (doc.exists) {
       emails = doc.get('personnel');
       if (emails != null) {
-        for (String email in emails) {
-          _personnelEmails.add(email);
+        QuerySnapshot personnelSnapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .where('email', whereIn: emails)
+            .get();
+        for (QueryDocumentSnapshot personnelDoc in personnelSnapshot.docs) {
+          _personnelEmails.add(personnelDoc['email']);
+          _personnelNames.add(personnelDoc['name']);
+          _personnelPhones.add(personnelDoc['phone']);
         }
         _oldEmails = List.from(emails);
       }
