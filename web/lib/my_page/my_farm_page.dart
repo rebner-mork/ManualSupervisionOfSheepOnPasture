@@ -109,7 +109,7 @@ class _MyFarmState extends State<MyFarm> {
           ),
           inputFieldSpacer(),
           _loadingData
-              ? const Text('Laster gårdsinformasjon...')
+              ? const LoadingData()
               : AnimatedOpacity(
                   opacity: _validationActivated ? 1.0 : 0.0,
                   duration: const Duration(milliseconds: 200),

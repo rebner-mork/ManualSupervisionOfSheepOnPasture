@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:web/utils/custom_widgets.dart';
 import 'package:web/utils/styles.dart';
 import 'package:web/utils/validation.dart';
 
@@ -48,12 +49,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
     return Material(
         child: Column(
             children: _loadingData
-                ? const [
-                    Text(
-                      'Laster inn oppsynspersonell...',
-                      style: TextStyle(fontSize: 18),
-                    )
-                  ]
+                ? const [SizedBox(height: 20), LoadingData()]
                 : [
                     Column(children: [
                       const SizedBox(height: 20),
@@ -92,104 +88,28 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
         .asMap()
         .entries
         .map((MapEntry<int, String> data) => DataRow(cells: [
-              DataCell(
-                  Container(
-                      color: data.key == _indexOfInvalidEmail
-                          ? Colors.yellow.shade200
-                          : null,
-                      child: TextField(
-                        controller: _emailControllers[data.key],
-                        decoration: InputDecoration(hintText: writeEmail),
-                        onChanged: (email) {
-                          setState(() {
-                            _showDeleteIcon[data.key] =
-                                email == _oldEmails[data.key];
-                          });
-                        },
-                        onSubmitted: (_) => _saveExistingPersonnel(data.key),
-                      )),
-                  showEditIcon: true),
+              DataCell(Container(
+                  color: data.key == _indexOfInvalidEmail
+                      ? Colors.yellow.shade200
+                      : null,
+                  child: Text(_emailControllers[data.key].text))),
               DataCell(Container(
                   constraints: const BoxConstraints(minWidth: 165),
                   alignment: Alignment.centerLeft,
-                  child: _showDeleteIcon[data.key]
-                      ? IconButton(
-                          icon: Icon(Icons.delete,
-                              color: Colors.grey.shade800, size: 26),
-                          splashRadius: 22,
-                          hoverColor: Colors.red,
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (_) =>
-                                    _deletePersonnelDialog(context, data.key));
-                          },
-                        )
-                      : Row(children: [
-                          ElevatedButton(
-                              style: ButtonStyle(
-                                  fixedSize: MaterialStateProperty.all(
-                                      const Size.fromHeight(35))),
-                              child:
-                                  const Text('Lagre', style: buttonTextStyle),
-                              onPressed: () =>
-                                  _saveExistingPersonnel(data.key)),
-                          const SizedBox(width: 10),
-                          ElevatedButton(
-                            style: ButtonStyle(
-                                fixedSize: MaterialStateProperty.all(
-                                    const Size.fromHeight(35)),
-                                textStyle:
-                                    MaterialStateProperty.all(buttonTextStyle),
-                                backgroundColor:
-                                    MaterialStateProperty.all(Colors.red)),
-                            child: const Text("Avbryt"),
-                            onPressed: () {
-                              setState(() {
-                                _emailControllers[data.key].text =
-                                    _oldEmails[data.key];
-                                _showDeleteIcon[data.key] = true;
-                                _indexOfInvalidEmail = -1;
-                                _helpText = '';
-                              });
-                            },
-                          )
-                        ])))
+                  child: IconButton(
+                    icon: Icon(Icons.delete,
+                        color: Colors.grey.shade800, size: 26),
+                    splashRadius: 22,
+                    hoverColor: Colors.red,
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (_) =>
+                              _deletePersonnelDialog(context, data.key));
+                    },
+                  )))
             ]))
         .toList();
-  }
-
-  void _saveExistingPersonnel(int index) {
-    String newEmail = _emailControllers[index].text;
-
-    if (newEmail != _oldEmails[index]) {
-      setState(() {
-        if (newEmail.isNotEmpty) {
-          if (!_emails.contains(newEmail)) {
-            if (validateEmail(newEmail) == null) {
-              _helpText = '';
-              _showDeleteIcon[index] = true;
-              _indexOfInvalidEmail = -1;
-              _emails[index] = newEmail;
-              _oldEmails = List.from(_emails);
-              _savePersonnelData();
-            } else {
-              _helpText = "'$newEmail' har ikke gyldig format";
-              _indexOfInvalidEmail = index;
-              _invalidNewEmail = false;
-            }
-          } else {
-            _helpText = nonUniqueEmail;
-            _indexOfInvalidEmail = index;
-            _invalidNewEmail = false;
-          }
-        } else {
-          _helpText = writeEmail;
-          _indexOfInvalidEmail = index;
-          _invalidNewEmail = false;
-        }
-      });
-    }
   }
 
   DataRow _newPersonnelRow() {
@@ -247,8 +167,17 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
               ]);
   }
 
-  void _saveNewPersonnel() {
+  Future<void> _saveNewPersonnel() async {
     String email = _newEmailController.text;
+
+    bool userExists = false;
+    QuerySnapshot userQuerySnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('email', isEqualTo: email)
+        .get();
+    if (userQuerySnapshot.size != 0) {
+      userExists = true;
+    }
 
     setState(() {
       if (email.isEmpty) {
@@ -266,15 +195,22 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
             ? 'E-post kan ikke være tom'
             : "'$email' har ikke gyldig format for e-post";
       } else {
-        _helpText = '';
-        _showNewEmailRow = false;
-        _invalidNewEmail = false;
-        _emails.add(email);
-        _emailControllers.add(_newEmailController);
-        _newEmailController = TextEditingController(text: '');
-        _showDeleteIcon.add(true);
+        if (userExists) {
+          _helpText = '';
+          _showNewEmailRow = false;
+          _invalidNewEmail = false;
+          _emails.add(email);
+          _emailControllers.add(_newEmailController);
+          // ADD i de nye tabellene
+          _newEmailController = TextEditingController(text: '');
+          _showDeleteIcon.add(true);
 
-        _savePersonnelData();
+          _savePersonnelData();
+        } else {
+          _helpText = 'Det finnes ingen bruker med e-posten \'$email\'';
+          _invalidNewEmail = true;
+        }
+        // TODO et annet sted: Fjern muligheten til å endre e-post
       }
     });
   }
