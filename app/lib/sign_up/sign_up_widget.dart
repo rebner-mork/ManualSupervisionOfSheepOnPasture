@@ -18,7 +18,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   bool _visiblePassword = false;
   bool _registerFailed = false;
   bool _validationActivated = false;
-  late String _email, _password, _phone, _feedback;
+  late String _name, _email, _password, _phone, _feedback;
   final passwordOneController = TextEditingController();
 
   void _toggleVisiblePassword() {
@@ -49,6 +49,16 @@ class _SignUpWidgetState extends State<SignUpWidget> {
               children: [
                 const Icon(Icons.account_circle,
                     size: 90, color: Colors.black54),
+                inputFieldSpacer(),
+                TextFormField(
+                    key: const Key('inputName'),
+                    validator: (input) => validateName(input),
+                    onSaved: (input) => _name = input.toString(),
+                    onChanged: _onFieldChange,
+                    textInputAction: TextInputAction.go,
+                    onFieldSubmitted: (value) => _createUser(),
+                    decoration:
+                        customInputDecoration('Fullt navn', Icons.badge)),
                 inputFieldSpacer(),
                 TextFormField(
                     key: const Key('inputEmail'),
@@ -126,7 +136,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
     if (formState!.validate()) {
       formState.save();
       try {
-        String? response = await createUser(_email, _password, _phone);
+        String? response = await createUser(_name, _email, _password, _phone);
 
         setState(() {
           _registerFailed = response == null ? false : true;
