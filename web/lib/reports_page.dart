@@ -47,8 +47,10 @@ class _ReportsPageState extends State<ReportsPage> {
     CollectionReference tripsCollection =
         FirebaseFirestore.instance.collection('trips');
 
-    QuerySnapshot<Object?> tripsSnapshot =
-        await tripsCollection.where('farmId', isEqualTo: uid).get();
+    QuerySnapshot<Object?> tripsSnapshot = await tripsCollection
+        .where('farmId', isEqualTo: uid)
+        .orderBy('startTime')
+        .get();
     _allTripDocuments = tripsSnapshot.docs;
 
     if (_allTripDocuments.isNotEmpty) {
