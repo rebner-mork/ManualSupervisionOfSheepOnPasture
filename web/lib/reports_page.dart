@@ -48,6 +48,7 @@ class _ReportsPageState extends State<ReportsPage> {
         .collection('farms')
         .doc(uid)
         .collection('trips')
+        .orderBy('startTime')
         .get();
 
     _allTripDocuments = tripsQuerySnapshot.docs;

@@ -33,6 +33,7 @@ class _TripOverviewListState extends State<TripOverviewList> {
         .collection('farms')
         .doc(uid)
         .collection('trips')
+        .orderBy('startTime', descending: true)
         .get();
 
     for (QueryDocumentSnapshot doc in tripsQuerySnapshot.docs) {
@@ -58,7 +59,6 @@ class _TripOverviewListState extends State<TripOverviewList> {
                 style: TextStyle(fontSize: 16),
               )
             : ListView.builder(
-                // shrinkWrap: true,
                 itemCount: _trips.length,
                 itemBuilder: (BuildContext context, int index) {
                   DateTime startTime =
