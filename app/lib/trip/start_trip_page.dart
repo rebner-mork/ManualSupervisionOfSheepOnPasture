@@ -73,7 +73,7 @@ class _StartTripPageState extends State<StartTripPage>
   static const double fieldNameWidth = 50;
   static const double dropdownWidth = 190;
 
-  late Timer timer;
+  late Timer synchronizeTimer;
 
   @override
   void initState() {
@@ -83,7 +83,7 @@ class _StartTripPageState extends State<StartTripPage>
 
     trySynchronize();
 
-    timer =
+    synchronizeTimer =
         Timer.periodic(const Duration(seconds: 60), (_) => trySynchronize());
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -538,17 +538,12 @@ class _StartTripPageState extends State<StartTripPage>
         Directory(applicationDocumentDirectoryPath + "/trips")
             .listSync(recursive: false);
 
-    List<String> relevantFiles = [];
     for (FileSystemEntity file in files) {
       if (file.path.endsWith(".json")) {
-        relevantFiles.add(file.path);
+        return false;
       }
     }
-
-    if (relevantFiles.isEmpty) {
-      return true;
-    }
-    return false;
+    return true;
   }
 
   Future<void> trySynchronize() async {
@@ -577,7 +572,7 @@ class _StartTripPageState extends State<StartTripPage>
   @override
   void dispose() {
     _animationController.dispose();
-    timer.cancel();
+    synchronizeTimer.cancel();
     super.dispose();
   }
 }
