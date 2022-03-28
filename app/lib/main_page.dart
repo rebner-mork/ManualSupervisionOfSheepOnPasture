@@ -201,7 +201,6 @@ class _MainPageState extends State<MainPage> {
                   ),
                 ),
               ]));
-//>>>>>>> main
   }
 
   Future<void> _endTripButtonPressed(
