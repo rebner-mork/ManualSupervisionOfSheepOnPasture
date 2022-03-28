@@ -44,12 +44,13 @@ class _ReportsPageState extends State<ReportsPage> {
   void _readAllTrips() async {
     String uid = FirebaseAuth.instance.currentUser!.uid;
 
-    CollectionReference tripsCollection =
-        FirebaseFirestore.instance.collection('trips');
+    QuerySnapshot tripsQuerySnapshot = await FirebaseFirestore.instance
+        .collection('farms')
+        .doc(uid)
+        .collection('trips')
+        .get();
 
-    QuerySnapshot<Object?> tripsSnapshot =
-        await tripsCollection.where('farmId', isEqualTo: uid).get();
-    _allTripDocuments = tripsSnapshot.docs;
+    _allTripDocuments = tripsQuerySnapshot.docs;
 
     if (_allTripDocuments.isNotEmpty) {
       for (QueryDocumentSnapshot tripDoc in _allTripDocuments) {
@@ -124,14 +125,14 @@ class _ReportsPageState extends State<ReportsPage> {
     for (int i = 0; i < tripDocuments.length; i++) {
       // If this trip will cause a page-wrap, add null to make pdfTripsTablePages-function add columnHeaderRow
       if (i != 0 && i % 25 == 0) {
-        tripSummaries.add(null);
+        tripSummaries.add(
+            null); // TODO: vil ikke dette føre til at man hopper over? fjern else? SJEKK LENGDEN TIL TRIPSUMMARIES ISTEDENFOR OG KJØR FOREACH
       } else {
-        CollectionReference registrationsCollection = FirebaseFirestore.instance
-            .collection('trips')
-            .doc(tripDocuments.elementAt(i)!.id)
-            .collection('registrations');
-        QuerySnapshot registrationsQuerySnapshot =
-            await registrationsCollection.get();
+        QuerySnapshot registrationsQuerySnapshot = await tripDocuments
+            .elementAt(i)!
+            .reference
+            .collection('registrations')
+            .get();
 
         int totalSheepAmount = 0;
         int totalLambAmount = 0;

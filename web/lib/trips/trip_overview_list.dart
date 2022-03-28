@@ -29,12 +29,13 @@ class _TripOverviewListState extends State<TripOverviewList> {
   Future<void> _readTrips() async {
     String uid = FirebaseAuth.instance.currentUser!.uid;
 
-    CollectionReference tripsCollection =
-        FirebaseFirestore.instance.collection('trips');
-    QuerySnapshot tripQuerySnapshot =
-        await tripsCollection.where('farmId', isEqualTo: uid).get();
+    QuerySnapshot tripsQuerySnapshot = await FirebaseFirestore.instance
+        .collection('farms')
+        .doc(uid)
+        .collection('trips')
+        .get();
 
-    for (QueryDocumentSnapshot doc in tripQuerySnapshot.docs) {
+    for (QueryDocumentSnapshot doc in tripsQuerySnapshot.docs) {
       _trips.add({
         'mapName': doc['mapName'],
         'startTime': doc['startTime'],

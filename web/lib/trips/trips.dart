@@ -46,7 +46,6 @@ class _TripsPageState extends State<TripsPage> {
         .collection('users')
         .where('email', isEqualTo: tripDoc['personnelEmail'])
         .get();
-    QueryDocumentSnapshot userDoc = userDocsSnapshot.docs.first;
 
     // Get map center coordinates
     DocumentSnapshot farmDoc = await FirebaseFirestore.instance
@@ -76,7 +75,7 @@ class _TripsPageState extends State<TripsPage> {
     _selectedTripData = {
       'mapName': tripDoc['mapName'],
       'personnelEmail': tripDoc['personnelEmail'],
-      'personnelPhone': userDoc['phone'],
+      'personnelPhone': userDocsSnapshot.docs.first['phone'],
       'startTime': tripDoc['startTime'],
       'stopTime': tripDoc['stopTime'],
       'mapCenter': mapCenter,

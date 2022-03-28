@@ -437,38 +437,38 @@ class _StartTripPageState extends State<StartTripPage>
 
   Future<void> _readFarms() async {
     String email = FirebaseAuth.instance.currentUser!.email!;
-    CollectionReference personnelCollection =
-        FirebaseFirestore.instance.collection('personnel');
-    DocumentReference personnelDoc = personnelCollection.doc(email);
+    QuerySnapshot personnelQuerySnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('email', isEqualTo: email)
+        .get();
+    QueryDocumentSnapshot personnelDoc = personnelQuerySnapshot.docs.first;
 
-    DocumentSnapshot<Object?> doc = await personnelDoc.get();
-    if (doc.exists) {
-      List<dynamic> farmIDs = doc.get('farms');
-      _farmIDs = farmIDs.map((dynamic id) => id as String).toList();
+    List<dynamic> farmIDs = personnelDoc['personnelAtFarms'];
+    _farmIDs = farmIDs.map((dynamic id) => id as String).toList();
 
-      CollectionReference farmCollection =
-          FirebaseFirestore.instance.collection('farms');
-      DocumentReference farmDoc;
+    CollectionReference farmCollection =
+        FirebaseFirestore.instance.collection('farms');
+    DocumentReference farmDoc;
 
-      for (int i = 0; i < farmIDs.length; i++) {
-        farmDoc = farmCollection.doc(farmIDs[i]);
+    for (int i = 0; i < farmIDs.length; i++) {
+      farmDoc = farmCollection.doc(farmIDs[i]);
 
-        DocumentSnapshot<Object?> doc = await farmDoc.get();
-        if (doc.exists) {
-          _farmNames.add(doc.get('name'));
-          if (i == 0) {
-            _readFarmMaps(_farmIDs.first);
-          }
-        } else {
-          throw Exception(
-              'Firestore: Farm with id ${farmIDs[i]} found in a Personnel-document, but does not exist in the Farms-collection.');
+      DocumentSnapshot<Object?> doc = await farmDoc.get();
+      if (doc.exists) {
+        _farmNames.add(doc.get('name'));
+        if (i == 0) {
+          _readFarmMaps(_farmIDs.first);
         }
-
-        setState(() {
-          _selectedFarmName = _farmNames[0];
-        });
+      } else {
+        throw Exception(
+            'Firestore: Farm with id ${farmIDs[i]} found in a Personnel-document, but does not exist in the Farms-collection.');
       }
+
+      setState(() {
+        _selectedFarmName = _farmNames[0];
+      });
     }
+
     setState(() {
       _isLoading = false;
     });
