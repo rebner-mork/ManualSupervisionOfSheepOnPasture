@@ -314,7 +314,6 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                   });
                   await _savePersonnelData();
                   setState(() {
-                    //_oldEmails.removeAt(index);
                     _emailControllers.removeAt(index);
                     _showDeleteIcon.removeAt(index);
 
