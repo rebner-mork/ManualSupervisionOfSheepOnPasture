@@ -31,8 +31,10 @@ class _TripOverviewListState extends State<TripOverviewList> {
 
     CollectionReference tripsCollection =
         FirebaseFirestore.instance.collection('trips');
-    QuerySnapshot tripQuerySnapshot =
-        await tripsCollection.where('farmId', isEqualTo: uid).get();
+    QuerySnapshot tripQuerySnapshot = await tripsCollection
+        .where('farmId', isEqualTo: uid)
+        .orderBy('startTime', descending: true)
+        .get();
 
     for (QueryDocumentSnapshot doc in tripQuerySnapshot.docs) {
       _trips.add({
@@ -57,7 +59,6 @@ class _TripOverviewListState extends State<TripOverviewList> {
                 style: TextStyle(fontSize: 16),
               )
             : ListView.builder(
-                // shrinkWrap: true,
                 itemCount: _trips.length,
                 itemBuilder: (BuildContext context, int index) {
                   DateTime startTime =
