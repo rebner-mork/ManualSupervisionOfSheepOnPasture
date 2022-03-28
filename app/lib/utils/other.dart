@@ -39,7 +39,7 @@ Size textSize(String text, TextStyle style) {
   return textPainter.size;
 }
 
-Future<bool> isConnectedToInternett() async {
+Future<bool> isConnectedToInternet() async {
   try {
     await http.get(Uri.parse("https://www.regjeringen.no"));
     return true;

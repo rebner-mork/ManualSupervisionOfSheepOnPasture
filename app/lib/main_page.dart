@@ -206,7 +206,7 @@ class _MainPageState extends State<MainPage> {
 
   Future<void> _endTripButtonPressed(
       BuildContext context, TripDataManager _trip) async {
-    bool isConnected = await isConnectedToInternett();
+    bool isConnected = await isConnectedToInternet();
     await showEndTripDialog(context, isConnected).then((isFinished) {
       if (isFinished) {
         if (isConnected) {

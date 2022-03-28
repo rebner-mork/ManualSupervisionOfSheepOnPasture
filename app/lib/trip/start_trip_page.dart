@@ -560,7 +560,7 @@ class _StartTripPageState extends State<StartTripPage>
         });
       }
     } else {
-      bool connected = await isConnectedToInternett();
+      bool connected = await isConnectedToInternet();
       if (connected) {
         synchronize();
       } else {
