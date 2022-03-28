@@ -36,7 +36,6 @@ class TripDataManager {
     }
 
     tripDocument.set({
-      'farmId': farmId,
       'personnelEmail': personnelEmail,
       'startTime': _startTime,
       'stopTime': _stopTime,
@@ -58,7 +57,6 @@ class TripDataManager {
   @override
   String toString() {
     Map<String, Object> data = {
-      'farmId': farmId,
       'personnelEmail': personnelEmail,
       'startTime': _startTime.toString(),
       'stopTime': _stopTime.toString(),
