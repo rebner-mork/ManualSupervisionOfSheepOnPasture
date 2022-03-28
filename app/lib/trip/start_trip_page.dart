@@ -83,6 +83,11 @@ class _StartTripPageState extends State<StartTripPage>
 
     trySynchronize();
 
+    var dir = Directory(applicationDocumentDirectoryPath + "/trips");
+    for (var file in dir.listSync(recursive: true)) {
+      debugPrint(file.path.toString());
+    }
+
     synchronizeTimer =
         Timer.periodic(const Duration(seconds: 15), (_) => trySynchronize());
 
@@ -520,12 +525,10 @@ class _StartTripPageState extends State<StartTripPage>
             .listSync(recursive: false);
 
     for (FileSystemEntity file in files) {
-      if (file.path.endsWith(".json")) {
-        String json = File(file.path).readAsStringSync();
-        TripDataManager trip = TripDataManager.fromJson(json);
-        trip.post();
-        File(file.path).delete();
-      }
+      String json = File(file.path).readAsStringSync();
+      TripDataManager trip = TripDataManager.fromJson(json);
+      trip.post();
+      File(file.path).delete();
     }
     setState(() {
       _syncStatus['color'] = Colors.green;

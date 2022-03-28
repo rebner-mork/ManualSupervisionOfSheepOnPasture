@@ -29,7 +29,7 @@ class EndTripDialog extends StatelessWidget {
               child: Center(
                 child: Text(isConnected
                     ? "Tilkoblet nettverk"
-                    :  "Oppsynsturen lagres lokalt og lastes opp når enheten er tilkoblet nettverk." ),
+                    : "Oppsynsturen lagres lokalt og lastes opp når enheten er tilkoblet nettverk."),
               )),
           const SizedBox(
             height: 30,
