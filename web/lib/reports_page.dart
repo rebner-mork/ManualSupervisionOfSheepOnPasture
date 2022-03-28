@@ -125,31 +125,29 @@ class _ReportsPageState extends State<ReportsPage> {
     for (int i = 0; i < tripDocuments.length; i++) {
       // If this trip will cause a page-wrap, add null to make pdfTripsTablePages-function add columnHeaderRow
       if (i != 0 && i % 25 == 0) {
-        tripSummaries.add(
-            null); // TODO: vil ikke dette føre til at man hopper over? fjern else? SJEKK LENGDEN TIL TRIPSUMMARIES ISTEDENFOR OG KJØR FOREACH
-      } else {
-        QuerySnapshot registrationsQuerySnapshot = await tripDocuments
-            .elementAt(i)!
-            .reference
-            .collection('registrations')
-            .get();
-
-        int totalSheepAmount = 0;
-        int totalLambAmount = 0;
-
-        for (DocumentSnapshot<Object?>? registrationDoc
-            in registrationsQuerySnapshot.docs) {
-          totalSheepAmount += registrationDoc!['sheep'] as int;
-          totalLambAmount += registrationDoc['lambs'] as int;
-        }
-        tripSummaries.add({
-          'startTime': tripDocuments.elementAt(i)!['startTime'],
-          'stopTime': tripDocuments.elementAt(i)!['stopTime'],
-          'sheep': totalSheepAmount,
-          'adults': totalSheepAmount - totalLambAmount,
-          'lambs': totalLambAmount
-        });
+        tripSummaries.add(null);
       }
+      QuerySnapshot registrationsQuerySnapshot = await tripDocuments
+          .elementAt(i)!
+          .reference
+          .collection('registrations')
+          .get();
+
+      int totalSheepAmount = 0;
+      int totalLambAmount = 0;
+
+      for (DocumentSnapshot<Object?>? registrationDoc
+          in registrationsQuerySnapshot.docs) {
+        totalSheepAmount += registrationDoc!['sheep'] as int;
+        totalLambAmount += registrationDoc['lambs'] as int;
+      }
+      tripSummaries.add({
+        'startTime': tripDocuments.elementAt(i)!['startTime'],
+        'stopTime': tripDocuments.elementAt(i)!['stopTime'],
+        'sheep': totalSheepAmount,
+        'adults': totalSheepAmount - totalLambAmount,
+        'lambs': totalLambAmount
+      });
     }
 
     return tripSummaries;
