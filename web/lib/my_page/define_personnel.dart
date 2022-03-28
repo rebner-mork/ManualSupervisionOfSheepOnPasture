@@ -80,9 +80,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                     const SizedBox(height: 10),
                     Text(
                       _helpText,
-                      style: const TextStyle(
-                        fontSize: 17,
-                      ),
+                      style: const TextStyle(fontSize: 17, color: Colors.red),
                       textAlign: TextAlign.center,
                     ),
                   ]));
@@ -205,8 +203,9 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
         if (userExists) {
           _helpText = '';
           _showNewPersonnelRow = false;
+          _personnelNames.add(userQuerySnapshot.docs.first['name']);
+          _personnelPhones.add(userQuerySnapshot.docs.first['phone']);
           _personnelEmails.add(email);
-          // ADD i de nye tabellene
           _newEmailController = TextEditingController(text: '');
 
           _savePersonnelData();
@@ -250,8 +249,6 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                   });
                   await _savePersonnelData();
                   setState(() {
-                    _oldEmails.removeAt(index);
-
                     _validateEmails();
                   });
                 },
@@ -277,15 +274,15 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
     DocumentSnapshot<Object?> doc = await farmDoc.get();
     if (doc.exists) {
       emails = doc.get('personnel');
-      if (emails != null) {
+      if (emails != null && emails.isNotEmpty) {
         QuerySnapshot personnelSnapshot = await FirebaseFirestore.instance
             .collection('users')
             .where('email', whereIn: emails)
             .get();
         for (QueryDocumentSnapshot personnelDoc in personnelSnapshot.docs) {
-          _personnelEmails.add(personnelDoc['email']);
           _personnelNames.add(personnelDoc['name']);
           _personnelPhones.add(personnelDoc['phone']);
+          _personnelEmails.add(personnelDoc['email']);
         }
         _oldEmails = List.from(emails);
       }
