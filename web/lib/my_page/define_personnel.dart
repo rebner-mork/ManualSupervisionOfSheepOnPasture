@@ -314,7 +314,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                   });
                   await _savePersonnelData();
                   setState(() {
-                    _oldEmails.removeAt(index);
+                    //_oldEmails.removeAt(index);
                     _emailControllers.removeAt(index);
                     _showDeleteIcon.removeAt(index);
 
@@ -380,45 +380,30 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
     }
 
     // Remove farm from individual personnel if mail was removed
-    CollectionReference personnelCollection =
-        FirebaseFirestore.instance.collection('personnel');
-    DocumentReference personnelDoc;
+    CollectionReference usersCollection =
+        FirebaseFirestore.instance.collection('users');
+    QuerySnapshot personnelQuerySnapshot;
 
     for (String oldEmail in _oldEmails) {
       if (!_emails.contains(oldEmail)) {
-        personnelDoc = personnelCollection.doc(oldEmail);
+        personnelQuerySnapshot =
+            await usersCollection.where('email', isEqualTo: oldEmail).get();
 
-        List<dynamic>? farms;
-
-        doc = await personnelDoc.get();
-        if (doc.exists) {
-          farms = doc.get('farms');
-          if (farms!.length == 1) {
-            personnelDoc.delete();
-          } else {
-            personnelDoc.update({
-              'farms': FieldValue.arrayRemove([uid])
-            });
-          }
-        }
+        personnelQuerySnapshot.docs.first.reference.update({
+          'personnelAtFarms': FieldValue.arrayRemove([uid])
+        });
       }
     }
 
     // Add farm to individual personnel if new mail was added
     for (String email in _emails) {
       if (!_oldEmails.contains(email)) {
-        personnelDoc = personnelCollection.doc(email);
+        personnelQuerySnapshot =
+            await usersCollection.where('email', isEqualTo: email).get();
 
-        doc = await personnelDoc.get();
-        if (doc.exists) {
-          personnelDoc.update({
-            'farms': FieldValue.arrayUnion([uid])
-          });
-        } else {
-          personnelDoc.set({
-            'farms': [uid]
-          });
-        }
+        personnelQuerySnapshot.docs.first.reference.update({
+          'personnelAtFarms': FieldValue.arrayUnion([uid])
+        });
       }
     }
     _oldEmails = List.from(_emails);

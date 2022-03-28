@@ -11,8 +11,9 @@ Future<String?> createUser(String email, String password, String phone) async {
 
     CollectionReference users = FirebaseFirestore.instance.collection('users');
 
-    await users.add({'email': email, 'phone': phone}).then(
-        (value) => log('Telefonnummer lagt til i users/' + value.id));
+    await users
+        .add({'email': email, 'phone': phone, 'personnelAtFarms': null}).then(
+            (value) => log('Telefonnummer lagt til i users/' + value.id));
   } on FirebaseAuthException catch (e) {
     switch (e.code) {
       case 'email-already-in-use':
