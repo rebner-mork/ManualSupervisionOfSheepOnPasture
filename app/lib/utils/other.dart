@@ -41,7 +41,7 @@ Size textSize(String text, TextStyle style) {
 
 Future<bool> isConnectedToInternet() async {
   try {
-    await http.get(Uri.parse("https://www.regjeringen.no"));
+    await http.get(Uri.parse("https://www.google.com"));
     return true;
   } catch (_) {
     return false;
