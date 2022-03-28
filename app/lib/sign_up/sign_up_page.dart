@@ -1,17 +1,17 @@
-import 'package:app/register_user/register_user_widget.dart';
+import 'package:app/sign_up/sign_up_widget.dart';
 import 'package:flutter/material.dart';
 
-class RegisterUserPage extends StatefulWidget {
-  const RegisterUserPage({Key? key}) : super(key: key);
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({Key? key}) : super(key: key);
 
   @override
-  State<RegisterUserPage> createState() => _RegisterUserPageState();
+  State<SignUpPage> createState() => _SignUpPageState();
 
   static const String route = 'register-user';
 }
 
-class _RegisterUserPageState extends State<RegisterUserPage> {
-  _RegisterUserPageState();
+class _SignUpPageState extends State<SignUpPage> {
+  _SignUpPageState();
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class _RegisterUserPageState extends State<RegisterUserPage> {
         children: const [
           Spacer(),
           Flexible(
-            child: RegisterUserWidget(),
+            child: SignUpWidget(),
             flex: 20,
           ),
         ],

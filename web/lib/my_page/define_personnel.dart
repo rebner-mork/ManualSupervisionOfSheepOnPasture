@@ -57,22 +57,22 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                 : [
                     Column(children: [
                       const SizedBox(height: 20),
-                      Text('Mitt oppsynspersonell',
-                          style: definePageHeadlineTextStyle),
+                      const Text('Mitt oppsynspersonell',
+                          style: pageHeadlineTextStyle),
                       const SizedBox(height: 10),
-                      Text(
+                      const Text(
                           'Her kan du legge til brukere som kan gå oppsynstur for deg i appen.',
-                          style: definePageInfoTextStyle),
+                          style: pageInfoTextStyle),
                       DataTable(
                           border: TableBorder.symmetric(),
                           showCheckboxColumn: false,
-                          columns: [
+                          columns: const [
                             DataColumn(
                                 label: Text(
                               'E-post',
                               style: dataColumnTextStyle,
                             )),
-                            const DataColumn(label: Text(''))
+                            DataColumn(label: Text(''))
                           ],
                           rows: _existingPersonnelRows() + [_newPersonnelRow()])
                     ]),
@@ -130,7 +130,8 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                               style: ButtonStyle(
                                   fixedSize: MaterialStateProperty.all(
                                       const Size.fromHeight(35))),
-                              child: Text('Lagre', style: buttonTextStyle),
+                              child:
+                                  const Text('Lagre', style: buttonTextStyle),
                               onPressed: () =>
                                   _saveExistingPersonnel(data.key)),
                           const SizedBox(width: 10),
@@ -211,7 +212,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                       style: ButtonStyle(
                           fixedSize: MaterialStateProperty.all(
                               const Size.fromHeight(35))),
-                      child: Text('Lagre', style: buttonTextStyle),
+                      child: const Text('Lagre', style: buttonTextStyle),
                       onPressed: _saveNewPersonnel),
                   const SizedBox(width: 10),
                   ElevatedButton(

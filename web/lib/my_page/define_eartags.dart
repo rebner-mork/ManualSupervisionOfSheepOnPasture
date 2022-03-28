@@ -51,17 +51,17 @@ class _MyEartagsState extends State<MyEartags> {
             )
           : Column(children: [
               const SizedBox(height: 20),
-              Text('Øremerker', style: definePageHeadlineTextStyle),
+              const Text('Øremerker', style: pageHeadlineTextStyle),
               const SizedBox(height: 10),
-              Text(
+              const Text(
                   'Her kan du legge til øremerker som oppsynspersonell kan møte på under oppsynstur.',
-                  style: definePageInfoTextStyle),
-              Text(
+                  style: pageInfoTextStyle),
+              const Text(
                   'Oppsynspersonell kan ikke registrere andre øremerker enn de som er lagt til her.',
-                  style: definePageInfoTextStyle),
+                  style: pageInfoTextStyle),
               DataTable(
                 border: TableBorder.symmetric(),
-                columns: [
+                columns: const [
                   DataColumn(
                       label: Text(
                     'Øremerke',
@@ -72,11 +72,12 @@ class _MyEartagsState extends State<MyEartags> {
                     'Eier',
                     style: dataColumnTextStyle,
                   )),
-                  const DataColumn(label: Text('')),
+                  DataColumn(label: Text('')),
                 ],
-                rows: _eartagColors.length < possibleEartagColors.length
-                    ? _eartagRows() + [_newEartagRow()]
-                    : _eartagRows(),
+                rows:
+                    _eartagColors.length < possibleEartagColorStringToKey.length
+                        ? _eartagRows() + [_newEartagRow()]
+                        : _eartagRows(),
               )
             ]),
       const SizedBox(height: 10),
@@ -136,10 +137,13 @@ class _MyEartagsState extends State<MyEartags> {
         child: Row(children: [
           DropdownButton<DropdownIcon>(
               value: DropdownIcon(Icons.local_offer, color),
-              items: possibleEartagColors
-                  .map((Color color) => DropdownMenuItem<DropdownIcon>(
-                      value: DropdownIcon(Icons.local_offer, color),
-                      child: DropdownIcon(Icons.local_offer, color).icon))
+              items: possibleEartagColorStringToKey.keys
+                  .map((String colorString) => DropdownMenuItem<DropdownIcon>(
+                      value: DropdownIcon(Icons.local_offer,
+                          Color(int.parse(colorString, radix: 16))),
+                      child: DropdownIcon(Icons.local_offer,
+                              Color(int.parse(colorString, radix: 16)))
+                          .icon))
                   .toList(),
               onChanged: (DropdownIcon? newIcon) {
                 _onColorChanged(newIcon!.icon.color!, index, color);
@@ -202,7 +206,8 @@ class _MyEartagsState extends State<MyEartags> {
 
   void _onEartagAdded() {
     setState(() {
-      _eartagColors.add(possibleEartagColors.first);
+      _eartagColors.add(Color(
+          int.parse(possibleEartagColorStringToKey.keys.first, radix: 16)));
       _eartagOwners.add(true);
       _valuesChanged = true;
       _eartagsAdded = true;
@@ -240,7 +245,7 @@ class _MyEartagsState extends State<MyEartags> {
                 fixedSize: MaterialStateProperty.all(const Size.fromHeight(35)),
                 backgroundColor: MaterialStateProperty.all(
                     _equalValues ? Colors.grey : Colors.green)),
-            child: Text(
+            child: const Text(
               "Lagre",
               style: buttonTextStyle,
               textAlign: TextAlign.center,
@@ -264,7 +269,7 @@ class _MyEartagsState extends State<MyEartags> {
           style: ButtonStyle(
               fixedSize: MaterialStateProperty.all(const Size.fromHeight(35)),
               backgroundColor: MaterialStateProperty.all(Colors.red)),
-          child: Text(
+          child: const Text(
             "Avbryt",
             style: buttonTextStyle,
           ),

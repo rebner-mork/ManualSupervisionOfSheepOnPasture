@@ -1,5 +1,5 @@
 import 'package:app/login/login_widget.dart';
-import 'package:app/register_user/register_user_page.dart';
+import 'package:app/sign_up/sign_up_page.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
           Flexible(
             child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, RegisterUserPage.route);
+                  Navigator.pushNamed(context, SignUpPage.route);
                 },
                 child: const Text('Registrer ny bruker')),
             flex: 2,

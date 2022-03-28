@@ -13,7 +13,7 @@ class TripOverviewList extends StatefulWidget {
 }
 
 class _TripOverviewListState extends State<TripOverviewList> {
-  late final List<Map<String, Object>> _trips;
+  final List<Map<String, Object>> _trips = [];
   bool _isLoading = true;
   int _selectedTripIndex = -1;
 
@@ -31,10 +31,10 @@ class _TripOverviewListState extends State<TripOverviewList> {
 
     CollectionReference tripsCollection =
         FirebaseFirestore.instance.collection('trips');
-    QuerySnapshot tripQuerySnapshot =
-        await tripsCollection.where('farmId', isEqualTo: uid).get();
-
-    _trips = [];
+    QuerySnapshot tripQuerySnapshot = await tripsCollection
+        .where('farmId', isEqualTo: uid)
+        .orderBy('startTime', descending: true)
+        .get();
 
     for (QueryDocumentSnapshot doc in tripQuerySnapshot.docs) {
       _trips.add({
@@ -49,9 +49,6 @@ class _TripOverviewListState extends State<TripOverviewList> {
     });
   }
 
-// TODO: Begrense antall som hentes fra Firestore? Gjøres med limit
-// TODO: Dropdown for å filtrere på 'alle', 'kartnavn1', 'kartnavn2'
-
   @override
   Widget build(BuildContext context) {
     return _isLoading
@@ -62,13 +59,12 @@ class _TripOverviewListState extends State<TripOverviewList> {
                 style: TextStyle(fontSize: 16),
               )
             : ListView.builder(
-                // shrinkWrap: true,
                 itemCount: _trips.length,
                 itemBuilder: (BuildContext context, int index) {
                   DateTime startTime =
                       (_trips[index]['startTime']! as Timestamp).toDate();
                   String startTimeString =
-                      '${startTime.day}/${startTime.month}/${startTime.year}';
+                      '${startTime.day.toString().padLeft(2, '0')}/${startTime.month.toString().padLeft(2, '0')}/${startTime.year}';
 
                   return ListTile(
                     tileColor:

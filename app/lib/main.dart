@@ -1,6 +1,6 @@
 import 'package:app/login/login_page.dart';
 import 'package:app/providers/settings_provider.dart';
-import 'package:app/register_user/register_user_page.dart';
+import 'package:app/sign_up/sign_up_page.dart';
 import 'package:app/trip/start_trip_page.dart';
 import 'package:app/utils/constants.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -38,7 +38,7 @@ class _MyAppState extends State<MyApp> {
       initialRoute: LoginPage.route,
       routes: {
         LoginPage.route: (context) => const LoginPage(),
-        RegisterUserPage.route: (context) => const RegisterUserPage(),
+        SignUpPage.route: (context) => const SignUpPage(),
         StartTripPage.route: (context) => const StartTripPage(),
       },
     );

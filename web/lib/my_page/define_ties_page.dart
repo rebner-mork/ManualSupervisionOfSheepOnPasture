@@ -57,16 +57,17 @@ class _MyTiesState extends State<MyTies> {
             )
           : Column(children: [
               const SizedBox(height: 20),
-              Text('Mine slips', style: definePageHeadlineTextStyle),
+              const Text('Mine slips', style: pageHeadlineTextStyle),
               const SizedBox(height: 10),
-              Text('Her kan du legge til slips som brukes på søyene dine.',
-                  style: definePageInfoTextStyle),
-              Text(
+              const Text(
+                  'Her kan du legge til slips som brukes på søyene dine.',
+                  style: pageInfoTextStyle),
+              const Text(
                   'Oppsynspersonell kan ikke registrere andre slips enn de som er lagt til her.',
-                  style: definePageInfoTextStyle),
+                  style: pageInfoTextStyle),
               DataTable(
                 border: TableBorder.symmetric(),
-                columns: [
+                columns: const [
                   DataColumn(
                       label: Text(
                     'Slipsfarge',
@@ -77,9 +78,9 @@ class _MyTiesState extends State<MyTies> {
                     'Antall lam',
                     style: dataColumnTextStyle,
                   )),
-                  const DataColumn(label: Text('')),
+                  DataColumn(label: Text('')),
                 ],
-                rows: _tieColors.length < possibleTieColors.length
+                rows: _tieColors.length < possibleTieColorStringToKey.length
                     ? _tieRows() + _newTieRow()
                     : _tieRows(),
               )
@@ -108,10 +109,13 @@ class _MyTiesState extends State<MyTies> {
         child: Row(children: [
           DropdownButton<DropdownIcon>(
               value: DropdownIcon(FontAwesome5.black_tie, color),
-              items: possibleTieColors
-                  .map((Color color) => DropdownMenuItem<DropdownIcon>(
-                      value: DropdownIcon(FontAwesome5.black_tie, color),
-                      child: DropdownIcon(FontAwesome5.black_tie, color).icon))
+              items: possibleTieColorStringToKey.keys
+                  .map((String colorString) => DropdownMenuItem<DropdownIcon>(
+                      value: DropdownIcon(FontAwesome5.black_tie,
+                          Color(int.parse(colorString, radix: 16))),
+                      child: DropdownIcon(FontAwesome5.black_tie,
+                              Color(int.parse(colorString, radix: 16)))
+                          .icon))
                   .toList(),
               onChanged: (DropdownIcon? newIcon) {
                 _onColorChanged(newIcon!.icon.color!, index, color);
@@ -197,7 +201,7 @@ class _MyTiesState extends State<MyTies> {
                 fixedSize: MaterialStateProperty.all(const Size.fromHeight(35)),
                 backgroundColor: MaterialStateProperty.all(
                     _equalValues ? Colors.grey : Colors.green)),
-            child: Text(
+            child: const Text(
               "Lagre",
               style: buttonTextStyle,
               textAlign: TextAlign.center,
@@ -221,7 +225,7 @@ class _MyTiesState extends State<MyTies> {
           style: ButtonStyle(
               fixedSize: MaterialStateProperty.all(const Size.fromHeight(35)),
               backgroundColor: MaterialStateProperty.all(Colors.red)),
-          child: Text(
+          child: const Text(
             "Avbryt",
             style: buttonTextStyle,
           ),
@@ -324,7 +328,8 @@ class _MyTiesState extends State<MyTies> {
 
   void _onTieAdded() {
     setState(() {
-      _tieColors.add(possibleTieColors.last);
+      _tieColors.add(
+          Color(int.parse(possibleTieColorStringToKey.keys.last, radix: 16)));
       _tieMeaning.add(0);
       _valuesChanged = true;
       _tiesAdded = true;

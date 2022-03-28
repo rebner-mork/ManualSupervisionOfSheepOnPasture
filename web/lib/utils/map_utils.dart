@@ -9,6 +9,23 @@ abstract class MapProvider {
   static final List<String> subdomains = ['', '2', '3'];
 }
 
+Marker getSheepMarker(LatLng pos) {
+  const double size = 50;
+  return Marker(
+      point: pos,
+      anchorPos: AnchorPos.align(AnchorAlign.top),
+      rotateAlignment: Alignment.bottomCenter,
+      height: size,
+      width: size,
+      rotate: true,
+      builder: (context) => const Image(
+            image: AssetImage("images/sheep_marker_green.png"),
+            width: size,
+            height: size,
+            filterQuality: FilterQuality.medium,
+          ));
+}
+
 Marker getCornerMarker(LatLng pos, bool upperLeft) {
   const double size = 50;
   return Marker(

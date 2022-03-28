@@ -11,8 +11,9 @@ InputDecoration customInputDecoration(String labelText, IconData icon,
       prefixIcon: Icon(icon),
       suffixIcon: passwordField
           ? IconButton(
-              icon: Icon(isVisible ? Icons.visibility : Icons.visibility_off,
-                  size: 20),
+              icon: Icon(
+                isVisible ? Icons.visibility : Icons.visibility_off,
+              ),
               color: isVisible ? Colors.green : Colors.grey,
               onPressed: onPressed)
           : null);

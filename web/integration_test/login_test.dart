@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:web/login/login_page.dart';
+import 'package:web/login_and_sign_up/login_widget.dart';
 import 'package:web/main_tabs/main_tabs.dart';
 
 import 'firebase_setup.dart';
@@ -13,7 +13,7 @@ void main() async {
 
   testWidgets('Integration test login', (WidgetTester tester) async {
     await tester.pumpWidget(MaterialApp(
-        home: const LoginPage(),
+        home: const Material(child: LoginWidget()),
         routes: {MainTabs.route: (context) => const MainTabs()}));
 
     var emailField = find.byKey(const Key('inputEmail'));
