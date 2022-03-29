@@ -87,7 +87,7 @@ class _ReportsPageState extends State<ReportsPage> {
 
     // Extract data from trips from selected year
     int tripAmountFromYear = 0;
-    Set<String> personnelFromYear = {};
+    Set<String> personnelFromYearEmails = {};
     SplayTreeSet<QueryDocumentSnapshot> tripsFromYear = SplayTreeSet(((a, b) =>
         (a['startTime'] as Timestamp)
             .toDate()
@@ -100,11 +100,20 @@ class _ReportsPageState extends State<ReportsPage> {
       if ((tripDocMap.value['startTime'] as Timestamp).toDate().year ==
           _selectedYear) {
         tripAmountFromYear++;
-        // TODO: Change to full name when available
-        personnelFromYear.add(tripDocMap.value['personnelEmail']);
+        personnelFromYearEmails.add(tripDocMap.value['personnelEmail']);
         tripsFromYear.add(tripDocMap.value);
       }
     }).toList();
+
+    // Get names of personnel
+    List<String> personnelFromYearNames = [];
+    QuerySnapshot userDocSnapshots = await FirebaseFirestore.instance
+        .collection('users')
+        .where('email', whereIn: personnelFromYearEmails.toList())
+        .get();
+    for (DocumentSnapshot userDoc in userDocSnapshots.docs) {
+      personnelFromYearNames.add(userDoc['name'] as String);
+    }
 
     // Summarize each trip
     List<Map<String, Object>?> tripSummaries =
@@ -113,7 +122,7 @@ class _ReportsPageState extends State<ReportsPage> {
     // Create PDF-document
     final pw.Document pdf = pw.Document();
     pdf.addPage(metaPdfPage(farmDoc, farmOwnerQuerySnapshot.docs.first,
-        personnelFromYear, tripAmountFromYear));
+        personnelFromYearNames, tripAmountFromYear));
     pdf.addPage(pdfTripsTablePages(tripSummaries));
 
     return pdf.save();
@@ -190,10 +199,12 @@ class _ReportsPageState extends State<ReportsPage> {
                     child: pw.Text('Gårdseier', style: columnHeaderTextStyle)),
                 pw.Padding(
                     padding: const pw.EdgeInsets.all(8),
-                    child: pw.Text('E-post: ' +
+                    child: pw.Text(farmOwnerDoc['name'] +
+                        '\n' +
                         farmOwnerDoc['email'] +
-                        '\nTlf:       ' +
-                        farmOwnerDoc['phone'])), // TODO: fullt navn
+                        '\n' +
+                        farmOwnerDoc['phone'] +
+                        '\n')),
               ]),
               pw.TableRow(children: [
                 pw.Padding(
@@ -205,8 +216,8 @@ class _ReportsPageState extends State<ReportsPage> {
                     child: pw.Text(personnel
                         .toString()
                         .replaceAll(', ', '\n')
-                        .replaceAll('{', '')
-                        .replaceAll('}', '')))
+                        .replaceAll('[', '')
+                        .replaceAll(']', '')))
               ]),
               pw.TableRow(children: [
                 pw.Padding(

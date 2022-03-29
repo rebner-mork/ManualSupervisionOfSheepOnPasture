@@ -13,10 +13,11 @@ void main() {
       expect(find.text('Passord'), findsOneWidget);
       expect(find.text('Gjenta passord'), findsOneWidget);
       expect(find.text('Telefon'), findsOneWidget);
-      expect(find.text('Opprett bruker'), findsOneWidget);
+      expect(find.text('Opprett brukerkonto'), findsOneWidget);
 
       expect(find.byIcon(Icons.account_circle), findsOneWidget);
       expect(find.byIcon(Icons.visibility_off), findsNWidgets(2));
+      expect(find.byIcon(Icons.badge), findsOneWidget);
       expect(find.byIcon(Icons.mail), findsOneWidget);
       expect(find.byIcon(Icons.lock), findsNWidgets(2));
       expect(find.byIcon(Icons.phone), findsOneWidget);
@@ -41,7 +42,7 @@ void main() {
           home: SingleChildScrollView(child: SignUpWidget())));
       TestWidgetsFlutterBinding.ensureInitialized();
 
-      var registerButton = find.text('Opprett bruker');
+      var registerButton = find.text('Opprett brukerkonto');
       var emailField = find.byKey(const Key('inputEmail'));
       var passwordOneField = find.byKey(const Key('inputPasswordOne'));
       var passwordTwoField = find.byKey(const Key('inputPasswordTwo'));

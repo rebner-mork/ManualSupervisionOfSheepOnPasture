@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:web/my_page/define_map/define_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:web/utils/custom_widgets.dart';
 import 'package:web/utils/map_utils.dart';
 import 'package:web/utils/styles.dart';
 
@@ -75,10 +76,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
       Flexible(
           flex: 2,
           child: _loadingData
-              ? Text(
-                  'Laster data...',
-                  style: largerTextStyle,
-                )
+              ? const LoadingData()
               : Scrollbar(
                   controller: _scrollController,
                   isAlwaysShown: true,

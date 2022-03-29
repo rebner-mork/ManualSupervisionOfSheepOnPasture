@@ -74,8 +74,9 @@ class _TripsPageState extends State<TripsPage> {
 
     _selectedTripData = {
       'mapName': tripDoc['mapName'],
-      'personnelEmail': tripDoc['personnelEmail'],
+      'personnelName': userDocsSnapshot.docs.first['name'],
       'personnelPhone': userDocsSnapshot.docs.first['phone'],
+      'personnelEmail': tripDoc['personnelEmail'],
       'startTime': tripDoc['startTime'],
       'stopTime': tripDoc['stopTime'],
       'mapCenter': mapCenter,
