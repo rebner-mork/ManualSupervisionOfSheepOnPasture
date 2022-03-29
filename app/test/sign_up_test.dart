@@ -18,6 +18,7 @@ void main() {
 
       expect(find.byIcon(Icons.account_circle), findsOneWidget);
       expect(find.byIcon(Icons.visibility_off), findsNWidgets(2));
+      expect(find.byIcon(Icons.badge), findsOneWidget);
       expect(find.byIcon(Icons.mail), findsOneWidget);
       expect(find.byIcon(Icons.lock), findsNWidgets(2));
       expect(find.byIcon(Icons.phone), findsOneWidget);
@@ -123,6 +124,9 @@ void main() {
 }
 
 Future pressRegisterButton(WidgetTester tester, Finder registerButton) async {
+  await tester.dragUntilVisible(find.text('Opprett bruker'),
+      find.byKey(const Key('scrollView')), const Offset(0, -100));
+
   await tester.tap(registerButton);
   await tester.pump();
 }

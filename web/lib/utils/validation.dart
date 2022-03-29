@@ -1,5 +1,14 @@
 import 'package:email_validator/email_validator.dart';
 
+String? validateName(String? name) {
+  if (name!.isEmpty) {
+    return 'Skriv fullt navn';
+  } else if (!name.contains(' ')) {
+    return 'Skriv fornavn og etternavn';
+  }
+  return null;
+}
+
 String? validateEmail(String? userName) {
   if (userName!.isEmpty) {
     return "Skriv e-post";

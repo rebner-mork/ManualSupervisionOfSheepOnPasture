@@ -49,53 +49,54 @@ class _MyTiesState extends State<MyTies> {
   @override
   Widget build(BuildContext context) {
     return Material(
-        child: Column(children: [
-      _loadingData
-          ? const Text(
-              'Laster data...',
-              style: TextStyle(fontSize: 18),
-            )
-          : Column(children: [
-              const SizedBox(height: 20),
-              const Text('Mine slips', style: pageHeadlineTextStyle),
-              const SizedBox(height: 10),
-              const Text(
-                  'Her kan du legge til slips som brukes på søyene dine.',
-                  style: pageInfoTextStyle),
-              const Text(
-                  'Oppsynspersonell kan ikke registrere andre slips enn de som er lagt til her.',
-                  style: pageInfoTextStyle),
-              DataTable(
-                border: TableBorder.symmetric(),
-                columns: const [
-                  DataColumn(
-                      label: Text(
-                    'Slipsfarge',
-                    style: dataColumnTextStyle,
-                  )),
-                  DataColumn(
-                      label: Text(
-                    'Antall lam',
-                    style: dataColumnTextStyle,
-                  )),
-                  DataColumn(label: Text('')),
-                ],
-                rows: _tieColors.length < possibleTieColorStringToKey.length
-                    ? _tieRows() + _newTieRow()
-                    : _tieRows(),
-              )
-            ]),
-      const SizedBox(height: 10),
-      Text(
-        _helpText,
-        style: TextStyle(
-            fontSize: 17,
-            color: _helpText == feedback['dataSaved']! ? Colors.green : null),
-        textAlign: TextAlign.center,
-      ),
-      const SizedBox(height: 10),
-      if (_valuesChanged) _saveOrDeleteButtons(),
-    ]));
+        child: Column(
+            children: _loadingData
+                ? const [SizedBox(height: 20), LoadingData()]
+                : [
+                    Column(children: [
+                      const SizedBox(height: 20),
+                      const Text('Mine slips', style: pageHeadlineTextStyle),
+                      const SizedBox(height: 10),
+                      const Text(
+                          'Her kan du legge til slips som brukes på søyene dine.',
+                          style: pageInfoTextStyle),
+                      const Text(
+                          'Oppsynspersonell kan ikke registrere andre slips enn de som er lagt til her.',
+                          style: pageInfoTextStyle),
+                      DataTable(
+                        border: TableBorder.symmetric(),
+                        columns: const [
+                          DataColumn(
+                              label: Text(
+                            'Slipsfarge',
+                            style: dataColumnTextStyle,
+                          )),
+                          DataColumn(
+                              label: Text(
+                            'Antall lam',
+                            style: dataColumnTextStyle,
+                          )),
+                          DataColumn(label: Text('')),
+                        ],
+                        rows: _tieColors.length <
+                                possibleTieColorStringToKey.length
+                            ? _tieRows() + _newTieRow()
+                            : _tieRows(),
+                      )
+                    ]),
+                    const SizedBox(height: 10),
+                    Text(
+                      _helpText,
+                      style: TextStyle(
+                          fontSize: 17,
+                          color: _helpText == feedback['dataSaved']!
+                              ? Colors.green
+                              : null),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 10),
+                    if (_valuesChanged) _saveOrDeleteButtons(),
+                  ]));
   }
 
   DataCell _tieCell(int index, Color color) {

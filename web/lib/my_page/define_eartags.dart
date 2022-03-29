@@ -43,54 +43,53 @@ class _MyEartagsState extends State<MyEartags> {
   @override
   Widget build(BuildContext context) {
     return Material(
-        child: Column(children: [
-      _loadingData
-          ? const Text(
-              'Laster data...',
-              style: TextStyle(fontSize: 18),
-            )
-          : Column(children: [
-              const SizedBox(height: 20),
-              const Text('Øremerker', style: pageHeadlineTextStyle),
-              const SizedBox(height: 10),
-              const Text(
-                  'Her kan du legge til øremerker som oppsynspersonell kan møte på under oppsynstur.',
-                  style: pageInfoTextStyle),
-              const Text(
-                  'Oppsynspersonell kan ikke registrere andre øremerker enn de som er lagt til her.',
-                  style: pageInfoTextStyle),
-              DataTable(
-                border: TableBorder.symmetric(),
-                columns: const [
-                  DataColumn(
-                      label: Text(
-                    'Øremerke',
-                    style: dataColumnTextStyle,
-                  )),
-                  DataColumn(
-                      label: Text(
-                    'Eier',
-                    style: dataColumnTextStyle,
-                  )),
-                  DataColumn(label: Text('')),
-                ],
-                rows:
-                    _eartagColors.length < possibleEartagColorStringToKey.length
-                        ? _eartagRows() + [_newEartagRow()]
-                        : _eartagRows(),
-              )
-            ]),
-      const SizedBox(height: 10),
-      Text(
-        _helpText,
-        style: TextStyle(
-            fontSize: 17,
-            color: _helpText == dataSavedText ? Colors.green : null),
-        textAlign: TextAlign.center,
-      ),
-      const SizedBox(height: 10),
-      if (_valuesChanged) _saveOrDeleteButtons(),
-    ]));
+        child: Column(
+            children: _loadingData
+                ? const [SizedBox(height: 20), LoadingData()]
+                : [
+                    Column(children: [
+                      const SizedBox(height: 20),
+                      const Text('Øremerker', style: pageHeadlineTextStyle),
+                      const SizedBox(height: 10),
+                      const Text(
+                          'Her kan du legge til øremerker som oppsynspersonell kan møte på under oppsynstur.',
+                          style: pageInfoTextStyle),
+                      const Text(
+                          'Oppsynspersonell kan ikke registrere andre øremerker enn de som er lagt til her.',
+                          style: pageInfoTextStyle),
+                      DataTable(
+                        border: TableBorder.symmetric(),
+                        columns: const [
+                          DataColumn(
+                              label: Text(
+                            'Øremerke',
+                            style: dataColumnTextStyle,
+                          )),
+                          DataColumn(
+                              label: Text(
+                            'Eier',
+                            style: dataColumnTextStyle,
+                          )),
+                          DataColumn(label: Text('')),
+                        ],
+                        rows: _eartagColors.length <
+                                possibleEartagColorStringToKey.length
+                            ? _eartagRows() + [_newEartagRow()]
+                            : _eartagRows(),
+                      )
+                    ]),
+                    const SizedBox(height: 10),
+                    Text(
+                      _helpText,
+                      style: TextStyle(
+                          fontSize: 17,
+                          color:
+                              _helpText == dataSavedText ? Colors.green : null),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 10),
+                    if (_valuesChanged) _saveOrDeleteButtons(),
+                  ]));
   }
 
   List<DataRow> _eartagRows() {
