@@ -114,7 +114,7 @@ class _MainPageState extends State<MainPage> {
                                     bottomLeft: Radius.circular(30)),
                                 child: SizedBox(
                                     width: 280,
-                                    height: 495,
+                                    height: 510,
                                     child: Drawer(
                                       child: RegistrationOptions(),
                                     ))))),

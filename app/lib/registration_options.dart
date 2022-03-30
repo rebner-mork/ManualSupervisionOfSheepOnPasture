@@ -26,7 +26,7 @@ class _RegistrationOptionsState extends State<RegistrationOptions> {
         const RegistrationTypeListTile(
             text: 'Skade', assetImageName: 'images/sheep_injured.png'),
         const RegistrationTypeListTile(
-            text: 'Død', assetImageName: 'images/sheep_dead.png'),
+            text: 'Kadaver', assetImageName: 'images/sheep_dead.png'),
         const RegistrationTypeListTile(
             text: 'Rovdyr', assetImageName: 'images/predator.png'),
         const RegistrationTypeListTile(
@@ -48,29 +48,39 @@ class RegistrationTypeListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 30),
-        child: InkWell(
-            child: DecoratedBox(
-                decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    border: Border.all(color: Colors.black),
-                    borderRadius: BorderRadius.circular(12)),
+        child: Container(
+            decoration: BoxDecoration(
+                color: Colors.green,
+                shape: BoxShape.rectangle,
+                border: Border.all(color: Colors.black),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: const [
+                  BoxShadow(blurRadius: 3, offset: Offset(0, 2))
+                ]),
+            //color: Colors.green,
+            child: InkWell(
+                /*child: DecoratedBox(
+                    decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        border: Border.all(color: Colors.black),
+                        borderRadius: BorderRadius.circular(12)),*/
                 child: Row(
-                  children: [
-                    Flexible(
-                        child: Padding(
-                            padding: const EdgeInsets.all(5),
-                            child: Image(
-                              image: AssetImage(assetImageName),
-                              width: 60,
-                            ))),
-                    const SizedBox(width: 25),
-                    Flexible(
-                        child: Text(
-                      text,
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
-                    ))
-                  ],
-                ))));
+              children: [
+                Flexible(
+                    child: Padding(
+                        padding: const EdgeInsets.all(5),
+                        child: Image(
+                          image: AssetImage(assetImageName),
+                          width: 60,
+                        ))),
+                const SizedBox(width: 25),
+                Flexible(
+                    child: Text(
+                  text,
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
+                ))
+              ],
+            ))));
   }
 }
