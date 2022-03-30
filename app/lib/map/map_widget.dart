@@ -1,3 +1,4 @@
+import 'package:app/register/register_cadaver.dart';
 import 'package:app/register/register_sheep.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -136,6 +137,14 @@ class _MapState extends State<MapWidget> {
     super.dispose();
   }
 
+//TODO remove
+  void testFunction() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => RegisterCadaver(ties: widget.ties)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -146,6 +155,7 @@ class _MapState extends State<MapWidget> {
             _mapController = c;
           },
           onTap: (_, point) => registerSheepByTap(point),
+          onLongPress: (_, __) => testFunction(),
           zoom: OfflineZoomLevels.min,
           minZoom: OfflineZoomLevels.min,
           maxZoom: OfflineZoomLevels.max,
