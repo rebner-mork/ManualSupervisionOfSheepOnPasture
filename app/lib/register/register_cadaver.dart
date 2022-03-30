@@ -30,7 +30,10 @@ class _RegisterCadaverState extends State<RegisterCadaver> {
                     margin: const EdgeInsets.symmetric(horizontal: 50),
                     child: Column(children: [
                       inputFieldSpacer(),
-                      const Text("Øremerke", style: TextStyle(fontSize: 25)),
+                      const Align(
+                          alignment: Alignment.centerLeft,
+                          child:
+                              Text("Øremerke", style: TextStyle(fontSize: 25))),
                       const SizedBox(
                         height: 10,
                       ),
@@ -58,6 +61,45 @@ class _RegisterCadaverState extends State<RegisterCadaver> {
                                 child: TieDropDownItem(colorHex: colorHex),
                               );
                             }).toList(),
+                          )
+                        ],
+                      ),
+                      inputFieldSpacer(),
+                      const Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text('Notat', style: TextStyle(fontSize: 25))),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      TextFormField(
+                        decoration: const InputDecoration(
+                            labelText: 'Notat', border: OutlineInputBorder()),
+                      ),
+                      inputFieldSpacer(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () => print('1'),
+                            child: const Icon(Icons.camera_alt),
+                            style: ElevatedButton.styleFrom(
+                                fixedSize: const Size(80, 120)),
+                          ),
+                          const SizedBox(width: 10),
+                          ElevatedButton(
+                            onPressed: () => print('2'),
+                            child: const Icon(Icons.camera_alt),
+                            style: ElevatedButton.styleFrom(
+                                fixedSize: const Size(80, 120)),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          ElevatedButton(
+                            onPressed: () => print('3'),
+                            child: const Icon(Icons.camera_alt),
+                            style: ElevatedButton.styleFrom(
+                                fixedSize: const Size(80, 120)),
                           )
                         ],
                       )
