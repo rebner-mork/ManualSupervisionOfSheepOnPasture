@@ -21,16 +21,25 @@ class _RegistrationOptionsState extends State<RegistrationOptions> {
               style: drawerHeadlineTextStyle,
               textAlign: TextAlign.center,
             )),
-        const RegistrationTypeListTile(
-            text: 'Sau', assetImageName: 'images/sheep_white.png'),
-        const RegistrationTypeListTile(
-            text: 'Skade', assetImageName: 'images/sheep_injured.png'),
-        const RegistrationTypeListTile(
-            text: 'Kadaver', assetImageName: 'images/sheep_dead.png'),
-        const RegistrationTypeListTile(
-            text: 'Rovdyr', assetImageName: 'images/predator.png'),
-        const RegistrationTypeListTile(
-            text: 'Notat', assetImageName: 'images/note.png'),
+        RegistrationTypeListTile(
+          text: 'Sau',
+          assetImageName: 'images/sheep_white.png',
+          onPressed: () {},
+        ),
+        RegistrationTypeListTile(
+            text: 'Skade',
+            assetImageName: 'images/sheep_injured.png',
+            onPressed: () {}),
+        RegistrationTypeListTile(
+            text: 'Kadaver',
+            assetImageName: 'images/sheep_dead.png',
+            onPressed: () {}),
+        RegistrationTypeListTile(
+            text: 'Rovdyr',
+            assetImageName: 'images/predator.png',
+            onPressed: () {}),
+        RegistrationTypeListTile(
+            text: 'Notat', assetImageName: 'images/note.png', onPressed: () {}),
       ],
     );
   }
@@ -38,11 +47,15 @@ class _RegistrationOptionsState extends State<RegistrationOptions> {
 
 class RegistrationTypeListTile extends StatelessWidget {
   const RegistrationTypeListTile(
-      {required this.text, required this.assetImageName, Key? key})
+      {required this.text,
+      required this.assetImageName,
+      required this.onPressed,
+      Key? key})
       : super(key: key);
 
   final String text;
   final String assetImageName;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -57,30 +70,28 @@ class RegistrationTypeListTile extends StatelessWidget {
                 boxShadow: const [
                   BoxShadow(blurRadius: 3, offset: Offset(0, 2))
                 ]),
-            //color: Colors.green,
-            child: InkWell(
-                /*child: DecoratedBox(
-                    decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        border: Border.all(color: Colors.black),
-                        borderRadius: BorderRadius.circular(12)),*/
-                child: Row(
-              children: [
-                Flexible(
-                    child: Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: Image(
-                          image: AssetImage(assetImageName),
-                          width: 60,
-                        ))),
-                const SizedBox(width: 25),
-                Flexible(
-                    child: Text(
-                  text,
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold),
-                ))
-              ],
-            ))));
+            child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                    highlightColor: Colors.green.shade700,
+                    onTap: onPressed,
+                    child: Row(
+                      children: [
+                        Flexible(
+                            child: Padding(
+                                padding: const EdgeInsets.all(5),
+                                child: Image(
+                                  image: AssetImage(assetImageName),
+                                  width: 60,
+                                ))),
+                        const SizedBox(width: 25),
+                        Flexible(
+                            child: Text(
+                          text,
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ))
+                      ],
+                    )))));
   }
 }
