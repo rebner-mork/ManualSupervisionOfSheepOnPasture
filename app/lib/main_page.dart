@@ -108,15 +108,16 @@ class _MainPageState extends State<MainPage> {
                                     MediaQuery.of(context).viewPadding.bottom +
                                         50 + // height of CircularButton
                                         2 * buttonInset),
-                            child: const ClipRRect(
-                                borderRadius: BorderRadius.only(
+                            child: ClipRRect(
+                                borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(30),
                                     bottomLeft: Radius.circular(30)),
                                 child: SizedBox(
                                     width: 280,
                                     height: 513,
                                     child: Drawer(
-                                      child: RegistrationOptions(),
+                                      child: RegistrationOptions(
+                                          ties: widget.ties),
                                     ))))),
                     body: Stack(children: [
                       ValueListenableBuilder<bool>(

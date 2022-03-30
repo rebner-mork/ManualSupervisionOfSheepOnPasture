@@ -1,8 +1,11 @@
+import 'package:app/register/injured_sheep.dart';
 import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
 
 class RegistrationOptions extends StatefulWidget {
-  const RegistrationOptions({Key? key}) : super(key: key);
+  const RegistrationOptions({required this.ties, Key? key}) : super(key: key);
+
+  final Map<String, int?> ties;
 
   @override
   State<RegistrationOptions> createState() => _RegistrationOptionsState();
@@ -29,7 +32,14 @@ class _RegistrationOptionsState extends State<RegistrationOptions> {
         RegistrationTypeListTile(
             text: 'Skade',
             assetImageName: 'images/sheep_injured.png',
-            onPressed: () {}),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => RegisterInjuredSheep(
+                            ties: widget.ties,
+                          )));
+            }),
         RegistrationTypeListTile(
             text: 'Kadaver',
             assetImageName: 'images/sheep_dead.png',
