@@ -61,7 +61,7 @@ class RegistrationTypeListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 30),
-        child: Container(
+        child: Ink(
             decoration: BoxDecoration(
                 color: Colors.green,
                 shape: BoxShape.rectangle,
@@ -70,28 +70,26 @@ class RegistrationTypeListTile extends StatelessWidget {
                 boxShadow: const [
                   BoxShadow(blurRadius: 3, offset: Offset(0, 2))
                 ]),
-            child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                    highlightColor: Colors.green.shade700,
-                    onTap: onPressed,
-                    child: Row(
-                      children: [
-                        Flexible(
-                            child: Padding(
-                                padding: const EdgeInsets.all(5),
-                                child: Image(
-                                  image: AssetImage(assetImageName),
-                                  width: 60,
-                                ))),
-                        const SizedBox(width: 25),
-                        Flexible(
-                            child: Text(
-                          text,
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ))
-                      ],
-                    )))));
+            child: InkWell(
+                highlightColor: Colors.green.shade700,
+                onTap: onPressed,
+                child: Row(
+                  children: [
+                    Flexible(
+                        child: Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Image(
+                              image: AssetImage(assetImageName),
+                              width: 60,
+                            ))),
+                    const SizedBox(width: 25),
+                    Flexible(
+                        child: Text(
+                      text,
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ))
+                  ],
+                ))));
   }
 }

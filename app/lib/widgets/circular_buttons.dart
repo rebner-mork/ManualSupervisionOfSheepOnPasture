@@ -24,11 +24,10 @@ class CircularButton extends StatelessWidget {
         clipBehavior: Clip.hardEdge,
         width: width,
         height: height,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
             color: Colors.green,
-            border: Border.all(color: Colors.transparent, width: 0),
-            borderRadius: const BorderRadius.all(Radius.circular(18)),
-            boxShadow: const [BoxShadow(blurRadius: 7, offset: Offset(0, 3))]),
+            borderRadius: BorderRadius.all(Radius.circular(18)),
+            boxShadow: [BoxShadow(blurRadius: 7, offset: Offset(0, 3))]),
         child: Material(
             color: Colors.transparent,
             child: IconButton(
