@@ -1,6 +1,5 @@
 import 'package:app/login/login_page.dart';
 import 'package:app/providers/settings_provider.dart';
-import 'package:app/register/register_cadaver.dart';
 import 'package:app/sign_up/sign_up_page.dart';
 import 'package:app/trip/start_trip_page.dart';
 import 'package:app/utils/constants.dart';
