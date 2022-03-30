@@ -106,13 +106,18 @@ class _MainPageState extends State<MainPage> {
                             padding: EdgeInsets.only(
                                 bottom:
                                     MediaQuery.of(context).viewPadding.bottom +
-                                        70),
-                            child: const SizedBox(
-                                width: 280,
-                                height: 490,
-                                child: Drawer(
-                                  child: RegistrationOptions(),
-                                )))),
+                                        50 + // height of CircularButton
+                                        2 * buttonInset),
+                            child: const ClipRRect(
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(30),
+                                    bottomLeft: Radius.circular(30)),
+                                child: SizedBox(
+                                    width: 280,
+                                    height: 490,
+                                    child: Drawer(
+                                      child: RegistrationOptions(),
+                                    ))))),
                     body: Stack(children: [
                       ValueListenableBuilder<bool>(
                           valueListenable: widget.ongoingDialog,
