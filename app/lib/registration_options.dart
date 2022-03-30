@@ -47,7 +47,7 @@ class RegistrationTypeListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 30),
+        padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 30),
         child: InkWell(
             child: DecoratedBox(
                 decoration: BoxDecoration(
@@ -57,11 +57,13 @@ class RegistrationTypeListTile extends StatelessWidget {
                 child: Row(
                   children: [
                     Flexible(
-                        child: Image(
-                      image: AssetImage(assetImageName),
-                      width: 65,
-                    )),
-                    const SizedBox(width: 30),
+                        child: Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Image(
+                              image: AssetImage(assetImageName),
+                              width: 60,
+                            ))),
+                    const SizedBox(width: 25),
                     Flexible(
                         child: Text(
                       text,
