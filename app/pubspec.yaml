@@ -72,7 +72,6 @@ flutter:
   assets:
     - images/stripes.png
     - images/sheep.png
-    - images/sheep_white.png
     - images/sheep_injured.png
     - images/sheep_dead.png
     - images/predator.png

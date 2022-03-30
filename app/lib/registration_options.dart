@@ -23,7 +23,7 @@ class _RegistrationOptionsState extends State<RegistrationOptions> {
             )),
         RegistrationTypeListTile(
           text: 'Sau',
-          assetImageName: 'images/sheep_white.png',
+          assetImageName: 'images/sheep.png',
           onPressed: () {},
         ),
         RegistrationTypeListTile(
