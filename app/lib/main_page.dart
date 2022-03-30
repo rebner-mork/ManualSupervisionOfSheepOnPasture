@@ -100,17 +100,19 @@ class _MainPageState extends State<MainPage> {
                   return _endTripButtonPressed(context);
                 },
                 child: Scaffold(
-                    endDrawer: Padding(
-                        padding: EdgeInsets.only(
-                          top: MediaQuery.of(context).viewPadding.top + 70,
-                          bottom: MediaQuery.of(context).viewPadding.bottom +
-                              70, // + 70 bunn også?
-                        ),
-                        child: const SizedBox(
-                            width: 280,
-                            child: Drawer(
-                              child: RegistrationOptions(),
-                            ))),
+                    endDrawer: Align(
+                        alignment: Alignment.bottomRight,
+                        child: Padding(
+                            padding: EdgeInsets.only(
+                                bottom:
+                                    MediaQuery.of(context).viewPadding.bottom +
+                                        70),
+                            child: const SizedBox(
+                                width: 280,
+                                height: 490,
+                                child: Drawer(
+                                  child: RegistrationOptions(),
+                                )))),
                     body: Stack(children: [
                       ValueListenableBuilder<bool>(
                           valueListenable: widget.ongoingDialog,
