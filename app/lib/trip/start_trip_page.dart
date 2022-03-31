@@ -81,15 +81,11 @@ class _StartTripPageState extends State<StartTripPage>
 
     _animationSetup();
 
-    trySynchronize();
-
-    var dir = Directory(applicationDocumentDirectoryPath + "/trips");
-    for (var file in dir.listSync(recursive: true)) {
-      debugPrint(file.path.toString());
-    }
-
     synchronizeTimer =
         Timer.periodic(const Duration(seconds: 15), (_) => trySynchronize());
+
+    Directory(applicationDocumentDirectoryPath + "/trips").createSync();
+    trySynchronize();
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _initSpeechToText();
