@@ -537,11 +537,10 @@ class _StartTripPageState extends State<StartTripPage>
         Directory(applicationDocumentDirectoryPath + "/trips")
             .listSync(recursive: false);
 
-    for (FileSystemEntity file in files) {
-      if (file.path.endsWith(".json")) {
-        return false;
-      }
+    if (files.isNotEmpty) {
+      return false;
     }
+
     synchronizeTimer.cancel();
     return true;
   }
