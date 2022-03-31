@@ -5,6 +5,9 @@ import 'package:latlong2/latlong.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import '../utils/map_utils.dart' as map_utils;
 
+const TextStyle dropdownTextStyle = TextStyle(fontSize: 24);
+const double dropdownArrowSize = 40;
+
 class RegisterInjuredSheep extends StatefulWidget {
   const RegisterInjuredSheep({required this.ties, Key? key}) : super(key: key);
 
@@ -17,16 +20,25 @@ class RegisterInjuredSheep extends StatefulWidget {
 class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
   bool _isLoading = true;
   late LatLng _devicePosition;
-  late String _tieColor;
+  late String _selectedTieColor;
   late final TextEditingController _eartagController;
   late Map<String, int?> _ties;
+  static const List<String> injuryTypes = [
+    'Annen',
+    'Beinskade',
+    'Hodeskade',
+    'Blodutredning'
+  ];
+  late String _selectedInjuryType;
 
   @override
   void initState() {
     super.initState();
 
     _eartagController = TextEditingController(text: 'MT-NO');
-    _tieColor = Colors.transparent.value.toRadixString(16);
+    _selectedTieColor = Colors.transparent.value.toRadixString(16);
+
+    _selectedInjuryType = injuryTypes.first;
 
     _ties = {...widget.ties};
 
@@ -84,7 +96,7 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                         appbarBodySpacer(),
                         const Align(
                             alignment: Alignment.centerLeft,
-                            child: Text("Øremerke",
+                            child: Text('Øremerke',
                                 style: TextStyle(fontSize: 25))),
                         inputFieldSpacer(),
                         Flexible(
@@ -117,45 +129,69 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                                   decoration: const InputDecoration(
                                       labelText: 'ID-nr',
                                       border: OutlineInputBorder())))
-                          /*SizedBox(
-                            width: 135,
-                            child: TextFormField(
-                              textAlign: TextAlign.center,
-                              keyboardType: TextInputType.text,
-                              textInputAction: TextInputAction.next,
-                              controller: _eartagController,
-                              decoration: const InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  contentPadding:
-                                      EdgeInsets.fromLTRB(2, 0, 2, 0)),
-                            ))*/
                         ])),
                         inputFieldSpacer(),
                         const Align(
                             alignment: Alignment.centerLeft,
                             child:
-                                Text("Slips", style: TextStyle(fontSize: 25))),
+                                Text('Slips', style: TextStyle(fontSize: 25))),
+                        //const SizedBox(height: 5),
                         Row(
-                          //mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            const SizedBox(width: 15),
                             DropdownButton<String>(
+                              itemHeight: 60,
+                              iconSize: dropdownArrowSize,
                               alignment: Alignment.center,
-                              value: _tieColor,
+                              value: _selectedTieColor,
                               onChanged: (String? newValue) {
                                 setState(() {
-                                  _tieColor = newValue!;
+                                  _selectedTieColor = newValue!;
                                 });
                               },
-                              items: _ties.keys.map<DropdownMenuItem<String>>(
-                                  (String colorHex) {
-                                return DropdownMenuItem(
-                                  value: colorHex,
-                                  child: TieDropDownItem(colorHex: colorHex),
-                                );
-                              }).toList(),
+                              items: _ties.keys
+                                  .map<DropdownMenuItem<String>>(
+                                      (String colorHex) => DropdownMenuItem(
+                                            value: colorHex,
+                                            child: TieDropDownItem(
+                                                colorHex: colorHex),
+                                          ))
+                                  .toList(),
                             )
                           ],
-                        )
+                        ),
+                        inputFieldSpacer(),
+                        const Align(
+                            alignment: Alignment.centerLeft,
+                            child:
+                                Text('Skade', style: TextStyle(fontSize: 25))),
+                        //inputFieldSpacer(),
+                        const SizedBox(height: 4),
+                        Align(
+                            alignment: Alignment.centerLeft,
+                            child: Row(children: [
+                              const SizedBox(width: 15),
+                              DropdownButton(
+                                  iconSize: dropdownArrowSize,
+                                  value: _selectedInjuryType,
+                                  items: injuryTypes
+                                      .map<DropdownMenuItem<String>>(
+                                          (String type) => DropdownMenuItem(
+                                              value: type,
+                                              child: Text(
+                                                type,
+                                                style: dropdownTextStyle,
+                                              )))
+                                      .toList(),
+                                  onChanged: (String? newType) {
+                                    if (_selectedInjuryType != newType!) {
+                                      setState(() {
+                                        _selectedInjuryType = newType;
+                                      });
+                                    }
+                                  })
+                            ])),
+                        const SizedBox(height: 8),
                       ],
                     ))),
       ),
@@ -165,8 +201,11 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
 
 class TieDropDownItem extends StatelessWidget {
   TieDropDownItem({Key? key, required String colorHex}) : super(key: key) {
-    icon = Icon(FontAwesome5.black_tie,
-        color: colorStringToColor[colorHex], size: 30);
+    bool isTransparent = colorHex == '0';
+    icon = Icon(
+        isTransparent ? Icons.disabled_by_default : FontAwesome5.black_tie,
+        color: isTransparent ? Colors.grey : colorStringToColor[colorHex],
+        size: 38);
 
     label = colorValueToStringGui[colorHex]!;
   }
@@ -185,7 +224,7 @@ class TieDropDownItem extends StatelessWidget {
         ),
         Text(
           label,
-          style: const TextStyle(fontSize: 25),
+          style: dropdownTextStyle,
         )
       ],
     ));
