@@ -37,18 +37,15 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
 
     _eartagController = TextEditingController(text: 'MT-NO');
     _selectedTieColor = Colors.transparent.value.toRadixString(16);
-
     _selectedInjuryType = injuryTypes.first;
 
     _ties = {...widget.ties};
-
     if (!_ties.keys.contains(Colors.transparent.value.toRadixString(16))) {
       _ties[Colors.transparent.value.toRadixString(16)] = null;
     }
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _getDevicePosition();
-      debugPrint(_ties.toString());
     });
   }
 
@@ -61,11 +58,7 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
 
   Future<void> _backButtonPressed() async {
     await cancelRegistrationDialog(context).then((value) => {
-          if (value)
-            {
-              //if (widget.onWillPop != null) {widget.onWillPop!()},
-              Navigator.pop(context)
-            }
+          if (value) {Navigator.pop(context)}
         });
   }
 

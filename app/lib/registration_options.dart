@@ -33,6 +33,7 @@ class _RegistrationOptionsState extends State<RegistrationOptions> {
             text: 'Skade',
             assetImageName: 'images/sheep_injured.png',
             onPressed: () {
+              Navigator.of(context).pop();
               Navigator.push(
                   context,
                   MaterialPageRoute(
