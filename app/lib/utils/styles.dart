@@ -8,6 +8,7 @@ TextStyle fieldNameTextStyle =
     const TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
 TextStyle dropDownTextStyle = const TextStyle(fontSize: 24);
 const double dropdownArrowSize = 40;
+const double textFormFieldHeight = 55;
 
 // Button
 TextStyle buttonTextStyle = const TextStyle(fontSize: 18);

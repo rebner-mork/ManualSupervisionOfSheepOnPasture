@@ -59,6 +59,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         inputFieldSpacer(),
                         TextFormField(
                             key: const Key('inputName'),
+                            textCapitalization: TextCapitalization.words,
                             validator: (input) => validateName(input!.trim()),
                             onSaved: (input) => _name = input!.trim(),
                             onChanged: _onFieldChange,

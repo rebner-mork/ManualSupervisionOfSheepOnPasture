@@ -1,11 +1,14 @@
+import 'package:app/register/radio_button.dart';
 import 'package:app/register/registration_input_headline.dart';
 import 'package:app/register/tie_dropdown_item.dart';
 import 'package:app/utils/custom_widgets.dart';
-import 'package:app/utils/other.dart';
 import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import '../utils/map_utils.dart' as map_utils;
+
+const double leftInset =
+    65; // Sentrert er 65, hør med Nikolai om det ser greit ut. Jeg synes inputfeltene bør være sentrert!!
 
 class RegisterInjuredSheep extends StatefulWidget {
   const RegisterInjuredSheep({required this.ties, Key? key}) : super(key: key);
@@ -19,25 +22,30 @@ class RegisterInjuredSheep extends StatefulWidget {
 class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
   bool _isLoading = true;
   late LatLng _devicePosition;
-  late String _selectedTieColor;
-  late final TextEditingController _eartagController;
-  late final TextEditingController _farmNumberController;
+  bool _isModerate = true;
+  bool _isSevere = false;
+
+  late final TextEditingController _startIdController;
+  final TextEditingController _farmNumberController = TextEditingController();
   late final TextEditingController _individualNumberController;
+  final TextEditingController _noteController = TextEditingController();
+
+  late String _selectedTieColor;
   late Map<String, int?> _ties;
+
+  late String _selectedInjuryType;
   static const List<String> injuryTypes = [
     'Annen',
     'Beinskade',
     'Hodeskade',
     'Blodutredning'
   ];
-  late String _selectedInjuryType;
 
   @override
   void initState() {
     super.initState();
 
-    _eartagController = TextEditingController(text: 'MT-NO');
-    _farmNumberController = TextEditingController();
+    _startIdController = TextEditingController(text: 'MT-NO');
     _individualNumberController = TextEditingController(text: '0');
     _selectedTieColor = Colors.transparent.value.toRadixString(16);
     _selectedInjuryType = injuryTypes.first;
@@ -86,7 +94,7 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
               ? const LoadingData()
               : SingleChildScrollView(
                   child: SizedBox(
-                      height: 500,
+                      height: 600,
                       child: Container(
                           margin: const EdgeInsets.only(left: 40),
                           child: Column(
@@ -99,14 +107,16 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                                   child: Row(children: [
                                 SizedBox(
                                     width: 90,
+                                    height: textFormFieldHeight,
                                     child: TextFormField(
                                         textAlign: TextAlign.center,
-                                        controller: _eartagController,
+                                        controller: _startIdController,
                                         decoration: const InputDecoration(
                                             border: OutlineInputBorder()))),
                                 const SizedBox(width: 10),
                                 SizedBox(
                                     width: 120,
+                                    height: textFormFieldHeight,
                                     child: TextFormField(
                                         // TODO: validering
                                         textAlign: TextAlign.center,
@@ -119,6 +129,7 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                                 const SizedBox(width: 10),
                                 SizedBox(
                                     width: 90,
+                                    height: textFormFieldHeight,
                                     child: TextFormField(
                                         // TODO: validering
                                         textAlign: TextAlign.center,
@@ -130,108 +141,115 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                                             border: OutlineInputBorder())))
                               ])),
                               inputFieldSpacer(),
-                              //Row(
-                              //  children: [
-                              //    const SizedBox(
-                              //        width: 115,
-                              //        child:
-                              const RegistrationInputHeadline(
-                                  title: 'Slips'), //),
-                              //const SizedBox(width: 15),
+                              const RegistrationInputHeadline(title: 'Slips'),
                               Row(children: [
-                                const SizedBox(width: 35),
-                                DropdownButton<String>(
-                                  itemHeight: 60,
-                                  iconSize: dropdownArrowSize,
-                                  //alignment: Alignment.center,
-                                  value: _selectedTieColor,
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      _selectedTieColor = newValue!;
-                                    });
-                                  },
-                                  items: _ties.keys
-                                      .map<DropdownMenuItem<String>>(
-                                          (String colorHex) => DropdownMenuItem(
-                                                value: colorHex,
-                                                child: TieDropDownItem(
-                                                    colorHex: colorHex),
-                                              ))
-                                      .toList(),
-                                )
-                              ]),
-                              //],
-                              //),
-                              inputFieldSpacer(),
-                              //Row(children: [
-                              //  const SizedBox(
-                              //      width: 80,
-                              //      child:
-                              const RegistrationInputHeadline(
-                                  title: 'Skade'), //),
-                              //  const SizedBox(width: 15),
-                              Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: DropdownButton(
-                                      alignment: Alignment.centerRight,
+                                const SizedBox(width: leftInset),
+                                SizedBox(
+                                    width: 190,
+                                    child: DropdownButton<String>(
+                                      isExpanded: true,
+                                      itemHeight: 60,
                                       iconSize: dropdownArrowSize,
-                                      value: _selectedInjuryType,
-                                      items: injuryTypes
+                                      value: _selectedTieColor,
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          _selectedTieColor = newValue!;
+                                        });
+                                      },
+                                      items: _ties.keys
                                           .map<DropdownMenuItem<String>>(
-                                              (String type) => DropdownMenuItem(
-                                                  value: type,
-                                                  child: Text(
-                                                    type,
-                                                    style: dropDownTextStyle,
-                                                  )))
+                                              (String colorHex) =>
+                                                  DropdownMenuItem(
+                                                    alignment:
+                                                        Alignment.centerRight,
+                                                    value: colorHex,
+                                                    child: TieDropDownItem(
+                                                      colorHex: colorHex,
+                                                    ),
+                                                  ))
                                           .toList(),
-                                      onChanged: (String? newType) {
-                                        if (_selectedInjuryType != newType!) {
-                                          setState(() {
-                                            _selectedInjuryType = newType;
-                                          });
-                                        }
-                                      })),
-                              //]),
+                                    ))
+                              ]),
+                              inputFieldSpacer(),
+                              const RegistrationInputHeadline(title: 'Skade'),
+                              Row(children: [
+                                const SizedBox(width: leftInset),
+                                DropdownButton(
+                                    //alignment: Alignment.centerRight,
+                                    iconSize: dropdownArrowSize,
+                                    value: _selectedInjuryType,
+                                    items: injuryTypes
+                                        .map<DropdownMenuItem<String>>(
+                                            (String type) => DropdownMenuItem(
+                                                value: type,
+                                                child: Text(
+                                                  type,
+                                                  style: dropDownTextStyle,
+                                                )))
+                                        .toList(),
+                                    onChanged: (String? newType) {
+                                      if (_selectedInjuryType != newType!) {
+                                        setState(() {
+                                          _selectedInjuryType = newType;
+                                        });
+                                      }
+                                    })
+                              ]),
                               inputFieldSpacer(),
                               //const RegistrationInputHeadline(
                               //    title: 'Alvorlighetsgrad'),
                               //inputFieldSpacer(),
                               Row(
-                                //mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const SizedBox(width: 15),
+                                  const SizedBox(width: leftInset),
                                   Column(children: [
                                     const Text(
                                       'Moderat',
-                                      style: TextStyle(fontSize: 20),
+                                      style: TextStyle(fontSize: 22),
                                     ),
-                                    Radio<bool>(
-                                        value: false,
-                                        groupValue: true,
-                                        onChanged: (bool? j) {})
+                                    RadioButton(
+                                        value: _isModerate,
+                                        groupValue: !_isSevere,
+                                        onChanged: (bool? newValue) {
+                                          setState(() {
+                                            _isModerate = !_isModerate;
+                                          });
+                                        }),
                                   ]),
                                   const SizedBox(width: 20),
                                   Column(children: [
                                     const Text(
                                       'Alvorlig',
-                                      style: TextStyle(fontSize: 20),
+                                      style: TextStyle(fontSize: 22),
                                     ),
-                                    Radio<bool>(
-                                        value: false,
-                                        groupValue: true,
-                                        onChanged: (bool? j) {})
+                                    RadioButton(
+                                        value: _isSevere,
+                                        groupValue: _isModerate,
+                                        onChanged: (bool? newValue) {
+                                          setState(() {
+                                            _isSevere = !_isSevere;
+                                          });
+                                        }),
                                   ]),
                                 ],
                               ),
-                              inputFieldSpacer(),
+                              const SizedBox(height: 8),
                               const RegistrationInputHeadline(title: 'Notat'),
-                              //inputFieldSpacer(),
-                              //completeRegistrationButton(context, () {})
+                              inputFieldSpacer(),
+                              Container(
+                                  margin: const EdgeInsets.only(right: 20),
+                                  child: TextFormField(
+                                      textCapitalization:
+                                          TextCapitalization.sentences,
+                                      maxLines: 3,
+                                      controller: _noteController,
+                                      decoration: const InputDecoration(
+                                          border: OutlineInputBorder())))
                             ],
                           )))),
         ),
-        floatingActionButton: completeRegistrationButton(context, () {}),
+        floatingActionButton:
+            _isLoading ? null : completeRegistrationButton(context, () {}),
         floatingActionButtonLocation:
             MediaQuery.of(context).viewInsets.bottom == 0
                 ? FloatingActionButtonLocation.centerFloat
