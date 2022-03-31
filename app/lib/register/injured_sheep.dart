@@ -18,19 +18,27 @@ class RegisterInjuredSheep extends StatefulWidget {
 class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
   bool _isLoading = true;
   late LatLng _devicePosition;
-  late Color _color;
+  late Color _tieColor;
   late final TextEditingController _eartagController;
+  late Map<String, int?> _ties;
 
   @override
   void initState() {
     super.initState();
 
     _eartagController = TextEditingController();
-    _color = Color(int.parse(widget.ties.keys.first, radix: 16));
+    _tieColor = Colors
+        .transparent; //Color(int.parse(widget.ties.keys.first, radix: 16));
+
+    _ties = {...widget.ties};
+
+    if (!_ties.keys.contains(Colors.transparent.value.toRadixString(16))) {
+      _ties[Colors.transparent.value.toRadixString(16)] = null;
+    }
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _getDevicePosition();
-      debugPrint(widget.ties.toString());
+      debugPrint(_ties.toString());
     });
   }
 
@@ -61,9 +69,9 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
   void _onColorChanged(Color newColor) {
     //_helpText = '';
 
-    if (newColor != _color) {
+    if (newColor != _tieColor) {
       setState(() {
-        _color = newColor;
+        _tieColor = newColor;
         //_tieColor = newColor;
         //_tieColors[index] = newColor;
       });
@@ -110,21 +118,40 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                                       EdgeInsets.fromLTRB(2, 0, 2, 0)),
                             ))
                       ])),
-                  DropdownButton<DropdownIcon>(
-                      // TODO: Legg til ingen slips, legg til tekst også (farge/ingen), default ingen
-                      value: DropdownIcon(FontAwesome5.black_tie, _color),
-                      items: widget.ties.keys
-                          .map((String colorString) => DropdownMenuItem<
-                                  DropdownIcon>(
-                              value: DropdownIcon(FontAwesome5.black_tie,
-                                  Color(int.parse(colorString, radix: 16))),
-                              child: DropdownIcon(FontAwesome5.black_tie,
-                                      Color(int.parse(colorString, radix: 16)))
-                                  .icon))
-                          .toList(),
-                      onChanged: (DropdownIcon? newIcon) {
-                        _onColorChanged(newIcon!.icon.color!);
-                      }),
+                  inputDividerWithHeadline('Slips'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        colorValueToStringGui[_tieColor.value]!,
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                      const SizedBox(width: 8),
+                      SizedBox(
+                          height: 55,
+                          width: 90,
+                          child: DropdownButton<DropdownIcon>(
+                              iconSize: 32,
+                              value: DropdownIcon(
+                                  FontAwesome5.black_tie, _tieColor),
+                              items: _ties.keys
+                                  .map((String colorString) =>
+                                      DropdownMenuItem<DropdownIcon>(
+                                          value: DropdownIcon(
+                                              FontAwesome5.black_tie,
+                                              Color(int.parse(colorString,
+                                                  radix: 16))),
+                                          child: DropdownIcon(
+                                                  FontAwesome5.black_tie,
+                                                  Color(int.parse(colorString,
+                                                      radix: 16)))
+                                              .icon))
+                                  .toList(),
+                              onChanged: (DropdownIcon? newIcon) {
+                                _onColorChanged(newIcon!.icon.color!);
+                              })),
+                    ],
+                  )
                 ],
               )),
       ),

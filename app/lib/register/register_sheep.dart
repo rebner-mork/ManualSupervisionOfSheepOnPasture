@@ -301,7 +301,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
           inputDividerWithHeadline('Øremerker', firstHeadlineFieldKeys[0]));
       for (String eartagColor in widget.eartags.keys) {
         eartags.add(inputRow(
-            colorValueStringToColorStringGui[eartagColor]!,
+            colorValueStringToColorStringGuiPlural[eartagColor]!,
             _textControllers[
                 '${colorValueStringToColorString[eartagColor]}Ear']!,
             eartagColor == '0' ? Icons.close : Icons.local_offer,
@@ -316,7 +316,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
       ties.add(inputDividerWithHeadline('Slips', firstHeadlineFieldKeys[1]));
       for (String tieColor in widget.ties.keys) {
         ties.add(inputRow(
-            colorValueStringToColorStringGui[tieColor]!,
+            colorValueStringToColorStringGuiPlural[tieColor]!,
             _textControllers['${colorValueStringToColorString[tieColor]}Tie']!,
             tieColor == '0' ? Icons.close : FontAwesome5.black_tie,
             tieColor == '0' ? Colors.grey : colorStringToColor[tieColor]!));

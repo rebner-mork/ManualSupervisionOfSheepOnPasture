@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 
 class DropdownIcon {
   DropdownIcon(IconData iconData, Color color) {
-    icon = Icon(iconData, color: color);
+    icon = Icon(
+      iconData,
+      color: color,
+      size: 40,
+    );
   }
 
   late Icon icon;

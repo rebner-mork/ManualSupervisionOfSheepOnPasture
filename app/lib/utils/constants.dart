@@ -25,14 +25,24 @@ final Map<String, String> colorValueStringToColorString = {
   Colors.pink.value.toRadixString(16): 'pink'
 };
 
-final Map<String, String> colorValueStringToColorStringGui = {
-  Colors.transparent.value.toRadixString(16): 'Uten',
+final Map<String, String> colorValueStringToColorStringGuiPlural = {
+  Colors.transparent.value.toRadixString(16): 'Ingen',
   Colors.red.value.toRadixString(16): 'Røde',
   Colors.blue.value.toRadixString(16): 'Blå',
   Colors.yellow.value.toRadixString(16): 'Gule',
   Colors.green.value.toRadixString(16): 'Grønne',
   Colors.orange.value.toRadixString(16): 'Oransje',
   Colors.pink.value.toRadixString(16): 'Rosa'
+};
+
+final Map<int, String> colorValueToStringGui = {
+  Colors.red.value: 'Rødt',
+  Colors.blue.value: 'Blått',
+  Colors.yellow.value: 'Gult',
+  Colors.green.value: 'Grønt',
+  Colors.orange.value: 'Oransje',
+  Colors.pink.value: 'Rosa',
+  Colors.transparent.value: 'Ingen'
 };
 
 final Map<String, Color> colorStringToColor = {
