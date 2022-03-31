@@ -72,35 +72,37 @@ class RegistrationTypeListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 30),
-        child: Ink(
+        child: Container(
             decoration: BoxDecoration(
                 color: Colors.green,
                 shape: BoxShape.rectangle,
                 border: Border.all(color: Colors.black),
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: const [
-                  BoxShadow(blurRadius: 3, offset: Offset(0, 2))
+                  BoxShadow(blurRadius: 2, offset: Offset(0, 2))
                 ]),
-            child: InkWell(
-                highlightColor: Colors.green.shade700,
-                onTap: onPressed,
-                child: Row(
-                  children: [
-                    Flexible(
-                        child: Padding(
-                            padding: const EdgeInsets.all(5),
-                            child: Image(
-                              image: AssetImage(assetImageName),
-                              width: 60,
-                            ))),
-                    const SizedBox(width: 25),
-                    Flexible(
-                        child: Text(
-                      text,
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
-                    ))
-                  ],
-                ))));
+            child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                    highlightColor: Colors.green.shade700,
+                    onTap: onPressed,
+                    child: Row(
+                      children: [
+                        Flexible(
+                            child: Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: Image(
+                                  image: AssetImage(assetImageName),
+                                  width: 55,
+                                ))),
+                        const SizedBox(width: 25),
+                        Flexible(
+                            child: Text(
+                          text,
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ))
+                      ],
+                    )))));
   }
 }
