@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 
+// Appbar
+const TextStyle appBarTextStyle = TextStyle(fontSize: 22);
+
 // User input fields
 TextStyle fieldNameTextStyle =
-    const TextStyle(fontSize: 21, fontWeight: FontWeight.bold);
-TextStyle dropDownTextStyle = const TextStyle(fontSize: 21);
+    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
+TextStyle dropDownTextStyle = const TextStyle(fontSize: 24);
+const double dropdownArrowSize = 40;
 
 // Button
 TextStyle buttonTextStyle = const TextStyle(fontSize: 18);
@@ -32,3 +36,6 @@ TextStyle cancelDialogButtonTextStyle = const TextStyle(
 
 TextStyle drawerHeadlineTextStyle =
     const TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
+
+// Registration pages
+const TextStyle registrationFieldHeadlineTextStyle = TextStyle(fontSize: 26);

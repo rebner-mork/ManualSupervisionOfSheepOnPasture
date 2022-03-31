@@ -4,6 +4,7 @@ import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/other.dart';
 import 'package:app/utils/question_sets.dart';
 import 'package:app/utils/speech_input_filters.dart';
+import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:provider/provider.dart';
@@ -344,7 +345,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
             onWillPop: _onWillPop,
             child: Scaffold(
                 appBar: AppBar(
-                  title: Text(title),
+                  title: Text(title, style: appBarTextStyle),
                   leading: BackButton(onPressed: _backButtonPressed),
                 ),
                 body: _isLoading

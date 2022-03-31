@@ -1,12 +1,9 @@
-import 'package:app/utils/constants.dart';
+import 'package:app/register/tie_dropdown_item.dart';
 import 'package:app/utils/custom_widgets.dart';
+import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:fluttericon/font_awesome5_icons.dart';
 import '../utils/map_utils.dart' as map_utils;
-
-const TextStyle dropdownTextStyle = TextStyle(fontSize: 24);
-const double dropdownArrowSize = 40;
 
 class RegisterInjuredSheep extends StatefulWidget {
   const RegisterInjuredSheep({required this.ties, Key? key}) : super(key: key);
@@ -22,6 +19,8 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
   late LatLng _devicePosition;
   late String _selectedTieColor;
   late final TextEditingController _eartagController;
+  late final TextEditingController _farmNumberController;
+  late final TextEditingController _individualNumberController;
   late Map<String, int?> _ties;
   static const List<String> injuryTypes = [
     'Annen',
@@ -36,6 +35,8 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
     super.initState();
 
     _eartagController = TextEditingController(text: 'MT-NO');
+    _farmNumberController = TextEditingController();
+    _individualNumberController = TextEditingController(text: '0');
     _selectedTieColor = Colors.transparent.value.toRadixString(16);
     _selectedInjuryType = injuryTypes.first;
 
@@ -74,7 +75,7 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
     return Material(
         child: Scaffold(
       appBar: AppBar(
-        title: const Text('Registrer skadd sau'),
+        title: const Text('Registrer skadd sau', style: appBarTextStyle),
         leading: BackButton(onPressed: _backButtonPressed),
       ),
       body: Form(
@@ -87,10 +88,7 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                     child: Column(
                       children: [
                         appbarBodySpacer(),
-                        const Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text('Øremerke',
-                                style: TextStyle(fontSize: 25))),
+                        const RegistrationInputHeadline(title: 'Øremerke'),
                         inputFieldSpacer(),
                         Flexible(
                             child: Row(children: [
@@ -100,13 +98,14 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                                   textAlign: TextAlign.center,
                                   controller: _eartagController,
                                   decoration: const InputDecoration(
-                                      //labelText: 'MT-NO',
                                       border: OutlineInputBorder()))),
                           const SizedBox(width: 10),
                           SizedBox(
                               width: 120,
                               child: TextFormField(
                                   // TODO: validering
+                                  textAlign: TextAlign.center,
+                                  controller: _farmNumberController,
                                   keyboardType:
                                       const TextInputType.numberWithOptions(),
                                   decoration: const InputDecoration(
@@ -117,6 +116,8 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                               width: 90,
                               child: TextFormField(
                                   // TODO: validering
+                                  textAlign: TextAlign.center,
+                                  controller: _individualNumberController,
                                   keyboardType:
                                       const TextInputType.numberWithOptions(),
                                   decoration: const InputDecoration(
@@ -124,13 +125,12 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                                       border: OutlineInputBorder())))
                         ])),
                         inputFieldSpacer(),
-                        const Align(
-                            alignment: Alignment.centerLeft,
-                            child:
-                                Text('Slips', style: TextStyle(fontSize: 25))),
-                        //const SizedBox(height: 5),
                         Row(
                           children: [
+                            const SizedBox(
+                                width: 115,
+                                child:
+                                    RegistrationInputHeadline(title: 'Slips')),
                             const SizedBox(width: 15),
                             DropdownButton<String>(
                               itemHeight: 60,
@@ -154,36 +154,32 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                           ],
                         ),
                         inputFieldSpacer(),
-                        const Align(
-                            alignment: Alignment.centerLeft,
-                            child:
-                                Text('Skade', style: TextStyle(fontSize: 25))),
-                        //inputFieldSpacer(),
-                        const SizedBox(height: 4),
-                        Align(
-                            alignment: Alignment.centerLeft,
-                            child: Row(children: [
-                              const SizedBox(width: 15),
-                              DropdownButton(
-                                  iconSize: dropdownArrowSize,
-                                  value: _selectedInjuryType,
-                                  items: injuryTypes
-                                      .map<DropdownMenuItem<String>>(
-                                          (String type) => DropdownMenuItem(
-                                              value: type,
-                                              child: Text(
-                                                type,
-                                                style: dropdownTextStyle,
-                                              )))
-                                      .toList(),
-                                  onChanged: (String? newType) {
-                                    if (_selectedInjuryType != newType!) {
-                                      setState(() {
-                                        _selectedInjuryType = newType;
-                                      });
-                                    }
-                                  })
-                            ])),
+                        Row(children: [
+                          const SizedBox(
+                              width: 80,
+                              child: RegistrationInputHeadline(title: 'Skade')),
+                          const SizedBox(width: 15),
+                          DropdownButton(
+                              alignment: Alignment.centerRight,
+                              iconSize: dropdownArrowSize,
+                              value: _selectedInjuryType,
+                              items: injuryTypes
+                                  .map<DropdownMenuItem<String>>(
+                                      (String type) => DropdownMenuItem(
+                                          value: type,
+                                          child: Text(
+                                            type,
+                                            style: dropDownTextStyle,
+                                          )))
+                                  .toList(),
+                              onChanged: (String? newType) {
+                                if (_selectedInjuryType != newType!) {
+                                  setState(() {
+                                    _selectedInjuryType = newType;
+                                  });
+                                }
+                              })
+                        ]),
                         const SizedBox(height: 8),
                       ],
                     ))),
@@ -192,34 +188,16 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
   }
 }
 
-class TieDropDownItem extends StatelessWidget {
-  TieDropDownItem({Key? key, required String colorHex}) : super(key: key) {
-    bool isTransparent = colorHex == '0';
-    icon = Icon(
-        isTransparent ? Icons.disabled_by_default : FontAwesome5.black_tie,
-        color: isTransparent ? Colors.grey : colorStringToColor[colorHex],
-        size: 38);
+class RegistrationInputHeadline extends StatelessWidget {
+  const RegistrationInputHeadline({required this.title, Key? key})
+      : super(key: key);
 
-    label = colorValueToStringGui[colorHex]!;
-  }
-
-  late final Icon icon; // Større
-  late final String label;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-        child: Row(
-      children: [
-        icon,
-        const SizedBox(
-          width: 10,
-        ),
-        Text(
-          label,
-          style: dropdownTextStyle,
-        )
-      ],
-    ));
+    return Align(
+        alignment: Alignment.centerLeft,
+        child: Text(title, style: registrationFieldHeadlineTextStyle));
   }
 }
