@@ -1,6 +1,5 @@
 import 'package:app/utils/constants.dart';
 import 'package:app/utils/custom_widgets.dart';
-import 'package:app/widgets/dropdown_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
@@ -18,7 +17,7 @@ class RegisterInjuredSheep extends StatefulWidget {
 class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
   bool _isLoading = true;
   late LatLng _devicePosition;
-  late Color _tieColor;
+  late String _tieColor;
   late final TextEditingController _eartagController;
   late Map<String, int?> _ties;
 
@@ -26,9 +25,8 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
   void initState() {
     super.initState();
 
-    _eartagController = TextEditingController();
-    _tieColor = Colors
-        .transparent; //Color(int.parse(widget.ties.keys.first, radix: 16));
+    _eartagController = TextEditingController(text: 'MT-NO');
+    _tieColor = Colors.transparent.value.toRadixString(16);
 
     _ties = {...widget.ties};
 
@@ -66,46 +64,60 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
     return returnValue;
   }
 
-  void _onColorChanged(Color newColor) {
-    //_helpText = '';
-
-    if (newColor != _tieColor) {
-      setState(() {
-        _tieColor = newColor;
-        //_tieColor = newColor;
-        //_tieColors[index] = newColor;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Material(
-        child: Form(
-      onWillPop: _onWillPop,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Registrer skadd sau'),
-          leading: BackButton(onPressed: _backButtonPressed),
-        ),
-        body: _isLoading
+        child: Scaffold(
+      appBar: AppBar(
+        title: const Text('Registrer skadd sau'),
+        leading: BackButton(onPressed: _backButtonPressed),
+      ),
+      body: Form(
+        onWillPop: _onWillPop,
+        child: _isLoading
             ? const LoadingData()
             : Center(
-                child: Column(
-                children: [
-                  appbarBodySpacer(),
-                  inputDividerWithHeadline('Øremerke-ID'),
-                  Flexible(
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                        const Text(
-                          'MT-NO',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(width: 5),
-                        SizedBox(
+                child: Container(
+                    margin: const EdgeInsets.only(left: 40),
+                    child: Column(
+                      children: [
+                        appbarBodySpacer(),
+                        const Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text("Øremerke",
+                                style: TextStyle(fontSize: 25))),
+                        inputFieldSpacer(),
+                        Flexible(
+                            child: Row(children: [
+                          SizedBox(
+                              width: 90,
+                              child: TextFormField(
+                                  textAlign: TextAlign.center,
+                                  controller: _eartagController,
+                                  decoration: const InputDecoration(
+                                      //labelText: 'MT-NO',
+                                      border: OutlineInputBorder()))),
+                          const SizedBox(width: 10),
+                          SizedBox(
+                              width: 120,
+                              child: TextFormField(
+                                  // TODO: validering
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(),
+                                  decoration: const InputDecoration(
+                                      labelText: 'Gårds-nr',
+                                      border: OutlineInputBorder()))),
+                          const SizedBox(width: 10),
+                          SizedBox(
+                              width: 90,
+                              child: TextFormField(
+                                  // TODO: validering
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(),
+                                  decoration: const InputDecoration(
+                                      labelText: 'ID-nr',
+                                      border: OutlineInputBorder())))
+                          /*SizedBox(
                             width: 135,
                             child: TextFormField(
                               textAlign: TextAlign.center,
@@ -116,45 +128,66 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                                   border: OutlineInputBorder(),
                                   contentPadding:
                                       EdgeInsets.fromLTRB(2, 0, 2, 0)),
-                            ))
-                      ])),
-                  inputDividerWithHeadline('Slips'),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        colorValueToStringGui[_tieColor.value]!,
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                      const SizedBox(width: 8),
-                      SizedBox(
-                          height: 55,
-                          width: 90,
-                          child: DropdownButton<DropdownIcon>(
-                              iconSize: 32,
-                              value: DropdownIcon(
-                                  FontAwesome5.black_tie, _tieColor),
-                              items: _ties.keys
-                                  .map((String colorString) =>
-                                      DropdownMenuItem<DropdownIcon>(
-                                          value: DropdownIcon(
-                                              FontAwesome5.black_tie,
-                                              Color(int.parse(colorString,
-                                                  radix: 16))),
-                                          child: DropdownIcon(
-                                                  FontAwesome5.black_tie,
-                                                  Color(int.parse(colorString,
-                                                      radix: 16)))
-                                              .icon))
-                                  .toList(),
-                              onChanged: (DropdownIcon? newIcon) {
-                                _onColorChanged(newIcon!.icon.color!);
-                              })),
-                    ],
-                  )
-                ],
-              )),
+                            ))*/
+                        ])),
+                        inputFieldSpacer(),
+                        const Align(
+                            alignment: Alignment.centerLeft,
+                            child:
+                                Text("Slips", style: TextStyle(fontSize: 25))),
+                        Row(
+                          //mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            DropdownButton<String>(
+                              alignment: Alignment.center,
+                              value: _tieColor,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  _tieColor = newValue!;
+                                });
+                              },
+                              items: _ties.keys.map<DropdownMenuItem<String>>(
+                                  (String colorHex) {
+                                return DropdownMenuItem(
+                                  value: colorHex,
+                                  child: TieDropDownItem(colorHex: colorHex),
+                                );
+                              }).toList(),
+                            )
+                          ],
+                        )
+                      ],
+                    ))),
       ),
+    ));
+  }
+}
+
+class TieDropDownItem extends StatelessWidget {
+  TieDropDownItem({Key? key, required String colorHex}) : super(key: key) {
+    icon = Icon(FontAwesome5.black_tie,
+        color: colorStringToColor[colorHex], size: 30);
+
+    label = colorValueToStringGui[colorHex]!;
+  }
+
+  late final Icon icon; // Større
+  late final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+        child: Row(
+      children: [
+        icon,
+        const SizedBox(
+          width: 10,
+        ),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 25),
+        )
+      ],
     ));
   }
 }
