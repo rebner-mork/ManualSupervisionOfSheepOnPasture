@@ -175,7 +175,7 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                               Row(children: [
                                 const SizedBox(width: leftInset),
                                 DropdownButton(
-                                    //alignment: Alignment.centerRight,
+                                    alignment: Alignment.center,
                                     iconSize: dropdownArrowSize,
                                     value: _selectedInjuryType,
                                     items: injuryTypes
