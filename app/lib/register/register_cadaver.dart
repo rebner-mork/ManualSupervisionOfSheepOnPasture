@@ -1,4 +1,6 @@
 import 'package:app/trip/trip_data_manager.dart';
+import 'package:app/utils/camera/camera_input_button.dart';
+import 'package:app/utils/camera/camera_widget.dart';
 import 'package:app/utils/constants.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:flutter/material.dart';
@@ -21,89 +23,85 @@ class _RegisterCadaverState extends State<RegisterCadaver> {
   @override
   Widget build(BuildContext context) {
     return Material(
-        child: Scaffold(
-            appBar: AppBar(
-              title: const Center(child: Text('Registrer kadaver')),
-            ),
-            body: Form(
-                child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 50),
-                    child: Column(children: [
-                      inputFieldSpacer(),
-                      const Align(
-                          alignment: Alignment.centerLeft,
-                          child:
-                              Text("Øremerke", style: TextStyle(fontSize: 25))),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      TextFormField(
-                          decoration: const InputDecoration(
-                              labelText: 'Øremerke-nummer',
-                              border: OutlineInputBorder())),
-                      inputFieldSpacer(),
-                      Row(
-                        children: [
-                          const Text("Slips", style: TextStyle(fontSize: 25)),
-                          const SizedBox(width: 50),
-                          DropdownButton<String>(
-                            value: dropdownValue,
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                dropdownValue = newValue!;
-                              });
-                            },
-                            items: widget.ties.keys
-                                .map<DropdownMenuItem<String>>(
-                                    (String colorHex) {
-                              return DropdownMenuItem(
-                                value: colorHex,
-                                child: TieDropDownItem(colorHex: colorHex),
-                              );
-                            }).toList(),
-                          )
-                        ],
-                      ),
-                      inputFieldSpacer(),
-                      const Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text('Notat', style: TextStyle(fontSize: 25))),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      TextFormField(
+      child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Registrer kadaver'),
+          ),
+          body: Form(
+              child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 50),
+                  child: Column(children: [
+                    inputFieldSpacer(),
+                    const Align(
+                        alignment: Alignment.centerLeft,
+                        child:
+                            Text("Øremerke", style: TextStyle(fontSize: 25))),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    TextFormField(
                         decoration: const InputDecoration(
-                            labelText: 'Notat', border: OutlineInputBorder()),
-                      ),
-                      inputFieldSpacer(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () => print('1'),
-                            child: const Icon(Icons.camera_alt),
-                            style: ElevatedButton.styleFrom(
-                                fixedSize: const Size(80, 120)),
-                          ),
-                          const SizedBox(width: 10),
-                          ElevatedButton(
-                            onPressed: () => print('2'),
-                            child: const Icon(Icons.camera_alt),
-                            style: ElevatedButton.styleFrom(
-                                fixedSize: const Size(80, 120)),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          ElevatedButton(
-                            onPressed: () => print('3'),
-                            child: const Icon(Icons.camera_alt),
-                            style: ElevatedButton.styleFrom(
-                                fixedSize: const Size(80, 120)),
-                          )
-                        ],
-                      )
-                    ])))));
+                            labelText: 'Øremerke-nummer',
+                            border: OutlineInputBorder())),
+                    inputFieldSpacer(),
+                    Row(
+                      children: [
+                        const Text("Slips", style: TextStyle(fontSize: 25)),
+                        const SizedBox(width: 50),
+                        DropdownButton<String>(
+                          iconSize: 32,
+                          value: dropdownValue,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              dropdownValue = newValue!;
+                            });
+                          },
+                          items: widget.ties.keys
+                              .map<DropdownMenuItem<String>>((String colorHex) {
+                            return DropdownMenuItem(
+                              value: colorHex,
+                              child: TieDropDownItem(colorHex: colorHex),
+                            );
+                          }).toList(),
+                        )
+                      ],
+                    ),
+                    inputFieldSpacer(),
+                    const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text('Notat', style: TextStyle(fontSize: 25))),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                          labelText: 'Notat', border: OutlineInputBorder()),
+                    ),
+                    inputFieldSpacer(),
+                    const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text("Bilder", style: TextStyle(fontSize: 25))),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CameraInputButton(),
+                        const SizedBox(width: 10),
+                        CameraInputButton(),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        CameraInputButton()
+                      ],
+                    )
+                  ]))),
+          floatingActionButton: completeRegistrationButton(
+              context, () => debugPrint('Fullfør registrering')),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat),
+    );
   }
 }
 
