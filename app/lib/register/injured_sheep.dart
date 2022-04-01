@@ -1,4 +1,3 @@
-import 'package:app/register/radio_button.dart';
 import 'package:app/register/registration_input_headline.dart';
 import 'package:app/register/tie_dropdown_item.dart';
 import 'package:app/utils/custom_widgets.dart';
@@ -93,7 +92,7 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
               ? const LoadingData()
               : SingleChildScrollView(
                   child: SizedBox(
-                      height: 650,
+                      height: 600,
                       child: Container(
                           margin: const EdgeInsets.only(left: leftMargin),
                           child: Column(
@@ -110,6 +109,7 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                                     child: TextFormField(
                                         textAlign: TextAlign.center,
                                         controller: _startIdController,
+                                        style: const TextStyle(fontSize: 18),
                                         decoration: const InputDecoration(
                                             border: OutlineInputBorder()))),
                                 const SizedBox(width: 10),
@@ -120,6 +120,7 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                                         // TODO: validering
                                         textAlign: TextAlign.center,
                                         controller: _farmNumberController,
+                                        style: const TextStyle(fontSize: 18),
                                         keyboardType: const TextInputType
                                             .numberWithOptions(),
                                         decoration: const InputDecoration(
@@ -133,6 +134,7 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                                         // TODO: validering
                                         textAlign: TextAlign.center,
                                         controller: _individualNumberController,
+                                        style: const TextStyle(fontSize: 18),
                                         keyboardType: const TextInputType
                                             .numberWithOptions(),
                                         decoration: const InputDecoration(
@@ -224,40 +226,87 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                                   ]),
                               inputFieldSpacer(),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Column(children: [
-                                    const Text(
-                                      'Moderat',
-                                      style: TextStyle(fontSize: 22),
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Ink(
+                                      decoration: BoxDecoration(
+                                          border:
+                                              Border.all(color: Colors.grey),
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(4))),
+                                      width: 235,
+                                      height: 60,
+                                      child: Row(
+                                        children: [
+                                          InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  _isModerate = true;
+                                                  _isSevere = false;
+                                                });
+                                              },
+                                              child: Container(
+                                                  color: _isModerate
+                                                      ? Colors.green
+                                                      : null,
+                                                  constraints:
+                                                      const BoxConstraints(
+                                                          maxWidth: 115,
+                                                          maxHeight: 60),
+                                                  child: Align(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: Text(
+                                                        'Moderat',
+                                                        style: TextStyle(
+                                                            fontSize: 22,
+                                                            fontWeight:
+                                                                _isModerate
+                                                                    ? FontWeight
+                                                                        .bold
+                                                                    : FontWeight
+                                                                        .normal),
+                                                      )))),
+                                          VerticalDivider(
+                                            width: 3,
+                                            thickness: 1,
+                                            indent: 7,
+                                            endIndent: 7,
+                                            color: Colors.grey.shade600,
+                                          ),
+                                          InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  _isSevere = true;
+                                                  _isModerate = false;
+                                                });
+                                              },
+                                              child: Container(
+                                                  color: _isSevere
+                                                      ? Colors.green
+                                                      : null,
+                                                  constraints:
+                                                      const BoxConstraints(
+                                                          maxWidth: 115,
+                                                          maxHeight: 60),
+                                                  child: Align(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: Text(
+                                                        'Alvorlig',
+                                                        style: TextStyle(
+                                                            fontSize: 22,
+                                                            fontWeight: _isSevere
+                                                                ? FontWeight
+                                                                    .bold
+                                                                : FontWeight
+                                                                    .normal),
+                                                      ))))
+                                        ],
+                                      ),
                                     ),
-                                    RadioButton(
-                                        value: _isModerate,
-                                        groupValue: !_isSevere,
-                                        onChanged: (bool? newValue) {
-                                          setState(() {
-                                            _isModerate = !_isModerate;
-                                          });
-                                        }),
+                                    const SizedBox(width: leftMargin),
                                   ]),
-                                  const SizedBox(width: 20),
-                                  Column(children: [
-                                    const Text(
-                                      'Alvorlig',
-                                      style: TextStyle(fontSize: 22),
-                                    ),
-                                    RadioButton(
-                                        value: _isSevere,
-                                        groupValue: _isModerate,
-                                        onChanged: (bool? newValue) {
-                                          setState(() {
-                                            _isSevere = !_isSevere;
-                                          });
-                                        }),
-                                  ]),
-                                  const SizedBox(width: leftMargin)
-                                ],
-                              ),
                               const SizedBox(height: 8),
                               const RegistrationInputHeadline(title: 'Notat'),
                               inputFieldSpacer(),
