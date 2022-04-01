@@ -92,7 +92,7 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
               ? const LoadingData()
               : SingleChildScrollView(
                   child: SizedBox(
-                      height: 600,
+                      height: 645,
                       child: Container(
                           margin: const EdgeInsets.only(left: leftMargin),
                           child: Column(
@@ -101,8 +101,7 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                               const RegistrationInputHeadline(
                                   title: 'Øremerke'),
                               inputFieldSpacer(),
-                              Flexible(
-                                  child: Row(children: [
+                              Row(children: [
                                 SizedBox(
                                     width: 90,
                                     height: textFormFieldHeight,
@@ -140,9 +139,10 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                                         decoration: const InputDecoration(
                                             labelText: 'ID-nr',
                                             border: OutlineInputBorder())))
-                              ])),
+                              ]),
                               inputFieldSpacer(),
                               const RegistrationInputHeadline(title: 'Slips'),
+                              inputFieldSpacer(),
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -187,6 +187,7 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                                   ]),
                               inputFieldSpacer(),
                               const RegistrationInputHeadline(title: 'Skade'),
+                              inputFieldSpacer(),
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -307,7 +308,7 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                                     ),
                                     const SizedBox(width: leftMargin),
                                   ]),
-                              const SizedBox(height: 8),
+                              inputFieldSpacer(),
                               const RegistrationInputHeadline(title: 'Notat'),
                               inputFieldSpacer(),
                               Container(
