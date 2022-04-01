@@ -1,4 +1,5 @@
 import 'package:email_validator/email_validator.dart';
+import 'package:flutter/material.dart';
 
 String? validateName(String? name) {
   if (name!.isEmpty) {
@@ -49,5 +50,30 @@ String? validatePhone(String? phone) {
     return 'Telefonnummer må inneholde minst 8 siffer';
   }
 
+  return null;
+}
+
+String? validateEartagCountryCode(String code) {
+  if (code.isEmpty) {
+    return 'Fyll inn';
+  }
+  return null;
+}
+
+String? validateEartagFarmNumber(String number) {
+  if (number.isEmpty) {
+    return 'Fyll inn';
+  } else if (number.length != 7 && number.length != 8) {
+    return '7-8 siffer';
+  }
+  return null;
+}
+
+String? validateEartagIndividualNumber(String number) {
+  if (number.isEmpty) {
+    return 'Fyll inn';
+  } else if (number.length != 4 && number.length != 5) {
+    return '4-5 siffer';
+  }
   return null;
 }

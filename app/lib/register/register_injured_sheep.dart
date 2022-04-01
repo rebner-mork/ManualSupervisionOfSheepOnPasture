@@ -1,6 +1,7 @@
 import 'package:app/register/registration_input_headline.dart';
 import 'package:app/register/tie_dropdown_item.dart';
 import 'package:app/utils/custom_widgets.dart';
+import 'package:app/utils/field_validation.dart';
 import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
@@ -23,7 +24,7 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
   bool _isModerate = true;
   bool _isSevere = false;
 
-  late final TextEditingController _startIdController;
+  late final TextEditingController _countryCodeController;
   final TextEditingController _farmNumberController = TextEditingController();
   late final TextEditingController _individualNumberController;
   final TextEditingController _noteController = TextEditingController();
@@ -39,12 +40,14 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
     'Blodutredning'
   ];
 
+  final _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     super.initState();
 
-    _startIdController = TextEditingController(text: 'MT-NO');
-    _individualNumberController = TextEditingController(text: '0');
+    _countryCodeController = TextEditingController(text: 'MT-NO');
+    _individualNumberController = TextEditingController();
     _selectedTieColor = Colors.transparent.value.toRadixString(16);
     _selectedInjuryType = injuryTypes.first;
 
@@ -87,12 +90,13 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
           leading: BackButton(onPressed: _backButtonPressed),
         ),
         body: Form(
+          key: _formKey,
           onWillPop: _onWillPop,
           child: _isLoading
               ? const LoadingData()
               : SingleChildScrollView(
                   child: SizedBox(
-                      height: 645,
+                      height: 655,
                       child: Container(
                           margin: const EdgeInsets.only(left: leftMargin),
                           child: Column(
@@ -103,44 +107,58 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                               inputFieldSpacer(),
                               Row(children: [
                                 SizedBox(
-                                    width: 90,
+                                    width: 97,
                                     height: textFormFieldHeight,
                                     child: TextFormField(
                                         textAlign: TextAlign.center,
-                                        controller: _startIdController,
+                                        controller: _countryCodeController,
                                         style: const TextStyle(fontSize: 18),
-                                        decoration: const InputDecoration(
-                                            border: OutlineInputBorder()))),
+                                        validator: (_) =>
+                                            validateEartagCountryCode(
+                                                _countryCodeController.text),
+                                        decoration: InputDecoration(
+                                            labelText: 'Landskode',
+                                            labelStyle: TextStyle(
+                                                fontSize: _countryCodeController
+                                                        .text.isEmpty
+                                                    ? 13
+                                                    : 18),
+                                            border:
+                                                const OutlineInputBorder()))),
                                 const SizedBox(width: 10),
                                 SizedBox(
                                     width: 120,
                                     height: textFormFieldHeight,
                                     child: TextFormField(
-                                        // TODO: validering
                                         textAlign: TextAlign.center,
                                         controller: _farmNumberController,
                                         style: const TextStyle(fontSize: 18),
+                                        validator: (_) =>
+                                            validateEartagFarmNumber(
+                                                _farmNumberController.text),
                                         keyboardType: const TextInputType
                                             .numberWithOptions(),
                                         decoration: const InputDecoration(
-                                            labelText: 'Gårds-nr',
+                                            labelText: 'Gård',
                                             border: OutlineInputBorder()))),
                                 const SizedBox(width: 10),
                                 SizedBox(
                                     width: 90,
                                     height: textFormFieldHeight,
                                     child: TextFormField(
-                                        // TODO: validering
+                                        validator: (_) =>
+                                            validateEartagIndividualNumber(
+                                                _individualNumberController
+                                                    .text),
                                         textAlign: TextAlign.center,
                                         controller: _individualNumberController,
                                         style: const TextStyle(fontSize: 18),
                                         keyboardType: const TextInputType
                                             .numberWithOptions(),
                                         decoration: const InputDecoration(
-                                            labelText: 'ID-nr',
+                                            labelText: 'Individ',
                                             border: OutlineInputBorder())))
                               ]),
-                              inputFieldSpacer(),
                               const RegistrationInputHeadline(title: 'Slips'),
                               inputFieldSpacer(),
                               Row(
@@ -324,8 +342,9 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                             ],
                           )))),
         ),
-        floatingActionButton:
-            _isLoading ? null : completeRegistrationButton(context, () {}),
+        floatingActionButton: _isLoading
+            ? null
+            : completeRegistrationButton(context, _registerInjuredSheep),
         floatingActionButtonLocation:
             MediaQuery.of(context).viewInsets.bottom == 0
                 ? FloatingActionButtonLocation.centerFloat
@@ -334,9 +353,11 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
     );
   }
 
-  /*void _registerInjuredSheep() {
-    Map<String, Object> data = {};
+  void _registerInjuredSheep() {
+    if (_formKey.currentState!.validate()) {
+      /*Map<String, Object> data = {};
     data.addAll(gatherRegisteredData(_textControllers));
+    data['type] = 'injuredSheep'
     data['timestamp'] = DateTime.now();
     data['devicePosition'] = {
       'latitude': _devicePosition.latitude,
@@ -352,6 +373,7 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
     }
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
+    }*/
     }
-  }*/
+  }
 }

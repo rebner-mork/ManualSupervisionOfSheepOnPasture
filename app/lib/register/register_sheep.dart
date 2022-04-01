@@ -239,6 +239,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
   void _registerSheep() {
     Map<String, Object> data = {};
     data.addAll(gatherRegisteredData(_textControllers));
+    data['type'] = 'sheep';
     data['timestamp'] = DateTime.now();
     data['devicePosition'] = {
       'latitude': _devicePosition.latitude,

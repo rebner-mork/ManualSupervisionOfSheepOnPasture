@@ -1,4 +1,4 @@
-import 'package:app/register/injured_sheep.dart';
+import 'package:app/register/register_injured_sheep.dart';
 import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
 
