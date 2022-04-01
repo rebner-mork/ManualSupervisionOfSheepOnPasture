@@ -1,5 +1,6 @@
-import 'package:app/register/registration_input_headline.dart';
-import 'package:app/register/tie_dropdown_item.dart';
+import 'package:app/register/widgets/note_form_field.dart';
+import 'package:app/register/widgets/registration_input_headline.dart';
+import 'package:app/register/widgets/tie_dropdown.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/field_validation.dart';
 import 'package:app/utils/styles.dart';
@@ -8,6 +9,12 @@ import 'package:latlong2/latlong.dart';
 import '../utils/map_utils.dart' as map_utils;
 
 const double leftMargin = 40;
+const List<String> injuryTypes = [
+  'Annen',
+  'Beinskade',
+  'Hodeskade',
+  'Blodutredning'
+];
 
 class RegisterInjuredSheep extends StatefulWidget {
   const RegisterInjuredSheep({required this.ties, Key? key}) : super(key: key);
@@ -34,12 +41,6 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
   late Map<String, int?> _ties;
 
   late String _selectedInjuryType;
-  static const List<String> injuryTypes = [
-    'Annen',
-    'Beinskade',
-    'Hodeskade',
-    'Blodutredning'
-  ];
 
   final _formKey = GlobalKey<FormState>();
 
@@ -181,42 +182,16 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     SizedBox(
-                                        width: 205,
-                                        child: Container(
-                                            decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Colors.grey),
-                                                borderRadius:
-                                                    const BorderRadius.all(
-                                                        Radius.circular(4))),
-                                            child: DropdownButton<String>(
-                                              underline: const SizedBox(),
-                                              isExpanded: true,
-                                              itemHeight: 60,
-                                              iconSize: dropdownArrowSize,
-                                              value: _selectedTieColor,
-                                              onChanged: (String? newValue) {
-                                                setState(() {
-                                                  _selectedTieColor = newValue!;
-                                                });
-                                              },
-                                              items: _ties.keys
-                                                  .map<
-                                                          DropdownMenuItem<
-                                                              String>>(
-                                                      (String colorHex) =>
-                                                          DropdownMenuItem(
-                                                            alignment: Alignment
-                                                                .centerRight,
-                                                            value: colorHex,
-                                                            child:
-                                                                TieDropDownItem(
-                                                              colorHex:
-                                                                  colorHex,
-                                                            ),
-                                                          ))
-                                                  .toList(),
-                                            ))),
+                                      width: 205,
+                                      child: TieDropdownButton(
+                                          selectedTieColor: _selectedTieColor,
+                                          tieColors: _ties.keys.toList(),
+                                          onChanged: (String? newValue) {
+                                            setState(() {
+                                              _selectedTieColor = newValue!;
+                                            });
+                                          }),
+                                    ),
                                     const SizedBox(width: 40),
                                   ]),
                               inputFieldSpacer(),
@@ -225,136 +200,45 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Container(
-                                        decoration: BoxDecoration(
-                                            border:
-                                                Border.all(color: Colors.grey),
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(4))),
-                                        child: DropdownButton(
-                                            itemHeight: 60,
-                                            underline: const SizedBox(),
-                                            alignment: Alignment.center,
-                                            iconSize: dropdownArrowSize,
-                                            value: _selectedInjuryType,
-                                            items: injuryTypes
-                                                .map<DropdownMenuItem<String>>(
-                                                    (String type) =>
-                                                        DropdownMenuItem(
-                                                            value: type,
-                                                            child: Text(
-                                                              type,
-                                                              style:
-                                                                  dropDownTextStyle,
-                                                            )))
-                                                .toList(),
-                                            onChanged: (String? newType) {
-                                              if (_selectedInjuryType !=
-                                                  newType!) {
-                                                setState(() {
-                                                  _selectedInjuryType = newType;
-                                                });
-                                              }
-                                            })),
+                                    InjuryTypeDropdownButton(
+                                        selectedInjuryType: _selectedInjuryType,
+                                        onChanged: (String? newType) {
+                                          if (_selectedInjuryType != newType!) {
+                                            setState(() {
+                                              _selectedInjuryType = newType;
+                                            });
+                                          }
+                                        }),
                                     const SizedBox(width: leftMargin),
                                   ]),
                               inputFieldSpacer(),
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Ink(
-                                      decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.grey),
-                                          borderRadius: const BorderRadius.all(
-                                              Radius.circular(4))),
-                                      width: 235,
-                                      height: 60,
-                                      child: Row(
-                                        children: [
-                                          InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  _isModerate = true;
-                                                  _isSevere = false;
-                                                });
-                                              },
-                                              child: Container(
-                                                  color: _isModerate
-                                                      ? Colors.green
-                                                      : null,
-                                                  constraints:
-                                                      const BoxConstraints(
-                                                          maxWidth: 115,
-                                                          maxHeight: 60),
-                                                  child: Align(
-                                                      alignment:
-                                                          Alignment.center,
-                                                      child: Text(
-                                                        'Moderat',
-                                                        style: TextStyle(
-                                                            fontSize: 22,
-                                                            fontWeight:
-                                                                _isModerate
-                                                                    ? FontWeight
-                                                                        .bold
-                                                                    : FontWeight
-                                                                        .normal),
-                                                      )))),
-                                          VerticalDivider(
-                                            width: 3,
-                                            thickness: 1,
-                                            indent: 7,
-                                            endIndent: 7,
-                                            color: Colors.grey.shade600,
-                                          ),
-                                          InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  _isSevere = true;
-                                                  _isModerate = false;
-                                                });
-                                              },
-                                              child: Container(
-                                                  color: _isSevere
-                                                      ? Colors.green
-                                                      : null,
-                                                  constraints:
-                                                      const BoxConstraints(
-                                                          maxWidth: 115,
-                                                          maxHeight: 60),
-                                                  child: Align(
-                                                      alignment:
-                                                          Alignment.center,
-                                                      child: Text(
-                                                        'Alvorlig',
-                                                        style: TextStyle(
-                                                            fontSize: 22,
-                                                            fontWeight: _isSevere
-                                                                ? FontWeight
-                                                                    .bold
-                                                                : FontWeight
-                                                                    .normal),
-                                                      ))))
-                                        ],
-                                      ),
+                                    ModerateSevereToggle(
+                                      isModerate: _isModerate,
+                                      isSevere: _isSevere,
+                                      onTapModerate: () {
+                                        setState(() {
+                                          _isModerate = true;
+                                          _isSevere = false;
+                                        });
+                                      },
+                                      onTapSevere: () {
+                                        setState(() {
+                                          _isSevere = true;
+                                          _isModerate = false;
+                                        });
+                                      },
                                     ),
                                     const SizedBox(width: leftMargin),
                                   ]),
                               inputFieldSpacer(),
                               const RegistrationInputHeadline(title: 'Notat'),
                               inputFieldSpacer(),
-                              Container(
-                                  margin:
-                                      const EdgeInsets.only(right: leftMargin),
-                                  child: TextFormField(
-                                      textCapitalization:
-                                          TextCapitalization.sentences,
-                                      maxLines: 3,
-                                      controller: _noteController,
-                                      decoration: const InputDecoration(
-                                          border: OutlineInputBorder())))
+                              NoteFormField(
+                                  textController: _noteController,
+                                  rightMargin: leftMargin),
                             ],
                           )))),
         ),
@@ -392,5 +276,106 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
       Navigator.pop(context);
     }*/
     }
+  }
+}
+
+class InjuryTypeDropdownButton extends StatelessWidget {
+  const InjuryTypeDropdownButton(
+      {required this.selectedInjuryType, required this.onChanged, Key? key})
+      : super(key: key);
+
+  final String selectedInjuryType;
+  final Function(String?) onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius: const BorderRadius.all(Radius.circular(4))),
+        child: DropdownButton(
+            itemHeight: 60,
+            underline: const SizedBox(),
+            alignment: Alignment.center,
+            iconSize: dropdownArrowSize,
+            value: selectedInjuryType,
+            items: injuryTypes
+                .map<DropdownMenuItem<String>>(
+                    (String type) => DropdownMenuItem(
+                        value: type,
+                        child: Text(
+                          type,
+                          style: dropDownTextStyle,
+                        )))
+                .toList(),
+            onChanged: onChanged));
+  }
+}
+
+class ModerateSevereToggle extends StatelessWidget {
+  const ModerateSevereToggle(
+      {required this.isModerate,
+      required this.isSevere,
+      required this.onTapModerate,
+      required this.onTapSevere,
+      Key? key})
+      : super(key: key);
+
+  final bool isModerate;
+  final bool isSevere;
+  final VoidCallback onTapModerate;
+  final VoidCallback onTapSevere;
+
+  @override
+  Widget build(BuildContext context) {
+    return Ink(
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey),
+          borderRadius: const BorderRadius.all(Radius.circular(4))),
+      width: 235,
+      height: 60,
+      child: Row(
+        children: [
+          InkWell(
+              onTap: onTapModerate,
+              child: Container(
+                  color: isModerate ? Colors.green : null,
+                  constraints:
+                      const BoxConstraints(maxWidth: 115, maxHeight: 60),
+                  child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Moderat',
+                        style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: isModerate
+                                ? FontWeight.bold
+                                : FontWeight.normal),
+                      )))),
+          VerticalDivider(
+            width: 3,
+            thickness: 1,
+            indent: 7,
+            endIndent: 7,
+            color: Colors.grey.shade600,
+          ),
+          InkWell(
+              onTap: onTapSevere,
+              child: Container(
+                  color: isSevere ? Colors.green : null,
+                  constraints:
+                      const BoxConstraints(maxWidth: 115, maxHeight: 60),
+                  child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Alvorlig',
+                        style: TextStyle(
+                            fontSize: 22,
+                            fontWeight:
+                                isSevere ? FontWeight.bold : FontWeight.normal),
+                      ))))
+        ],
+      ),
+    );
   }
 }
