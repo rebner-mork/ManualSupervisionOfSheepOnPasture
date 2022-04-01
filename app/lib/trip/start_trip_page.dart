@@ -159,6 +159,7 @@ class _StartTripPageState extends State<StartTripPage>
             child: Text(
               'Gård',
               style: fieldNameTextStyle,
+              textAlign: TextAlign.end,
             )),
         const SizedBox(
           width: 20,
