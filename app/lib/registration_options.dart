@@ -1,11 +1,15 @@
 import 'package:app/register/register_injured_sheep.dart';
 import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 
 class RegistrationOptions extends StatefulWidget {
-  const RegistrationOptions({required this.ties, Key? key}) : super(key: key);
+  const RegistrationOptions(
+      {required this.ties, required this.sheepPosition, Key? key})
+      : super(key: key);
 
   final Map<String, int?> ties;
+  final LatLng sheepPosition;
 
   @override
   State<RegistrationOptions> createState() => _RegistrationOptionsState();
@@ -39,6 +43,7 @@ class _RegistrationOptionsState extends State<RegistrationOptions> {
                   MaterialPageRoute(
                       builder: (context) => RegisterInjuredSheep(
                             ties: widget.ties,
+                            sheepPosition: widget.sheepPosition,
                           )));
             }),
         RegistrationTypeListTile(

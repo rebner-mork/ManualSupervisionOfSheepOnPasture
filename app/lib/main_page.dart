@@ -117,7 +117,9 @@ class _MainPageState extends State<MainPage> {
                                     height: 520,
                                     child: Drawer(
                                       child: RegistrationOptions(
-                                          ties: widget.ties),
+                                        ties: widget.ties,
+                                        sheepPosition: LatLng(0, 0),
+                                      ), // TODO
                                     ))))),
                     body: Stack(children: [
                       ValueListenableBuilder<bool>(
