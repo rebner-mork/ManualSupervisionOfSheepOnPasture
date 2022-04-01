@@ -22,16 +22,18 @@ class TieDropDownItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
         child: Row(
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         icon,
         const SizedBox(
           width: 10,
         ),
-        Text(
-          label,
-          style: dropDownTextStyle,
-        )
+        SizedBox(
+            width: 90,
+            child: Text(
+              label,
+              style: dropDownTextStyle,
+            ))
       ],
     ));
   }

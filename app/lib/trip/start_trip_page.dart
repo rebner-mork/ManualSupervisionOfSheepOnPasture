@@ -61,7 +61,7 @@ class _StartTripPageState extends State<StartTripPage>
   late Animation<Color?> _colorTween;
 
   static const double downloadIconSize = 48;
-  static const double fieldNameWidth = 55;
+  static const double fieldNameWidth = 60;
   static const double dropdownWidth = 190;
 
   @override

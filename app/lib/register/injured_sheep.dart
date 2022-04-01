@@ -94,7 +94,7 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
               ? const LoadingData()
               : SingleChildScrollView(
                   child: SizedBox(
-                      height: 600,
+                      height: 650,
                       child: Container(
                           margin: const EdgeInsets.only(left: 40),
                           child: Column(
@@ -145,55 +145,72 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                               Row(children: [
                                 const SizedBox(width: leftInset),
                                 SizedBox(
-                                    width: 190,
-                                    child: DropdownButton<String>(
-                                      isExpanded: true,
-                                      itemHeight: 60,
-                                      iconSize: dropdownArrowSize,
-                                      value: _selectedTieColor,
-                                      onChanged: (String? newValue) {
-                                        setState(() {
-                                          _selectedTieColor = newValue!;
-                                        });
-                                      },
-                                      items: _ties.keys
-                                          .map<DropdownMenuItem<String>>(
-                                              (String colorHex) =>
-                                                  DropdownMenuItem(
-                                                    alignment:
-                                                        Alignment.centerRight,
-                                                    value: colorHex,
-                                                    child: TieDropDownItem(
-                                                      colorHex: colorHex,
-                                                    ),
-                                                  ))
-                                          .toList(),
-                                    ))
+                                    width: 205,
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                            border:
+                                                Border.all(color: Colors.grey),
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                                    Radius.circular(4))),
+                                        child: DropdownButton<String>(
+                                          underline: const SizedBox(),
+                                          isExpanded: true,
+                                          itemHeight: 60,
+                                          iconSize: dropdownArrowSize,
+                                          value: _selectedTieColor,
+                                          onChanged: (String? newValue) {
+                                            setState(() {
+                                              _selectedTieColor = newValue!;
+                                            });
+                                          },
+                                          items: _ties.keys
+                                              .map<DropdownMenuItem<String>>(
+                                                  (String colorHex) =>
+                                                      DropdownMenuItem(
+                                                        alignment: Alignment
+                                                            .centerRight,
+                                                        value: colorHex,
+                                                        child: TieDropDownItem(
+                                                          colorHex: colorHex,
+                                                        ),
+                                                      ))
+                                              .toList(),
+                                        )))
                               ]),
                               inputFieldSpacer(),
                               const RegistrationInputHeadline(title: 'Skade'),
                               Row(children: [
                                 const SizedBox(width: leftInset),
-                                DropdownButton(
-                                    alignment: Alignment.center,
-                                    iconSize: dropdownArrowSize,
-                                    value: _selectedInjuryType,
-                                    items: injuryTypes
-                                        .map<DropdownMenuItem<String>>(
-                                            (String type) => DropdownMenuItem(
-                                                value: type,
-                                                child: Text(
-                                                  type,
-                                                  style: dropDownTextStyle,
-                                                )))
-                                        .toList(),
-                                    onChanged: (String? newType) {
-                                      if (_selectedInjuryType != newType!) {
-                                        setState(() {
-                                          _selectedInjuryType = newType;
-                                        });
-                                      }
-                                    })
+                                Container(
+                                    decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey),
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(4))),
+                                    child: DropdownButton(
+                                        itemHeight: 60,
+                                        underline: const SizedBox(),
+                                        alignment: Alignment.center,
+                                        iconSize: dropdownArrowSize,
+                                        value: _selectedInjuryType,
+                                        items: injuryTypes
+                                            .map<DropdownMenuItem<String>>(
+                                                (String type) =>
+                                                    DropdownMenuItem(
+                                                        value: type,
+                                                        child: Text(
+                                                          type,
+                                                          style:
+                                                              dropDownTextStyle,
+                                                        )))
+                                            .toList(),
+                                        onChanged: (String? newType) {
+                                          if (_selectedInjuryType != newType!) {
+                                            setState(() {
+                                              _selectedInjuryType = newType;
+                                            });
+                                          }
+                                        }))
                               ]),
                               inputFieldSpacer(),
                               //const RegistrationInputHeadline(
