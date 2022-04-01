@@ -23,6 +23,7 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
   late LatLng _devicePosition;
   bool _isModerate = true;
   bool _isSevere = false;
+  bool _isValidationActivated = false;
 
   late final TextEditingController _countryCodeController;
   final TextEditingController _farmNumberController = TextEditingController();
@@ -116,6 +117,11 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                                         validator: (_) =>
                                             validateEartagCountryCode(
                                                 _countryCodeController.text),
+                                        onChanged: (_) {
+                                          if (_isValidationActivated) {
+                                            _formKey.currentState!.validate();
+                                          }
+                                        },
                                         decoration: InputDecoration(
                                             labelText: 'Landskode',
                                             labelStyle: TextStyle(
@@ -136,6 +142,11 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                                         validator: (_) =>
                                             validateEartagFarmNumber(
                                                 _farmNumberController.text),
+                                        onChanged: (_) {
+                                          if (_isValidationActivated) {
+                                            _formKey.currentState!.validate();
+                                          }
+                                        },
                                         keyboardType: const TextInputType
                                             .numberWithOptions(),
                                         decoration: const InputDecoration(
@@ -146,13 +157,18 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                                     width: 90,
                                     height: textFormFieldHeight,
                                     child: TextFormField(
+                                        textAlign: TextAlign.center,
+                                        controller: _individualNumberController,
+                                        style: const TextStyle(fontSize: 18),
                                         validator: (_) =>
                                             validateEartagIndividualNumber(
                                                 _individualNumberController
                                                     .text),
-                                        textAlign: TextAlign.center,
-                                        controller: _individualNumberController,
-                                        style: const TextStyle(fontSize: 18),
+                                        onChanged: (_) {
+                                          if (_isValidationActivated) {
+                                            _formKey.currentState!.validate();
+                                          }
+                                        },
                                         keyboardType: const TextInputType
                                             .numberWithOptions(),
                                         decoration: const InputDecoration(
@@ -354,6 +370,7 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
   }
 
   void _registerInjuredSheep() {
+    _isValidationActivated = true;
     if (_formKey.currentState!.validate()) {
       /*Map<String, Object> data = {};
     data.addAll(gatherRegisteredData(_textControllers));
