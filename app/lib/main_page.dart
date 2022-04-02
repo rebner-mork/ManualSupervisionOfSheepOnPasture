@@ -5,6 +5,7 @@ import 'package:app/registration_options.dart';
 import 'package:app/trip/end_trip_dialog.dart';
 import 'package:app/trip/start_trip_page.dart';
 import 'package:app/trip/trip_data_manager.dart';
+import 'package:app/utils/constants.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/other.dart';
 import 'package:app/widgets/circular_buttons.dart';
@@ -55,6 +56,8 @@ class _MainPageState extends State<MainPage> {
   int _sheepAmount = 0;
   double iconSize = 42;
   bool _isLoading = true;
+  bool _isSelectPositionMode = false;
+  RegistrationTypes _registrationType = RegistrationTypes.sheep;
 
   @override
   void initState() {
@@ -117,9 +120,14 @@ class _MainPageState extends State<MainPage> {
                                     height: 520,
                                     child: Drawer(
                                       child: RegistrationOptions(
-                                        ties: widget.ties,
-                                        sheepPosition: LatLng(0, 0),
-                                      ), // TODO
+                                          ties: widget.ties,
+                                          onRegisterOptionSelected:
+                                              (RegistrationTypes type) {
+                                            setState(() {
+                                              _isSelectPositionMode = true;
+                                              _registrationType = type;
+                                            });
+                                          }),
                                     ))))),
                     body: Stack(children: [
                       ValueListenableBuilder<bool>(
@@ -132,72 +140,102 @@ class _MainPageState extends State<MainPage> {
                                 eartags: widget.eartags,
                                 ties: widget.ties,
                                 deviceStartPosition: _deviceStartPosition,
-                                onSheepRegistered: (Map<String, Object> data) {
-                                  int sheepAmountRegistered =
-                                      data['sheep']! as int;
-                                  if (sheepAmountRegistered > 0) {
-                                    _tripData.registrations.add(data);
-                                    setState(() {
-                                      _sheepAmount += sheepAmountRegistered;
-                                    });
+                                registrationType: _registrationType,
+                                onRegistrationComplete:
+                                    (Map<String, Object> data) {
+                                  // TODO: individualiser per type switch case?
+                                  switch (_registrationType) {
+                                    case RegistrationTypes.sheep:
+                                      int sheepAmountRegistered =
+                                          data['sheep']! as int;
+                                      if (sheepAmountRegistered > 0) {
+                                        _tripData.registrations.add(data);
+                                        setState(() {
+                                          _sheepAmount += sheepAmountRegistered;
+                                        });
+                                      }
+                                      break;
+                                    case RegistrationTypes.injury:
+                                      break;
+                                    default:
+                                      break;
                                   }
+
+                                  setState(() {
+                                    _isSelectPositionMode = false;
+                                    _registrationType = RegistrationTypes.sheep;
+                                    // TODO: avbryt modus-knapp
+                                  });
                                 },
                               )),
-                      Positioned(
-                        top: buttonInset +
-                            MediaQuery.of(context).viewPadding.top,
-                        left: buttonInset,
-                        child: CircularButton(
-                            child: Icon(
-                              Icons.cloud_upload,
-                              size: iconSize,
-                            ),
-                            onPressed: () {
-                              _endTripButtonPressed(context);
-                            }),
-                      ),
-                      Positioned(
+                      if (_isSelectPositionMode)
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                              // Animer pulsering ellerno?
+                              // const map oversett til GUI
+                              "Hold inne på $_registrationType sin posisjon",
+                              style: const TextStyle(fontSize: 24)),
+                        ),
+                      if (!_isSelectPositionMode)
+                        Positioned(
                           top: buttonInset +
                               MediaQuery.of(context).viewPadding.top,
-                          right: buttonInset,
+                          left: buttonInset,
                           child: CircularButton(
-                            child: SettingsIcon(iconSize: iconSize),
-                            onPressed: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (_) => const SettingsDialog());
-                            },
-                          )),
-                      Positioned(
-                        bottom: buttonInset +
-                            MediaQuery.of(context).viewPadding.bottom,
-                        left: buttonInset,
-                        child: CircularButton(
-                          child: Sheepometer(
-                              sheepAmount: _sheepAmount, iconSize: iconSize),
-                          onPressed: () {},
-                          width: 62 +
-                              textSize(_sheepAmount.toString(),
-                                      circularButtonTextStyle)
-                                  .width,
+                              child: Icon(
+                                Icons.cloud_upload,
+                                size: iconSize,
+                              ),
+                              onPressed: () {
+                                _endTripButtonPressed(context);
+                              }),
                         ),
-                      ),
-                      Builder(
-                          builder: (context) => Positioned(
-                              bottom: buttonInset +
-                                  MediaQuery.of(context).viewPadding.bottom,
-                              right: buttonInset,
-                              child: CircularButton(
-                                child: const Text(
-                                  '+?',
-                                  style: TextStyle(
-                                      fontSize: 28,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                onPressed: () {
-                                  Scaffold.of(context).openEndDrawer();
-                                },
-                              )))
+                      if (!_isSelectPositionMode)
+                        Positioned(
+                            top: buttonInset +
+                                MediaQuery.of(context).viewPadding.top,
+                            right: buttonInset,
+                            child: CircularButton(
+                              child: SettingsIcon(iconSize: iconSize),
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (_) => const SettingsDialog());
+                              },
+                            )),
+                      if (!_isSelectPositionMode)
+                        Positioned(
+                          bottom: buttonInset +
+                              MediaQuery.of(context).viewPadding.bottom,
+                          left: buttonInset,
+                          child: CircularButton(
+                            child: Sheepometer(
+                                sheepAmount: _sheepAmount, iconSize: iconSize),
+                            onPressed: () {},
+                            width: 62 +
+                                textSize(_sheepAmount.toString(),
+                                        circularButtonTextStyle)
+                                    .width,
+                          ),
+                        ),
+                      if (!_isSelectPositionMode)
+                        Builder(
+                            builder: (context) => Positioned(
+                                bottom: buttonInset +
+                                    MediaQuery.of(context).viewPadding.bottom,
+                                right: buttonInset,
+                                child: CircularButton(
+                                  child: const Text(
+                                    '+?',
+                                    style: TextStyle(
+                                        fontSize: 28,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  onPressed: () {
+                                    Scaffold.of(context).openEndDrawer();
+                                  },
+                                )))
                     ]))));
   }
 }

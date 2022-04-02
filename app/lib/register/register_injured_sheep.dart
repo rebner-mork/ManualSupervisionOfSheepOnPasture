@@ -3,7 +3,6 @@ import 'package:app/register/widgets/note_form_field.dart';
 import 'package:app/register/widgets/registration_input_headline.dart';
 import 'package:app/register/widgets/tie_dropdown.dart';
 import 'package:app/utils/custom_widgets.dart';
-import 'package:app/utils/field_validation.dart';
 import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
@@ -19,11 +18,18 @@ const List<String> injuryTypes = [
 
 class RegisterInjuredSheep extends StatefulWidget {
   const RegisterInjuredSheep(
-      {required this.ties, required this.sheepPosition, Key? key})
+      {required this.ties,
+      required this.sheepPosition,
+      required this.onCompletedSuccessfully,
+      this.onWillPop,
+      Key? key})
       : super(key: key);
 
   final Map<String, int?> ties;
   final LatLng sheepPosition;
+
+  final ValueChanged<Map<String, Object>>? onCompletedSuccessfully;
+  final VoidCallback? onWillPop;
 
   @override
   State<RegisterInjuredSheep> createState() => _RegisterInjuredSheepState();
@@ -76,7 +82,11 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
 
   Future<void> _backButtonPressed() async {
     await cancelRegistrationDialog(context).then((value) => {
-          if (value) {Navigator.pop(context)}
+          if (value)
+            {
+              if (widget.onWillPop != null) {widget.onWillPop!()},
+              Navigator.pop(context)
+            }
         });
   }
 
@@ -84,6 +94,9 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
     bool returnValue = false;
     await cancelRegistrationDialog(context)
         .then((value) => {returnValue = value});
+    if (returnValue && widget.onWillPop != null) {
+      widget.onWillPop!();
+    }
     return returnValue;
   }
 
@@ -211,15 +224,15 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
         'longitude': widget.sheepPosition.longitude
       };
 
-      /*
-    data.addAll(gatherRegisteredData(_textControllers));
+      // TODO: hent ut data
+      // data.addAll(gatherRegisteredData(_textControllers));
 
-    if (widget.onCompletedSuccessfully != null) {
-      widget.onCompletedSuccessfully!(data);
-    }
-    if (Navigator.canPop(context)) {
-      Navigator.pop(context);
-    }*/
+      if (widget.onCompletedSuccessfully != null) {
+        widget.onCompletedSuccessfully!(data);
+      }
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
     }
   }
 }

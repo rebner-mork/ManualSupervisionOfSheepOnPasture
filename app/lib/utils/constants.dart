@@ -73,3 +73,5 @@ final Map<String, int?> possibleTiesWithoutDefinition = {
   Colors.orange.value.toRadixString(16): null,
   Colors.pink.value.toRadixString(16): null
 };
+
+enum RegistrationTypes { sheep, injury, cadaver, predator, note }
