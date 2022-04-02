@@ -76,6 +76,10 @@ final Map<String, int?> possibleTiesWithoutDefinition = {
 
 enum RegistrationType { sheep, injury, cadaver, predator, note }
 
+enum SheepMarkerColor { green, yellow, red }
+
+//enum RegistrationMarkerType { sheep, injury, errorSheep, cadaver, predator, note }
+
 final Map<RegistrationType, String> registrationTypeToGui = {
   RegistrationType.sheep: 'sauen',
   RegistrationType.injury: 'den skadde sauen',

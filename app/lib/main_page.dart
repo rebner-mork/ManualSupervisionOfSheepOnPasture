@@ -87,6 +87,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   }
 
   void _startTimer() {
+    _isVisible = true;
     _timer = Timer.periodic(Duration(milliseconds: pulsateDuration), (timer) {
       setState(() {
         _isVisible = !_isVisible;
@@ -114,13 +115,14 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     setState(() {
       _isSelectPositionMode = false;
       _registrationType = RegistrationType.sheep;
-      _timer!.cancel();
+      if (_timer != null) {
+        _timer!.cancel();
+      }
     });
   }
 
   @override
   void dispose() {
-    debugPrint("dispose");
     if (_timer != null) {
       _timer!.cancel();
     }
@@ -190,6 +192,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                       }
                                       break;
                                     case RegistrationType.injury:
+                                      _tripData.registrations.add(data);
+                                      setState(() {
+                                        _sheepAmount += 1;
+                                      });
                                       break;
                                     default:
                                       break;

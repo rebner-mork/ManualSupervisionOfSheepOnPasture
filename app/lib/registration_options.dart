@@ -102,10 +102,11 @@ class RegistrationTypeListTile extends StatelessWidget {
                                   image: AssetImage(assetImageName),
                                   width: 55,
                                 ))),
-                        const SizedBox(width: 25),
-                        Flexible(
+                        //const SizedBox(width: 20),
+                        Expanded(
                             child: Text(
                           text,
+                          textAlign: TextAlign.center,
                           style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ))

@@ -109,11 +109,12 @@ class _MapState extends State<MapWidget> {
                       onCompletedSuccessfully: (Map<String, Object> data) {
                         mapAlreadyTapped = false;
 
+                        if (widget.onRegistrationComplete != null) {
+                          widget.onRegistrationComplete!(data);
+                        }
+
                         if (data['sheep']! as int > 0) {
                           setState(() {
-                            if (widget.onRegistrationComplete != null) {
-                              widget.onRegistrationComplete!(data);
-                            }
                             LatLng devicePosition = LatLng(
                                 (data['devicePosition']!
                                     as Map<String, double>)['latitude']!,
@@ -125,8 +126,8 @@ class _MapState extends State<MapWidget> {
                                 color: Colors.black,
                                 isDotted: true,
                                 strokeWidth: 5.0));
-                            registrationMarkers
-                                .add(map_utils.getSheepMarker(targetPosition));
+                            registrationMarkers.add(map_utils.getSheepMarker(
+                                targetPosition, RegistrationType.sheep));
                           });
                         }
                       },
@@ -151,6 +152,22 @@ class _MapState extends State<MapWidget> {
                     if (widget.onRegistrationComplete != null) {
                       widget.onRegistrationComplete!(data);
                     }
+
+                    setState(() {
+                      LatLng devicePosition = LatLng(
+                          (data['devicePosition']!
+                              as Map<String, double>)['latitude']!,
+                          (data['devicePosition']!
+                              as Map<String, double>)['longitude']!);
+
+                      linesOfSight.add(Polyline(
+                          points: [devicePosition, targetPosition],
+                          color: Colors.black,
+                          isDotted: true,
+                          strokeWidth: 5.0));
+                      registrationMarkers.add(map_utils.getSheepMarker(
+                          targetPosition, RegistrationType.injury));
+                    });
                   },
                   onWillPop: () {
                     mapAlreadyTapped = false;
