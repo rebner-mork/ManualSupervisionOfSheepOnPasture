@@ -197,7 +197,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                         _sheepAmount += 1;
                                       });
                                       break;
-                                    default:
+                                    default: // TODO: remove default when all types are added
                                       break;
                                   }
 

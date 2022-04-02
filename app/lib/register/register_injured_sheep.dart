@@ -230,6 +230,9 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
       if (widget.onCompletedSuccessfully != null) {
         widget.onCompletedSuccessfully!(data);
       }
+      if (widget.onWillPop != null) {
+        widget.onWillPop!();
+      }
       if (Navigator.canPop(context)) {
         Navigator.pop(context);
       }
