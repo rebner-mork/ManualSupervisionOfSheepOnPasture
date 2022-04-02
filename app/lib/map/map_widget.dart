@@ -92,8 +92,7 @@ class _MapState extends State<MapWidget> {
     });
   }
 
-  void registerSheep(LatLng targetPosition) async {
-    // hvorfor er denne async?
+  void registerSheep(LatLng targetPosition) {
     if (!mapAlreadyTapped) {
       mapAlreadyTapped = true;
 
@@ -141,7 +140,6 @@ class _MapState extends State<MapWidget> {
   }
 
   void registerInjuredSheep(LatLng targetPosition) {
-    debugPrint('Injured sheep');
     if (!mapAlreadyTapped) {
       mapAlreadyTapped = true;
 

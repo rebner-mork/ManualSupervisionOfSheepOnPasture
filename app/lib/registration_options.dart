@@ -1,4 +1,3 @@
-import 'package:app/register/register_injured_sheep.dart';
 import 'package:app/utils/constants.dart';
 import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +30,10 @@ class _RegistrationOptionsState extends State<RegistrationOptions> {
         RegistrationTypeListTile(
           text: 'Sau',
           assetImageName: 'images/sheep.png',
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context).pop();
+            widget.onRegisterOptionSelected(RegistrationType.sheep);
+          },
         ),
         RegistrationTypeListTile(
             text: 'Skade',
@@ -39,14 +41,6 @@ class _RegistrationOptionsState extends State<RegistrationOptions> {
             onPressed: () {
               Navigator.of(context).pop();
               widget.onRegisterOptionSelected(RegistrationType.injury);
-              /*Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => RegisterInjuredSheep(
-                            ties: widget.ties,
-                            sheepPosition:
-                                LatLng(0, 0), // TODO //widget.sheepPosition,
-                          )));*/
             }),
         RegistrationTypeListTile(
             text: 'Kadaver',
@@ -102,7 +96,6 @@ class RegistrationTypeListTile extends StatelessWidget {
                                   image: AssetImage(assetImageName),
                                   width: 55,
                                 ))),
-                        //const SizedBox(width: 20),
                         Expanded(
                             child: Text(
                           text,

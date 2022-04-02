@@ -79,7 +79,7 @@ enum RegistrationType { sheep, injury, cadaver, predator, note }
 enum SheepMarkerColor { green, yellow, red }
 
 final Map<RegistrationType, String> registrationTypeToGui = {
-  RegistrationType.sheep: 'sauen',
+  RegistrationType.sheep: 'sauen(e)',
   RegistrationType.injury: 'den skadde sauen',
   RegistrationType.cadaver: 'kadaveret',
   RegistrationType.note: 'notatet'

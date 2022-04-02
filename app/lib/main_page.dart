@@ -47,7 +47,7 @@ class MainPage extends StatefulWidget {
   State<MainPage> createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
+class _MainPageState extends State<MainPage> {
   static const double buttonInset = 8;
   late final TripDataManager _tripData;
 
@@ -56,12 +56,12 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   int _sheepAmount = 0;
   double iconSize = 42;
   bool _isLoading = true;
-  bool _isSelectPositionMode = false;
-  RegistrationType _registrationType = RegistrationType.sheep;
 
-  Timer? _timer;
-  bool _isVisible = true;
-  int pulsateDuration = 1200; // ms
+  bool _inSelectPositionMode = false;
+  RegistrationType _selectedRegistrationType = RegistrationType.sheep;
+  Timer? _selectPositionTextTimer;
+  int selectPositionTextTimerDuration = 1200; // ms
+  bool _isSelectPositionTextVisible = true;
 
   @override
   void initState() {
@@ -86,17 +86,18 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     });
   }
 
-  void _startTimer() {
-    _isVisible = true;
-    _timer = Timer.periodic(Duration(milliseconds: pulsateDuration), (timer) {
+  void _startSelectPositionTextTimer() {
+    _isSelectPositionTextVisible = true;
+    _selectPositionTextTimer = Timer.periodic(
+        Duration(milliseconds: selectPositionTextTimerDuration), (timer) {
       setState(() {
-        _isVisible = !_isVisible;
+        _isSelectPositionTextVisible = !_isSelectPositionTextVisible;
       });
     });
   }
 
   Future<bool> _backButtonPressed(BuildContext context) async {
-    if (_isSelectPositionMode) {
+    if (_inSelectPositionMode) {
       _cancelSelectPositionMode();
       return false;
     } else {
@@ -113,18 +114,18 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   void _cancelSelectPositionMode() {
     setState(() {
-      _isSelectPositionMode = false;
-      _registrationType = RegistrationType.sheep;
-      if (_timer != null) {
-        _timer!.cancel();
+      _inSelectPositionMode = false;
+      _selectedRegistrationType = RegistrationType.sheep;
+      if (_selectPositionTextTimer != null) {
+        _selectPositionTextTimer!.cancel();
       }
     });
   }
 
   @override
   void dispose() {
-    if (_timer != null) {
-      _timer!.cancel();
+    if (_selectPositionTextTimer != null) {
+      _selectPositionTextTimer!.cancel();
     }
     super.dispose();
   }
@@ -160,9 +161,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                           onRegisterOptionSelected:
                                               (RegistrationType type) {
                                             setState(() {
-                                              _isSelectPositionMode = true;
-                                              _registrationType = type;
-                                              _startTimer();
+                                              _inSelectPositionMode = true;
+                                              _selectedRegistrationType = type;
+                                              _startSelectPositionTextTimer();
                                             });
                                           }),
                                     ))))),
@@ -177,12 +178,12 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                 eartags: widget.eartags,
                                 ties: widget.ties,
                                 deviceStartPosition: _deviceStartPosition,
-                                registrationType: _registrationType,
+                                registrationType: _selectedRegistrationType,
                                 onRegistrationCanceled:
                                     _cancelSelectPositionMode,
                                 onRegistrationComplete:
                                     (Map<String, Object> data) {
-                                  switch (_registrationType) {
+                                  switch (_selectedRegistrationType) {
                                     case RegistrationType.sheep:
                                       int sheepAmountRegistered =
                                           data['sheep']! as int;
@@ -195,9 +196,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                       break;
                                     case RegistrationType.injury:
                                       _tripData.registrations.add(data);
-                                      debugPrint("HER");
-                                      debugPrint(_tripData.registrations
-                                          .toString()); // TODO: remove
                                       setState(() {
                                         _sheepAmount += 1;
                                       });
@@ -209,7 +207,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                   _cancelSelectPositionMode();
                                 },
                               )),
-                      if (_isSelectPositionMode)
+                      if (_inSelectPositionMode)
                         Padding(
                           padding: EdgeInsets.only(
                               top: buttonInset +
@@ -227,17 +225,20 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                     }),
                                 Expanded(
                                     child: AnimatedOpacity(
-                                        opacity: _isVisible ? 1.0 : 0.3,
+                                        opacity: _isSelectPositionTextVisible
+                                            ? 1.0
+                                            : 0.3,
                                         duration: Duration(
-                                            milliseconds: pulsateDuration),
+                                            milliseconds:
+                                                selectPositionTextTimerDuration),
                                         child: Text(
-                                          'Hold inne på posisjonen til ${registrationTypeToGui[_registrationType]}',
+                                          'Hold inne på posisjonen til ${registrationTypeToGui[_selectedRegistrationType]}',
                                           style: const TextStyle(fontSize: 26),
                                           textAlign: TextAlign.center,
                                         )))
                               ]),
                         ),
-                      if (!_isSelectPositionMode)
+                      if (!_inSelectPositionMode)
                         Positioned(
                           top: buttonInset +
                               MediaQuery.of(context).viewPadding.top,
@@ -251,7 +252,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                 _backButtonPressed(context);
                               }),
                         ),
-                      if (!_isSelectPositionMode)
+                      if (!_inSelectPositionMode)
                         Positioned(
                             top: buttonInset +
                                 MediaQuery.of(context).viewPadding.top,
@@ -264,7 +265,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                     builder: (_) => const SettingsDialog());
                               },
                             )),
-                      if (!_isSelectPositionMode)
+                      if (!_inSelectPositionMode)
                         Positioned(
                           bottom: buttonInset +
                               MediaQuery.of(context).viewPadding.bottom,
@@ -279,7 +280,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                     .width,
                           ),
                         ),
-                      if (!_isSelectPositionMode)
+                      if (!_inSelectPositionMode)
                         Builder(
                             builder: (context) => Positioned(
                                 bottom: buttonInset +
