@@ -1,6 +1,5 @@
 import 'package:app/register/register_injured_sheep.dart';
 import 'package:app/register/register_sheep.dart';
-import 'package:app/registration_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/plugin_api.dart';
@@ -44,7 +43,7 @@ class MapWidget extends StatefulWidget {
   final ValueChanged<Map<String, Object>>? onRegistrationComplete;
   final ValueChanged<LatLng>? onNewPosition;
 
-  late RegistrationType registrationType;
+  final RegistrationType registrationType;
   final VoidCallback onRegistrationCanceled;
 
   @override
