@@ -195,6 +195,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                       break;
                                     case RegistrationType.injury:
                                       _tripData.registrations.add(data);
+                                      debugPrint("HER");
+                                      debugPrint(_tripData.registrations
+                                          .toString()); // TODO: remove
                                       setState(() {
                                         _sheepAmount += 1;
                                       });

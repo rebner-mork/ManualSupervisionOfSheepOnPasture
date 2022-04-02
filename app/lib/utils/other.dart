@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 
 void scrollToKey(ScrollController scrollController, GlobalKey key,
     {bool hasAppbar = false}) {
@@ -36,4 +37,22 @@ Size textSize(String text, TextStyle style) {
       textDirection: TextDirection.ltr)
     ..layout(minWidth: 0, maxWidth: double.infinity);
   return textPainter.size;
+}
+
+Map<String, Object> getMetaRegistrationData(
+    {required String type,
+    required LatLng devicePosition,
+    required LatLng registrationPosition}) {
+  return {
+    'type': type,
+    'timeStamp': DateTime.now(),
+    'devicePosition': {
+      'latitude': devicePosition.latitude,
+      'longitude': devicePosition.longitude
+    },
+    'registrationPosition': {
+      'latitude': registrationPosition.latitude,
+      'longitude': registrationPosition.longitude
+    },
+  };
 }

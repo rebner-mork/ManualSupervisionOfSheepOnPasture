@@ -3,6 +3,7 @@ import 'package:app/register/widgets/note_form_field.dart';
 import 'package:app/register/widgets/registration_input_headline.dart';
 import 'package:app/register/widgets/tie_dropdown.dart';
 import 'package:app/utils/custom_widgets.dart';
+import 'package:app/utils/other.dart';
 import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
@@ -212,20 +213,21 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
   void _registerInjuredSheep() {
     _isValidationActivated = true;
     if (_formKey.currentState!.validate()) {
-      Map<String, Object> data = {};
-      data['type'] = 'injuredSheep';
-      data['timestamp'] = DateTime.now();
-      data['devicePosition'] = {
-        'latitude': _devicePosition.latitude,
-        'longitude': _devicePosition.longitude
+      Map<String, Object> data = {
+        ...getMetaRegistrationData(
+            type: 'injuredSheep',
+            devicePosition: _devicePosition,
+            registrationPosition: widget.sheepPosition),
+        'eartag': _countryCodeController.text +
+            '-' +
+            _farmNumberController.text +
+            '-' +
+            _individualNumberController.text,
+        'tieColor': _selectedTieColor,
+        'injuryType': _selectedInjuryType,
+        'severity': _isModerate ? 'moderat' : 'alvorlig',
+        'note': _noteController.text
       };
-      data['registrationPosition'] = {
-        'latitude': widget.sheepPosition.latitude,
-        'longitude': widget.sheepPosition.longitude
-      };
-
-      // TODO: hent ut data
-      // data.addAll(gatherRegisteredData(_textControllers));
 
       if (widget.onCompletedSuccessfully != null) {
         widget.onCompletedSuccessfully!(data);

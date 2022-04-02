@@ -237,17 +237,12 @@ class _RegisterSheepState extends State<RegisterSheep> {
   }
 
   void _registerSheep() {
-    Map<String, Object> data = {};
-    data.addAll(gatherRegisteredData(_textControllers));
-    data['type'] = 'sheep';
-    data['timestamp'] = DateTime.now();
-    data['devicePosition'] = {
-      'latitude': _devicePosition.latitude,
-      'longitude': _devicePosition.longitude
-    };
-    data['registrationPosition'] = {
-      'latitude': widget.sheepPosition.latitude,
-      'longitude': widget.sheepPosition.longitude
+    Map<String, Object> data = {
+      ...getMetaRegistrationData(
+          type: 'sheep',
+          devicePosition: _devicePosition,
+          registrationPosition: widget.sheepPosition),
+      ...gatherRegisteredData(_textControllers)
     };
 
     if (widget.onCompletedSuccessfully != null) {
