@@ -74,4 +74,11 @@ final Map<String, int?> possibleTiesWithoutDefinition = {
   Colors.pink.value.toRadixString(16): null
 };
 
-enum RegistrationTypes { sheep, injury, cadaver, predator, note }
+enum RegistrationType { sheep, injury, cadaver, predator, note }
+
+final Map<RegistrationType, String> registrationTypeToGui = {
+  RegistrationType.sheep: 'sauen',
+  RegistrationType.injury: 'den skadde sauen',
+  RegistrationType.cadaver: 'kadaveret',
+  RegistrationType.note: 'notatet'
+};

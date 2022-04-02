@@ -43,7 +43,7 @@ class MapWidget extends StatefulWidget {
   final ValueChanged<Map<String, Object>>? onRegistrationComplete;
   final ValueChanged<LatLng>? onNewPosition;
 
-  late RegistrationTypes registrationType;
+  late RegistrationType registrationType;
 
   @override
   State<MapWidget> createState() => _MapState();
@@ -160,10 +160,10 @@ class _MapState extends State<MapWidget> {
 
   void _register(LatLng point) {
     switch (widget.registrationType) {
-      case RegistrationTypes.sheep:
+      case RegistrationType.sheep:
         registerSheep(point);
         break;
-      case RegistrationTypes.injury:
+      case RegistrationType.injury:
         registerInjuredSheep(point);
         break;
       default:

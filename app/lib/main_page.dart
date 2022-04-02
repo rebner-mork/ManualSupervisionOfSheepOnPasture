@@ -47,7 +47,7 @@ class MainPage extends StatefulWidget {
   State<MainPage> createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   static const double buttonInset = 8;
   late final TripDataManager _tripData;
 
@@ -57,7 +57,11 @@ class _MainPageState extends State<MainPage> {
   double iconSize = 42;
   bool _isLoading = true;
   bool _isSelectPositionMode = false;
-  RegistrationTypes _registrationType = RegistrationTypes.sheep;
+  RegistrationType _registrationType = RegistrationType.sheep;
+
+  Timer? _timer;
+  bool _isVisible = true;
+  int pulsateDuration = 1200; // ms
 
   @override
   void initState() {
@@ -82,15 +86,45 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
-  Future<bool> _endTripButtonPressed(BuildContext context) async {
-    await showEndTripDialog(context).then((isFinished) {
-      if (isFinished) {
-        _tripData.post();
-        Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
-      }
-      return isFinished;
+  void _startTimer() {
+    _timer = Timer.periodic(Duration(milliseconds: pulsateDuration), (timer) {
+      setState(() {
+        _isVisible = !_isVisible;
+      });
     });
-    return false;
+  }
+
+  Future<bool> _backButtonPressed(BuildContext context) async {
+    if (_isSelectPositionMode) {
+      _cancelSelectPositionMode();
+      return false;
+    } else {
+      await showEndTripDialog(context).then((isFinished) {
+        if (isFinished) {
+          _tripData.post();
+          Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
+        }
+        return isFinished;
+      });
+      return false;
+    }
+  }
+
+  void _cancelSelectPositionMode() {
+    setState(() {
+      _isSelectPositionMode = false;
+      _registrationType = RegistrationType.sheep;
+      _timer!.cancel();
+    });
+  }
+
+  @override
+  void dispose() {
+    debugPrint("dispose");
+    if (_timer != null) {
+      _timer!.cancel();
+    }
+    super.dispose();
   }
 
   @override
@@ -100,7 +134,7 @@ class _MainPageState extends State<MainPage> {
             ? const LoadingData()
             : WillPopScope(
                 onWillPop: () async {
-                  return _endTripButtonPressed(context);
+                  return _backButtonPressed(context);
                 },
                 child: Scaffold(
                     endDrawer: Align(
@@ -122,10 +156,11 @@ class _MainPageState extends State<MainPage> {
                                       child: RegistrationOptions(
                                           ties: widget.ties,
                                           onRegisterOptionSelected:
-                                              (RegistrationTypes type) {
+                                              (RegistrationType type) {
                                             setState(() {
                                               _isSelectPositionMode = true;
                                               _registrationType = type;
+                                              _startTimer();
                                             });
                                           }),
                                     ))))),
@@ -143,9 +178,8 @@ class _MainPageState extends State<MainPage> {
                                 registrationType: _registrationType,
                                 onRegistrationComplete:
                                     (Map<String, Object> data) {
-                                  // TODO: individualiser per type switch case?
                                   switch (_registrationType) {
-                                    case RegistrationTypes.sheep:
+                                    case RegistrationType.sheep:
                                       int sheepAmountRegistered =
                                           data['sheep']! as int;
                                       if (sheepAmountRegistered > 0) {
@@ -155,27 +189,42 @@ class _MainPageState extends State<MainPage> {
                                         });
                                       }
                                       break;
-                                    case RegistrationTypes.injury:
+                                    case RegistrationType.injury:
                                       break;
                                     default:
                                       break;
                                   }
 
-                                  setState(() {
-                                    _isSelectPositionMode = false;
-                                    _registrationType = RegistrationTypes.sheep;
-                                    // TODO: avbryt modus-knapp
-                                  });
+                                  _cancelSelectPositionMode();
                                 },
                               )),
                       if (_isSelectPositionMode)
-                        Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                              // Animer pulsering ellerno?
-                              // const map oversett til GUI
-                              "Hold inne på $_registrationType sin posisjon",
-                              style: const TextStyle(fontSize: 24)),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              top: buttonInset +
+                                  MediaQuery.of(context).viewPadding.top,
+                              left: buttonInset,
+                              right: 20),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CircularButton(
+                                    child: Icon(Icons.cancel, size: iconSize),
+                                    onPressed: () {
+                                      _cancelSelectPositionMode();
+                                    }),
+                                Expanded(
+                                    child: AnimatedOpacity(
+                                        opacity: _isVisible ? 1.0 : 0.3,
+                                        duration: Duration(
+                                            milliseconds: pulsateDuration),
+                                        child: Text(
+                                          'Hold inne på posisjonen til ${registrationTypeToGui[_registrationType]}',
+                                          style: const TextStyle(fontSize: 26),
+                                          textAlign: TextAlign.center,
+                                        )))
+                              ]),
                         ),
                       if (!_isSelectPositionMode)
                         Positioned(
@@ -188,7 +237,7 @@ class _MainPageState extends State<MainPage> {
                                 size: iconSize,
                               ),
                               onPressed: () {
-                                _endTripButtonPressed(context);
+                                _backButtonPressed(context);
                               }),
                         ),
                       if (!_isSelectPositionMode)

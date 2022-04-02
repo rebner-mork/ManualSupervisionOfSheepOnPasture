@@ -2,7 +2,6 @@ import 'package:app/register/register_injured_sheep.dart';
 import 'package:app/utils/constants.dart';
 import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
-import 'package:latlong2/latlong.dart';
 
 class RegistrationOptions extends StatefulWidget {
   const RegistrationOptions(
@@ -10,7 +9,7 @@ class RegistrationOptions extends StatefulWidget {
       : super(key: key);
 
   final Map<String, int?> ties;
-  final Function(RegistrationTypes) onRegisterOptionSelected;
+  final Function(RegistrationType) onRegisterOptionSelected;
 
   @override
   State<RegistrationOptions> createState() => _RegistrationOptionsState();
@@ -39,7 +38,7 @@ class _RegistrationOptionsState extends State<RegistrationOptions> {
             assetImageName: 'images/sheep_injured.png',
             onPressed: () {
               Navigator.of(context).pop();
-              widget.onRegisterOptionSelected(RegistrationTypes.injury);
+              widget.onRegisterOptionSelected(RegistrationType.injury);
               /*Navigator.push(
                   context,
                   MaterialPageRoute(
