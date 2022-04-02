@@ -178,6 +178,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                 ties: widget.ties,
                                 deviceStartPosition: _deviceStartPosition,
                                 registrationType: _registrationType,
+                                onRegistrationCanceled:
+                                    _cancelSelectPositionMode,
                                 onRegistrationComplete:
                                     (Map<String, Object> data) {
                                   switch (_registrationType) {

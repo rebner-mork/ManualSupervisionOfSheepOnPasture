@@ -22,6 +22,7 @@ class MapWidget extends StatefulWidget {
       required this.ties,
       required this.registrationType,
       required this.onRegistrationComplete,
+      required this.onRegistrationCanceled,
       this.onNewPosition,
       Key? key})
       : super(key: key) {
@@ -44,6 +45,7 @@ class MapWidget extends StatefulWidget {
   final ValueChanged<LatLng>? onNewPosition;
 
   late RegistrationType registrationType;
+  final VoidCallback onRegistrationCanceled;
 
   @override
   State<MapWidget> createState() => _MapState();
@@ -132,6 +134,7 @@ class _MapState extends State<MapWidget> {
                         }
                       },
                       onWillPop: () {
+                        widget.onRegistrationCanceled();
                         mapAlreadyTapped = false;
                       }))));
     }
@@ -170,12 +173,13 @@ class _MapState extends State<MapWidget> {
                     });
                   },
                   onWillPop: () {
+                    widget.onRegistrationCanceled();
                     mapAlreadyTapped = false;
                   })));
     }
   }
 
-  void _register(LatLng point) {
+  void _startRegistration(LatLng point) {
     switch (widget.registrationType) {
       case RegistrationType.sheep:
         registerSheep(point);
@@ -202,8 +206,7 @@ class _MapState extends State<MapWidget> {
           onMapCreated: (c) {
             _mapController = c;
           },
-          onTap: (_, point) => registerSheep(point),
-          onLongPress: (_, point) => _register(point),
+          onLongPress: (_, point) => _startRegistration(point),
           zoom: OfflineZoomLevels.min,
           minZoom: OfflineZoomLevels.min,
           maxZoom: OfflineZoomLevels.max,
