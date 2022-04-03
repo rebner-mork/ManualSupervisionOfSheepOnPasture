@@ -1,3 +1,4 @@
+import 'package:app/register/register_page.dart';
 import 'package:app/register/widgets/eartag_input.dart';
 import 'package:app/register/widgets/note_form_field.dart';
 import 'package:app/register/widgets/registration_input_headline.dart';
@@ -33,10 +34,10 @@ class RegisterInjuredSheep extends StatefulWidget {
   final VoidCallback? onWillPop;
 
   @override
-  State<RegisterInjuredSheep> createState() => _RegisterInjuredSheepState();
+  State<RegisterInjuredSheep> createState() => _registerState();
 }
 
-class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
+class _registerState extends State<RegisterInjuredSheep> with RegisterPage {
   bool _isLoading = true;
   late LatLng _devicePosition;
   bool _isModerate = true;
@@ -70,35 +71,16 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
     }
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      _getDevicePosition();
+      getDevicePosition();
     });
   }
 
-  Future<void> _getDevicePosition() async {
+  @override
+  Future<void> getDevicePosition() async {
     _devicePosition = await map_utils.getDevicePosition();
     setState(() {
       _isLoading = false;
     });
-  }
-
-  Future<void> _backButtonPressed() async {
-    await cancelRegistrationDialog(context).then((value) => {
-          if (value)
-            {
-              if (widget.onWillPop != null) {widget.onWillPop!()},
-              Navigator.pop(context)
-            }
-        });
-  }
-
-  Future<bool> _onWillPop() async {
-    bool returnValue = false;
-    await cancelRegistrationDialog(context)
-        .then((value) => {returnValue = value});
-    if (returnValue && widget.onWillPop != null) {
-      widget.onWillPop!();
-    }
-    return returnValue;
   }
 
   @override
@@ -107,11 +89,12 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Registrer skadd sau', style: appBarTextStyle),
-          leading: BackButton(onPressed: _backButtonPressed),
+          leading: BackButton(
+              onPressed: () => backButtonPressed(context, widget.onWillPop)),
         ),
         body: Form(
           key: _formKey,
-          onWillPop: _onWillPop,
+          onWillPop: () => onWillPop(context, widget.onWillPop),
           child: _isLoading
               ? const LoadingData()
               : SingleChildScrollView(
@@ -199,9 +182,8 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
                             ],
                           )))),
         ),
-        floatingActionButton: _isLoading
-            ? null
-            : completeRegistrationButton(context, _registerInjuredSheep),
+        floatingActionButton:
+            _isLoading ? null : completeRegistrationButton(context, register),
         floatingActionButtonLocation:
             MediaQuery.of(context).viewInsets.bottom == 0
                 ? FloatingActionButtonLocation.centerFloat
@@ -210,7 +192,8 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep> {
     );
   }
 
-  void _registerInjuredSheep() {
+  @override
+  void register() {
     _isValidationActivated = true;
     if (_formKey.currentState!.validate()) {
       Map<String, Object> data = {

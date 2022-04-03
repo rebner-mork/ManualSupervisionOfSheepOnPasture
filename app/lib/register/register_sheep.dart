@@ -1,4 +1,5 @@
 import 'package:app/providers/settings_provider.dart';
+import 'package:app/register/register_page.dart';
 import 'package:app/utils/constants.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/other.dart';
@@ -42,7 +43,7 @@ class RegisterSheep extends StatefulWidget {
   State<RegisterSheep> createState() => _RegisterSheepState();
 }
 
-class _RegisterSheepState extends State<RegisterSheep> {
+class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
   _RegisterSheepState();
 
   String title = 'Avstandsregistrering sau';
@@ -94,7 +95,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
 
   Future<void> _initGpsQuestionsAndDialog() async {
     // TODO: try/catch (Unhandled Exception: Location services does not have permissions)
-    _devicePosition = await map_utils.getDevicePosition();
+    await getDevicePosition();
     _isShortDistance =
         distance.distance(_devicePosition, widget.sheepPosition) < 50;
 
@@ -136,6 +137,11 @@ class _RegisterSheepState extends State<RegisterSheep> {
         _startDialog(questions, questionContexts);
       }
     }
+  }
+
+  @override
+  Future<void> getDevicePosition() async {
+    _devicePosition = await map_utils.getDevicePosition();
   }
 
   void _startDialog(
@@ -236,7 +242,8 @@ class _RegisterSheepState extends State<RegisterSheep> {
     await _tts.speak(text);
   }
 
-  void _registerSheep() {
+  @override
+  void register() {
     Map<String, Object> data = {
       ...getMetaRegistrationData(
           type: 'sheep',
@@ -271,8 +278,6 @@ class _RegisterSheepState extends State<RegisterSheep> {
   }
 
   Future<bool> _onWillPop() async {
-    bool returnValue = false;
-
     if (widget.stt.isAvailable) {
       widget.stt.stop();
       _tts.stop();
@@ -281,12 +286,7 @@ class _RegisterSheepState extends State<RegisterSheep> {
       });
     }
 
-    await cancelRegistrationDialog(context)
-        .then((value) => {returnValue = value});
-    if (returnValue && widget.onWillPop != null) {
-      widget.onWillPop!();
-    }
-    return returnValue;
+    return onWillPop(context, widget.onWillPop);
   }
 
   List<Widget> _shortDistance() {
@@ -399,8 +399,8 @@ class _RegisterSheepState extends State<RegisterSheep> {
                               : const Spacer(),
                           Padding(
                               padding: const EdgeInsets.only(right: 10),
-                              child: completeRegistrationButton(
-                                  context, _registerSheep))
+                              child:
+                                  completeRegistrationButton(context, register))
                         ],
                       )
                     : null,
