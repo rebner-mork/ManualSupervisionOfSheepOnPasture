@@ -34,10 +34,11 @@ class RegisterInjuredSheep extends StatefulWidget {
   final VoidCallback? onWillPop;
 
   @override
-  State<RegisterInjuredSheep> createState() => _registerState();
+  State<RegisterInjuredSheep> createState() => _RegisterInjuredSheepState();
 }
 
-class _registerState extends State<RegisterInjuredSheep> with RegisterPage {
+class _RegisterInjuredSheepState extends State<RegisterInjuredSheep>
+    with RegisterPage {
   bool _isLoading = true;
   late LatLng _devicePosition;
   bool _isModerate = true;
