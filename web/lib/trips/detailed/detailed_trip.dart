@@ -69,6 +69,7 @@ class _DetailedTripState extends State<DetailedTrip> {
           break;
         case 'injuredSheep':
           sheepData['injuredSheep'] = sheepData['injuredSheep']! + 1;
+          sheepData['sheep'] = sheepData['sheep']! + 1;
           break;
         default:
       }

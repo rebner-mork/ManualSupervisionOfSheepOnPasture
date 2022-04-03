@@ -146,20 +146,28 @@ class _ReportsPageState extends State<ReportsPage> {
 
         int totalSheepAmount = 0;
         int totalLambAmount = 0;
+        int totalInjuredSheepAmount = 0;
 
-        debugPrint(registrationsQuerySnapshot.docs.toString());
-
-        for (DocumentSnapshot<Object?>? registrationDoc
+        for (DocumentSnapshot<Object?> registrationDoc
             in registrationsQuerySnapshot.docs) {
-          totalSheepAmount += registrationDoc!['sheep'] as int;
-          totalLambAmount += registrationDoc['lambs'] as int;
+          switch (registrationDoc['type']) {
+            case 'injuredSheep':
+              totalInjuredSheepAmount++;
+              totalSheepAmount++;
+              break;
+            default:
+              totalSheepAmount += registrationDoc['sheep'] as int;
+              totalLambAmount += registrationDoc['lambs'] as int;
+              break;
+          }
         }
         tripSummaries.add({
           'startTime': tripDocuments.elementAt(i)!['startTime'],
           'stopTime': tripDocuments.elementAt(i)!['stopTime'],
           'sheep': totalSheepAmount,
           'adults': totalSheepAmount - totalLambAmount,
-          'lambs': totalLambAmount
+          'lambs': totalLambAmount,
+          'injuredSheep': totalInjuredSheepAmount
         });
       }
     }
@@ -294,8 +302,8 @@ class _ReportsPageState extends State<ReportsPage> {
                                 textAlign: pw.TextAlign.center)),
                         pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
-                            child:
-                                pw.Text('x', textAlign: pw.TextAlign.center)),
+                            child: pw.Text('${tripMap['injuredSheep']}',
+                                textAlign: pw.TextAlign.center)),
                         pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
                             child:
