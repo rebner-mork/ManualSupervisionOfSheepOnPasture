@@ -18,7 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Material(
         child: FractionallySizedBox(
-      widthFactor: 0.6,
+      widthFactor: 0.65,
       child: Column(
         children: [
           const Spacer(flex: 3),

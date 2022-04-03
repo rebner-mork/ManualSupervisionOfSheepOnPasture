@@ -147,6 +147,8 @@ class _ReportsPageState extends State<ReportsPage> {
         int totalSheepAmount = 0;
         int totalLambAmount = 0;
 
+        debugPrint(registrationsQuerySnapshot.docs.toString());
+
         for (DocumentSnapshot<Object?>? registrationDoc
             in registrationsQuerySnapshot.docs) {
           totalSheepAmount += registrationDoc!['sheep'] as int;

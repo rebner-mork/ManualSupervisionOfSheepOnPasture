@@ -26,7 +26,7 @@ final Map<String, String> possibleEartagColorStringToKey = {
   Colors.pink.value.toRadixString(16): 'pinkEar'
 };
 
-const Map<String, String> possibleSheepKeysAndStrings = {
+const Map<String, String> mainSheepRegistrationKeysToGui = {
   'sheep': 'Totalt',
   'lambs': 'Lam',
   'white': 'Hvite',
