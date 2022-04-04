@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:web/trips/detailed/main_trip_info_table.dart';
-import 'package:web/utils/other.dart';
 import 'package:web/utils/styles.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 
@@ -14,8 +12,8 @@ class InjuredSheepTable extends StatelessWidget {
   Widget build(BuildContext context) {
     return Table(
       border: TableBorder.symmetric(
-          inside: const BorderSide(width: 0.5),
-          outside: const BorderSide(width: 0.5)),
+        inside: const BorderSide(width: 0.5),
+      ),
       columnWidths: const {
         0: FixedColumnWidth(150),
         1: FixedColumnWidth(60),
@@ -114,7 +112,7 @@ class InjuredSheepTable extends StatelessWidget {
                                             horizontal: 15, vertical: 15),
                                         child: Text('${registration['note']}',
                                             style:
-                                                const TextStyle(fontSize: 16)))
+                                                const TextStyle(fontSize: 16))),
                                   ],
                                 ));
                       }))

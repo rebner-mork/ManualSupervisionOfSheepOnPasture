@@ -73,7 +73,6 @@ class _DetailedTripState extends State<DetailedTrip> {
   }
 
   void _fillDataMaps() {
-    debugPrint(widget.tripData['registrations'].toString());
     for (Map<String, dynamic> registration
         in (widget.tripData['registrations']! as List<Map<String, dynamic>>)) {
       switch (registration['type']) {
@@ -175,7 +174,7 @@ class _DetailedTripState extends State<DetailedTrip> {
     height += 20 + textSize('2022', mainHeadlineTextStyle).height;
 
     // Mapname
-    height += textSize('2022', mapHeadlineTextStyle).height;
+    height += textSize('A', mapHeadlineTextStyle).height;
 
     // MainTripInfoTable
     height += 50 +
@@ -189,7 +188,7 @@ class _DetailedTripState extends State<DetailedTrip> {
             (2 * tableCellPadding.top));
 
     // InfoTableHeight
-    height += textSize(('A'), headlineTextStyle).width +
+    height += textSize(('A'), headlineTextStyle).height +
         40 +
         textSize('A', tableRowDescriptionTextStyle).height +
         (2 * tableCellPadding.top) +
@@ -226,74 +225,97 @@ class _DetailedTripState extends State<DetailedTrip> {
                       as List<Map<String, dynamic>>))),
       Flexible(
           flex: 2,
-          child: SingleChildScrollView(
-              controller: _scrollController,
-              child: SizedBox(
-                  height: _computeHeight(),
-                  child: Column(
-                    children: [
-                      SizedBox(
-                          width: textSize(dateText(), mainHeadlineTextStyle)
-                                      .width >
-                                  (2 * (infoTableWidth + infoTablePadding))
-                              ? textSize(dateText(), mainHeadlineTextStyle)
-                                  .width
-                              : 2 * (infoTableWidth + infoTablePadding),
-                          child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 20),
-                                child: Text(
-                                  dateText(),
-                                  style: mainHeadlineTextStyle,
-                                ),
-                              ))),
-                      SizedBox(
-                          width: 2 * (infoTableWidth + infoTablePadding),
-                          child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(widget.tripData['mapName']! as String,
-                                  style: mapHeadlineTextStyle))),
-                      Padding(
-                          padding: const EdgeInsets.only(top: 25, bottom: 25),
-                          child: MainTripInfoTable(
-                              startTime: startTime,
-                              stopTime: stopTime,
-                              personnelName:
-                                  widget.tripData['personnelName']! as String)),
-                      SheepInfoTable(
-                        sheepData: sheepData,
-                      ),
-                      const Headline(title: 'Øremerker & Slips'),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Flexible(
-                              child: Padding(
-                                  padding:
-                                      EdgeInsets.only(right: infoTablePadding),
-                                  child: InfoTable(
-                                      data: tieData,
-                                      headerText: 'Slips',
-                                      iconData: FontAwesome5.black_tie))),
-                          Flexible(
-                              child: Padding(
-                                  padding:
-                                      EdgeInsets.only(left: infoTablePadding),
-                                  child: InfoTable(
-                                    data: eartagData,
-                                    headerText: 'Øremerker',
-                                    iconData: Icons.local_offer,
-                                  ))),
-                        ],
-                      ),
-                      if (injuredSheepData.isNotEmpty)
-                        const Headline(title: 'Skader'),
-                      if (injuredSheepData.isNotEmpty)
-                        InjuredSheepTable(injuredSheep: injuredSheepData)
-                    ],
-                  )))),
+          child: Padding(
+              padding: EdgeInsets.only(right: 2),
+              child: RawScrollbar(
+                  radius: Radius.circular(15),
+                  controller: _scrollController,
+                  isAlwaysShown: true,
+                  thickness: 8,
+                  thumbColor: Colors.grey.shade500,
+                  child: SingleChildScrollView(
+                      controller: _scrollController,
+                      child: SizedBox(
+                          height: _computeHeight(),
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                  width: textSize(dateText(),
+                                                  mainHeadlineTextStyle)
+                                              .width >
+                                          (2 *
+                                              (infoTableWidth +
+                                                  infoTablePadding))
+                                      ? textSize(dateText(),
+                                                  mainHeadlineTextStyle)
+                                              .width +
+                                          60
+                                      : 2 *
+                                              (infoTableWidth +
+                                                  infoTablePadding) +
+                                          60,
+                                  child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(top: 20),
+                                        child: Text(
+                                          dateText(),
+                                          style: mainHeadlineTextStyle,
+                                        ),
+                                      ))),
+                              SizedBox(
+                                  width:
+                                      2 * (infoTableWidth + infoTablePadding) +
+                                          60,
+                                  child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                          widget.tripData['mapName']! as String,
+                                          style: mapHeadlineTextStyle))),
+                              Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 25, bottom: 25),
+                                  child: MainTripInfoTable(
+                                      startTime: startTime,
+                                      stopTime: stopTime,
+                                      personnelName:
+                                          widget.tripData['personnelName']!
+                                              as String)),
+                              SheepInfoTable(
+                                sheepData: sheepData,
+                              ),
+                              const Headline(title: 'Øremerker & Slips'),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Flexible(
+                                      child: Padding(
+                                          padding: EdgeInsets.only(
+                                              right: infoTablePadding),
+                                          child: InfoTable(
+                                              data: tieData,
+                                              headerText: 'Slips',
+                                              iconData:
+                                                  FontAwesome5.black_tie))),
+                                  Flexible(
+                                      child: Padding(
+                                          padding: EdgeInsets.only(
+                                              left: infoTablePadding),
+                                          child: InfoTable(
+                                            data: eartagData,
+                                            headerText: 'Øremerker',
+                                            iconData: Icons.local_offer,
+                                          ))),
+                                ],
+                              ),
+                              if (injuredSheepData.isNotEmpty)
+                                const Headline(title: 'Skader'),
+                              if (injuredSheepData.isNotEmpty)
+                                InjuredSheepTable(
+                                    injuredSheep: injuredSheepData)
+                            ],
+                          )))))),
     ]);
   }
 }
@@ -308,7 +330,7 @@ class Headline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-        width: 2 * (infoTableWidth + padding),
+        width: 2 * (infoTableWidth + padding) + 60,
         child: Padding(
             padding: const EdgeInsets.only(top: 25, bottom: 15),
             child: Text(title, style: headlineTextStyle)));
