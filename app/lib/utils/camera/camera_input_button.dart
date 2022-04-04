@@ -5,23 +5,21 @@ import 'dart:io';
 import 'camera_widget.dart';
 
 class CameraInputButton extends StatefulWidget {
-  CameraInputButton({Key? key, this.size = const Size(80, 120)})
+  const CameraInputButton({Key? key, this.size = const Size(80, 120)})
       : super(key: key);
 
-  Size size;
-
-  late String photo = "";
-
-  void pictureTaken() {}
+  final Size size;
 
   @override
   State<CameraInputButton> createState() => _CameraInputButtonState();
 }
 
 class _CameraInputButtonState extends State<CameraInputButton> {
+  String photo = "";
+
   @override
   Widget build(BuildContext context) {
-    return widget.photo == ""
+    return photo == ""
         ? ElevatedButton(
             onPressed: () {
               Navigator.push(
@@ -30,7 +28,7 @@ class _CameraInputButtonState extends State<CameraInputButton> {
                     builder: (context) => CameraPage(
                           onPhotoCaptured: (photoPath) {
                             setState(() {
-                              widget.photo = photoPath;
+                              photo = photoPath;
                             });
                           },
                         )),
@@ -46,10 +44,10 @@ class _CameraInputButtonState extends State<CameraInputButton> {
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => DisplayPhotoWidget(
-                        imagePath: widget.photo,
+                        imagePath: photo,
                         onDeletePhoto: () {
                           setState(() {
-                            widget.photo = "";
+                            photo = "";
                           });
                         },
                       )));
@@ -59,7 +57,7 @@ class _CameraInputButtonState extends State<CameraInputButton> {
               width: widget.size.width,
               foregroundDecoration: BoxDecoration(
                   image: DecorationImage(
-                image: FileImage(File(widget.photo)),
+                image: FileImage(File(photo)),
                 fit: BoxFit.fill,
               )),
             ));

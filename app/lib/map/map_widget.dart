@@ -195,14 +195,6 @@ class _MapState extends State<MapWidget> {
     super.dispose();
   }
 
-//TODO remove
-  void testFunction() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => RegisterCadaver(ties: widget.ties)));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -212,7 +204,16 @@ class _MapState extends State<MapWidget> {
           onMapCreated: (c) {
             _mapController = c;
           },
-          onLongPress: (_, __) => testFunction(),
+          onLongPress: (_, point) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => RegisterCadaver(
+                          ties: widget.ties,
+                          cadaverPosition: point,
+                          onCompletedSuccessfully: (_) => print('ree'),
+                        )));
+          },
           //TODO keep: onLongPress: (_, point) => _startRegistration(point),
           zoom: OfflineZoomLevels.min,
           minZoom: OfflineZoomLevels.min,
