@@ -39,9 +39,10 @@ class _DetailedTripState extends State<DetailedTrip> {
   }
 
   void _initDataMaps() {
-    for (String sheepKey in possibleSheepKeysAndStrings.keys) {
+    for (String sheepKey in mainSheepRegistrationKeysToGui.keys) {
       sheepData[sheepKey] = 0;
     }
+    sheepData['injuredSheep'] = 0;
 
     for (String eartagColor in possibleEartagColorStringToKey.keys) {
       if ((widget.tripData['definedEartagColors'] as List<String>)
@@ -59,29 +60,42 @@ class _DetailedTripState extends State<DetailedTrip> {
   }
 
   void _fillDataMaps() {
+    debugPrint(widget.tripData['registrations'].toString());
     for (Map<String, dynamic> registration
         in (widget.tripData['registrations']! as List<Map<String, dynamic>>)) {
-      for (String sheepKey in possibleSheepKeysAndStrings.keys) {
-        sheepData[sheepKey] =
-            sheepData[sheepKey]! + registration[sheepKey] as int;
+      switch (registration['type']) {
+        case 'sheep':
+          _fillDataMapsFromSheepRegistration(registration);
+          break;
+        case 'injuredSheep':
+          sheepData['injuredSheep'] = sheepData['injuredSheep']! + 1;
+          sheepData['sheep'] = sheepData['sheep']! + 1;
+          break;
+        default:
       }
+    }
+  }
 
-      for (String eartagColor in possibleEartagColorStringToKey.keys) {
-        if (eartagData[eartagColor] != null &&
-            registration[possibleEartagColorStringToKey[eartagColor]!] !=
-                null) {
-          eartagData[eartagColor] = eartagData[eartagColor]! +
-                  registration[possibleEartagColorStringToKey[eartagColor]!]!
-              as int;
-        }
+  void _fillDataMapsFromSheepRegistration(Map<String, dynamic> registration) {
+    for (String sheepKey in mainSheepRegistrationKeysToGui.keys) {
+      debugPrint(registration[sheepKey].toString() + ' ' + sheepKey);
+      sheepData[sheepKey] =
+          sheepData[sheepKey]! + registration[sheepKey] as int;
+    }
+
+    for (String eartagColor in possibleEartagColorStringToKey.keys) {
+      if (eartagData[eartagColor] != null &&
+          registration[possibleEartagColorStringToKey[eartagColor]!] != null) {
+        eartagData[eartagColor] = eartagData[eartagColor]! +
+            registration[possibleEartagColorStringToKey[eartagColor]!]! as int;
       }
+    }
 
-      for (String tieColor in possibleTieColorStringToKey.keys) {
-        if (tieData[tieColor] != null &&
-            registration[possibleTieColorStringToKey[tieColor]!] != null) {
-          tieData[tieColor] = tieData[tieColor]! +
-              registration[possibleTieColorStringToKey[tieColor]!]! as int;
-        }
+    for (String tieColor in possibleTieColorStringToKey.keys) {
+      if (tieData[tieColor] != null &&
+          registration[possibleTieColorStringToKey[tieColor]!] != null) {
+        tieData[tieColor] = tieData[tieColor]! +
+            registration[possibleTieColorStringToKey[tieColor]!]! as int;
       }
     }
   }
@@ -164,7 +178,7 @@ class _DetailedTripState extends State<DetailedTrip> {
                           (2 * (infoTableWidth + infoTablePadding))
                       ? textSize(dateText(), const TextStyle(fontSize: 50))
                           .width
-                      : (2 * (infoTableWidth + infoTablePadding)),
+                      : 2 * (infoTableWidth + infoTablePadding),
                   child: Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
@@ -175,15 +189,13 @@ class _DetailedTripState extends State<DetailedTrip> {
                         ),
                       ))),
               SizedBox(
-                  width: (2 * (infoTableWidth + infoTablePadding)),
+                  width: 2 * (infoTableWidth + infoTablePadding),
                   child: Align(
                       alignment: Alignment.centerLeft,
-                      child: Text(
-                        widget.tripData['mapName']! as String,
-                        style: const TextStyle(
-                          fontSize: 30,
-                        ),
-                      ))),
+                      child: Text(widget.tripData['mapName']! as String,
+                          style: const TextStyle(
+                            fontSize: 30,
+                          )))),
               Flexible(
                   child: Padding(
                       padding: const EdgeInsets.only(top: 30, bottom: 25),
@@ -205,14 +217,15 @@ class _DetailedTripState extends State<DetailedTrip> {
                 children: [
                   Flexible(
                       child: Padding(
-                          padding: const EdgeInsets.only(right: 25),
+                          padding:
+                              EdgeInsets.only(right: infoTablePadding + 38),
                           child: InfoTable(
                               data: tieData,
                               headerText: 'Slips',
                               iconData: FontAwesome5.black_tie))),
                   Flexible(
                       child: Padding(
-                          padding: const EdgeInsets.only(left: 25),
+                          padding: EdgeInsets.only(left: infoTablePadding + 38),
                           child: InfoTable(
                             data: eartagData,
                             headerText: 'Øremerker',

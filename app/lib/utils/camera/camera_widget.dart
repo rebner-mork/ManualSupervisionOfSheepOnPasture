@@ -41,10 +41,11 @@ class _CameraPageState extends State<CameraPage> {
         future: _initializeControllerFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            final size = MediaQuery.of(context).size;
+            /*final size = MediaQuery.of(context).size;
             final deviceRatio = size.width / size.height;
-            final xScale = _cameraController.value.aspectRatio / deviceRatio;
+            final xScale = _cameraController.value.aspectRatio / deviceRatio;*/
             return Stack(children: [
+              /*
               AspectRatio(
                 aspectRatio: deviceRatio,
                 child: Transform(
@@ -53,6 +54,8 @@ class _CameraPageState extends State<CameraPage> {
                   child: CameraPreview(_cameraController),
                 ),
               ),
+              */
+              CameraPreview(_cameraController),
               Positioned(
                   left: 10,
                   top: 10 + MediaQuery.of(context).viewPadding.top,

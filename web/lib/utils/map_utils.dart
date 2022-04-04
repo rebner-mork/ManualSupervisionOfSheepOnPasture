@@ -9,8 +9,30 @@ abstract class MapProvider {
   static final List<String> subdomains = ['', '2', '3'];
 }
 
-Marker getSheepMarker(LatLng pos) {
+Marker getSheepMarker(LatLng pos, String type) {
   const double size = 50;
+
+  final AssetImage image;
+  debugPrint(type);
+
+  switch (type) {
+    case 'injuredSheep':
+      image = const AssetImage('images/sheep_marker_injury.png');
+      break;
+    case 'cadaver':
+      image = const AssetImage('images/sheep_marker_cadaver.png');
+      break;
+    case 'predator':
+      image = const AssetImage('images/predator_marker.png');
+      break;
+    case 'note':
+      image = const AssetImage('images/note_marker.png');
+      break;
+    default:
+      image = const AssetImage('images/sheep_marker_green.png');
+      break;
+  }
+
   return Marker(
       point: pos,
       anchorPos: AnchorPos.align(AnchorAlign.top),
@@ -18,8 +40,8 @@ Marker getSheepMarker(LatLng pos) {
       height: size,
       width: size,
       rotate: true,
-      builder: (context) => const Image(
-            image: AssetImage("images/sheep_marker_green.png"),
+      builder: (context) => Image(
+            image: image,
             width: size,
             height: size,
             filterQuality: FilterQuality.medium,

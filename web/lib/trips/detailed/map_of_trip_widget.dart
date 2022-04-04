@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:web/utils/constants.dart';
 
 import '../../../utils/map_utils.dart' as map_utils;
 
@@ -44,7 +45,8 @@ class _MapOfTripWidgetState extends State<MapOfTripWidget> {
     registrationMarkers = widget.registrations
         .map((Map<String, dynamic> registration) => map_utils.getSheepMarker(
             LatLng(registration['registrationPosition']['latitude']! as double,
-                registration['registrationPosition']['longitude']! as double)))
+                registration['registrationPosition']['longitude']! as double),
+            registration['type']))
         .toList();
   }
 

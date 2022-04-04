@@ -11,12 +11,12 @@ class SheepInfoTable extends StatelessWidget {
     return Table(
         border: const TableBorder(horizontalInside: BorderSide(width: 0.5)),
         columnWidths: const {
-          // Combined width should match 'idealWidth' (410) in detailed_trip.dart
           0: FixedColumnWidth(76),
           1: FixedColumnWidth(76),
           2: FixedColumnWidth(76),
           3: FixedColumnWidth(76),
-          4: FixedColumnWidth(106)
+          4: FixedColumnWidth(106),
+          5: FixedColumnWidth(76)
         },
         children: [
           const TableRow(children: [
@@ -56,6 +56,14 @@ class SheepInfoTable extends StatelessWidget {
               padding: tableCellPadding,
               child: Text(
                 'Svart hode',
+                style: tableRowDescriptionTextStyle,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Padding(
+              padding: tableCellPadding,
+              child: Text(
+                'Skadde',
                 style: tableRowDescriptionTextStyle,
                 textAlign: TextAlign.center,
               ),

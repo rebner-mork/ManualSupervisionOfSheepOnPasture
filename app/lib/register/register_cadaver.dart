@@ -110,10 +110,7 @@ class TieDropDownItem extends StatelessWidget {
     icon = Icon(FontAwesome5.black_tie,
         color: colorStringToColor[colorHex], size: 30);
 
-    label = colorValueStringToColorStringGui[colorHex]!;
-    if (!['Oransje', 'Uten'].contains(label)) {
-      label = label.replaceFirst('e', '');
-    }
+    label = colorValueToStringGui[colorHex]!;
   }
 
   late Icon icon;

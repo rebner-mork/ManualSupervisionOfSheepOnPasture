@@ -22,11 +22,11 @@ class MainTripInfoTable extends StatelessWidget {
   Widget build(BuildContext context) {
     return Table(
       columnWidths: {
-        // Combined width should match 'idealWidth' (410) in detailed_trip.dart
+        // Combined width should match 486 (combined width of SheepInfoTable)
         0: const FixedColumnWidth(80),
         1: textSize(personnelName, tableRowTextStyle).width > 330
             ? FixedColumnWidth(textSize(personnelName, tableRowTextStyle).width)
-            : const FixedColumnWidth(330)
+            : const FixedColumnWidth(406)
       },
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
       children: [
