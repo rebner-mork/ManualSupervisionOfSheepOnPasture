@@ -14,6 +14,12 @@ import 'package:web/utils/styles.dart';
 const TextStyle injuredSheepHeadlineTextStyle =
     TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
 
+const TextStyle mainHeadlineTextStyle = TextStyle(fontSize: 50);
+const TextStyle mapHeadlineTextStyle = TextStyle(
+  fontSize: 30,
+);
+const TextStyle headlineTextStyle = TextStyle(fontSize: 24);
+
 class DetailedTrip extends StatefulWidget {
   const DetailedTrip(this.tripData, {Key? key}) : super(key: key);
 
@@ -163,29 +169,29 @@ class _DetailedTripState extends State<DetailedTrip> {
   }
 
   double _computeHeight() {
-    // Hva om slips og øremerker er tomme?
     double height = 0;
 
     // Date-headline
-    height += 20 + textSize('2022', const TextStyle(fontSize: 50)).height;
+    height += 20 + textSize('2022', mainHeadlineTextStyle).height;
 
     // Mapname
-    height += textSize('2022', const TextStyle(fontSize: 30)).height;
+    height += textSize('2022', mapHeadlineTextStyle).height;
 
     // MainTripInfoTable
-    height += 55 +
+    height += 50 +
         2 *
             (textSize('A', descriptionTextStyle).height +
                 (2 * tableCellPadding.top));
 
     // SheepInfoTableHeight
-    height += 60 +
-        2 *
-            (textSize('A', tableRowDescriptionTextStyle).height +
-                (2 * tableCellPadding.top));
+    height += 2 *
+        (textSize('A', tableRowDescriptionTextStyle).height +
+            (2 * tableCellPadding.top));
 
     // InfoTableHeight
-    height += textSize('A', tableRowDescriptionTextStyle).height +
+    height += textSize(('A'), headlineTextStyle).width +
+        40 +
+        textSize('A', tableRowDescriptionTextStyle).height +
         (2 * tableCellPadding.top) +
         (tieData.length > eartagData.length
             ? tieData.length * (25 + (2 * tableCellPadding.top))
@@ -193,7 +199,8 @@ class _DetailedTripState extends State<DetailedTrip> {
 
     // InjuredSheepTable
     if (injuredSheepData.isNotEmpty) {
-      height += 15 +
+      height += textSize(('A'), headlineTextStyle).width +
+          40 +
           textSize('S', injuredSheepHeadlineTextStyle).height +
           textSize('A', descriptionTextStyle).height +
           (2 * tableCellPadding.top) +
@@ -222,17 +229,14 @@ class _DetailedTripState extends State<DetailedTrip> {
           child: SingleChildScrollView(
               controller: _scrollController,
               child: SizedBox(
-                  height:
-                      _computeHeight(), // Høyde på header-rad og høyde på underrader
+                  height: _computeHeight(),
                   child: Column(
                     children: [
                       SizedBox(
-                          width: textSize(dateText(),
-                                          const TextStyle(fontSize: 50))
+                          width: textSize(dateText(), mainHeadlineTextStyle)
                                       .width >
                                   (2 * (infoTableWidth + infoTablePadding))
-                              ? textSize(
-                                      dateText(), const TextStyle(fontSize: 50))
+                              ? textSize(dateText(), mainHeadlineTextStyle)
                                   .width
                               : 2 * (infoTableWidth + infoTablePadding),
                           child: Align(
@@ -241,7 +245,7 @@ class _DetailedTripState extends State<DetailedTrip> {
                                 padding: const EdgeInsets.only(top: 20),
                                 child: Text(
                                   dateText(),
-                                  style: const TextStyle(fontSize: 50),
+                                  style: mainHeadlineTextStyle,
                                 ),
                               ))),
                       SizedBox(
@@ -249,22 +253,18 @@ class _DetailedTripState extends State<DetailedTrip> {
                           child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(widget.tripData['mapName']! as String,
-                                  style: const TextStyle(
-                                    fontSize: 30,
-                                  )))),
+                                  style: mapHeadlineTextStyle))),
                       Padding(
-                          padding: const EdgeInsets.only(top: 30, bottom: 25),
+                          padding: const EdgeInsets.only(top: 25, bottom: 25),
                           child: MainTripInfoTable(
                               startTime: startTime,
                               stopTime: stopTime,
                               personnelName:
                                   widget.tripData['personnelName']! as String)),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 30),
-                        child: SheepInfoTable(
-                          sheepData: sheepData,
-                        ),
+                      SheepInfoTable(
+                        sheepData: sheepData,
                       ),
+                      const Headline(title: 'Øremerker & Slips'),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -289,20 +289,28 @@ class _DetailedTripState extends State<DetailedTrip> {
                         ],
                       ),
                       if (injuredSheepData.isNotEmpty)
-                        /*const Padding(
-                            padding: EdgeInsets.only(top: 10, bottom: 5),
-                            child: Text('Skader',
-                                style: injuredSheepHeadlineTextStyle)),*/
-                        Align(
-                            alignment: Alignment.centerLeft,
-                            child: Padding(
-                                padding: EdgeInsets.only(left: 30),
-                                child: Text('Skader',
-                                    style: injuredSheepHeadlineTextStyle))),
+                        const Headline(title: 'Skader'),
                       if (injuredSheepData.isNotEmpty)
                         InjuredSheepTable(injuredSheep: injuredSheepData)
                     ],
                   )))),
     ]);
+  }
+}
+
+class Headline extends StatelessWidget {
+  const Headline({required this.title, this.padding = 25, Key? key})
+      : super(key: key);
+
+  final String title;
+  final double padding;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+        width: 2 * (infoTableWidth + padding),
+        child: Padding(
+            padding: const EdgeInsets.only(top: 25, bottom: 15),
+            child: Text(title, style: headlineTextStyle)));
   }
 }

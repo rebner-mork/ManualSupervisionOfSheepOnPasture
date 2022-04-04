@@ -25,7 +25,7 @@ class InjuredSheepTable extends StatelessWidget {
       },
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
       children: [
-        TableRow(children: [
+        const TableRow(children: [
           Padding(
               padding: tableCellPadding,
               child: Text('Øremerke',
