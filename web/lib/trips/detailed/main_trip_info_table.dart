@@ -3,7 +3,7 @@ import 'package:web/utils/other.dart';
 import 'package:web/utils/styles.dart';
 
 TextStyle textStyle = const TextStyle(fontSize: 19);
-TextStyle decsriptionTextStyle =
+TextStyle descriptionTextStyle =
     const TextStyle(fontSize: 19, fontWeight: FontWeight.bold);
 
 class MainTripInfoTable extends StatelessWidget {
@@ -33,7 +33,7 @@ class MainTripInfoTable extends StatelessWidget {
         TableRow(children: [
           Padding(
               padding: tableCellPadding,
-              child: Text('Tid', style: decsriptionTextStyle)),
+              child: Text('Tid', style: descriptionTextStyle)),
           Padding(
               padding: tableCellPadding,
               child: Text(
@@ -43,7 +43,7 @@ class MainTripInfoTable extends StatelessWidget {
         TableRow(children: [
           Padding(
               padding: tableCellPadding,
-              child: Text('Gått av', style: decsriptionTextStyle)),
+              child: Text('Gått av', style: descriptionTextStyle)),
           Padding(
               padding: tableCellPadding,
               child: Text(

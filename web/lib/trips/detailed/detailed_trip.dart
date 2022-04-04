@@ -102,9 +102,6 @@ class _DetailedTripState extends State<DetailedTrip> {
             registration[possibleTieColorStringToKey[tieColor]!]! as int;
       }
     }
-    // TODO: REMOVE
-    /*tieData = {'0': 0, Colors.red.value.toRadixString(16): 0};
-    eartagData = {'0': 0, Colors.red.value.toRadixString(16): 0};*/
   }
 
   String intToMonth(int month) {
@@ -163,6 +160,48 @@ class _DetailedTripState extends State<DetailedTrip> {
     }
   }
 
+  double _computeHeight() {
+    // Hva om slips og øremerker er tomme?
+    double height = 0;
+
+    // Date-headline
+    height += 20 + textSize('2022', const TextStyle(fontSize: 50)).height;
+
+    // Mapname
+    height += textSize('2022', const TextStyle(fontSize: 30)).height;
+
+    // MainTripInfoTable
+    height += 55 +
+        2 *
+            (textSize('A', descriptionTextStyle).height +
+                (2 * tableCellPadding.top));
+
+    // SheepInfoTableHeight
+    height += 60 +
+        2 *
+            (textSize('A', tableRowDescriptionTextStyle).height +
+                (2 * tableCellPadding.top));
+
+    // InfoTableHeight
+    height += textSize('A', tableRowDescriptionTextStyle).height +
+        (2 * tableCellPadding.top) +
+        (tieData.length > eartagData.length
+            ? tieData.length * (25 + (2 * tableCellPadding.top))
+            : eartagData.length * (25 + (2 * tableCellPadding.top)));
+
+    // InjuredSheepTable
+    if (injuredSheepData.isNotEmpty) {
+      height += 30 +
+          textSize('A', descriptionTextStyle).height +
+          (2 * tableCellPadding.top) +
+          injuredSheepData.length * (41 + (2 * tableCellPadding.top));
+    }
+
+    return height;
+  }
+
+  // TODO: notat-popup kryss
+
   @override
   Widget build(BuildContext context) {
     return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -179,122 +218,80 @@ class _DetailedTripState extends State<DetailedTrip> {
           flex: 2,
           child: SingleChildScrollView(
               controller: _scrollController,
-              child: Container(
-                  // TODO: remove
-                  color: Colors.blue,
-                  constraints: BoxConstraints(
-                      maxHeight: 20 +
-                          textSize('2022', const TextStyle(fontSize: 50))
-                              .height + // Dato-overskrift
-                          textSize('2022', const TextStyle(fontSize: 30))
-                              .height + // Kartnavn
-                          55 +
-                          2 *
-                              (textSize('A', decsriptionTextStyle).height +
-                                  (2 *
-                                      tableCellPadding
-                                          .top)) + // MainTripInfoTable
-                          60 +
-                          2 *
-                              (textSize('A', tableRowDescriptionTextStyle)
-                                      .height +
-                                  (2 *
-                                      tableCellPadding.top)) + // SheepInfoTable
-                          //190 +
-                          //(infoTablePadding * 2) +
-                          // INFOTABLE
-                          textSize('A', tableRowDescriptionTextStyle).height +
-                          (2 * tableCellPadding.top) +
-                          (tieData.length > eartagData.length
-                              ? tieData.length *
-                                  (25 + (2 * tableCellPadding.top))
-                              : eartagData.length *
-                                  (25 + (2 * tableCellPadding.top)))
-                      /*+
-                          (injuredSheepData.isEmpty
-                              ? 0
-                              : (30 + (injuredSheepData.length * 50)))*/
-                      ),
-                  child: SizedBox(
-                      height: MediaQuery.of(context)
-                              .size
-                              .height - // erstatt med høyden på det andre. if (showmore) vis tekst at det er mer?
-                          mainTabsHeight +
-                          (injuredSheepData.isEmpty
-                              ? 0
-                              : (30 +
-                                  (injuredSheepData.length *
-                                      50))), // Høyde på header-rad og høyde på underrader
-                      child: Column(
-                        children: [
-                          SizedBox(
-                              width: textSize(dateText(),
-                                              const TextStyle(fontSize: 50))
-                                          .width >
-                                      (2 * (infoTableWidth + infoTablePadding))
-                                  ? textSize(dateText(),
+              child: SizedBox(
+                  height:
+                      _computeHeight(), // Høyde på header-rad og høyde på underrader
+                  child: Column(
+                    children: [
+                      SizedBox(
+                          width: textSize(dateText(),
                                           const TextStyle(fontSize: 50))
-                                      .width
-                                  : 2 * (infoTableWidth + infoTablePadding),
-                              child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(top: 20),
-                                    child: Text(
-                                      dateText(),
-                                      style: const TextStyle(fontSize: 50),
-                                    ),
+                                      .width >
+                                  (2 * (infoTableWidth + infoTablePadding))
+                              ? textSize(
+                                      dateText(), const TextStyle(fontSize: 50))
+                                  .width
+                              : 2 * (infoTableWidth + infoTablePadding),
+                          child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 20),
+                                child: Text(
+                                  dateText(),
+                                  style: const TextStyle(fontSize: 50),
+                                ),
+                              ))),
+                      SizedBox(
+                          width: 2 * (infoTableWidth + infoTablePadding),
+                          child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(widget.tripData['mapName']! as String,
+                                  style: const TextStyle(
+                                    fontSize: 30,
+                                  )))),
+                      Padding(
+                          padding: const EdgeInsets.only(top: 30, bottom: 25),
+                          child: MainTripInfoTable(
+                              startTime: startTime,
+                              stopTime: stopTime,
+                              personnelName:
+                                  widget.tripData['personnelName']! as String)),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 30),
+                        child: SheepInfoTable(
+                          sheepData: sheepData,
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Flexible(
+                              child: Padding(
+                                  padding:
+                                      EdgeInsets.only(right: infoTablePadding),
+                                  child: InfoTable(
+                                      data: tieData,
+                                      headerText: 'Slips',
+                                      iconData: FontAwesome5.black_tie))),
+                          Flexible(
+                              child: Padding(
+                                  padding:
+                                      EdgeInsets.only(left: infoTablePadding),
+                                  child: InfoTable(
+                                    data: eartagData,
+                                    headerText: 'Øremerker',
+                                    iconData: Icons.local_offer,
                                   ))),
-                          SizedBox(
-                              width: 2 * (infoTableWidth + infoTablePadding),
-                              child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                      widget.tripData['mapName']! as String,
-                                      style: const TextStyle(
-                                        fontSize: 30,
-                                      )))),
-                          Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 30, bottom: 25),
-                              child: MainTripInfoTable(
-                                  startTime: startTime,
-                                  stopTime: stopTime,
-                                  personnelName: widget
-                                      .tripData['personnelName']! as String)),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 30),
-                            child: SheepInfoTable(
-                              sheepData: sheepData,
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Flexible(
-                                  child: Padding(
-                                      padding: EdgeInsets.only(
-                                          right: infoTablePadding),
-                                      child: InfoTable(
-                                          data: tieData,
-                                          headerText: 'Slips',
-                                          iconData: FontAwesome5.black_tie))),
-                              Flexible(
-                                  child: Padding(
-                                      padding: EdgeInsets.only(
-                                          left: infoTablePadding),
-                                      child: InfoTable(
-                                        data: eartagData,
-                                        headerText: 'Øremerker',
-                                        iconData: Icons.local_offer,
-                                      ))),
-                            ],
-                          ),
-                          //if (injuredSheepData.isNotEmpty)
-                          //  InjuredSheepTable(injuredSheep: injuredSheepData)
                         ],
-                      ))))),
+                      ),
+                      if (injuredSheepData.isNotEmpty)
+                        Padding(
+                            padding: const EdgeInsets.only(top: 30),
+                            child: InjuredSheepTable(
+                                injuredSheep: injuredSheepData))
+                    ],
+                  )))),
     ]);
   }
 }

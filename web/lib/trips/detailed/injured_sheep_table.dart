@@ -27,23 +27,23 @@ class InjuredSheepTable extends StatelessWidget {
           Padding(
               padding: tableCellPadding,
               child: Text('Øremerke',
-                  style: decsriptionTextStyle, textAlign: TextAlign.center)),
+                  style: descriptionTextStyle, textAlign: TextAlign.center)),
           Padding(
               padding: tableCellPadding,
               child: Text('Slips',
-                  style: decsriptionTextStyle, textAlign: TextAlign.center)),
+                  style: descriptionTextStyle, textAlign: TextAlign.center)),
           Padding(
               padding: tableCellPadding,
               child: Text('Type',
-                  style: decsriptionTextStyle, textAlign: TextAlign.center)),
+                  style: descriptionTextStyle, textAlign: TextAlign.center)),
           Padding(
               padding: tableCellPadding,
               child: Text('Alvorlighet',
-                  style: decsriptionTextStyle, textAlign: TextAlign.center)),
+                  style: descriptionTextStyle, textAlign: TextAlign.center)),
           Padding(
               padding: tableCellPadding,
               child: Text('Notat',
-                  style: decsriptionTextStyle, textAlign: TextAlign.center)),
+                  style: descriptionTextStyle, textAlign: TextAlign.center)),
         ]),
         ...injuredSheep.map((Map<String, dynamic> registration) {
           List<String> eartag = (registration['eartag'] as String).split('-');
