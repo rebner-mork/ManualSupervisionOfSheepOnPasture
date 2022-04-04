@@ -13,7 +13,9 @@ class InjuredSheepTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Table(
-      border: TableBorder.symmetric(inside: const BorderSide(width: 0.5)),
+      border: TableBorder.symmetric(
+          inside: const BorderSide(width: 0.5),
+          outside: const BorderSide(width: 0.5)),
       columnWidths: const {
         0: FixedColumnWidth(150),
         1: FixedColumnWidth(60),
@@ -27,23 +29,28 @@ class InjuredSheepTable extends StatelessWidget {
           Padding(
               padding: tableCellPadding,
               child: Text('Øremerke',
-                  style: descriptionTextStyle, textAlign: TextAlign.center)),
+                  style: tableRowDescriptionTextStyle,
+                  textAlign: TextAlign.center)),
           Padding(
               padding: tableCellPadding,
               child: Text('Slips',
-                  style: descriptionTextStyle, textAlign: TextAlign.center)),
+                  style: tableRowDescriptionTextStyle,
+                  textAlign: TextAlign.center)),
           Padding(
               padding: tableCellPadding,
               child: Text('Type',
-                  style: descriptionTextStyle, textAlign: TextAlign.center)),
+                  style: tableRowDescriptionTextStyle,
+                  textAlign: TextAlign.center)),
           Padding(
               padding: tableCellPadding,
               child: Text('Alvorlighet',
-                  style: descriptionTextStyle, textAlign: TextAlign.center)),
+                  style: tableRowDescriptionTextStyle,
+                  textAlign: TextAlign.center)),
           Padding(
               padding: tableCellPadding,
               child: Text('Notat',
-                  style: descriptionTextStyle, textAlign: TextAlign.center)),
+                  style: tableRowDescriptionTextStyle,
+                  textAlign: TextAlign.center)),
         ]),
         ...injuredSheep.map((Map<String, dynamic> registration) {
           List<String> eartag = (registration['eartag'] as String).split('-');

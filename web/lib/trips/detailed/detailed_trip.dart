@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
-import 'package:web/main_tabs/main_tabs.dart';
 import 'package:web/trips/detailed/injured_sheep_table.dart';
 import 'package:web/trips/detailed/main_trip_info_table.dart';
 import 'package:web/trips/detailed/map_of_trip_widget.dart';
@@ -11,6 +10,9 @@ import 'package:web/trips/detailed/info_table.dart';
 import 'package:web/utils/constants.dart';
 import 'package:web/utils/other.dart';
 import 'package:web/utils/styles.dart';
+
+const TextStyle injuredSheepHeadlineTextStyle =
+    TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
 
 class DetailedTrip extends StatefulWidget {
   const DetailedTrip(this.tripData, {Key? key}) : super(key: key);
@@ -191,7 +193,8 @@ class _DetailedTripState extends State<DetailedTrip> {
 
     // InjuredSheepTable
     if (injuredSheepData.isNotEmpty) {
-      height += 30 +
+      height += 15 +
+          textSize('S', injuredSheepHeadlineTextStyle).height +
           textSize('A', descriptionTextStyle).height +
           (2 * tableCellPadding.top) +
           injuredSheepData.length * (41 + (2 * tableCellPadding.top));
@@ -286,10 +289,18 @@ class _DetailedTripState extends State<DetailedTrip> {
                         ],
                       ),
                       if (injuredSheepData.isNotEmpty)
-                        Padding(
-                            padding: const EdgeInsets.only(top: 30),
-                            child: InjuredSheepTable(
-                                injuredSheep: injuredSheepData))
+                        /*const Padding(
+                            padding: EdgeInsets.only(top: 10, bottom: 5),
+                            child: Text('Skader',
+                                style: injuredSheepHeadlineTextStyle)),*/
+                        Align(
+                            alignment: Alignment.centerLeft,
+                            child: Padding(
+                                padding: EdgeInsets.only(left: 30),
+                                child: Text('Skader',
+                                    style: injuredSheepHeadlineTextStyle))),
+                      if (injuredSheepData.isNotEmpty)
+                        InjuredSheepTable(injuredSheep: injuredSheepData)
                     ],
                   )))),
     ]);
