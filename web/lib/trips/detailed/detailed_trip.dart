@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:web/main_tabs/main_tabs.dart';
 import 'package:web/trips/detailed/injured_sheep_table.dart';
 import 'package:web/trips/detailed/main_trip_info_table.dart';
 import 'package:web/trips/detailed/map_of_trip_widget.dart';
@@ -9,6 +10,7 @@ import 'package:web/trips/detailed/sheep_info_table.dart';
 import 'package:web/trips/detailed/info_table.dart';
 import 'package:web/utils/constants.dart';
 import 'package:web/utils/other.dart';
+import 'package:web/utils/styles.dart';
 
 class DetailedTrip extends StatefulWidget {
   const DetailedTrip(this.tripData, {Key? key}) : super(key: key);
@@ -30,6 +32,8 @@ class _DetailedTripState extends State<DetailedTrip> {
 
   final double infoTablePadding = 25;
 
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -44,7 +48,6 @@ class _DetailedTripState extends State<DetailedTrip> {
     for (String sheepKey in mainSheepRegistrationKeysToGui.keys) {
       sheepData[sheepKey] = 0;
     }
-    //sheepData['injuredSheep'] = 0;
 
     for (String eartagColor in possibleEartagColorStringToKey.keys) {
       if ((widget.tripData['definedEartagColors'] as List<String>)
@@ -70,7 +73,6 @@ class _DetailedTripState extends State<DetailedTrip> {
           _fillDataMapsFromSheepRegistration(registration);
           break;
         case 'injuredSheep':
-          //sheepData['injuredSheep'] = sheepData['injuredSheep']! + 1;
           injuredSheepData.add(registration);
           sheepData['sheep'] = sheepData['sheep']! + 1;
           break;
@@ -100,6 +102,9 @@ class _DetailedTripState extends State<DetailedTrip> {
             registration[possibleTieColorStringToKey[tieColor]!]! as int;
       }
     }
+    // TODO: REMOVE
+    /*tieData = {'0': 0, Colors.red.value.toRadixString(16): 0};
+    eartagData = {'0': 0, Colors.red.value.toRadixString(16): 0};*/
   }
 
   String intToMonth(int month) {
@@ -160,7 +165,7 @@ class _DetailedTripState extends State<DetailedTrip> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(children: [
+    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Flexible(
           flex: 3,
           child: Padding(
@@ -172,72 +177,124 @@ class _DetailedTripState extends State<DetailedTrip> {
                       as List<Map<String, dynamic>>))),
       Flexible(
           flex: 2,
-          child: Column(
-            children: [
-              SizedBox(
-                  width: textSize(dateText(), const TextStyle(fontSize: 50))
-                              .width >
-                          (2 * (infoTableWidth + infoTablePadding))
-                      ? textSize(dateText(), const TextStyle(fontSize: 50))
-                          .width
-                      : 2 * (infoTableWidth + infoTablePadding),
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 20),
-                        child: Text(
-                          dateText(),
-                          style: const TextStyle(fontSize: 50),
-                        ),
-                      ))),
-              SizedBox(
-                  width: 2 * (infoTableWidth + infoTablePadding),
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(widget.tripData['mapName']! as String,
-                          style: const TextStyle(
-                            fontSize: 30,
-                          )))),
-              Flexible(
-                  child: Padding(
-                      padding: const EdgeInsets.only(top: 30, bottom: 25),
-                      child: MainTripInfoTable(
-                          startTime: startTime,
-                          stopTime: stopTime,
-                          personnelName:
-                              widget.tripData['personnelName']! as String))),
-              Flexible(
-                  child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 30),
-                child: SheepInfoTable(
-                  sheepData: sheepData,
-                ),
-              )),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Flexible(
-                      child: Padding(
-                          padding: EdgeInsets.only(right: infoTablePadding),
-                          child: InfoTable(
-                              data: tieData,
-                              headerText: 'Slips',
-                              iconData: FontAwesome5.black_tie))),
-                  Flexible(
-                      child: Padding(
-                          padding: EdgeInsets.only(left: infoTablePadding),
-                          child: InfoTable(
-                            data: eartagData,
-                            headerText: 'Øremerker',
-                            iconData: Icons.local_offer,
-                          ))),
-                ],
-              ),
-              if (injuredSheepData.isNotEmpty)
-                InjuredSheepTable(injuredSheep: injuredSheepData)
-            ],
-          )),
+          child: SingleChildScrollView(
+              controller: _scrollController,
+              child: Container(
+                  // TODO: remove
+                  color: Colors.blue,
+                  constraints: BoxConstraints(
+                      maxHeight: 20 +
+                          textSize('2022', const TextStyle(fontSize: 50))
+                              .height + // Dato-overskrift
+                          textSize('2022', const TextStyle(fontSize: 30))
+                              .height + // Kartnavn
+                          55 +
+                          2 *
+                              (textSize('A', decsriptionTextStyle).height +
+                                  (2 *
+                                      tableCellPadding
+                                          .top)) + // MainTripInfoTable
+                          60 +
+                          2 *
+                              (textSize('A', tableRowDescriptionTextStyle)
+                                      .height +
+                                  (2 *
+                                      tableCellPadding.top)) + // SheepInfoTable
+                          //190 +
+                          //(infoTablePadding * 2) +
+                          // INFOTABLE
+                          textSize('A', tableRowDescriptionTextStyle).height +
+                          (2 * tableCellPadding.top) +
+                          (tieData.length > eartagData.length
+                              ? tieData.length *
+                                  (25 + (2 * tableCellPadding.top))
+                              : eartagData.length *
+                                  (25 + (2 * tableCellPadding.top)))
+                      /*+
+                          (injuredSheepData.isEmpty
+                              ? 0
+                              : (30 + (injuredSheepData.length * 50)))*/
+                      ),
+                  child: SizedBox(
+                      height: MediaQuery.of(context)
+                              .size
+                              .height - // erstatt med høyden på det andre. if (showmore) vis tekst at det er mer?
+                          mainTabsHeight +
+                          (injuredSheepData.isEmpty
+                              ? 0
+                              : (30 +
+                                  (injuredSheepData.length *
+                                      50))), // Høyde på header-rad og høyde på underrader
+                      child: Column(
+                        children: [
+                          SizedBox(
+                              width: textSize(dateText(),
+                                              const TextStyle(fontSize: 50))
+                                          .width >
+                                      (2 * (infoTableWidth + infoTablePadding))
+                                  ? textSize(dateText(),
+                                          const TextStyle(fontSize: 50))
+                                      .width
+                                  : 2 * (infoTableWidth + infoTablePadding),
+                              child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 20),
+                                    child: Text(
+                                      dateText(),
+                                      style: const TextStyle(fontSize: 50),
+                                    ),
+                                  ))),
+                          SizedBox(
+                              width: 2 * (infoTableWidth + infoTablePadding),
+                              child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                      widget.tripData['mapName']! as String,
+                                      style: const TextStyle(
+                                        fontSize: 30,
+                                      )))),
+                          Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 30, bottom: 25),
+                              child: MainTripInfoTable(
+                                  startTime: startTime,
+                                  stopTime: stopTime,
+                                  personnelName: widget
+                                      .tripData['personnelName']! as String)),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 30),
+                            child: SheepInfoTable(
+                              sheepData: sheepData,
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Flexible(
+                                  child: Padding(
+                                      padding: EdgeInsets.only(
+                                          right: infoTablePadding),
+                                      child: InfoTable(
+                                          data: tieData,
+                                          headerText: 'Slips',
+                                          iconData: FontAwesome5.black_tie))),
+                              Flexible(
+                                  child: Padding(
+                                      padding: EdgeInsets.only(
+                                          left: infoTablePadding),
+                                      child: InfoTable(
+                                        data: eartagData,
+                                        headerText: 'Øremerker',
+                                        iconData: Icons.local_offer,
+                                      ))),
+                            ],
+                          ),
+                          //if (injuredSheepData.isNotEmpty)
+                          //  InjuredSheepTable(injuredSheep: injuredSheepData)
+                        ],
+                      ))))),
     ]);
   }
 }
