@@ -48,9 +48,6 @@ class InjuredSheepTable extends StatelessWidget {
         ...injuredSheep.map((Map<String, dynamic> registration) {
           List<String> eartag = (registration['eartag'] as String).split('-');
 
-          debugPrint("her:" +
-              textSize('Blodutredning', tableRowTextStyle).width.toString());
-
           return TableRow(
             children: [
               Padding(
@@ -69,12 +66,7 @@ class InjuredSheepTable extends StatelessWidget {
                     size: 24,
                     color:
                         Color(int.parse(registration['tieColor'], radix: 16)),
-                  ) /*Text(
-                    '${registration['tieColor']}',
-                    style: tableRowTextStyle,
-                    textAlign: TextAlign.center,
-                  )*/
-                  ),
+                  )),
               Padding(
                   padding: tableCellPadding,
                   child: Text(
@@ -92,7 +84,33 @@ class InjuredSheepTable extends StatelessWidget {
               Padding(
                   padding: tableCellPadding,
                   child: IconButton(
-                      icon: const Icon(Icons.open_in_new), onPressed: () {}))
+                      icon: const Icon(Icons.description),
+                      color: Colors.grey.shade700,
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) => SimpleDialog(
+                                  title: const Text(
+                                    'Saueskade',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  titleTextStyle: const TextStyle(fontSize: 26),
+                                  contentPadding: const EdgeInsets.fromLTRB(
+                                      0.0, 1.0, 0.0, 16.0),
+                                  children: [
+                                    Text(
+                                        '${eartag[0]}-${eartag[1]}\n${eartag[2]}-${eartag[3]}',
+                                        style: const TextStyle(fontSize: 18),
+                                        textAlign: TextAlign.center),
+                                    Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 15, vertical: 15),
+                                        child: Text('${registration['note']}',
+                                            style:
+                                                const TextStyle(fontSize: 16)))
+                                  ],
+                                ));
+                      }))
             ],
           );
         })
