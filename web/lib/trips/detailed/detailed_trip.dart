@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:web/trips/detailed/injured_sheep_table.dart';
 import 'package:web/trips/detailed/main_trip_info_table.dart';
 import 'package:web/trips/detailed/map_of_trip_widget.dart';
 import 'package:latlong2/latlong.dart';
@@ -23,6 +24,7 @@ class _DetailedTripState extends State<DetailedTrip> {
   late DateTime stopTime;
 
   Map<String, int> sheepData = {};
+  List<Map<String, dynamic>> injuredSheepData = [];
   Map<String, int> eartagData = {};
   Map<String, int> tieData = {};
 
@@ -42,7 +44,7 @@ class _DetailedTripState extends State<DetailedTrip> {
     for (String sheepKey in mainSheepRegistrationKeysToGui.keys) {
       sheepData[sheepKey] = 0;
     }
-    sheepData['injuredSheep'] = 0;
+    //sheepData['injuredSheep'] = 0;
 
     for (String eartagColor in possibleEartagColorStringToKey.keys) {
       if ((widget.tripData['definedEartagColors'] as List<String>)
@@ -68,7 +70,8 @@ class _DetailedTripState extends State<DetailedTrip> {
           _fillDataMapsFromSheepRegistration(registration);
           break;
         case 'injuredSheep':
-          sheepData['injuredSheep'] = sheepData['injuredSheep']! + 1;
+          //sheepData['injuredSheep'] = sheepData['injuredSheep']! + 1;
+          injuredSheepData.add(registration);
           sheepData['sheep'] = sheepData['sheep']! + 1;
           break;
         default:
@@ -78,7 +81,6 @@ class _DetailedTripState extends State<DetailedTrip> {
 
   void _fillDataMapsFromSheepRegistration(Map<String, dynamic> registration) {
     for (String sheepKey in mainSheepRegistrationKeysToGui.keys) {
-      debugPrint(registration[sheepKey].toString() + ' ' + sheepKey);
       sheepData[sheepKey] =
           sheepData[sheepKey]! + registration[sheepKey] as int;
     }
@@ -217,15 +219,14 @@ class _DetailedTripState extends State<DetailedTrip> {
                 children: [
                   Flexible(
                       child: Padding(
-                          padding:
-                              EdgeInsets.only(right: infoTablePadding + 38),
+                          padding: EdgeInsets.only(right: infoTablePadding),
                           child: InfoTable(
                               data: tieData,
                               headerText: 'Slips',
                               iconData: FontAwesome5.black_tie))),
                   Flexible(
                       child: Padding(
-                          padding: EdgeInsets.only(left: infoTablePadding + 38),
+                          padding: EdgeInsets.only(left: infoTablePadding),
                           child: InfoTable(
                             data: eartagData,
                             headerText: 'Øremerker',
@@ -233,6 +234,8 @@ class _DetailedTripState extends State<DetailedTrip> {
                           ))),
                 ],
               ),
+              if (injuredSheepData.isNotEmpty)
+                InjuredSheepTable(injuredSheep: injuredSheepData)
             ],
           )),
     ]);

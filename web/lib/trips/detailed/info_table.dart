@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:web/utils/constants.dart';
 import 'package:web/utils/styles.dart';
 
-const double infoTableWidth = 180 + 38;
+const double infoTableWidth = 180;
 
 class InfoTable extends StatelessWidget {
   const InfoTable(

@@ -15,8 +15,7 @@ class SheepInfoTable extends StatelessWidget {
           1: FixedColumnWidth(76),
           2: FixedColumnWidth(76),
           3: FixedColumnWidth(76),
-          4: FixedColumnWidth(106),
-          5: FixedColumnWidth(76)
+          4: FixedColumnWidth(106)
         },
         children: [
           const TableRow(children: [
@@ -56,14 +55,6 @@ class SheepInfoTable extends StatelessWidget {
               padding: tableCellPadding,
               child: Text(
                 'Svart hode',
-                style: tableRowDescriptionTextStyle,
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Padding(
-              padding: tableCellPadding,
-              child: Text(
-                'Skadde',
                 style: tableRowDescriptionTextStyle,
                 textAlign: TextAlign.center,
               ),
