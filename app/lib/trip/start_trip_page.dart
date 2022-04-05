@@ -47,7 +47,6 @@ class _StartTripPageState extends State<StartTripPage>
   bool _isLoading = true;
   bool _downloadingMap = false;
   bool _mapDownloaded = false;
-  bool _noFarmDefined = false;
   bool _noMapsDefined = false;
   bool _noEartagsDefined = false;
   bool _noTiesDefined = false;
@@ -116,7 +115,7 @@ class _StartTripPageState extends State<StartTripPage>
                 ? const LoadingData()
                 : Column(
                     children: _farmNames.isEmpty
-                        ? [NoFarmInfo()]
+                        ? [const NoFarmInfo()]
                         : [
                             appbarBodySpacer(),
                             _farmNameRow(),
