@@ -226,9 +226,9 @@ class _DetailedTripState extends State<DetailedTrip> {
       Flexible(
           flex: 2,
           child: Padding(
-              padding: EdgeInsets.only(right: 2),
+              padding: const EdgeInsets.only(right: 2),
               child: RawScrollbar(
-                  radius: Radius.circular(15),
+                  radius: const Radius.circular(15),
                   controller: _scrollController,
                   isAlwaysShown: true,
                   thickness: 8,
