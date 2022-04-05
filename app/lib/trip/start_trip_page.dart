@@ -34,6 +34,7 @@ class _StartTripPageState extends State<StartTripPage>
   final ValueNotifier<bool> _ongoingDialog = ValueNotifier<bool>(false);
 
   late List<String> _farmIDs;
+  late List<QueryDocumentSnapshot> _farmDocs;
 
   final List<String> _farmNames = [];
   late String _selectedFarmName;
@@ -174,7 +175,7 @@ class _StartTripPageState extends State<StartTripPage>
                     _noMapsDefined = false;
                     _noEartagsDefined = false;
                     _noTiesDefined = false;
-                    _readFarmMaps(_farmIDs[_farmNames.indexOf(newFarmName!)]);
+                    _readFarmMaps(_farmDocs[_farmNames.indexOf(newFarmName!)]);
                     setState(() {
                       _selectedFarmName = newFarmName;
                       _feedbackText = '';
@@ -350,8 +351,7 @@ class _StartTripPageState extends State<StartTripPage>
                       southEast: mapBounds['southEast']!,
                       farmId: _farmIDs[_farmNames.indexOf(_selectedFarmName)],
                       personnelEmail: FirebaseAuth.instance.currentUser!.email!,
-                      mapName:
-                          _selectedFarmMap, //TODO change to mapId when maps are their own documents
+                      mapName: _selectedFarmMap,
                       eartags: _noEartagsDefined
                           ? possibleEartagsWithoutDefinition
                           : _eartags!,
@@ -376,15 +376,15 @@ class _StartTripPageState extends State<StartTripPage>
                         (key, value) => MapEntry(key, value as double))))));
   }
 
-  Future<void> _readFarmMaps(String farmId) async {
-    CollectionReference farmCollection =
+  Future<void> _readFarmMaps(QueryDocumentSnapshot farmDoc) async {
+    /*CollectionReference farmCollection =
         FirebaseFirestore.instance.collection('farms');
-    DocumentReference farmDoc = farmCollection.doc(farmId);
+    DocumentReference farmDoc = farmCollection.doc(farmId);*/
 
-    DocumentSnapshot<Object?> doc = await farmDoc.get();
-    LinkedHashMap<String, dynamic>? dbMaps = await doc.get('maps');
-    LinkedHashMap<String, dynamic>? dbEartags = await doc.get('eartags');
-    LinkedHashMap<String, dynamic>? dbTies = await doc.get('ties');
+    //DocumentSnapshot<Object?> doc = await farmDoc.get();
+    LinkedHashMap<String, dynamic>? dbMaps = farmDoc['maps'];
+    LinkedHashMap<String, dynamic>? dbEartags = farmDoc['eartags'];
+    LinkedHashMap<String, dynamic>? dbTies = farmDoc['ties'];
 
     if (dbMaps != null && dbMaps.isNotEmpty) {
       _selectedFarmMaps = _castMapsFromDynamic(dbMaps);
@@ -432,35 +432,36 @@ class _StartTripPageState extends State<StartTripPage>
   }
 
   Future<void> _readFarms() async {
-    String email = FirebaseAuth.instance.currentUser!.email!;
+    /*String email = FirebaseAuth.instance.currentUser!.email!;
     QuerySnapshot personnelQuerySnapshot = await FirebaseFirestore.instance
         .collection('users')
         .where('email', isEqualTo: email)
         .get();
-    QueryDocumentSnapshot personnelDoc = personnelQuerySnapshot.docs.first;
+    QueryDocumentSnapshot personnelDoc = personnelQuerySnapshot.docs.first;*/
 
-    List<dynamic> farmIDs = personnelDoc['personnelAtFarms'];
-    _farmIDs = farmIDs.map((dynamic id) => id as String).toList();
+    /*List<dynamic> farmIDs = personnelDoc['personnelAtFarms'];
+    _farmIDs = farmIDs.map((dynamic id) => id as String).toList();*/
 
-    CollectionReference farmCollection =
-        FirebaseFirestore.instance.collection('farms');
-    DocumentReference farmDoc;
+    QuerySnapshot farmsSnapshot = await FirebaseFirestore.instance
+        .collection('farms')
+        .where('personnel',
+            arrayContains: FirebaseAuth.instance.currentUser!.email)
+        .get();
+    _farmDocs = farmsSnapshot.docs;
 
-    for (int i = 0; i < farmIDs.length; i++) {
-      farmDoc = farmCollection.doc(farmIDs[i]);
-
-      DocumentSnapshot<Object?> doc = await farmDoc.get();
-      if (doc.exists) {
-        _farmNames.add(doc.get('name'));
+    if (_farmDocs.isNotEmpty) {
+      for (int i = 0; i < _farmDocs.length; i++) {
+        _farmNames.add(_farmDocs[i]['name']);
         if (i == 0) {
-          _readFarmMaps(_farmIDs.first);
+          _readFarmMaps(_farmDocs.first);
         }
       }
-    }
-    if (_farmNames.isNotEmpty) {
-      setState(() {
-        _selectedFarmName = _farmNames[0];
-      });
+
+      if (_farmNames.isNotEmpty) {
+        setState(() {
+          _selectedFarmName = _farmNames[0];
+        });
+      }
     }
 
     setState(() {
