@@ -50,9 +50,7 @@ class InfoTable extends StatelessWidget {
                               iconData,
                               color: Color(int.parse(mapEntry.key, radix: 16)),
                             )),
-                        Text(
-                            colorValueToString[
-                                int.parse(mapEntry.key, radix: 16)]!,
+                        Text(colorValueToStringGui[mapEntry.key]!,
                             style: tableRowTextStyle,
                             textAlign: TextAlign.center)
                       ]),

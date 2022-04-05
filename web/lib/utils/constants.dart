@@ -28,10 +28,10 @@ final Map<String, String> possibleEartagColorStringToKey = {
 
 final Map<String, String> colorValueToStringGui = {
   Colors.transparent.value.toRadixString(16): 'Ingen',
-  Colors.red.value.toRadixString(16): 'Rødt',
-  Colors.blue.value.toRadixString(16): 'Blått',
-  Colors.yellow.value.toRadixString(16): 'Gult',
-  Colors.green.value.toRadixString(16): 'Grønt',
+  Colors.red.value.toRadixString(16): 'Rød',
+  Colors.blue.value.toRadixString(16): 'Blå',
+  Colors.yellow.value.toRadixString(16): 'Gul',
+  Colors.green.value.toRadixString(16): 'Grønn',
   Colors.orange.value.toRadixString(16): 'Oransje',
   Colors.pink.value.toRadixString(16): 'Rosa'
 };
@@ -52,16 +52,6 @@ const Map<String, String> mainSheepRegistrationKeysToGui = {
   'white': 'Hvite',
   'black': 'Svarte',
   'blackHead': 'Svart hode'
-};
-
-final Map<int, String> colorValueToString = {
-  Colors.red.value: 'Rød',
-  Colors.blue.value: 'Blå',
-  Colors.yellow.value: 'Gul',
-  Colors.green.value: 'Grønn',
-  Colors.orange.value: 'Oransje',
-  Colors.pink.value: 'Rosa',
-  Colors.transparent.value: 'Ingen'
 };
 
 final Map<Color, String> dialogColorToString = <Color, String>{
