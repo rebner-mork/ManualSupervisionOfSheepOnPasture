@@ -33,7 +33,6 @@ class _StartTripPageState extends State<StartTripPage>
   late SpeechToText _speechToText;
   final ValueNotifier<bool> _ongoingDialog = ValueNotifier<bool>(false);
 
-  late List<String> _farmIDs;
   late List<QueryDocumentSnapshot> _farmDocs;
 
   final List<String> _farmNames = [];
@@ -349,7 +348,8 @@ class _StartTripPageState extends State<StartTripPage>
                       ongoingDialog: _ongoingDialog,
                       northWest: mapBounds['northWest']!,
                       southEast: mapBounds['southEast']!,
-                      farmId: _farmIDs[_farmNames.indexOf(_selectedFarmName)],
+                      farmId:
+                          _farmDocs[_farmNames.indexOf(_selectedFarmName)].id,
                       personnelEmail: FirebaseAuth.instance.currentUser!.email!,
                       mapName: _selectedFarmMap,
                       eartags: _noEartagsDefined
@@ -377,11 +377,6 @@ class _StartTripPageState extends State<StartTripPage>
   }
 
   Future<void> _readFarmMaps(QueryDocumentSnapshot farmDoc) async {
-    /*CollectionReference farmCollection =
-        FirebaseFirestore.instance.collection('farms');
-    DocumentReference farmDoc = farmCollection.doc(farmId);*/
-
-    //DocumentSnapshot<Object?> doc = await farmDoc.get();
     LinkedHashMap<String, dynamic>? dbMaps = farmDoc['maps'];
     LinkedHashMap<String, dynamic>? dbEartags = farmDoc['eartags'];
     LinkedHashMap<String, dynamic>? dbTies = farmDoc['ties'];
@@ -432,16 +427,6 @@ class _StartTripPageState extends State<StartTripPage>
   }
 
   Future<void> _readFarms() async {
-    /*String email = FirebaseAuth.instance.currentUser!.email!;
-    QuerySnapshot personnelQuerySnapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .where('email', isEqualTo: email)
-        .get();
-    QueryDocumentSnapshot personnelDoc = personnelQuerySnapshot.docs.first;*/
-
-    /*List<dynamic> farmIDs = personnelDoc['personnelAtFarms'];
-    _farmIDs = farmIDs.map((dynamic id) => id as String).toList();*/
-
     QuerySnapshot farmsSnapshot = await FirebaseFirestore.instance
         .collection('farms')
         .where('personnel',
