@@ -4,10 +4,10 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:web/my_page/define_ties/tie_dropdown.dart';
 import 'package:web/utils/constants.dart';
 import 'package:web/utils/custom_widgets.dart';
 import 'package:web/utils/styles.dart';
-import 'package:fluttericon/font_awesome5_icons.dart';
 
 class MyTies extends StatefulWidget {
   const MyTies({Key? key}) : super(key: key);
@@ -108,23 +108,16 @@ class _MyTiesState extends State<MyTies> {
             : null,
         constraints: const BoxConstraints(minWidth: 115),
         child: Row(children: [
-          DropdownButton<DropdownIcon>(
-              value: DropdownIcon(FontAwesome5.black_tie, color),
-              items: possibleTieColorStringToKey.keys
-                  .map((String colorString) => DropdownMenuItem<DropdownIcon>(
-                      value: DropdownIcon(FontAwesome5.black_tie,
-                          Color(int.parse(colorString, radix: 16))),
-                      child: DropdownIcon(FontAwesome5.black_tie,
-                              Color(int.parse(colorString, radix: 16)))
-                          .icon))
-                  .toList(),
-              onChanged: (DropdownIcon? newIcon) {
-                _onColorChanged(newIcon!.icon.color!, index, color);
-              }),
-          const SizedBox(width: 8),
-          Text(
-            colorValueToString[color.value].toString(),
-            style: dataCellTextStyle,
+          SizedBox(
+            width: 140,
+            child: TieDropdownButton(
+                selectedTieColor: color,
+                tieColors: possibleTieColorStringToKey.keys
+                    .map((String value) => Color(int.parse(value, radix: 16)))
+                    .toList(),
+                onChanged: (Color? newColor) {
+                  _onColorChanged(newColor!, index, color);
+                }),
           ),
         ])));
   }
@@ -138,6 +131,7 @@ class _MyTiesState extends State<MyTies> {
             : null,
         child: Center(
             child: DropdownButton<int>(
+          iconSize: dropdownArrowSize,
           value: _tieMeaning[index],
           items: <int>[0, 1, 2, 3, 4, 5, 6]
               .map((int value) => DropdownMenuItem<int>(

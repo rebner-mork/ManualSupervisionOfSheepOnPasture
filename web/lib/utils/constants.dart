@@ -26,6 +26,26 @@ final Map<String, String> possibleEartagColorStringToKey = {
   Colors.pink.value.toRadixString(16): 'pinkEar'
 };
 
+final Map<String, String> colorValueToStringGui = {
+  Colors.transparent.value.toRadixString(16): 'Ingen',
+  Colors.red.value.toRadixString(16): 'Rødt',
+  Colors.blue.value.toRadixString(16): 'Blått',
+  Colors.yellow.value.toRadixString(16): 'Gult',
+  Colors.green.value.toRadixString(16): 'Grønt',
+  Colors.orange.value.toRadixString(16): 'Oransje',
+  Colors.pink.value.toRadixString(16): 'Rosa'
+};
+
+final Map<String, Color> colorStringToColor = {
+  Colors.transparent.value.toRadixString(16): Colors.transparent,
+  Colors.red.value.toRadixString(16): Colors.red,
+  Colors.blue.value.toRadixString(16): Colors.blue,
+  Colors.yellow.value.toRadixString(16): Colors.yellow,
+  Colors.green.value.toRadixString(16): Colors.green,
+  Colors.orange.value.toRadixString(16): Colors.orange,
+  Colors.pink.value.toRadixString(16): Colors.pink
+};
+
 const Map<String, String> mainSheepRegistrationKeysToGui = {
   'sheep': 'Totalt',
   'lambs': 'Lam',

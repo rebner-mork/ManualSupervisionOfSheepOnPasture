@@ -135,6 +135,7 @@ class _MyEartagsState extends State<MyEartags> {
         constraints: const BoxConstraints(minWidth: 115),
         child: Row(children: [
           DropdownButton<DropdownIcon>(
+              iconSize: dropdownArrowSize,
               value: DropdownIcon(Icons.local_offer, color),
               items: possibleEartagColorStringToKey.keys
                   .map((String colorString) => DropdownMenuItem<DropdownIcon>(
