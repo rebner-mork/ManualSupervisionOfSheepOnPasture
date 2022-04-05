@@ -32,6 +32,7 @@ class DisplayPhotoWidget extends StatelessWidget {
               width: buttonWidth,
               child: const Icon(Icons.arrow_back),
               onPressed: () {
+                debugPrint(imagePath);
                 Navigator.pop(context);
               },
             )),
@@ -43,9 +44,12 @@ class DisplayPhotoWidget extends StatelessWidget {
                 width: buttonWidth,
                 child: const Icon(Icons.delete),
                 onPressed: () {
+                  debugPrint(imagePath);
+                  debugPrint('rett før onDeletePhoto');
                   if (onDeletePhoto != null) {
                     onDeletePhoto!();
                   }
+                  debugPrint('Rett før pop i display photo');
                   Navigator.pop(context);
                 })),
         Positioned(

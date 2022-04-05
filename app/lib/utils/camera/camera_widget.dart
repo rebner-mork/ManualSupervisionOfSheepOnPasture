@@ -2,6 +2,9 @@ import 'package:app/widgets/circular_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 
+import 'dart:io';
+import 'package:path/path.dart' as p;
+
 import 'package:app/utils/constants.dart' as constants;
 
 class CameraPage extends StatefulWidget {
@@ -76,7 +79,12 @@ class _CameraPageState extends State<CameraPage> {
 
             final image = await _cameraController.takePicture();
 
-            widget.onPhotoCaptured(image.path);
+            File newFile = File(image.path).renameSync(
+                constants.applicationDocumentDirectoryPath +
+                    '/cadavers/' +
+                    p.basename(image.path));
+
+            widget.onPhotoCaptured(newFile.path);
 
             Navigator.pop(context);
           } catch (e) {

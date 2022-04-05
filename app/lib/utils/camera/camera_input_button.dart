@@ -5,10 +5,13 @@ import 'dart:io';
 import 'camera_widget.dart';
 
 class CameraInputButton extends StatefulWidget {
-  const CameraInputButton({Key? key, this.size = const Size(80, 120)})
+  const CameraInputButton(
+      {Key? key, this.size = const Size(80, 120), this.onPhotoChanged})
       : super(key: key);
 
   final Size size;
+
+  final ValueChanged<String>? onPhotoChanged;
 
   @override
   State<CameraInputButton> createState() => _CameraInputButtonState();
@@ -30,6 +33,9 @@ class _CameraInputButtonState extends State<CameraInputButton> {
                             setState(() {
                               photo = photoPath;
                             });
+                            if (widget.onPhotoChanged != null) {
+                              widget.onPhotoChanged!(photo);
+                            }
                           },
                         )),
               );
@@ -46,9 +52,13 @@ class _CameraInputButtonState extends State<CameraInputButton> {
                   builder: (context) => DisplayPhotoWidget(
                         imagePath: photo,
                         onDeletePhoto: () {
+                          File(photo).deleteSync();
                           setState(() {
                             photo = "";
                           });
+                          if (widget.onPhotoChanged != null) {
+                            widget.onPhotoChanged!(photo);
+                          }
                         },
                       )));
             },

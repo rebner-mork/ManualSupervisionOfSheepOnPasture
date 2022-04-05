@@ -2,14 +2,10 @@ import 'package:app/register/widgets/eartag_input.dart';
 import 'package:app/register/widgets/note_form_field.dart';
 import 'package:app/register/widgets/registration_input_headline.dart';
 import 'package:app/register/widgets/tie_dropdown.dart';
-import 'package:app/trip/trip_data_manager.dart';
 import 'package:app/utils/camera/camera_input_button.dart';
-import 'package:app/utils/camera/camera_widget.dart';
-import 'package:app/utils/constants.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/other.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:app/register/register_page.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:app/utils/map_utils.dart' as map_utils;
@@ -50,6 +46,8 @@ class _RegisterCadaverState extends State<RegisterCadaver> with RegisterPage {
 
   late String _selectedTieColor;
   late Map<String, int?> _ties;
+
+  List<String> photoPaths = ["", "", ""];
 
   late final TextEditingController _countryCodeController;
   final TextEditingController _farmNumberController = TextEditingController();
@@ -145,13 +143,22 @@ class _RegisterCadaverState extends State<RegisterCadaver> with RegisterPage {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  CameraInputButton(),
+                                  CameraInputButton(
+                                      onPhotoChanged: (photoPath) {
+                                    photoPaths[0] = photoPath;
+                                  }),
                                   const SizedBox(width: 10),
-                                  CameraInputButton(),
+                                  CameraInputButton(
+                                    onPhotoChanged: (photoPath) =>
+                                        photoPaths[1] = photoPath,
+                                  ),
                                   const SizedBox(
                                     width: 10,
                                   ),
-                                  CameraInputButton(),
+                                  CameraInputButton(
+                                    onPhotoChanged: (photoPath) =>
+                                        photoPaths[2] = photoPath,
+                                  ),
                                   const SizedBox(width: 10),
                                 ],
                               )
@@ -172,6 +179,8 @@ class _RegisterCadaverState extends State<RegisterCadaver> with RegisterPage {
   void register() {
     _isValidationActivated = true;
     if (_formKey.currentState!.validate()) {
+      photoPaths.removeWhere((element) => element == "");
+
       Map<String, Object> data = {
         ...getMetaRegistrationData(
             type: 'cadaver',
@@ -182,7 +191,8 @@ class _RegisterCadaverState extends State<RegisterCadaver> with RegisterPage {
             _farmNumberController.text +
             '-' +
             _individualNumberController.text,
-        'note': _noteController.text
+        'note': _noteController.text,
+        'photos': photoPaths
       };
 
       if (widget.onCompletedSuccessfully != null) {

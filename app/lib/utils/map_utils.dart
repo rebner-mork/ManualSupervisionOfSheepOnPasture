@@ -46,7 +46,7 @@ Future<LatLng> getDevicePosition() async {
   return LatLng(_locationData.latitude!, _locationData.longitude!);
 }
 
-// --- MARKERS ---
+// --- MARKERS AND LINES ---
 
 Marker getDevicePositionMarker(LatLng pos) {
   const double size = 40;
@@ -107,6 +107,11 @@ Marker getSheepMarker(LatLng pos, RegistrationType type,
             width: size,
             height: size,
           ));
+}
+
+Polyline getLineOfSight(List<LatLng> points) {
+  return Polyline(
+      points: points, color: Colors.black, isDotted: true, strokeWidth: 5.0);
 }
 
 // --- INDEX CALCULATIONS ---

@@ -122,11 +122,8 @@ class _MapState extends State<MapWidget> {
                                 (data['devicePosition']!
                                     as Map<String, double>)['longitude']!);
 
-                            linesOfSight.add(Polyline(
-                                points: [devicePosition, targetPosition],
-                                color: Colors.black,
-                                isDotted: true,
-                                strokeWidth: 5.0));
+                            linesOfSight.add(map_utils.getLineOfSight(
+                                [devicePosition, targetPosition]));
                             registrationMarkers.add(map_utils.getSheepMarker(
                                 targetPosition, RegistrationType.sheep));
                           });
@@ -161,13 +158,45 @@ class _MapState extends State<MapWidget> {
                           (data['devicePosition']!
                               as Map<String, double>)['longitude']!);
 
-                      linesOfSight.add(Polyline(
-                          points: [devicePosition, targetPosition],
-                          color: Colors.black,
-                          isDotted: true,
-                          strokeWidth: 5.0));
+                      linesOfSight.add(map_utils
+                          .getLineOfSight([devicePosition, targetPosition]));
                       registrationMarkers.add(map_utils.getSheepMarker(
                           targetPosition, RegistrationType.injury));
+                    });
+                  },
+                  onWillPop: () {
+                    widget.onRegistrationCanceled();
+                    mapAlreadyTapped = false;
+                  })));
+    }
+  }
+
+  void registerCadaver(LatLng targetPosition) {
+    if (!mapAlreadyTapped) {
+      mapAlreadyTapped = true;
+
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => RegisterCadaver(
+                  ties: widget.ties,
+                  cadaverPosition: targetPosition,
+                  onCompletedSuccessfully: (Map<String, Object> data) {
+                    if (widget.onRegistrationComplete != null) {
+                      widget.onRegistrationComplete!(data);
+                    }
+
+                    setState(() {
+                      LatLng devicePosition = LatLng(
+                          (data['devicePosition']!
+                              as Map<String, double>)['latitude']!,
+                          (data['devicePosition']!
+                              as Map<String, double>)['longitude']!);
+
+                      linesOfSight.add(map_utils
+                          .getLineOfSight([devicePosition, targetPosition]));
+                      registrationMarkers.add(map_utils.getSheepMarker(
+                          targetPosition, RegistrationType.cadaver));
                     });
                   },
                   onWillPop: () {
@@ -184,6 +213,9 @@ class _MapState extends State<MapWidget> {
         break;
       case RegistrationType.injury:
         registerInjuredSheep(point);
+        break;
+      case RegistrationType.cadaver:
+        registerCadaver(point);
         break;
       default:
     }
@@ -204,7 +236,7 @@ class _MapState extends State<MapWidget> {
           onMapCreated: (c) {
             _mapController = c;
           },
-          onLongPress: (_, point) {
+          /*onLongPress: (_, point) {
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -213,8 +245,8 @@ class _MapState extends State<MapWidget> {
                           cadaverPosition: point,
                           onCompletedSuccessfully: (_) => print('ree'),
                         )));
-          },
-          //TODO keep: onLongPress: (_, point) => _startRegistration(point),
+          },*/
+          onLongPress: (_, point) => _startRegistration(point),
           zoom: OfflineZoomLevels.min,
           minZoom: OfflineZoomLevels.min,
           maxZoom: OfflineZoomLevels.max,
