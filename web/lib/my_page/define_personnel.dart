@@ -114,8 +114,10 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                     onPressed: () {
                       showDialog(
                           context: context,
-                          builder: (_) =>
-                              _deletePersonnelDialog(context, data.key));
+                          builder: (_) => Padding(
+                              padding: const EdgeInsets.only(left: 128),
+                              child:
+                                  _deletePersonnelDialog(context, data.key)));
                     },
                   ))),
             ]))

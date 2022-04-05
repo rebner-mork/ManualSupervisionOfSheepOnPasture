@@ -184,7 +184,10 @@ class _MyTiesState extends State<MyTies> {
       hoverColor: Colors.red,
       onPressed: () {
         showDialog(
-            context: context, builder: (_) => _deleteTieDialog(context, index));
+            context: context,
+            builder: (_) => Padding(
+                padding: const EdgeInsets.only(left: 128),
+                child: _deleteTieDialog(context, index)));
       },
     ));
   }

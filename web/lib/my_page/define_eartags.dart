@@ -107,7 +107,9 @@ class _MyEartagsState extends State<MyEartags> {
                 onPressed: () {
                   showDialog(
                       context: context,
-                      builder: (_) => _deleteEartagDialog(context, data.key));
+                      builder: (_) => Padding(
+                          padding: const EdgeInsets.only(left: 128),
+                          child: _deleteEartagDialog(context, data.key)));
                 },
               ))
             ]))

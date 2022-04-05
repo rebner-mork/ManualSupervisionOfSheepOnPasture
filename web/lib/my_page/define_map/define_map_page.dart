@@ -469,7 +469,9 @@ class _DefineMapPageState extends State<DefineMapPage> {
             hoverColor: Colors.red,
             onPressed: () => showDialog(
                 context: context,
-                builder: (_) => deleteMapDialog(context, index)))
+                builder: (_) => Padding(
+                    padding: const EdgeInsets.only(left: 128),
+                    child: deleteMapDialog(context, index))))
         : Row(children: [
             ElevatedButton(
               style: ButtonStyle(
