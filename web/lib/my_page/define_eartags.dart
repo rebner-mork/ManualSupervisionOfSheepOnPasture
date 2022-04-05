@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:web/my_page/define_ties/tie_or_eartag_dropdown.dart';
 import 'package:web/utils/constants.dart';
 import 'package:web/utils/custom_widgets.dart';
 import 'package:web/utils/styles.dart';
@@ -134,24 +135,17 @@ class _MyEartagsState extends State<MyEartags> {
             : null,
         constraints: const BoxConstraints(minWidth: 115),
         child: Row(children: [
-          DropdownButton<DropdownIcon>(
-              iconSize: dropdownArrowSize,
-              value: DropdownIcon(Icons.local_offer, color),
-              items: possibleEartagColorStringToKey.keys
-                  .map((String colorString) => DropdownMenuItem<DropdownIcon>(
-                      value: DropdownIcon(Icons.local_offer,
-                          Color(int.parse(colorString, radix: 16))),
-                      child: DropdownIcon(Icons.local_offer,
-                              Color(int.parse(colorString, radix: 16)))
-                          .icon))
-                  .toList(),
-              onChanged: (DropdownIcon? newIcon) {
-                _onColorChanged(newIcon!.icon.color!, index, color);
-              }),
-          const SizedBox(width: 8),
-          Text(
-            colorValueToString[color.value].toString(),
-            style: dataCellTextStyle,
+          SizedBox(
+            width: 140,
+            child: TieOrEartagDropdownButton(
+                selectedColor: color,
+                colors: possibleEartagColorStringToKey.keys
+                    .map((String value) => Color(int.parse(value, radix: 16)))
+                    .toList(),
+                onChanged: (Color? newColor) {
+                  _onColorChanged(newColor!, index, color);
+                },
+                isTie: false),
           ),
         ])));
   }

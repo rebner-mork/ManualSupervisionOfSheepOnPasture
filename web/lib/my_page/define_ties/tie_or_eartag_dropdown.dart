@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:web/my_page/define_ties/tie_dropdown_item.dart';
+import 'package:web/my_page/define_ties/tie_or_eartag_dropdown_item.dart';
 import 'package:web/utils/styles.dart';
 
-class TieDropdownButton extends StatelessWidget {
-  const TieDropdownButton(
-      {required this.selectedTieColor,
-      required this.tieColors,
+class TieOrEartagDropdownButton extends StatelessWidget {
+  const TieOrEartagDropdownButton(
+      {required this.selectedColor,
+      required this.colors,
       required this.onChanged,
+      required this.isTie,
       Key? key})
       : super(key: key);
 
-  final Color selectedTieColor;
-  final List<Color> tieColors;
+  final Color selectedColor;
+  final List<Color> colors;
   final Function(Color?) onChanged;
+  final bool isTie;
 
   @override
   Widget build(BuildContext context) {
@@ -23,15 +25,13 @@ class TieDropdownButton extends StatelessWidget {
           isExpanded: true,
           itemHeight: 60,
           iconSize: dropdownArrowSize,
-          value: selectedTieColor,
+          value: selectedColor,
           onChanged: onChanged,
-          items: tieColors
+          items: colors
               .map<DropdownMenuItem<Color>>((Color color) => DropdownMenuItem(
                     alignment: Alignment.centerRight,
                     value: color,
-                    child: TieDropDownItem(
-                      color: color,
-                    ),
+                    child: TieDropDownItem(color: color, isTie: isTie),
                   ))
               .toList(),
         ));

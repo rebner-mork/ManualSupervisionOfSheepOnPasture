@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:web/my_page/define_ties/tie_dropdown.dart';
+import 'package:web/my_page/define_ties/tie_or_eartag_dropdown.dart';
 import 'package:web/utils/constants.dart';
 import 'package:web/utils/custom_widgets.dart';
 import 'package:web/utils/styles.dart';
@@ -110,14 +110,15 @@ class _MyTiesState extends State<MyTies> {
         child: Row(children: [
           SizedBox(
             width: 140,
-            child: TieDropdownButton(
-                selectedTieColor: color,
-                tieColors: possibleTieColorStringToKey.keys
+            child: TieOrEartagDropdownButton(
+                selectedColor: color,
+                colors: possibleTieColorStringToKey.keys
                     .map((String value) => Color(int.parse(value, radix: 16)))
                     .toList(),
                 onChanged: (Color? newColor) {
                   _onColorChanged(newColor!, index, color);
-                }),
+                },
+                isTie: true),
           ),
         ])));
   }

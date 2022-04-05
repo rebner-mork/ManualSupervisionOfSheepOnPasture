@@ -4,10 +4,15 @@ import 'package:web/utils/constants.dart';
 import 'package:web/utils/styles.dart';
 
 class TieDropDownItem extends StatelessWidget {
-  TieDropDownItem({Key? key, required Color color}) : super(key: key) {
+  TieDropDownItem({Key? key, required Color color, required bool isTie})
+      : super(key: key) {
     bool isTransparent = color == Colors.transparent;
     icon = Icon(
-        isTransparent ? Icons.disabled_by_default : FontAwesome5.black_tie,
+        isTransparent
+            ? Icons.disabled_by_default
+            : isTie
+                ? FontAwesome5.black_tie
+                : Icons.local_offer,
         color: isTransparent ? Colors.grey.shade400 : color,
         size: 30);
 
