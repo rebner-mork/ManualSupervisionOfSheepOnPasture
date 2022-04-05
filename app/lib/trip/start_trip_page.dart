@@ -47,6 +47,7 @@ class _StartTripPageState extends State<StartTripPage>
   bool _isLoading = true;
   bool _downloadingMap = false;
   bool _mapDownloaded = false;
+  bool _noFarmDefined = false;
   bool _noMapsDefined = false;
   bool _noEartagsDefined = false;
   bool _noTiesDefined = false;
@@ -115,11 +116,7 @@ class _StartTripPageState extends State<StartTripPage>
                 ? const LoadingData()
                 : Column(
                     children: _farmNames.isEmpty
-                        ? [
-                            Text(
-                                'Du er ikke registrert som oppsynspersonell hos noen gård. Ta kontakt med sauebonde.',
-                                style: feedbackTextStyle)
-                          ]
+                        ? [NoFarmInfo()]
                         : [
                             appbarBodySpacer(),
                             _farmNameRow(),
@@ -459,11 +456,9 @@ class _StartTripPageState extends State<StartTripPage>
         if (i == 0) {
           _readFarmMaps(_farmIDs.first);
         }
-      } else {
-        throw Exception(
-            'Firestore: Farm with id ${farmIDs[i]} found in a Personnel-document, but does not exist in the Farms-collection.');
       }
-
+    }
+    if (_farmNames.isNotEmpty) {
       setState(() {
         _selectedFarmName = _farmNames[0];
       });
@@ -478,5 +473,47 @@ class _StartTripPageState extends State<StartTripPage>
   void dispose() {
     _animationController.dispose();
     super.dispose();
+  }
+}
+
+class NoFarmInfo extends StatelessWidget {
+  const NoFarmInfo({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      appbarBodySpacer(),
+      const Text('Kan ikke starte oppsynstur', style: TextStyle(fontSize: 26)),
+      const SizedBox(height: 40),
+      const Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+              padding: EdgeInsets.only(left: 15),
+              child: Text('Skal du gå for noen andres gård?',
+                  style: TextStyle(fontSize: 22)))),
+      const SizedBox(height: 10),
+      const Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+              padding: EdgeInsets.only(left: 25),
+              child: Text(
+                  'Du er ikke registrert som oppsynsperson,\nta kontakt med sauebonde.',
+                  style: TextStyle(fontSize: 16)))),
+      const SizedBox(height: 30),
+      const Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+              padding: EdgeInsets.only(left: 15),
+              child: Text('Skal du gå for din egen gård?',
+                  style: TextStyle(fontSize: 22)))),
+      const SizedBox(height: 10),
+      const Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+              padding: EdgeInsets.only(left: 25),
+              child: Text(
+                  '1: Logg inn på web-løsning med samme bruker.\n2: Lagre gårdsinformasjon på \'Min side\'.\n3: Logg inn i appen og start oppsynstur.',
+                  style: TextStyle(fontSize: 16)))),
+    ]);
   }
 }

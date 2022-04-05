@@ -13,7 +13,7 @@ Future<String?> createUser(
       'name': name,
       'email': email,
       'phone': phone,
-      'personnelAtFarms': null
+      'personnelAtFarms': [FirebaseAuth.instance.currentUser!.uid]
     });
   } on FirebaseAuthException catch (e) {
     switch (e.code) {
