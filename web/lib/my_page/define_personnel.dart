@@ -241,7 +241,6 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
         filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
         child: AlertDialog(
           title: Text("Slette '${_personnelEmails[index]}'?"),
-          content: const Text('Sletting kan ikke angres'),
           actions: [
             TextButton(
                 onPressed: () async {
