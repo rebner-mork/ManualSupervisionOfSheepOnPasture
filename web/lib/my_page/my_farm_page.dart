@@ -175,7 +175,7 @@ class _MyFarmState extends State<MyFarm> {
             'maps': null,
             'ties': null,
             'eartags': null,
-            'personnel': null,
+            'personnel': [FirebaseAuth.instance.currentUser!.email],
             'name': farmNameController.text,
             'address': farmAddressController.text
           });

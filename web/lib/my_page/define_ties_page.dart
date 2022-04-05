@@ -402,7 +402,7 @@ class _MyTiesState extends State<MyTies> {
         'address': null,
         'maps': null,
         'eartags': null,
-        'personnel': null,
+        'personnel': [FirebaseAuth.instance.currentUser!.email],
         'ties': dataMap
       });
     }

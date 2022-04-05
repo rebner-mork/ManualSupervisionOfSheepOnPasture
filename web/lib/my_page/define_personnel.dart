@@ -280,11 +280,15 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
             .where('email', whereIn: emails)
             .get();
         for (QueryDocumentSnapshot personnelDoc in personnelSnapshot.docs) {
-          _personnelNames.add(personnelDoc['name']);
-          _personnelPhones.add(personnelDoc['phone']);
-          _personnelEmails.add(personnelDoc['email']);
+          if (personnelDoc['email'] !=
+              FirebaseAuth.instance.currentUser!.email) {
+            _personnelNames.add(personnelDoc['name']);
+            _personnelPhones.add(personnelDoc['phone']);
+            _personnelEmails.add(personnelDoc['email']);
+          }
         }
-        _oldEmails = List.from(emails);
+
+        _oldEmails = List.from(_personnelEmails);
       }
     }
     setState(() {
@@ -302,7 +306,12 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
 
     DocumentSnapshot<Object?> doc = await farmDoc.get();
     if (doc.exists) {
-      farmDoc.update({'personnel': _personnelEmails});
+      farmDoc.update({
+        'personnel': [
+          ..._personnelEmails,
+          FirebaseAuth.instance.currentUser!.email
+        ]
+      });
     } else {
       farmDoc.set({
         'maps': null,
@@ -310,7 +319,10 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
         'address': null,
         'ties': null,
         'eartags': null,
-        'personnel': _personnelEmails
+        'personnel': [
+          ..._personnelEmails,
+          FirebaseAuth.instance.currentUser!.email
+        ]
       });
     }
 
