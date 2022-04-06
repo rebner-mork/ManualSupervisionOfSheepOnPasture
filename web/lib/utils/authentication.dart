@@ -34,7 +34,7 @@ Future<String> signIn(String email, String password) async {
         .signInWithEmailAndPassword(email: email, password: password);
     return '';
   } on FirebaseAuthException {
-    return "Passord og/eller e-post er ugyldig";
+    return "E-post og/eller passord er ugyldig";
   } catch (e) {
     return "Noe gikk galt";
   }
