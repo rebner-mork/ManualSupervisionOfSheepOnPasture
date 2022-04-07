@@ -79,6 +79,8 @@ class _CameraPageState extends State<CameraPage> {
 
             final image = await _cameraController.takePicture();
 
+            Directory(constants.applicationDocumentDirectoryPath + '/cadavers/')
+                .createSync(recursive: true);
             File newFile = File(image.path).renameSync(
                 constants.applicationDocumentDirectoryPath +
                     '/cadavers/' +

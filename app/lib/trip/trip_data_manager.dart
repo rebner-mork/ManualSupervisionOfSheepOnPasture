@@ -1,5 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:latlong2/latlong.dart';
+import 'dart:io';
+import 'dart:developer' as developer;
+import 'package:path/path.dart' as path;
 
 class TripDataManager {
   TripDataManager.start(
@@ -14,11 +19,39 @@ class TripDataManager {
   final String mapName;
   late final DateTime _startTime;
   DateTime? _stopTime;
-  List<Map<String, Object>> registrations = [];
+  List<Map<String, dynamic>> registrations = [];
   List<LatLng> track = [];
+
+  void _storePhotos() {
+    FirebaseStorage photoStorage = FirebaseStorage.instance;
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    for (int i = 0; i < registrations.length; i++) {
+      if (registrations[i].containsValue('cadaver') &&
+          !registrations[i]['photos'].isEmpty) {
+        for (int j = 0; j < registrations[i]['photos'].length; j++) {
+          try {
+            String basename = path.basename(registrations[i]['photos'][j]);
+            //TODO mappe for hver tur
+            Reference fileReference =
+                photoStorage.ref('users/$uid/cadavers/$basename');
+            fileReference.putFile(File(registrations[i]['photos'][j]));
+            File(registrations[i]['photos'][j]).deleteSync();
+            //TODO skifte fra string til fullpath
+            registrations[i]['photos'][j] = fileReference.toString();
+          } on FirebaseException catch (e) {
+            developer.log(e.toString());
+          }
+        }
+      }
+    }
+  }
 
   void post() {
     _stopTime ??= DateTime.now();
+
+    // --- PHOTOS ---
+
+    _storePhotos();
 
     // --- TRIPS ---
 
@@ -63,7 +96,7 @@ class TripDataManager {
     };
 
     List<String> stringRegistrations = [];
-    for (Map<String, Object> registration in registrations) {
+    for (Map<String, dynamic> registration in registrations) {
       stringRegistrations.add(registration.toString());
     }
     data['registrations'] = stringRegistrations.toString();
