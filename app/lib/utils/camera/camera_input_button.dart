@@ -50,7 +50,7 @@ class _CameraInputButtonState extends State<CameraInputButton> {
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => DisplayPhotoWidget(
-                        imagePath: photo,
+                        photoPath: photo,
                         onDeletePhoto: () {
                           File(photo).deleteSync();
                           setState(() {
