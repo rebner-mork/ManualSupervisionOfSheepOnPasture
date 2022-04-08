@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:app/map/map_widget.dart';
+import 'package:app/registration_options.dart';
 import 'package:app/trip/end_trip_dialog.dart';
 import 'package:app/trip/start_trip_page.dart';
 import 'package:app/trip/trip_data_manager.dart';
@@ -89,67 +90,105 @@ class _MainPageState extends State<MainPage> {
                 onWillPop: () async {
                   return _endTripButtonPressed(context, _tripData);
                 },
-                child: Stack(children: [
-                  ValueListenableBuilder<bool>(
-                      valueListenable: widget.ongoingDialog,
-                      builder: (context, value, child) => MapWidget(
-                            northWest: widget.northWest,
-                            southEast: widget.southEast,
-                            stt: widget.speechToText,
-                            ongoingDialog: widget.ongoingDialog,
-                            eartags: widget.eartags,
-                            ties: widget.ties,
-                            deviceStartPosition: _deviceStartPosition,
-                            onSheepRegistered: (Map<String, Object> data) {
-                              int sheepAmountRegistered = data['sheep']! as int;
-                              if (sheepAmountRegistered > 0) {
-                                _tripData.registrations.add(data);
-                                setState(() {
-                                  _sheepAmount += sheepAmountRegistered;
-                                });
-                              }
+                child: Scaffold(
+                    endDrawer: Align(
+                        alignment: Alignment.bottomRight,
+                        child: Padding(
+                            padding: EdgeInsets.only(
+                                bottom:
+                                    MediaQuery.of(context).viewPadding.bottom +
+                                        50 + // height of CircularButton
+                                        2 * buttonInset),
+                            child: const ClipRRect(
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(30),
+                                    bottomLeft: Radius.circular(30)),
+                                child: SizedBox(
+                                    width: 280,
+                                    height: 520,
+                                    child: Drawer(
+                                      child: RegistrationOptions(),
+                                    ))))),
+                    body: Stack(children: [
+                      ValueListenableBuilder<bool>(
+                          valueListenable: widget.ongoingDialog,
+                          builder: (context, value, child) => MapWidget(
+                                northWest: widget.northWest,
+                                southEast: widget.southEast,
+                                stt: widget.speechToText,
+                                ongoingDialog: widget.ongoingDialog,
+                                eartags: widget.eartags,
+                                ties: widget.ties,
+                                deviceStartPosition: _deviceStartPosition,
+                                onSheepRegistered: (Map<String, Object> data) {
+                                  int sheepAmountRegistered =
+                                      data['sheep']! as int;
+                                  if (sheepAmountRegistered > 0) {
+                                    _tripData.registrations.add(data);
+                                    setState(() {
+                                      _sheepAmount += sheepAmountRegistered;
+                                    });
+                                  }
+                                },
+                                onNewPosition: (position) =>
+                                    _tripData.track.add(position),
+                              )),
+                      Positioned(
+                        top: buttonInset +
+                            MediaQuery.of(context).viewPadding.top,
+                        left: buttonInset,
+                        child: CircularButton(
+                            child: Icon(
+                              Icons.cloud_upload,
+                              size: iconSize,
+                            ),
+                            onPressed: () {
+                              _endTripButtonPressed(context, _tripData);
+                            }),
+                      ),
+                      Positioned(
+                          top: buttonInset +
+                              MediaQuery.of(context).viewPadding.top,
+                          right: buttonInset,
+                          child: CircularButton(
+                            child: SettingsIcon(iconSize: iconSize),
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (_) => const SettingsDialog());
                             },
-                            onNewPosition: (position) =>
-                                _tripData.track.add(position),
                           )),
-                  Positioned(
-                    top: buttonInset + MediaQuery.of(context).viewPadding.top,
-                    left: buttonInset,
-                    child: CircularButton(
-                        child: Icon(
-                          Icons.cloud_upload,
-                          size: iconSize,
+                      Positioned(
+                        bottom: buttonInset +
+                            MediaQuery.of(context).viewPadding.bottom,
+                        left: buttonInset,
+                        child: CircularButton(
+                          child: Sheepometer(
+                              sheepAmount: _sheepAmount, iconSize: iconSize),
+                          onPressed: () {},
+                          width: 62 +
+                              textSize(_sheepAmount.toString(),
+                                      circularButtonTextStyle)
+                                  .width,
                         ),
-                        onPressed: () {
-                          _endTripButtonPressed(context, _tripData);
-                        }),
-                  ),
-                  Positioned(
-                      top: buttonInset + MediaQuery.of(context).viewPadding.top,
-                      right: buttonInset,
-                      child: CircularButton(
-                        child: SettingsIcon(iconSize: iconSize),
-                        onPressed: () {
-                          showDialog(
-                              context: context,
-                              builder: (_) => const SettingsDialog());
-                        },
-                      )),
-                  Positioned(
-                    bottom:
-                        buttonInset + MediaQuery.of(context).viewPadding.bottom,
-                    left: buttonInset,
-                    child: CircularButton(
-                      child: Sheepometer(
-                          sheepAmount: _sheepAmount, iconSize: iconSize),
-                      onPressed: () {},
-                      width: 62 +
-                          textSize(_sheepAmount.toString(),
-                                  circularButtonTextStyle)
-                              .width,
-                    ),
-                  ),
-                ])));
+                      ),
+                      Builder(
+                          builder: (context) => Positioned(
+                              bottom: buttonInset +
+                                  MediaQuery.of(context).viewPadding.bottom,
+                              right: buttonInset,
+                              child: CircularButton(
+                                child: const Text(
+                                  '+?',
+                                  style: TextStyle(
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                onPressed: () {
+                                  Scaffold.of(context).openEndDrawer();
+                                },
+                              )))
+                    ]))));
   }
 
   Future<bool> _endTripButtonPressed(

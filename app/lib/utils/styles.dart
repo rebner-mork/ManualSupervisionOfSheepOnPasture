@@ -29,3 +29,6 @@ TextStyle cancelDialogButtonTextStyle = const TextStyle(
   fontWeight: FontWeight.w600,
   fontSize: 18,
 );
+
+TextStyle drawerHeadlineTextStyle =
+    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
