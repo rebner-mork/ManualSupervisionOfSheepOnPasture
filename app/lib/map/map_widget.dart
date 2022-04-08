@@ -258,7 +258,6 @@ class _MapState extends State<MapWidget> {
           TileLayerOptions(
             tileProvider: const FileTileProvider(),
             urlTemplate: urlTemplate,
-            errorImage: const AssetImage("images/stripes.png"),
             attributionBuilder: (_) {
               return const Text(
                 "Kartverket",

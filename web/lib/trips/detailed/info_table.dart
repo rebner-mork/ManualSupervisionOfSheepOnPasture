@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:web/utils/constants.dart';
 import 'package:web/utils/styles.dart';
 
-const double infoTableWidth = 180 + 38;
+const double infoTableWidth = 180;
 
 class InfoTable extends StatelessWidget {
   const InfoTable(
@@ -50,9 +50,7 @@ class InfoTable extends StatelessWidget {
                               iconData,
                               color: Color(int.parse(mapEntry.key, radix: 16)),
                             )),
-                        Text(
-                            colorValueToString[
-                                int.parse(mapEntry.key, radix: 16)]!,
+                        Text(colorValueToStringGui[mapEntry.key]!,
                             style: tableRowTextStyle,
                             textAlign: TextAlign.center)
                       ]),

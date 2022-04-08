@@ -22,3 +22,6 @@ const TextStyle tableRowDescriptionTextStyle =
 const TextStyle tableRowTextStyle = TextStyle(fontSize: 17);
 
 const EdgeInsets tableCellPadding = EdgeInsets.all(8);
+
+TextStyle dropDownTextStyle = const TextStyle(fontSize: 16);
+const double dropdownArrowSize = 28;

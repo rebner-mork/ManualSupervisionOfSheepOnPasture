@@ -3,6 +3,8 @@ import 'package:web/my_page/my_page.dart';
 import 'package:web/trips/trips_page.dart';
 import 'package:web/reports_page.dart';
 
+const double mainTabsHeight = 50;
+
 class MainTabs extends StatefulWidget {
   const MainTabs({Key? key}) : super(key: key);
 
@@ -23,7 +25,7 @@ class _MainState extends State<MainTabs> {
           initialIndex: 2,
           child: Scaffold(
             appBar: PreferredSize(
-              preferredSize: const Size.fromHeight(50),
+              preferredSize: const Size.fromHeight(mainTabsHeight),
               child: Container(
                   color: Colors.grey.shade800,
                   child: Padding(

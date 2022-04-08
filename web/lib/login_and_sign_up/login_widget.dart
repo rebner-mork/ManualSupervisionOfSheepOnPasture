@@ -77,7 +77,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                 },
                 decoration: const InputDecoration(
                     prefixIcon: Icon(Icons.mail),
-                    hintText: "E-post",
+                    labelText: "E-post",
                     border: OutlineInputBorder()),
               )),
           inputFieldSpacer(),

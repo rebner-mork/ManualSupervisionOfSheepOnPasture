@@ -209,7 +209,7 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep>
             _individualNumberController.text,
         'tieColor': _selectedTieColor,
         'injuryType': _selectedInjuryType,
-        'severity': _isModerate ? 'moderat' : 'alvorlig',
+        'severity': _isModerate ? 'Moderat' : 'Alvorlig',
         'note': _noteController.text
       };
 
