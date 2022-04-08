@@ -147,12 +147,18 @@ class _ReportsPageState extends State<ReportsPage> {
         int totalSheepAmount = 0;
         int totalLambAmount = 0;
         int totalInjuredSheepAmount = 0;
+        int totalCadaverAmount = 0;
 
         for (DocumentSnapshot<Object?> registrationDoc
             in registrationsQuerySnapshot.docs) {
           switch (registrationDoc['type']) {
             case 'injuredSheep':
               totalInjuredSheepAmount++;
+              totalSheepAmount++;
+              break;
+            case 'cadaver':
+              totalCadaverAmount++;
+              //TODO check if cadavers are supposed to count as sheep.
               totalSheepAmount++;
               break;
             default:
@@ -167,7 +173,8 @@ class _ReportsPageState extends State<ReportsPage> {
           'sheep': totalSheepAmount,
           'adults': totalSheepAmount - totalLambAmount,
           'lambs': totalLambAmount,
-          'injuredSheep': totalInjuredSheepAmount
+          'injuredSheep': totalInjuredSheepAmount,
+          'cadaver': totalCadaverAmount,
         });
       }
     }
@@ -306,8 +313,8 @@ class _ReportsPageState extends State<ReportsPage> {
                                 textAlign: pw.TextAlign.center)),
                         pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
-                            child:
-                                pw.Text('x', textAlign: pw.TextAlign.center)),
+                            child: pw.Text('${tripMap['cadaver']}',
+                                textAlign: pw.TextAlign.center)),
                         pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
                             child:
