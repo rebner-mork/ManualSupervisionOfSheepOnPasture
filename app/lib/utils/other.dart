@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 
@@ -36,4 +37,13 @@ Size textSize(String text, TextStyle style) {
       textDirection: TextDirection.ltr)
     ..layout(minWidth: 0, maxWidth: double.infinity);
   return textPainter.size;
+}
+
+Future<bool> isConnectedToInternet() async {
+  try {
+    await http.get(Uri.parse("https://www.google.com"));
+    return true;
+  } catch (_) {
+    return false;
+  }
 }

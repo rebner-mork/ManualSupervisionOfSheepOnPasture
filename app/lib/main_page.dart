@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:app/map/map_widget.dart';
 import 'package:app/trip/end_trip_dialog.dart';
 import 'package:app/trip/start_trip_page.dart';
@@ -24,11 +23,14 @@ class MainPage extends StatefulWidget {
       required this.personnelEmail,
       required this.eartags,
       required this.ties,
+      this.onCompleted,
       Key? key})
       : super(key: key);
 
   final SpeechToText speechToText;
   final ValueNotifier<bool> ongoingDialog;
+
+  final VoidCallback? onCompleted;
 
   final LatLng northWest;
   final LatLng southEast;
@@ -78,17 +80,6 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
-  Future<bool> _endTripButtonPressed(BuildContext context) async {
-    await showEndTripDialog(context).then((isFinished) {
-      if (isFinished) {
-        _tripData.post();
-        Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
-      }
-      return isFinished;
-    });
-    return false;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -96,7 +87,7 @@ class _MainPageState extends State<MainPage> {
             ? const LoadingData()
             : WillPopScope(
                 onWillPop: () async {
-                  return _endTripButtonPressed(context);
+                  return _endTripButtonPressed(context, _tripData);
                 },
                 child: Stack(children: [
                   ValueListenableBuilder<bool>(
@@ -118,6 +109,8 @@ class _MainPageState extends State<MainPage> {
                                 });
                               }
                             },
+                            onNewPosition: (position) =>
+                                _tripData.track.add(position),
                           )),
                   Positioned(
                     top: buttonInset + MediaQuery.of(context).viewPadding.top,
@@ -128,7 +121,7 @@ class _MainPageState extends State<MainPage> {
                           size: iconSize,
                         ),
                         onPressed: () {
-                          _endTripButtonPressed(context);
+                          _endTripButtonPressed(context, _tripData);
                         }),
                   ),
                   Positioned(
@@ -157,5 +150,25 @@ class _MainPageState extends State<MainPage> {
                     ),
                   ),
                 ])));
+  }
+
+  Future<bool> _endTripButtonPressed(
+      BuildContext context, TripDataManager _trip) async {
+    bool isConnected = await isConnectedToInternet();
+    await showEndTripDialog(context, isConnected).then((isFinished) {
+      if (isFinished) {
+        if (isConnected) {
+          _trip.post();
+        } else {
+          _trip.archive();
+        }
+        if (widget.onCompleted != null) {
+          widget.onCompleted!();
+        }
+        Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
+      }
+      return isFinished;
+    });
+    return false;
   }
 }
