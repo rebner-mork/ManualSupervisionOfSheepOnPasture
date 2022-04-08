@@ -303,8 +303,8 @@ class _StartTripPageState extends State<StartTripPage>
       style: ButtonStyle(
           fixedSize:
               MaterialStateProperty.all(Size.fromHeight(mainButtonHeight)),
-          backgroundColor:
-              MaterialStateProperty.all(_noMapsDefined ? Colors.grey : null)),
+          backgroundColor: MaterialStateProperty.all(
+              (_noMapsDefined || _downloadingMap) ? Colors.grey : null)),
       onPressed: () async {
         if (!_noMapsDefined) {
           _startTrip();
