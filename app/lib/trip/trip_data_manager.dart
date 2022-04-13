@@ -53,14 +53,15 @@ class TripDataManager {
 
     // --- TRIPS ---
 
-    CollectionReference tripCollection =
-        FirebaseFirestore.instance.collection('trips');
+    CollectionReference tripCollection = FirebaseFirestore.instance
+        .collection('farms')
+        .doc(farmId)
+        .collection('trips');
     DocumentReference tripDocument = tripCollection.doc();
 
     List<Map<String, double>> preparedTrack = _getPreparedTrack();
 
     tripDocument.set({
-      'farmId': farmId,
       'personnelEmail': personnelEmail,
       'startTime': _startTime,
       'stopTime': _stopTime,
@@ -128,7 +129,6 @@ class TripDataManager {
   @override
   String toString() {
     Map<String, Object> data = {
-      'farmId': farmId,
       'personnelEmail': personnelEmail,
       'startTime': _startTime.toString(),
       'stopTime': _stopTime.toString(),

@@ -364,7 +364,7 @@ class _MyEartagsState extends State<MyEartags> {
         'address': null,
         'maps': null,
         'ties': null,
-        'personnel': null,
+        'personnel': [FirebaseAuth.instance.currentUser!.email],
         'eartags': dataMap
       });
     }

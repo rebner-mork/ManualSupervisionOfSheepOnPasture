@@ -44,14 +44,14 @@ class _ReportsPageState extends State<ReportsPage> {
   void _readAllTrips() async {
     String uid = FirebaseAuth.instance.currentUser!.uid;
 
-    CollectionReference tripsCollection =
-        FirebaseFirestore.instance.collection('trips');
-
-    QuerySnapshot<Object?> tripsSnapshot = await tripsCollection
-        .where('farmId', isEqualTo: uid)
+    QuerySnapshot tripsQuerySnapshot = await FirebaseFirestore.instance
+        .collection('farms')
+        .doc(uid)
+        .collection('trips')
         .orderBy('startTime')
         .get();
-    _allTripDocuments = tripsSnapshot.docs;
+
+    _allTripDocuments = tripsQuerySnapshot.docs;
 
     if (_allTripDocuments.isNotEmpty) {
       for (QueryDocumentSnapshot tripDoc in _allTripDocuments) {
@@ -136,30 +136,28 @@ class _ReportsPageState extends State<ReportsPage> {
       // If this trip will cause a page-wrap, add null to make pdfTripsTablePages-function add columnHeaderRow
       if (i != 0 && i % 25 == 0) {
         tripSummaries.add(null);
-      } else {
-        CollectionReference registrationsCollection = FirebaseFirestore.instance
-            .collection('trips')
-            .doc(tripDocuments.elementAt(i)!.id)
-            .collection('registrations');
-        QuerySnapshot registrationsQuerySnapshot =
-            await registrationsCollection.get();
-
-        int totalSheepAmount = 0;
-        int totalLambAmount = 0;
-
-        for (DocumentSnapshot<Object?>? registrationDoc
-            in registrationsQuerySnapshot.docs) {
-          totalSheepAmount += registrationDoc!['sheep'] as int;
-          totalLambAmount += registrationDoc['lambs'] as int;
-        }
-        tripSummaries.add({
-          'startTime': tripDocuments.elementAt(i)!['startTime'],
-          'stopTime': tripDocuments.elementAt(i)!['stopTime'],
-          'sheep': totalSheepAmount,
-          'adults': totalSheepAmount - totalLambAmount,
-          'lambs': totalLambAmount
-        });
       }
+      QuerySnapshot registrationsQuerySnapshot = await tripDocuments
+          .elementAt(i)!
+          .reference
+          .collection('registrations')
+          .get();
+
+      int totalSheepAmount = 0;
+      int totalLambAmount = 0;
+
+      for (DocumentSnapshot<Object?>? registrationDoc
+          in registrationsQuerySnapshot.docs) {
+        totalSheepAmount += registrationDoc!['sheep'] as int;
+        totalLambAmount += registrationDoc['lambs'] as int;
+      }
+      tripSummaries.add({
+        'startTime': tripDocuments.elementAt(i)!['startTime'],
+        'stopTime': tripDocuments.elementAt(i)!['stopTime'],
+        'sheep': totalSheepAmount,
+        'adults': totalSheepAmount - totalLambAmount,
+        'lambs': totalLambAmount
+      });
     }
 
     return tripSummaries;

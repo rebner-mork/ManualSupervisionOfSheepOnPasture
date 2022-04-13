@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:web/trips/detailed/detailed_trip.dart';
@@ -46,12 +47,11 @@ class _TripsPageState extends State<TripsPage> {
         .collection('users')
         .where('email', isEqualTo: tripDoc['personnelEmail'])
         .get();
-    QueryDocumentSnapshot userDoc = userDocsSnapshot.docs.first;
 
     // Get map center coordinates
     DocumentSnapshot farmDoc = await FirebaseFirestore.instance
         .collection('farms')
-        .doc(tripDoc['farmId'])
+        .doc(FirebaseAuth.instance.currentUser!.uid)
         .get();
 
     LatLng northWest = LatLng(
@@ -75,7 +75,9 @@ class _TripsPageState extends State<TripsPage> {
 
     _selectedTripData = {
       'mapName': tripDoc['mapName'],
-      'personnelName': userDoc['name'],
+      'personnelName': userDocsSnapshot.docs.first['name'],
+      'personnelPhone': userDocsSnapshot.docs.first['phone'],
+      'personnelEmail': tripDoc['personnelEmail'],
       'startTime': tripDoc['startTime'],
       'stopTime': tripDoc['stopTime'],
       'mapCenter': mapCenter,
