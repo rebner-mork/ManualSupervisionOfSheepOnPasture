@@ -212,7 +212,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
         'address': null,
         'ties': null,
         'eartags': null,
-        'personnel': null
+        'personnel': [FirebaseAuth.instance.currentUser!.email]
       });
     }
   }

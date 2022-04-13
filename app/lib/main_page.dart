@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:app/map/map_widget.dart';
 import 'package:app/registration_options.dart';
 import 'package:app/trip/end_trip_dialog.dart';
@@ -26,11 +25,14 @@ class MainPage extends StatefulWidget {
       required this.personnelEmail,
       required this.eartags,
       required this.ties,
+      this.onCompleted,
       Key? key})
       : super(key: key);
 
   final SpeechToText speechToText;
   final ValueNotifier<bool> ongoingDialog;
+
+  final VoidCallback? onCompleted;
 
   final LatLng northWest;
   final LatLng southEast;
@@ -101,7 +103,8 @@ class _MainPageState extends State<MainPage> {
       _cancelSelectPositionMode();
       return false;
     } else {
-      await showEndTripDialog(context).then((isFinished) {
+      bool isConnected = await isConnectedToInternet();
+      await showEndTripDialog(context, isConnected).then((isFinished) {
         if (isFinished) {
           _tripData.post();
           Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
@@ -137,7 +140,7 @@ class _MainPageState extends State<MainPage> {
             ? const LoadingData()
             : WillPopScope(
                 onWillPop: () async {
-                  return _backButtonPressed(context);
+                  return _endTripButtonPressed(context, _tripData);
                 },
                 child: Scaffold(
                     endDrawer: Align(
@@ -206,6 +209,8 @@ class _MainPageState extends State<MainPage> {
 
                                   _cancelSelectPositionMode();
                                 },
+                                onNewPosition: (position) =>
+                                    _tripData.track.add(position),
                               )),
                       if (_inSelectPositionMode)
                         Padding(
@@ -249,9 +254,22 @@ class _MainPageState extends State<MainPage> {
                                 size: iconSize,
                               ),
                               onPressed: () {
-                                _backButtonPressed(context);
+                                _endTripButtonPressed(context, _tripData);
                               }),
                         ),
+                      Positioned(
+                        top: buttonInset +
+                            MediaQuery.of(context).viewPadding.top,
+                        left: buttonInset,
+                        child: CircularButton(
+                            child: Icon(
+                              Icons.cloud_upload,
+                              size: iconSize,
+                            ),
+                            onPressed: () {
+                              _backButtonPressed(context);
+                            }),
+                      ),
                       if (!_inSelectPositionMode)
                         Positioned(
                             top: buttonInset +
@@ -298,5 +316,25 @@ class _MainPageState extends State<MainPage> {
                                   },
                                 )))
                     ]))));
+  }
+
+  Future<bool> _endTripButtonPressed(
+      BuildContext context, TripDataManager _trip) async {
+    bool isConnected = await isConnectedToInternet();
+    await showEndTripDialog(context, isConnected).then((isFinished) {
+      if (isFinished) {
+        if (isConnected) {
+          _trip.post();
+        } else {
+          _trip.archive();
+        }
+        if (widget.onCompleted != null) {
+          widget.onCompleted!();
+        }
+        Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
+      }
+      return isFinished;
+    });
+    return false;
   }
 }

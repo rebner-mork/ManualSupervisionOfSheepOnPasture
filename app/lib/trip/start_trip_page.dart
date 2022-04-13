@@ -1,4 +1,6 @@
 import 'dart:collection';
+import 'dart:io';
+import 'dart:async';
 
 import 'package:app/main_page.dart';
 import 'package:app/providers/settings_provider.dart';
@@ -14,6 +16,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+import 'trip_data_manager.dart';
+import '../utils/other.dart';
 
 class StartTripPage extends StatefulWidget {
   const StartTripPage({Key? key}) : super(key: key);
@@ -30,10 +34,15 @@ class _StartTripPageState extends State<StartTripPage>
     with TickerProviderStateMixin {
   _StartTripPageState();
 
+  final Map<String, dynamic> _syncStatus = {
+    'text': "Laster...",
+    'color': Colors.grey
+  };
+
   late SpeechToText _speechToText;
   final ValueNotifier<bool> _ongoingDialog = ValueNotifier<bool>(false);
 
-  late List<String> _farmIDs;
+  late List<QueryDocumentSnapshot> _farmDocs;
 
   final List<String> _farmNames = [];
   late String _selectedFarmName;
@@ -64,11 +73,19 @@ class _StartTripPageState extends State<StartTripPage>
   static const double fieldNameWidth = 60;
   static const double dropdownWidth = 190;
 
+  late Timer synchronizeTimer;
+
   @override
   void initState() {
     super.initState();
 
     _animationSetup();
+
+    synchronizeTimer =
+        Timer.periodic(const Duration(seconds: 15), (_) => trySynchronize());
+
+    Directory(applicationDocumentDirectoryPath + "/trips").createSync();
+    trySynchronize();
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _initSpeechToText();
@@ -111,43 +128,52 @@ class _StartTripPageState extends State<StartTripPage>
               centerTitle: true,
               actions: const [SettingsIconButton()],
             ),
-            body: _isLoading
-                ? const LoadingData()
-                : Column(
-                    children: _farmNames.isEmpty
-                        ? [
-                            Text(
-                                'Du er ikke registrert som oppsynspersonell hos noen gård. Ta kontakt med sauebonde.',
-                                style: feedbackTextStyle)
-                          ]
-                        : [
-                            appbarBodySpacer(),
-                            _farmNameRow(),
-                            inputFieldSpacer(),
-                            if (!_noMapsDefined) _farmMapRow(),
-                            if (!_noMapsDefined) inputFieldSpacer(),
-                            Text(
-                              _feedbackText,
-                              style: _noMapsDefined
-                                  ? feedbackErrorTextStyle
-                                  : feedbackTextStyle,
-                            ),
-                            inputFieldSpacer(),
-                            Visibility(
-                                visible: _downloadingMap,
-                                child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 40),
-                                    child: LinearProgressIndicator(
-                                      value: _downloadProgress,
-                                      minHeight: 10,
-                                    ))),
-                            inputFieldSpacer(),
-                            startTripButton(),
-                            inputFieldSpacer(),
-                            Text(_eartagAndTieText, style: feedbackTextStyle),
-                          ],
-                  )));
+            body: Stack(children: [
+              _isLoading
+                  ? const LoadingData()
+                  : Column(
+                      children: _farmNames.isEmpty
+                          ? [const NoFarmInfo()]
+                          : [
+                              appbarBodySpacer(),
+                              _farmNameRow(),
+                              inputFieldSpacer(),
+                              if (!_noMapsDefined) _farmMapRow(),
+                              if (!_noMapsDefined) inputFieldSpacer(),
+                              Text(
+                                _feedbackText,
+                                style: _noMapsDefined
+                                    ? feedbackErrorTextStyle
+                                    : feedbackTextStyle,
+                              ),
+                              inputFieldSpacer(),
+                              Visibility(
+                                  visible: _downloadingMap,
+                                  child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 40),
+                                      child: LinearProgressIndicator(
+                                        value: _downloadProgress,
+                                        minHeight: 10,
+                                      ))),
+                              inputFieldSpacer(),
+                              startTripButton(),
+                              inputFieldSpacer(),
+                              Text(_eartagAndTieText, style: feedbackTextStyle),
+                            ],
+                    ),
+              Positioned(
+                  bottom: MediaQuery.of(context).viewPadding.bottom,
+                  child: Container(
+                      color: _syncStatus['color'],
+                      height: 20,
+                      width: MediaQuery.of(context).size.width,
+                      child: Center(
+                          child: Text(
+                        _syncStatus['text'],
+                        style: const TextStyle(color: Colors.white),
+                      ))))
+            ])));
   }
 
   Row _farmNameRow() {
@@ -179,7 +205,7 @@ class _StartTripPageState extends State<StartTripPage>
                     _noMapsDefined = false;
                     _noEartagsDefined = false;
                     _noTiesDefined = false;
-                    _readFarmMaps(_farmIDs[_farmNames.indexOf(newFarmName!)]);
+                    _readFarmMaps(_farmDocs[_farmNames.indexOf(newFarmName!)]);
                     setState(() {
                       _selectedFarmName = newFarmName;
                       _feedbackText = '';
@@ -308,8 +334,8 @@ class _StartTripPageState extends State<StartTripPage>
       style: ButtonStyle(
           fixedSize:
               MaterialStateProperty.all(Size.fromHeight(mainButtonHeight)),
-          backgroundColor:
-              MaterialStateProperty.all(_noMapsDefined ? Colors.grey : null)),
+          backgroundColor: MaterialStateProperty.all(
+              (_noMapsDefined || _downloadingMap) ? Colors.grey : null)),
       onPressed: () async {
         if (!_noMapsDefined) {
           _startTrip();
@@ -342,7 +368,7 @@ class _StartTripPageState extends State<StartTripPage>
       _downloadingMap = false;
       _downloadProgress = 0;
     });
-
+    synchronizeTimer.cancel();
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -351,12 +377,18 @@ class _StartTripPageState extends State<StartTripPage>
                 builder: (context, value, child) => MainPage(
                       speechToText: _speechToText,
                       ongoingDialog: _ongoingDialog,
+                      onCompleted: () {
+                        trySynchronize();
+                        synchronizeTimer = Timer.periodic(
+                            const Duration(seconds: 15),
+                            (_) => trySynchronize());
+                      },
                       northWest: mapBounds['northWest']!,
                       southEast: mapBounds['southEast']!,
-                      farmId: _farmIDs[_farmNames.indexOf(_selectedFarmName)],
+                      farmId:
+                          _farmDocs[_farmNames.indexOf(_selectedFarmName)].id,
                       personnelEmail: FirebaseAuth.instance.currentUser!.email!,
-                      mapName:
-                          _selectedFarmMap, //TODO change to mapId when maps are their own documents
+                      mapName: _selectedFarmMap,
                       eartags: _noEartagsDefined
                           ? possibleEartagsWithoutDefinition
                           : _eartags!,
@@ -381,15 +413,10 @@ class _StartTripPageState extends State<StartTripPage>
                         (key, value) => MapEntry(key, value as double))))));
   }
 
-  Future<void> _readFarmMaps(String farmId) async {
-    CollectionReference farmCollection =
-        FirebaseFirestore.instance.collection('farms');
-    DocumentReference farmDoc = farmCollection.doc(farmId);
-
-    DocumentSnapshot<Object?> doc = await farmDoc.get();
-    LinkedHashMap<String, dynamic>? dbMaps = await doc.get('maps');
-    LinkedHashMap<String, dynamic>? dbEartags = await doc.get('eartags');
-    LinkedHashMap<String, dynamic>? dbTies = await doc.get('ties');
+  Future<void> _readFarmMaps(QueryDocumentSnapshot farmDoc) async {
+    LinkedHashMap<String, dynamic>? dbMaps = farmDoc['maps'];
+    LinkedHashMap<String, dynamic>? dbEartags = farmDoc['eartags'];
+    LinkedHashMap<String, dynamic>? dbTies = farmDoc['ties'];
 
     if (dbMaps != null && dbMaps.isNotEmpty) {
       _selectedFarmMaps = _castMapsFromDynamic(dbMaps);
@@ -437,47 +464,133 @@ class _StartTripPageState extends State<StartTripPage>
   }
 
   Future<void> _readFarms() async {
-    String email = FirebaseAuth.instance.currentUser!.email!;
-    CollectionReference personnelCollection =
-        FirebaseFirestore.instance.collection('personnel');
-    DocumentReference personnelDoc = personnelCollection.doc(email);
+    QuerySnapshot farmsSnapshot = await FirebaseFirestore.instance
+        .collection('farms')
+        .where('personnel',
+            arrayContains: FirebaseAuth.instance.currentUser!.email)
+        .get();
+    _farmDocs = farmsSnapshot.docs;
 
-    DocumentSnapshot<Object?> doc = await personnelDoc.get();
-    if (doc.exists) {
-      List<dynamic> farmIDs = doc.get('farms');
-      _farmIDs = farmIDs.map((dynamic id) => id as String).toList();
-
-      CollectionReference farmCollection =
-          FirebaseFirestore.instance.collection('farms');
-      DocumentReference farmDoc;
-
-      for (int i = 0; i < farmIDs.length; i++) {
-        farmDoc = farmCollection.doc(farmIDs[i]);
-
-        DocumentSnapshot<Object?> doc = await farmDoc.get();
-        if (doc.exists) {
-          _farmNames.add(doc.get('name'));
-          if (i == 0) {
-            _readFarmMaps(_farmIDs.first);
-          }
-        } else {
-          throw Exception(
-              'Firestore: Farm with id ${farmIDs[i]} found in a Personnel-document, but does not exist in the Farms-collection.');
+    if (_farmDocs.isNotEmpty) {
+      for (int i = 0; i < _farmDocs.length; i++) {
+        _farmNames.add(_farmDocs[i]['name']);
+        if (i == 0) {
+          _readFarmMaps(_farmDocs.first);
         }
+      }
 
+      if (_farmNames.isNotEmpty) {
         setState(() {
           _selectedFarmName = _farmNames[0];
         });
       }
     }
+
     setState(() {
       _isLoading = false;
     });
   }
 
+  void synchronize() {
+    setState(() {
+      _syncStatus['color'] = Colors.orange;
+      _syncStatus['text'] = "Synkroniserer...";
+    });
+
+    List<FileSystemEntity> files =
+        Directory(applicationDocumentDirectoryPath + "/trips")
+            .listSync(recursive: false);
+
+    for (FileSystemEntity file in files) {
+      String json = File(file.path).readAsStringSync();
+      TripDataManager trip = TripDataManager.fromJson(json);
+      trip.post();
+      File(file.path).delete();
+    }
+    setState(() {
+      _syncStatus['color'] = Colors.green;
+      _syncStatus['text'] = "Synkronisert";
+    });
+  }
+
+  bool isSynchronized() {
+    List<FileSystemEntity> files =
+        Directory(applicationDocumentDirectoryPath + "/trips")
+            .listSync(recursive: false);
+
+    if (files.isNotEmpty) {
+      return false;
+    }
+
+    synchronizeTimer.cancel();
+    return true;
+  }
+
+  Future<void> trySynchronize() async {
+    if (isSynchronized()) {
+      setState(() {
+        _syncStatus['color'] = Colors.green;
+        _syncStatus['text'] = "Synkronisert";
+      });
+    } else {
+      bool connected = await isConnectedToInternet();
+      if (connected) {
+        synchronize();
+      } else {
+        setState(() {
+          _syncStatus['color'] = Colors.red;
+          _syncStatus['text'] = "Ikke synkronisert";
+        });
+      }
+    }
+  }
+
   @override
   void dispose() {
     _animationController.dispose();
+    synchronizeTimer.cancel();
     super.dispose();
+  }
+}
+
+class NoFarmInfo extends StatelessWidget {
+  const NoFarmInfo({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      appbarBodySpacer(),
+      const Text('Kan ikke starte oppsynstur', style: TextStyle(fontSize: 26)),
+      const SizedBox(height: 40),
+      const Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+              padding: EdgeInsets.only(left: 15),
+              child: Text('Skal du gå for noen andres gård?',
+                  style: TextStyle(fontSize: 22)))),
+      const SizedBox(height: 10),
+      const Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+              padding: EdgeInsets.only(left: 25),
+              child: Text(
+                  'Du er ikke registrert som oppsynsperson,\nta kontakt med sauebonde.',
+                  style: TextStyle(fontSize: 16)))),
+      const SizedBox(height: 30),
+      const Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+              padding: EdgeInsets.only(left: 15),
+              child: Text('Skal du gå for din egen gård?',
+                  style: TextStyle(fontSize: 22)))),
+      const SizedBox(height: 10),
+      const Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+              padding: EdgeInsets.only(left: 25),
+              child: Text(
+                  '1: Logg inn på web-løsning med samme bruker.\n2: Lagre gårdsinformasjon på \'Min side\'.\n3: Logg inn i appen og start oppsynstur.',
+                  style: TextStyle(fontSize: 16)))),
+    ]);
   }
 }
