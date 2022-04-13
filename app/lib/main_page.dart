@@ -223,11 +223,16 @@ class _MainPageState extends State<MainPage> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                CircularButton(
-                                    child: Icon(Icons.cancel, size: iconSize),
-                                    onPressed: () {
-                                      _cancelSelectPositionMode();
-                                    }),
+                                Positioned(
+                                    top: buttonInset +
+                                        MediaQuery.of(context).viewPadding.top,
+                                    left: buttonInset,
+                                    child: CircularButton(
+                                        child:
+                                            Icon(Icons.cancel, size: iconSize),
+                                        onPressed: () {
+                                          _cancelSelectPositionMode();
+                                        })),
                                 Expanded(
                                     child: AnimatedOpacity(
                                         opacity: _isSelectPositionTextVisible
@@ -254,22 +259,9 @@ class _MainPageState extends State<MainPage> {
                                 size: iconSize,
                               ),
                               onPressed: () {
-                                _endTripButtonPressed(context, _tripData);
+                                _backButtonPressed(context);
                               }),
                         ),
-                      Positioned(
-                        top: buttonInset +
-                            MediaQuery.of(context).viewPadding.top,
-                        left: buttonInset,
-                        child: CircularButton(
-                            child: Icon(
-                              Icons.cloud_upload,
-                              size: iconSize,
-                            ),
-                            onPressed: () {
-                              _backButtonPressed(context);
-                            }),
-                      ),
                       if (!_inSelectPositionMode)
                         Positioned(
                             top: buttonInset +
