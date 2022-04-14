@@ -8,9 +8,9 @@ import 'package:path/path.dart' as p;
 import 'package:app/utils/constants.dart' as constants;
 
 class CameraPage extends StatefulWidget {
-  CameraPage({Key? key, required this.onPhotoCaptured}) : super(key: key);
+  const CameraPage({Key? key, required this.onPhotoCaptured}) : super(key: key);
 
-  late ValueChanged<dynamic> onPhotoCaptured;
+  final ValueChanged<dynamic> onPhotoCaptured;
 
   @override
   State<CameraPage> createState() => _CameraPageState();
