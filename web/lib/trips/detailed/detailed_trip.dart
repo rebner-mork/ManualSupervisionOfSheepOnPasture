@@ -56,21 +56,6 @@ class _DetailedTripState extends State<DetailedTrip> {
   }
 
   Future<void> _initDataMaps() async {
-    /*String url =
-        await FirebaseStorage.instance.bucket; // ref('users').getDownloadURL();
-    // 'users/eNHgl2gWR6OlojWc1bTJNJqZNkp1/cadavers/CAP18040324410685016933.jpg'
-
-    debugPrint("HER: " + url);
-    */
-    /*FirebaseStorage photoStorage = FirebaseStorage.instance;
-    Reference fileReference = photoStorage.ref().child(
-        '/users/eNHgl2gWR6OIojWc1bTJNJqZNkp1//cadavers/CAP1840324410685016933.jpg');
-    debugPrint("referanse: " + fileReference.toString());
-    String hei = await fileReference.getDownloadURL();
-    debugPrint("HEI: " + hei);*/
-
-    //bucket: master-backend-93896.appspot.com
-
     for (String sheepKey in mainSheepRegistrationKeysToGui.keys) {
       sheepData[sheepKey] = 0;
     }

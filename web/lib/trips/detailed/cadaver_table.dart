@@ -32,11 +32,9 @@ class _CadaverTableState extends State<CadaverTable> {
         final List<String> modifiedUrls = [];
         for (dynamic url in urls) {
           // TODO: replace url
-          String downloadUrl = await FirebaseStorage.instance
-              .ref()
-              .child(
-                  '/users/eNHgl2gWR6OIojWc1bTJNJqZNkp1//cadavers/CAP1840324410685016933.jpg')
-              .getDownloadURL();
+          String downloadUrl = await FirebaseStorage.instance.ref().child(
+              //'/users/eNHgl2gWR6OIojWc1bTJNJqZNkp1//cadavers/CAP1840324410685016933.jpg')
+              url).getDownloadURL();
           modifiedUrls.add(downloadUrl);
         }
         photoUrls.add(modifiedUrls);
@@ -101,8 +99,9 @@ class _CadaverTableState extends State<CadaverTable> {
                         ? Icons.disabled_by_default
                         : FontAwesome5.black_tie,
                     size: 24,
-                    color:
-                        Color(int.parse(registration['tieColor'], radix: 16)),
+                    color: registration['tieColor'] == '0'
+                        ? Colors.grey
+                        : Color(int.parse(registration['tieColor'], radix: 16)),
                   )),
               Padding(
                   padding: tableCellPadding,

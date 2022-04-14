@@ -39,7 +39,7 @@ class TripDataManager {
             String basename = path.basename(registrations[i]['photos'][j]);
             Reference fileReference =
                 photoStorage.ref('users/$uid/cadavers/$basename');
-            fullPhotoUrls[i].add('users/$uid/cadavers/$basename');
+            fullPhotoUrls.last.add('users/$uid/cadavers/$basename');
             fileReference
                 .putFile(File(registrations[i]['photos'][j]))
                 .then((_) {
@@ -53,8 +53,10 @@ class TripDataManager {
     }
 
     for (int registrationIndex in indexes) {
-      registrations[registrationIndex]['photos'] =
-          fullPhotoUrls[indexes.indexOf(registrationIndex)];
+      registrations[registrationIndex]['photos'] = fullPhotoUrls.first;
+      if (fullPhotoUrls.isNotEmpty) {
+        fullPhotoUrls.removeAt(0);
+      }
     }
   }
 
