@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:web/trips/detailed/cadaver_table.dart';
 import 'package:web/trips/detailed/injured_sheep_table.dart';
 import 'package:web/trips/detailed/main_trip_info_table.dart';
 import 'package:web/trips/detailed/map_of_trip_widget.dart';
@@ -11,7 +13,7 @@ import 'package:web/utils/constants.dart';
 import 'package:web/utils/other.dart';
 import 'package:web/utils/styles.dart';
 
-const TextStyle injuredSheepHeadlineTextStyle =
+const TextStyle injuryCadaverHeadlineTextStyle =
     TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
 
 const TextStyle mainHeadlineTextStyle = TextStyle(fontSize: 50);
@@ -34,9 +36,10 @@ class _DetailedTripState extends State<DetailedTrip> {
   late DateTime stopTime;
 
   Map<String, int> sheepData = {};
-  List<Map<String, dynamic>> injuredSheepData = [];
   Map<String, int> eartagData = {};
   Map<String, int> tieData = {};
+  List<Map<String, dynamic>> injuredSheepData = [];
+  List<Map<String, dynamic>> cadaverData = [];
 
   final double infoTablePadding = 25;
 
@@ -52,7 +55,22 @@ class _DetailedTripState extends State<DetailedTrip> {
     _fillDataMaps();
   }
 
-  void _initDataMaps() {
+  Future<void> _initDataMaps() async {
+    /*String url =
+        await FirebaseStorage.instance.bucket; // ref('users').getDownloadURL();
+    // 'users/eNHgl2gWR6OlojWc1bTJNJqZNkp1/cadavers/CAP18040324410685016933.jpg'
+
+    debugPrint("HER: " + url);
+    */
+    /*FirebaseStorage photoStorage = FirebaseStorage.instance;
+    Reference fileReference = photoStorage.ref().child(
+        '/users/eNHgl2gWR6OIojWc1bTJNJqZNkp1//cadavers/CAP1840324410685016933.jpg');
+    debugPrint("referanse: " + fileReference.toString());
+    String hei = await fileReference.getDownloadURL();
+    debugPrint("HEI: " + hei);*/
+
+    //bucket: master-backend-93896.appspot.com
+
     for (String sheepKey in mainSheepRegistrationKeysToGui.keys) {
       sheepData[sheepKey] = 0;
     }
@@ -81,6 +99,10 @@ class _DetailedTripState extends State<DetailedTrip> {
           break;
         case 'injuredSheep':
           injuredSheepData.add(registration);
+          sheepData['sheep'] = sheepData['sheep']! + 1;
+          break;
+        case 'cadaver':
+          cadaverData.add(registration);
           sheepData['sheep'] = sheepData['sheep']! + 1;
           break;
         default:
@@ -200,16 +222,24 @@ class _DetailedTripState extends State<DetailedTrip> {
     if (injuredSheepData.isNotEmpty) {
       height += textSize(('A'), headlineTextStyle).width +
           40 +
-          textSize('S', injuredSheepHeadlineTextStyle).height +
+          textSize('S', injuryCadaverHeadlineTextStyle).height +
           textSize('A', descriptionTextStyle).height +
           (2 * tableCellPadding.top) +
           injuredSheepData.length * (41 + (2 * tableCellPadding.top));
     }
 
+    // CadaverTable
+    if (cadaverData.isNotEmpty) {
+      height += textSize(('A'), headlineTextStyle).width +
+          40 +
+          textSize('S', injuryCadaverHeadlineTextStyle).height +
+          textSize('A', descriptionTextStyle).height +
+          (2 * tableCellPadding.top) +
+          cadaverData.length * (41 + (2 * tableCellPadding.top));
+    }
+
     return height;
   }
-
-  // TODO: notat-popup kryss
 
   @override
   Widget build(BuildContext context) {
@@ -313,7 +343,18 @@ class _DetailedTripState extends State<DetailedTrip> {
                                 const Headline(title: 'Skader'),
                               if (injuredSheepData.isNotEmpty)
                                 InjuredSheepTable(
-                                    injuredSheep: injuredSheepData)
+                                    injuredSheep: injuredSheepData),
+                              if (cadaverData.isNotEmpty)
+                                const Headline(title: 'Kadaver'),
+                              if (cadaverData.isNotEmpty)
+                                Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      CadaverTable(cadaverData: cadaverData),
+                                      const SizedBox(
+                                          width:
+                                              180) // CadaverTable width + 180 = InjuredSheepTable width
+                                    ])
                             ],
                           )))))),
     ]);

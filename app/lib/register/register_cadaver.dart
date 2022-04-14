@@ -191,6 +191,7 @@ class _RegisterCadaverState extends State<RegisterCadaver> with RegisterPage {
             _farmNumberController.text +
             '-' +
             _individualNumberController.text,
+        'tieColor': _selectedTieColor,
         'note': _noteController.text,
         'photos': photoPaths
       };
