@@ -127,27 +127,43 @@ class _CadaverTableState extends State<CadaverTable> {
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 15, vertical: 15),
                                             child: Text(
-                                                '${registration['note']}',
+                                                (registration['note'] as String)
+                                                        .isEmpty
+                                                    ? 'Ingen notat.'
+                                                    : '${registration['note']}',
                                                 style: const TextStyle(
                                                     fontSize: 16))),
-                                        Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              ...(_photoUrls[widget.cadaverData
-                                                      .indexOf(registration)])
-                                                  .map((photoUrl) =>
-                                                      Row(children: [
-                                                        const SizedBox(
-                                                            width: 8),
-                                                        Image.network(
-                                                          photoUrl as String,
-                                                          width: 300,
-                                                        ),
-                                                        const SizedBox(width: 8)
-                                                      ]))
-                                                  .toList()
-                                            ])
+                                        _photoUrls[widget.cadaverData
+                                                    .indexOf(registration)]
+                                                .isEmpty
+                                            ? const Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 15),
+                                                child: Text('Ingen bilder.',
+                                                    style: TextStyle(
+                                                        fontSize: 16)))
+                                            : Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                    ...(_photoUrls[widget
+                                                            .cadaverData
+                                                            .indexOf(
+                                                                registration)])
+                                                        .map((photoUrl) =>
+                                                            Row(children: [
+                                                              const SizedBox(
+                                                                  width: 8),
+                                                              Image.network(
+                                                                photoUrl
+                                                                    as String,
+                                                                width: 300,
+                                                              ),
+                                                              const SizedBox(
+                                                                  width: 8)
+                                                            ]))
+                                                        .toList()
+                                                  ])
                                       ],
                                     ));
                           }))

@@ -69,8 +69,9 @@ class InjuredSheepTable extends StatelessWidget {
                         ? Icons.disabled_by_default
                         : FontAwesome5.black_tie,
                     size: 24,
-                    color:
-                        Color(int.parse(registration['tieColor'], radix: 16)),
+                    color: registration['tieColor'] == '0'
+                        ? Colors.grey
+                        : Color(int.parse(registration['tieColor'], radix: 16)),
                   )),
               Padding(
                   padding: tableCellPadding,
@@ -110,7 +111,11 @@ class InjuredSheepTable extends StatelessWidget {
                                     Padding(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 15, vertical: 15),
-                                        child: Text('${registration['note']}',
+                                        child: Text(
+                                            (registration['note'] as String)
+                                                    .isEmpty
+                                                ? 'Ingen notat.'
+                                                : '${registration['note']}',
                                             style:
                                                 const TextStyle(fontSize: 16))),
                                   ],
