@@ -130,11 +130,24 @@ class _CadaverTableState extends State<CadaverTable> {
                                                 '${registration['note']}',
                                                 style: const TextStyle(
                                                     fontSize: 16))),
-                                        ...(_photoUrls[widget.cadaverData
-                                                .indexOf(registration)])
-                                            .map((photoUrl) => Image.network(
-                                                photoUrl as String))
-                                            .toList(),
+                                        Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              ...(_photoUrls[widget.cadaverData
+                                                      .indexOf(registration)])
+                                                  .map((photoUrl) =>
+                                                      Row(children: [
+                                                        const SizedBox(
+                                                            width: 8),
+                                                        Image.network(
+                                                          photoUrl as String,
+                                                          width: 300,
+                                                        ),
+                                                        const SizedBox(width: 8)
+                                                      ]))
+                                                  .toList()
+                                            ])
                                       ],
                                     ));
                           }))
