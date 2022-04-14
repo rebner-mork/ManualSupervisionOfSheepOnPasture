@@ -25,25 +25,36 @@ class TripDataManager {
   void _storePhotos() {
     FirebaseStorage photoStorage = FirebaseStorage.instance;
     String uid = FirebaseAuth.instance.currentUser!.uid;
+
+    final List<List<String>> fullPhotoUrls = [];
+    final List<int> indexes = [];
+
     for (int i = 0; i < registrations.length; i++) {
       if (registrations[i].containsValue('cadaver') &&
           !registrations[i]['photos'].isEmpty) {
+        fullPhotoUrls.add([]);
+        indexes.add(i);
         for (int j = 0; j < registrations[i]['photos'].length; j++) {
           try {
             String basename = path.basename(registrations[i]['photos'][j]);
             Reference fileReference =
                 photoStorage.ref('users/$uid/cadavers/$basename');
+            fullPhotoUrls[i].add('users/$uid/cadavers/$basename');
             fileReference
                 .putFile(File(registrations[i]['photos'][j]))
                 .then((_) {
               File(registrations[i]['photos'][j]).deleteSync();
-              registrations[i]['photos'][j] = fileReference.fullPath;
             });
           } on FirebaseException catch (e) {
             developer.log(e.toString());
           }
         }
       }
+    }
+
+    for (int registrationIndex in indexes) {
+      registrations[registrationIndex]['photos'] =
+          fullPhotoUrls[indexes.indexOf(registrationIndex)];
     }
   }
 
