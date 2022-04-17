@@ -103,23 +103,27 @@ class _MainPageState extends State<MainPage> {
       _cancelSelectPositionMode();
       return false;
     } else {
-      bool isConnected = await isConnectedToInternet();
-      await showEndTripDialog(context, isConnected).then((isFinished) {
-        if (isFinished) {
-          if (isConnected) {
-            _tripData.post();
-          } else {
-            _tripData.archive();
-          }
-          if (widget.onCompleted != null) {
-            widget.onCompleted!();
-          }
-          Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
-        }
-        return isFinished;
-      });
-      return false;
+      return await _endTrip(context);
     }
+  }
+
+  Future<bool> _endTrip(BuildContext context) async {
+    bool isConnected = await isConnectedToInternet();
+    await showEndTripDialog(context, isConnected).then((isFinished) {
+      if (isFinished) {
+        if (isConnected) {
+          _tripData.post();
+        } else {
+          _tripData.archive();
+        }
+        if (widget.onCompleted != null) {
+          widget.onCompleted!();
+        }
+        Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
+      }
+      return isFinished;
+    });
+    return false;
   }
 
   void _cancelSelectPositionMode() {
@@ -258,7 +262,7 @@ class _MainPageState extends State<MainPage> {
                                 size: iconSize,
                               ),
                               onPressed: () {
-                                _backButtonPressed(context);
+                                _endTrip(context);
                               }),
                         ),
                       if (!_inSelectPositionMode)
