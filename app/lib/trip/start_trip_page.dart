@@ -501,7 +501,9 @@ class _StartTripPageState extends State<StartTripPage>
         return farmMap;
       }).toList();
 
-      File(offlineFarmsFilePath).delete();
+      try {
+        await File(offlineFarmsFilePath).delete();
+      } on FileSystemException catch (_) {}
     } else {
       try {
         _farmDocs =

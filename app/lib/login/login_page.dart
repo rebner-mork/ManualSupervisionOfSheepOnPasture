@@ -5,10 +5,9 @@ import 'package:app/utils/other.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage(this.context, {Key? key}) : super(key: key);
+  const LoginPage({Key? key}) : super(key: key);
 
   static const String route = 'login';
-  final BuildContext context;
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -17,11 +16,20 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   _LoginPageState();
 
+  bool _isConnectivityCheckComplete = false;
+
   @override
   void initState() {
     super.initState();
+  }
 
-    _checkConnection();
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!_isConnectivityCheckComplete) {
+      _checkConnection();
+    }
   }
 
   Future<void> _checkConnection() async {
@@ -32,6 +40,7 @@ class _LoginPageState extends State<LoginPage> {
           MaterialPageRoute(
               builder: (context) => const StartTripPage(isConnected: false)));
     }
+    _isConnectivityCheckComplete = true;
   }
 
   @override

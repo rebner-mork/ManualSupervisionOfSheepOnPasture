@@ -38,7 +38,6 @@ class _LoginWidgetState extends State<LoginWidget> {
             ),
             inputFieldSpacer(),
             TextFormField(
-              initialValue: 'kadavermann@gmail.com', // TODO: remove line
               key: const Key('inputEmail'),
               validator: (input) => validateEmail(input),
               onSaved: (input) => _email = input.toString(),
@@ -60,7 +59,6 @@ class _LoginWidgetState extends State<LoginWidget> {
             ),
             inputFieldSpacer(),
             TextFormField(
-              initialValue: '11111111', // TODO: remove line
               key: const Key('inputPassword'),
               validator: (input) => validatePassword(input),
               onSaved: (input) => _password = input.toString(),
@@ -119,8 +117,7 @@ class _LoginWidgetState extends State<LoginWidget> {
         setState(() {
           _loginFailed = false;
         });
-        Navigator.popAndPushNamed(
-            context, StartTripPage.route); // TODO: hvorfor pop?
+        Navigator.pushNamed(context, StartTripPage.route);
       } catch (e) {
         setState(() {
           _loginFailed = true;
