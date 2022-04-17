@@ -269,10 +269,14 @@ class _StartTripPageState extends State<StartTripPage>
                 iconSize: downloadIconSize,
                 icon: Icon(
                   _mapIcon,
-                  color: _mapDownloaded ? Colors.green : null,
+                  color: _mapDownloaded
+                      ? Colors.green
+                      : widget.isConnected
+                          ? null
+                          : Colors.red,
                 ),
                 onPressed: () {
-                  if (!_mapDownloaded) {
+                  if (widget.isConnected && !_mapDownloaded) {
                     setState(() {
                       _animationController.repeat();
                       _downloadingMap = true;
@@ -326,7 +330,15 @@ class _StartTripPageState extends State<StartTripPage>
         mapBounds['southEast']!, OfflineZoomLevels.min, OfflineZoomLevels.max);
     _mapIcon = _mapDownloaded
         ? StartTripPage.downloadedIcon
-        : StartTripPage.notDownloadedIcon;
+        : widget.isConnected
+            ? StartTripPage.notDownloadedIcon
+            : Icons.clear;
+    if (!widget.isConnected && !_mapDownloaded) {
+      setState(() {
+        _feedbackText =
+            'Kan ikke starte oppsynstur,\nvalgt kart er ikke nedlastet';
+      });
+    }
   }
 
   ElevatedButton startTripButton() {
@@ -338,11 +350,20 @@ class _StartTripPageState extends State<StartTripPage>
       style: ButtonStyle(
           fixedSize:
               MaterialStateProperty.all(Size.fromHeight(mainButtonHeight)),
-          backgroundColor: MaterialStateProperty.all(
-              (_noMapsDefined || _downloadingMap) ? Colors.grey : null)),
+          backgroundColor: MaterialStateProperty.all((_noMapsDefined ||
+                  _downloadingMap ||
+                  (!widget.isConnected && !_mapDownloaded))
+              ? Colors.grey
+              : null)),
       onPressed: () async {
         if (!_noMapsDefined) {
-          _startTrip();
+          if (widget.isConnected) {
+            _startTrip();
+          } else {
+            if (_mapDownloaded) {
+              _startTrip();
+            }
+          }
         }
       },
     );
@@ -487,21 +508,6 @@ class _StartTripPageState extends State<StartTripPage>
       debugPrint("1: " + _farmDocs.runtimeType.toString());
       debugPrint(_farmDocs.toString());
     }
-    /*if (_farmDocs.isNotEmpty) {
-        for (int i = 0; i < _farmDocs.length; i++) {
-          _farmNames.add(_farmDocs[i]['name']);
-
-          if (i == 0) {
-            _readFarmMaps(_farmDocs.first);
-          }
-        }
-
-        if (_farmNames.isNotEmpty) {
-          setState(() {
-            _selectedFarmName = _farmNames[0];
-          });
-        }
-      }*/
 
     List<Object> offlineFarmData = [];
     Map<String, dynamic> offlineFarmElement;
@@ -512,7 +518,6 @@ class _StartTripPageState extends State<StartTripPage>
 
         if (widget.isConnected) {
           offlineFarmElement = _farmDocs[i];
-          //offlineFarmElement.addAll({'farmId': _farmDocs[i]['farmId']});
           offlineFarmElement.remove('personnel');
           offlineFarmData.add(offlineFarmElement);
         }
