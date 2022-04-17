@@ -21,9 +21,11 @@ import 'trip_data_manager.dart';
 import '../utils/other.dart';
 
 class StartTripPage extends StatefulWidget {
-  const StartTripPage({Key? key}) : super(key: key);
+  const StartTripPage({Key? key, this.isConnected = true}) : super(key: key);
 
   static const String route = 'start-trip';
+  final bool isConnected;
+
   static const IconData downloadedIcon = Icons.download_done;
   static const IconData notDownloadedIcon = Icons.download_for_offline_sharp;
 
@@ -43,7 +45,7 @@ class _StartTripPageState extends State<StartTripPage>
   late SpeechToText _speechToText;
   final ValueNotifier<bool> _ongoingDialog = ValueNotifier<bool>(false);
 
-  late List<QueryDocumentSnapshot> _farmDocs;
+  List<Map<String, dynamic>> _farmDocs = [];
 
   final List<String> _farmNames = [];
   late String _selectedFarmName;
@@ -125,8 +127,10 @@ class _StartTripPageState extends State<StartTripPage>
     return Material(
         child: Scaffold(
             appBar: AppBar(
-              title: const Text('Start oppsynstur'),
-              centerTitle: true,
+              title: Text(widget.isConnected
+                  ? 'Start oppsynstur'
+                  : 'Start oppsynstur offline'),
+              centerTitle: true, // TODO: venstrestilt vel?
               actions: const [SettingsIconButton()],
             ),
             body: Stack(children: [
@@ -385,8 +389,8 @@ class _StartTripPageState extends State<StartTripPage>
                       },
                       northWest: mapBounds['northWest']!,
                       southEast: mapBounds['southEast']!,
-                      farmId:
-                          _farmDocs[_farmNames.indexOf(_selectedFarmName)].id,
+                      farmId: _farmDocs[_farmNames.indexOf(_selectedFarmName)]
+                          ['farmId'],
                       personnelEmail: FirebaseAuth.instance.currentUser!.email!,
                       mapName: _selectedFarmMap,
                       eartags: _noEartagsDefined
@@ -413,7 +417,7 @@ class _StartTripPageState extends State<StartTripPage>
                         (key, value) => MapEntry(key, value as double))))));
   }
 
-  Future<void> _readFarmMaps(QueryDocumentSnapshot farmDoc) async {
+  Future<void> _readFarmMaps(Map<String, dynamic> farmDoc) async {
     LinkedHashMap<String, dynamic>? dbMaps = farmDoc['maps'];
     LinkedHashMap<String, dynamic>? dbEartags = farmDoc['eartags'];
     LinkedHashMap<String, dynamic>? dbTies = farmDoc['ties'];
@@ -464,38 +468,64 @@ class _StartTripPageState extends State<StartTripPage>
   }
 
   Future<void> _readFarms() async {
-    QuerySnapshot farmsSnapshot = await FirebaseFirestore.instance
-        .collection('farms')
-        .where('personnel',
-            arrayContains: FirebaseAuth.instance.currentUser!.email)
-        .get();
-    _farmDocs = farmsSnapshot.docs;
+    if (widget.isConnected) {
+      QuerySnapshot farmsSnapshot = await FirebaseFirestore.instance
+          .collection('farms')
+          .where('personnel',
+              arrayContains: FirebaseAuth.instance.currentUser!.email)
+          .get();
+      _farmDocs = farmsSnapshot.docs.map((QueryDocumentSnapshot farmDoc) {
+        Map<String, dynamic> farmMap = farmDoc.data() as Map<String, dynamic>;
+        farmMap.addAll({'farmId': farmDoc.id});
+        return farmMap;
+      }).toList();
+    } else {
+      _farmDocs =
+          (json.decode(File(offlineFarmsFilePath).readAsStringSync()) as List)
+              .map((e) => e as Map<String, dynamic>)
+              .toList();
+      debugPrint("1: " + _farmDocs.runtimeType.toString());
+      debugPrint(_farmDocs.toString());
+    }
+    /*if (_farmDocs.isNotEmpty) {
+        for (int i = 0; i < _farmDocs.length; i++) {
+          _farmNames.add(_farmDocs[i]['name']);
 
-    List<String> offlineFarmData = [];
-    LinkedHashMap<String, dynamic> offlineFarmElement;
+          if (i == 0) {
+            _readFarmMaps(_farmDocs.first);
+          }
+        }
+
+        if (_farmNames.isNotEmpty) {
+          setState(() {
+            _selectedFarmName = _farmNames[0];
+          });
+        }
+      }*/
+
+    List<Object> offlineFarmData = [];
+    Map<String, dynamic> offlineFarmElement;
 
     if (_farmDocs.isNotEmpty) {
       for (int i = 0; i < _farmDocs.length; i++) {
         _farmNames.add(_farmDocs[i]['name']);
 
-        offlineFarmElement =
-            (_farmDocs[i].data() as LinkedHashMap<String, dynamic>);
-        offlineFarmElement.addAll({'farmId': _farmDocs[i].id});
-        offlineFarmElement.remove('personnel');
-        offlineFarmData.add(offlineFarmElement.toString());
+        if (widget.isConnected) {
+          offlineFarmElement = _farmDocs[i];
+          //offlineFarmElement.addAll({'farmId': _farmDocs[i]['farmId']});
+          offlineFarmElement.remove('personnel');
+          offlineFarmData.add(offlineFarmElement);
+        }
 
         if (i == 0) {
-          _readFarmMaps(_farmDocs.first);
+          _readFarmMaps(_farmDocs.first); // TODO: uten nett?
         }
       }
 
-      debugPrint(json.encode(offlineFarmData));
-      String filePath = '$applicationDocumentDirectoryPath/farms';
-      File(filePath).writeAsStringSync(json.encode(offlineFarmData));
-
-      String content = File(filePath).readAsStringSync();
-      debugPrint(content + '\n\n');
-      debugPrint(json.decode(content).toString());
+      if (widget.isConnected) {
+        File(offlineFarmsFilePath)
+            .writeAsStringSync(json.encode(offlineFarmData));
+      }
 
       if (_farmNames.isNotEmpty) {
         setState(() {

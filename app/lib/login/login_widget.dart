@@ -119,7 +119,8 @@ class _LoginWidgetState extends State<LoginWidget> {
         setState(() {
           _loginFailed = false;
         });
-        Navigator.popAndPushNamed(context, StartTripPage.route);
+        Navigator.popAndPushNamed(
+            context, StartTripPage.route); // TODO: hvorfor pop?
       } catch (e) {
         setState(() {
           _loginFailed = true;

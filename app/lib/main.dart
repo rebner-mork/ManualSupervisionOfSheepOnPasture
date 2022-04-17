@@ -38,7 +38,7 @@ class _MyAppState extends State<MyApp> {
           colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green)),
       initialRoute: LoginPage.route,
       routes: {
-        LoginPage.route: (context) => const LoginPage(),
+        LoginPage.route: (context) => LoginPage(context),
         SignUpPage.route: (context) => const SignUpPage(),
         StartTripPage.route: (context) => const StartTripPage(),
       },
