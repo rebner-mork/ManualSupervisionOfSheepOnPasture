@@ -494,18 +494,21 @@ class _StartTripPageState extends State<StartTripPage>
           .where('personnel',
               arrayContains: FirebaseAuth.instance.currentUser!.email)
           .get();
+
       _farmDocs = farmsSnapshot.docs.map((QueryDocumentSnapshot farmDoc) {
         Map<String, dynamic> farmMap = farmDoc.data() as Map<String, dynamic>;
         farmMap.addAll({'farmId': farmDoc.id});
         return farmMap;
       }).toList();
+
+      File(offlineFarmsFilePath).delete();
     } else {
-      _farmDocs =
-          (json.decode(File(offlineFarmsFilePath).readAsStringSync()) as List)
-              .map((e) => e as Map<String, dynamic>)
-              .toList();
-      debugPrint("1: " + _farmDocs.runtimeType.toString());
-      debugPrint(_farmDocs.toString());
+      try {
+        _farmDocs =
+            (json.decode(File(offlineFarmsFilePath).readAsStringSync()) as List)
+                .map((e) => e as Map<String, dynamic>)
+                .toList();
+      } on FileSystemException catch (_) {}
     }
 
     List<Object> offlineFarmData = [];
