@@ -672,7 +672,7 @@ class NoFarmNoInternetInfo extends StatelessWidget {
           alignment: Alignment.centerLeft,
           child: Padding(
               padding: EdgeInsets.only(left: 15),
-              child: Text('Du har ikke nettverksforbindelse',
+              child: Text('Ingen nettverksforbindelse',
                   style: TextStyle(fontSize: 22)))),
       const SizedBox(height: 10),
       const Align(
