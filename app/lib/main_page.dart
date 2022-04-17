@@ -55,6 +55,8 @@ class _MainPageState extends State<MainPage> {
 
   late LatLng _deviceStartPosition;
 
+  bool _autoMoveMapMode = true;
+
   int _sheepAmount = 0;
   double iconSize = 42;
   bool _isLoading = true;
@@ -222,6 +224,7 @@ class _MainPageState extends State<MainPage> {
                                 },
                                 onNewPosition: (position) =>
                                     _tripData.track.add(position),
+                                autoMoveMapMode: _autoMoveMapMode,
                               )),
                       if (_inSelectPositionMode)
                         Positioned(
@@ -265,6 +268,22 @@ class _MainPageState extends State<MainPage> {
                                 _endTrip(context);
                               }),
                         ),
+                      if (!_inSelectPositionMode)
+                        Positioned(
+                            top: buttonInset +
+                                MediaQuery.of(context).viewPadding.top,
+                            right: buttonInset * 3 + 50,
+                            child: CircularButton(
+                              child: Icon(
+                                _autoMoveMapMode ? Icons.near_me : Icons.map,
+                                size: iconSize,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _autoMoveMapMode = !_autoMoveMapMode;
+                                });
+                              },
+                            )),
                       if (!_inSelectPositionMode)
                         Positioned(
                             top: buttonInset +

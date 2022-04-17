@@ -23,6 +23,7 @@ class MapWidget extends StatefulWidget {
       required this.onRegistrationComplete,
       required this.onRegistrationCanceled,
       this.onNewPosition,
+      this.autoMoveMapMode,
       Key? key})
       : super(key: key) {
     southWest = LatLng(southEast.latitude, northWest.longitude);
@@ -45,6 +46,8 @@ class MapWidget extends StatefulWidget {
 
   final RegistrationType registrationType;
   final VoidCallback onRegistrationCanceled;
+
+  final bool? autoMoveMapMode;
 
   @override
   State<MapWidget> createState() => _MapState();
@@ -85,7 +88,11 @@ class _MapState extends State<MapWidget> {
       widget.onNewPosition!(userPosition);
     }
     setState(() {
-      //_mapController.move(pos, _mapController.zoom);
+      if (widget.autoMoveMapMode != null) {
+        widget.autoMoveMapMode!
+            ? _mapController.move(userPosition, _mapController.zoom)
+            : null;
+      }
       _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition);
       _movementPoints.add(userPosition);
     });
