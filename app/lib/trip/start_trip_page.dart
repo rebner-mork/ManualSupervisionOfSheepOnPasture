@@ -137,7 +137,11 @@ class _StartTripPageState extends State<StartTripPage>
                   ? const LoadingData()
                   : Column(
                       children: _farmNames.isEmpty
-                          ? [const NoFarmInfo()]
+                          ? [
+                              widget.isConnected
+                                  ? const NoFarmInfo()
+                                  : const NoFarmNoInternetInfo()
+                            ]
                           : [
                               appbarBodySpacer(),
                               _farmNameRow(),
@@ -631,7 +635,8 @@ class NoFarmInfo extends StatelessWidget {
           child: Padding(
               padding: EdgeInsets.only(left: 25),
               child: Text(
-                  'Du er ikke registrert som oppsynsperson,\nta kontakt med sauebonde.',
+                  'Du er ikke registrert som oppsynsperson,\n'
+                  'ta kontakt med sauebonde.',
                   style: TextStyle(fontSize: 16)))),
       const SizedBox(height: 30),
       const Align(
@@ -646,7 +651,39 @@ class NoFarmInfo extends StatelessWidget {
           child: Padding(
               padding: EdgeInsets.only(left: 25),
               child: Text(
-                  '1: Logg inn på web-løsning med samme bruker.\n2: Lagre gårdsinformasjon på \'Min side\'.\n3: Logg inn i appen og start oppsynstur.',
+                  '1: Logg inn på web-løsning med samme bruker.\n'
+                  '2: Lagre gårdsinformasjon på \'Min side\'.\n'
+                  '3: Logg inn i appen og start oppsynstur.',
+                  style: TextStyle(fontSize: 16)))),
+    ]);
+  }
+}
+
+class NoFarmNoInternetInfo extends StatelessWidget {
+  const NoFarmNoInternetInfo({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      appbarBodySpacer(),
+      const Text('Kan ikke starte oppsynstur', style: TextStyle(fontSize: 26)),
+      const SizedBox(height: 40),
+      const Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+              padding: EdgeInsets.only(left: 15),
+              child: Text('Du har ikke nettverksforbindelse',
+                  style: TextStyle(fontSize: 22)))),
+      const SizedBox(height: 10),
+      const Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+              padding: EdgeInsets.only(left: 25),
+              child: Text(
+                  'Det ligger ingen gårdsinfo lokalt på enheten.\n'
+                  'For å gjøre oppsyn offline må du først logge\n'
+                  'inn med nettverksforbindelse, og laste ned\n'
+                  'kartet du skal gå i.',
                   style: TextStyle(fontSize: 16)))),
     ]);
   }
