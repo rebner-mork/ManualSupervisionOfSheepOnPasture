@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:app/map/map_widget.dart';
 import 'package:app/registration_options.dart';
 import 'package:app/trip/end_trip_dialog.dart';
-import 'package:app/trip/start_trip_page.dart';
 import 'package:app/trip/trip_data_manager.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/other.dart';
