@@ -53,7 +53,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '867330479261',
     projectId: 'master-backend-93896',
     storageBucket: 'master-backend-93896.appspot.com',
-    iosClientId: '867330479261-rm5k0la2clbg9p4t6mlugshumg7a5nlv.apps.googleusercontent.com',
+    iosClientId:
+        '867330479261-rm5k0la2clbg9p4t6mlugshumg7a5nlv.apps.googleusercontent.com',
     iosBundleId: 'ios.master.sheep',
   );
 }
