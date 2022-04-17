@@ -5,8 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:latlong2/latlong.dart';
-import 'dart:io';
-import 'dart:developer' as developer;
 import 'package:path/path.dart' as path;
 
 import '../utils/constants.dart';
@@ -50,7 +48,7 @@ class TripDataManager {
   late String mapName;
   late final DateTime _startTime;
   DateTime? _stopTime;
-  List<dynamic> registrations = [];
+  List<Map<String, dynamic>> registrations = [];
   List<LatLng> track = [];
 
   void _storePhotos() {
