@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
 
@@ -470,13 +471,31 @@ class _StartTripPageState extends State<StartTripPage>
         .get();
     _farmDocs = farmsSnapshot.docs;
 
+    List<String> offlineFarmData = [];
+    LinkedHashMap<String, dynamic> offlineFarmElement;
+
     if (_farmDocs.isNotEmpty) {
       for (int i = 0; i < _farmDocs.length; i++) {
         _farmNames.add(_farmDocs[i]['name']);
+
+        offlineFarmElement =
+            (_farmDocs[i].data() as LinkedHashMap<String, dynamic>);
+        offlineFarmElement.addAll({'farmId': _farmDocs[i].id});
+        offlineFarmElement.remove('personnel');
+        offlineFarmData.add(offlineFarmElement.toString());
+
         if (i == 0) {
           _readFarmMaps(_farmDocs.first);
         }
       }
+
+      debugPrint(json.encode(offlineFarmData));
+      String filePath = '$applicationDocumentDirectoryPath/farms';
+      File(filePath).writeAsStringSync(json.encode(offlineFarmData));
+
+      String content = File(filePath).readAsStringSync();
+      debugPrint(content + '\n\n');
+      debugPrint(json.decode(content).toString());
 
       if (_farmNames.isNotEmpty) {
         setState(() {
