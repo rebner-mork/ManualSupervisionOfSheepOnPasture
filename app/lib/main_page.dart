@@ -147,8 +147,7 @@ class _MainPageState extends State<MainPage> {
             ? const LoadingData()
             : WillPopScope(
                 onWillPop: () async {
-                  return _backButtonPressed(
-                      context); //_endTripButtonPressed(context, _tripData);
+                  return _backButtonPressed(context);
                 },
                 child: Scaffold(
                     endDrawer: Align(
@@ -221,42 +220,33 @@ class _MainPageState extends State<MainPage> {
                                     _tripData.track.add(position),
                               )),
                       if (_inSelectPositionMode)
+                        Positioned(
+                            top: buttonInset +
+                                MediaQuery.of(context).viewPadding.top,
+                            left: buttonInset,
+                            child: CircularButton(
+                                child: Icon(Icons.cancel, size: iconSize),
+                                onPressed: () {
+                                  _cancelSelectPositionMode();
+                                })),
+                      if (_inSelectPositionMode)
                         Padding(
-                          padding: EdgeInsets.only(
-                              top: buttonInset +
-                                  MediaQuery.of(context).viewPadding.top,
-                              left: buttonInset,
-                              right: 20),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Positioned(
-                                    // TODO: positioned kan ikke være i rad
-                                    top: buttonInset +
-                                        MediaQuery.of(context).viewPadding.top,
-                                    left: buttonInset,
-                                    child: CircularButton(
-                                        child:
-                                            Icon(Icons.cancel, size: iconSize),
-                                        onPressed: () {
-                                          _cancelSelectPositionMode();
-                                        })),
-                                Expanded(
-                                    child: AnimatedOpacity(
-                                        opacity: _isSelectPositionTextVisible
-                                            ? 1.0
-                                            : 0.3,
-                                        duration: Duration(
-                                            milliseconds:
-                                                selectPositionTextTimerDuration),
-                                        child: Text(
-                                          'Hold inne på posisjonen til ${registrationTypeToGui[_selectedRegistrationType]}',
-                                          style: const TextStyle(fontSize: 26),
-                                          textAlign: TextAlign.center,
-                                        )))
-                              ]),
-                        ),
+                            padding: EdgeInsets.only(
+                                top: buttonInset +
+                                    MediaQuery.of(context).viewPadding.top,
+                                left: buttonInset + 50,
+                                right: 20),
+                            child: AnimatedOpacity(
+                                opacity:
+                                    _isSelectPositionTextVisible ? 1.0 : 0.3,
+                                duration: Duration(
+                                    milliseconds:
+                                        selectPositionTextTimerDuration),
+                                child: Text(
+                                  'Hold inne på posisjonen til ${registrationTypeToGui[_selectedRegistrationType]}',
+                                  style: const TextStyle(fontSize: 26),
+                                  textAlign: TextAlign.center,
+                                ))),
                       if (!_inSelectPositionMode)
                         Positioned(
                           top: buttonInset +
