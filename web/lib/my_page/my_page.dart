@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:web/my_page/define_personnel.dart';
 import 'package:web/my_page/define_eartags.dart';
-import 'package:web/my_page/define_ties_page.dart';
+import 'package:web/my_page/define_ties/define_ties_page.dart';
 import 'package:web/my_page/my_farm_page.dart';
 import 'package:web/my_page/define_map/define_map_page.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
