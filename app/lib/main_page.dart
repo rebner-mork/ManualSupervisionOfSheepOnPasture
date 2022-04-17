@@ -106,7 +106,14 @@ class _MainPageState extends State<MainPage> {
       bool isConnected = await isConnectedToInternet();
       await showEndTripDialog(context, isConnected).then((isFinished) {
         if (isFinished) {
-          _tripData.post();
+          if (isConnected) {
+            _tripData.post();
+          } else {
+            _tripData.archive();
+          }
+          if (widget.onCompleted != null) {
+            widget.onCompleted!();
+          }
           Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
         }
         return isFinished;
@@ -140,7 +147,8 @@ class _MainPageState extends State<MainPage> {
             ? const LoadingData()
             : WillPopScope(
                 onWillPop: () async {
-                  return _endTripButtonPressed(context, _tripData);
+                  return _backButtonPressed(
+                      context); //_endTripButtonPressed(context, _tripData);
                 },
                 child: Scaffold(
                     endDrawer: Align(
@@ -224,6 +232,7 @@ class _MainPageState extends State<MainPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Positioned(
+                                    // TODO: positioned kan ikke være i rad
                                     top: buttonInset +
                                         MediaQuery.of(context).viewPadding.top,
                                     left: buttonInset,
@@ -308,25 +317,5 @@ class _MainPageState extends State<MainPage> {
                                   },
                                 )))
                     ]))));
-  }
-
-  Future<bool> _endTripButtonPressed(
-      BuildContext context, TripDataManager _trip) async {
-    bool isConnected = await isConnectedToInternet();
-    await showEndTripDialog(context, isConnected).then((isFinished) {
-      if (isFinished) {
-        if (isConnected) {
-          _trip.post();
-        } else {
-          _trip.archive();
-        }
-        if (widget.onCompleted != null) {
-          widget.onCompleted!();
-        }
-        Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
-      }
-      return isFinished;
-    });
-    return false;
   }
 }
