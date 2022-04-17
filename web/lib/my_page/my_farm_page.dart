@@ -29,7 +29,7 @@ class _MyFarmState extends State<MyFarm> {
   void initState() {
     super.initState();
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      getFarmInfo();
+      _readFarmInfo();
     });
   }
 
@@ -72,7 +72,7 @@ class _MyFarmState extends State<MyFarm> {
                           onChanged: (_) {
                             _onFieldChanged();
                           },
-                          onFieldSubmitted: (_) => _saveFarm(),
+                          onFieldSubmitted: (_) => _saveFarmInfo(),
                           decoration:
                               customInputDecoration('Navn', Icons.badge)))),
               const Spacer()
@@ -101,7 +101,7 @@ class _MyFarmState extends State<MyFarm> {
                           onChanged: (_) {
                             _onFieldChanged();
                           },
-                          onFieldSubmitted: (_) => _saveFarm(),
+                          onFieldSubmitted: (_) => _saveFarmInfo(),
                           decoration:
                               customInputDecoration('Adresse', Icons.place)))),
               const Spacer()
@@ -122,7 +122,7 @@ class _MyFarmState extends State<MyFarm> {
           const SizedBox(height: 25),
           ElevatedButton(
               key: const Key('saveFarmButton'),
-              onPressed: _saveFarm,
+              onPressed: _saveFarmInfo,
               child: const Text(
                 "Lagre",
                 style: TextStyle(fontSize: 20),
@@ -133,7 +133,7 @@ class _MyFarmState extends State<MyFarm> {
         ]));
   }
 
-  void getFarmInfo() async {
+  Future<void> _readFarmInfo() async {
     String uid = FirebaseAuth.instance.currentUser!.uid;
 
     CollectionReference farmCollection =
@@ -150,7 +150,7 @@ class _MyFarmState extends State<MyFarm> {
     });
   }
 
-  void _saveFarm() async {
+  Future<void> _saveFarmInfo() async {
     setState(() {
       _validationActivated = true;
       _feedback = '';
@@ -175,7 +175,7 @@ class _MyFarmState extends State<MyFarm> {
             'maps': null,
             'ties': null,
             'eartags': null,
-            'personnel': null,
+            'personnel': [FirebaseAuth.instance.currentUser!.email],
             'name': farmNameController.text,
             'address': farmAddressController.text
           });

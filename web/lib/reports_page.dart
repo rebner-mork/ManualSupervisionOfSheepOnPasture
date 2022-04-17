@@ -44,14 +44,14 @@ class _ReportsPageState extends State<ReportsPage> {
   void _readAllTrips() async {
     String uid = FirebaseAuth.instance.currentUser!.uid;
 
-    CollectionReference tripsCollection =
-        FirebaseFirestore.instance.collection('trips');
-
-    QuerySnapshot<Object?> tripsSnapshot = await tripsCollection
-        .where('farmId', isEqualTo: uid)
+    QuerySnapshot tripsQuerySnapshot = await FirebaseFirestore.instance
+        .collection('farms')
+        .doc(uid)
+        .collection('trips')
         .orderBy('startTime')
         .get();
-    _allTripDocuments = tripsSnapshot.docs;
+
+    _allTripDocuments = tripsQuerySnapshot.docs;
 
     if (_allTripDocuments.isNotEmpty) {
       for (QueryDocumentSnapshot tripDoc in _allTripDocuments) {
@@ -178,7 +178,6 @@ class _ReportsPageState extends State<ReportsPage> {
         });
       }
     }
-
     return tripSummaries;
   }
 

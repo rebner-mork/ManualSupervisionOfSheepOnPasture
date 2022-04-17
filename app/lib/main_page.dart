@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:app/map/map_widget.dart';
 import 'package:app/registration_options.dart';
 import 'package:app/trip/end_trip_dialog.dart';
@@ -26,11 +25,14 @@ class MainPage extends StatefulWidget {
       required this.personnelEmail,
       required this.eartags,
       required this.ties,
+      this.onCompleted,
       Key? key})
       : super(key: key);
 
   final SpeechToText speechToText;
   final ValueNotifier<bool> ongoingDialog;
+
+  final VoidCallback? onCompleted;
 
   final LatLng northWest;
   final LatLng southEast;
@@ -101,15 +103,27 @@ class _MainPageState extends State<MainPage> {
       _cancelSelectPositionMode();
       return false;
     } else {
-      await showEndTripDialog(context).then((isFinished) {
-        if (isFinished) {
-          _tripData.post();
-          Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
-        }
-        return isFinished;
-      });
-      return false;
+      return await _endTrip(context);
     }
+  }
+
+  Future<bool> _endTrip(BuildContext context) async {
+    bool isConnected = await isConnectedToInternet();
+    await showEndTripDialog(context, isConnected).then((isFinished) {
+      if (isFinished) {
+        if (isConnected) {
+          _tripData.post();
+        } else {
+          _tripData.archive();
+        }
+        if (widget.onCompleted != null) {
+          widget.onCompleted!();
+        }
+        Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
+      }
+      return isFinished;
+    });
+    return false;
   }
 
   void _cancelSelectPositionMode() {
@@ -212,38 +226,37 @@ class _MainPageState extends State<MainPage> {
 
                                   _cancelSelectPositionMode();
                                 },
+                                onNewPosition: (position) =>
+                                    _tripData.track.add(position),
                               )),
                       if (_inSelectPositionMode)
+                        Positioned(
+                            top: buttonInset +
+                                MediaQuery.of(context).viewPadding.top,
+                            left: buttonInset,
+                            child: CircularButton(
+                                child: Icon(Icons.cancel, size: iconSize),
+                                onPressed: () {
+                                  _cancelSelectPositionMode();
+                                })),
+                      if (_inSelectPositionMode)
                         Padding(
-                          padding: EdgeInsets.only(
-                              top: buttonInset +
-                                  MediaQuery.of(context).viewPadding.top,
-                              left: buttonInset,
-                              right: 20),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CircularButton(
-                                    child: Icon(Icons.cancel, size: iconSize),
-                                    onPressed: () {
-                                      _cancelSelectPositionMode();
-                                    }),
-                                Expanded(
-                                    child: AnimatedOpacity(
-                                        opacity: _isSelectPositionTextVisible
-                                            ? 1.0
-                                            : 0.3,
-                                        duration: Duration(
-                                            milliseconds:
-                                                selectPositionTextTimerDuration),
-                                        child: Text(
-                                          'Hold inne på posisjonen til ${registrationTypeToGui[_selectedRegistrationType]}',
-                                          style: const TextStyle(fontSize: 26),
-                                          textAlign: TextAlign.center,
-                                        )))
-                              ]),
-                        ),
+                            padding: EdgeInsets.only(
+                                top: buttonInset +
+                                    MediaQuery.of(context).viewPadding.top,
+                                left: buttonInset + 50,
+                                right: 20),
+                            child: AnimatedOpacity(
+                                opacity:
+                                    _isSelectPositionTextVisible ? 1.0 : 0.3,
+                                duration: Duration(
+                                    milliseconds:
+                                        selectPositionTextTimerDuration),
+                                child: Text(
+                                  'Hold inne på posisjonen til ${registrationTypeToGui[_selectedRegistrationType]}',
+                                  style: const TextStyle(fontSize: 26),
+                                  textAlign: TextAlign.center,
+                                ))),
                       if (!_inSelectPositionMode)
                         Positioned(
                           top: buttonInset +
@@ -255,7 +268,7 @@ class _MainPageState extends State<MainPage> {
                                 size: iconSize,
                               ),
                               onPressed: () {
-                                _backButtonPressed(context);
+                                _endTrip(context);
                               }),
                         ),
                       if (!_inSelectPositionMode)

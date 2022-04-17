@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
@@ -55,4 +56,13 @@ Map<String, Object> getMetaRegistrationData(
       'longitude': registrationPosition.longitude
     },
   };
+}
+
+Future<bool> isConnectedToInternet() async {
+  try {
+    await http.get(Uri.parse("https://www.google.com"));
+    return true;
+  } catch (_) {
+    return false;
+  }
 }
