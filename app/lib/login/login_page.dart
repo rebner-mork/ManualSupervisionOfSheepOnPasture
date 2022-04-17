@@ -17,8 +17,6 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   _LoginPageState();
 
-  bool _isConnected = true;
-
   @override
   void initState() {
     super.initState();
@@ -28,12 +26,8 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _checkConnection() async {
     bool isConnected = await isConnectedToInternet();
-    /*setState(() {
-      _isConnected = isConnected;
-    });*/
     if (!isConnected) {
-      //Navigator.pushNamed(widget.context, StartTripPage.route);
-      Navigator.push(
+      Navigator.pushReplacement(
           context,
           MaterialPageRoute(
               builder: (context) => const StartTripPage(isConnected: false)));

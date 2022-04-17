@@ -130,7 +130,6 @@ class _StartTripPageState extends State<StartTripPage>
               title: Text(widget.isConnected
                   ? 'Start oppsynstur'
                   : 'Start oppsynstur offline'),
-              centerTitle: true, // TODO: venstrestilt vel?
               actions: const [SettingsIconButton()],
             ),
             body: Stack(children: [
