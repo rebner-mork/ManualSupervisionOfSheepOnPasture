@@ -522,7 +522,7 @@ class _StartTripPageState extends State<StartTripPage>
         }
 
         if (i == 0) {
-          _readFarmMaps(_farmDocs.first); // TODO: uten nett?
+          _readFarmMaps(_farmDocs.first);
         }
       }
 
