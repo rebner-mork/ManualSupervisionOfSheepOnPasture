@@ -70,7 +70,7 @@ class _StartTripPageState extends State<StartTripPage>
   late Animation<Color?> _colorTween;
 
   static const double downloadIconSize = 48;
-  static const double fieldNameWidth = 50;
+  static const double fieldNameWidth = 60;
   static const double dropdownWidth = 190;
 
   late Timer synchronizeTimer;
@@ -185,6 +185,7 @@ class _StartTripPageState extends State<StartTripPage>
             child: Text(
               'Gård',
               style: fieldNameTextStyle,
+              textAlign: TextAlign.end,
             )),
         const SizedBox(
           width: 20,

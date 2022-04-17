@@ -136,30 +136,41 @@ class _ReportsPageState extends State<ReportsPage> {
       // If this trip will cause a page-wrap, add null to make pdfTripsTablePages-function add columnHeaderRow
       if (i != 0 && i % 25 == 0) {
         tripSummaries.add(null);
-      }
-      QuerySnapshot registrationsQuerySnapshot = await tripDocuments
-          .elementAt(i)!
-          .reference
-          .collection('registrations')
-          .get();
+      } else {
+        CollectionReference registrationsCollection = FirebaseFirestore.instance
+            .collection('trips')
+            .doc(tripDocuments.elementAt(i)!.id)
+            .collection('registrations');
+        QuerySnapshot registrationsQuerySnapshot =
+            await registrationsCollection.get();
 
-      int totalSheepAmount = 0;
-      int totalLambAmount = 0;
+        int totalSheepAmount = 0;
+        int totalLambAmount = 0;
+        int totalInjuredSheepAmount = 0;
 
-      for (DocumentSnapshot<Object?>? registrationDoc
-          in registrationsQuerySnapshot.docs) {
-        totalSheepAmount += registrationDoc!['sheep'] as int;
-        totalLambAmount += registrationDoc['lambs'] as int;
+        for (DocumentSnapshot<Object?> registrationDoc
+            in registrationsQuerySnapshot.docs) {
+          switch (registrationDoc['type']) {
+            case 'injuredSheep':
+              totalInjuredSheepAmount++;
+              totalSheepAmount++;
+              break;
+            default:
+              totalSheepAmount += registrationDoc['sheep'] as int;
+              totalLambAmount += registrationDoc['lambs'] as int;
+              break;
+          }
+        }
+        tripSummaries.add({
+          'startTime': tripDocuments.elementAt(i)!['startTime'],
+          'stopTime': tripDocuments.elementAt(i)!['stopTime'],
+          'sheep': totalSheepAmount,
+          'adults': totalSheepAmount - totalLambAmount,
+          'lambs': totalLambAmount,
+          'injuredSheep': totalInjuredSheepAmount
+        });
       }
-      tripSummaries.add({
-        'startTime': tripDocuments.elementAt(i)!['startTime'],
-        'stopTime': tripDocuments.elementAt(i)!['stopTime'],
-        'sheep': totalSheepAmount,
-        'adults': totalSheepAmount - totalLambAmount,
-        'lambs': totalLambAmount
-      });
     }
-
     return tripSummaries;
   }
 
@@ -290,8 +301,8 @@ class _ReportsPageState extends State<ReportsPage> {
                                 textAlign: pw.TextAlign.center)),
                         pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
-                            child:
-                                pw.Text('x', textAlign: pw.TextAlign.center)),
+                            child: pw.Text('${tripMap['injuredSheep']}',
+                                textAlign: pw.TextAlign.center)),
                         pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
                             child:

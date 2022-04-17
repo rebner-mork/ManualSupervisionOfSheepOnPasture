@@ -45,96 +45,96 @@ class _SignUpWidgetState extends State<SignUpWidget> {
     return Material(
         child: Form(
             key: _formKey,
-            child: SingleChildScrollView(
-                key: const Key('scrollView'),
-                child: SizedBox(
-                    height: MediaQuery.of(context).size.height -
-                        MediaQuery.of(context).viewPadding.top -
-                        MediaQuery.of(context).viewInsets.bottom,
-                    child: ListView(
-                      shrinkWrap: true,
-                      children: [
-                        const Icon(Icons.account_circle,
-                            size: 90, color: Colors.black54),
-                        inputFieldSpacer(),
-                        TextFormField(
-                            key: const Key('inputName'),
-                            validator: (input) => validateName(input!.trim()),
-                            onSaved: (input) => _name = input!.trim(),
-                            onChanged: _onFieldChange,
-                            textInputAction: TextInputAction.go,
-                            onFieldSubmitted: (value) => _createUser(),
-                            decoration: customInputDecoration(
-                                'Fullt navn', Icons.badge)),
-                        inputFieldSpacer(),
-                        TextFormField(
-                            key: const Key('inputEmail'),
-                            validator: (input) => validateEmail(input),
-                            onSaved: (input) => _email = input.toString(),
-                            onChanged: _onFieldChange,
-                            textInputAction: TextInputAction.go,
-                            onFieldSubmitted: (value) => _createUser(),
-                            decoration:
-                                customInputDecoration('E-post', Icons.mail)),
-                        inputFieldSpacer(),
-                        TextFormField(
-                            controller: passwordOneController,
-                            key: const Key('inputPasswordOne'),
-                            validator: (input) => validatePassword(input),
-                            onSaved: (input) => _password = input.toString(),
-                            onChanged: _onFieldChange,
-                            textInputAction: TextInputAction.go,
-                            onFieldSubmitted: (value) => _createUser(),
-                            obscureText: !_visiblePassword,
-                            decoration: customInputDecoration(
-                                'Passord', Icons.lock,
-                                passwordField: true,
-                                isVisible: _visiblePassword,
-                                onPressed: _toggleVisiblePassword)),
-                        inputFieldSpacer(),
-                        TextFormField(
-                            key: const Key('inputPasswordTwo'),
-                            validator: (input) => validatePasswords(
-                                passwordOneController.text, input),
-                            onChanged: _onFieldChange,
-                            textInputAction: TextInputAction.go,
-                            onFieldSubmitted: (value) => _createUser(),
-                            obscureText: !_visiblePassword,
-                            decoration: customInputDecoration(
-                                'Gjenta passord', Icons.lock,
-                                passwordField: true,
-                                isVisible: _visiblePassword,
-                                onPressed: _toggleVisiblePassword)),
-                        inputFieldSpacer(),
-                        TextFormField(
-                            key: const Key('inputPhone'),
-                            validator: (input) => validatePhone(input),
-                            onSaved: (input) => _phone = input.toString(),
-                            onChanged: _onFieldChange,
-                            textInputAction: TextInputAction.go,
-                            onFieldSubmitted: (value) => _createUser(),
-                            decoration:
-                                customInputDecoration('Telefon', Icons.phone)),
-                        inputFieldSpacer(),
-                        AnimatedOpacity(
-                          opacity: _registerFailed ? 1.0 : 0.0,
-                          duration: const Duration(milliseconds: 200),
-                          child: Text(
-                            _registerFailed ? _feedback : '',
-                            key: const Key('feedback'),
-                            style: const TextStyle(color: Colors.red),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        ElevatedButton(
-                            key: const Key('registerUserButton'),
-                            onPressed: _createUser,
-                            child: const Text('Opprett bruker',
-                                style: TextStyle(fontSize: 20)),
-                            style: ElevatedButton.styleFrom(
-                                fixedSize: const Size(180, 60)))
-                      ],
-                    )))));
+            child: SizedBox(
+                height: MediaQuery.of(context).size.height -
+                    MediaQuery.of(context).viewPadding.top -
+                    MediaQuery.of(context).viewInsets.bottom,
+                child: ListView(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 0.175 * MediaQuery.of(context).size.width),
+                  children: [
+                    const Icon(Icons.account_circle,
+                        size: 90, color: Colors.black54),
+                    inputFieldSpacer(),
+                    TextFormField(
+                        key: const Key('inputName'),
+                        textCapitalization: TextCapitalization.words,
+                        validator: (input) => validateName(input!.trim()),
+                        onSaved: (input) => _name = input!.trim(),
+                        onChanged: _onFieldChange,
+                        textInputAction: TextInputAction.go,
+                        onFieldSubmitted: (value) => _createUser(),
+                        decoration:
+                            customInputDecoration('Fullt navn', Icons.badge)),
+                    inputFieldSpacer(),
+                    TextFormField(
+                        key: const Key('inputEmail'),
+                        validator: (input) => validateEmail(input),
+                        onSaved: (input) => _email = input.toString(),
+                        onChanged: _onFieldChange,
+                        textInputAction: TextInputAction.go,
+                        onFieldSubmitted: (value) => _createUser(),
+                        decoration:
+                            customInputDecoration('E-post', Icons.mail)),
+                    inputFieldSpacer(),
+                    TextFormField(
+                        controller: passwordOneController,
+                        key: const Key('inputPasswordOne'),
+                        validator: (input) => validatePassword(input),
+                        onSaved: (input) => _password = input.toString(),
+                        onChanged: _onFieldChange,
+                        textInputAction: TextInputAction.go,
+                        onFieldSubmitted: (value) => _createUser(),
+                        obscureText: !_visiblePassword,
+                        decoration: customInputDecoration('Passord', Icons.lock,
+                            passwordField: true,
+                            isVisible: _visiblePassword,
+                            onPressed: _toggleVisiblePassword)),
+                    inputFieldSpacer(),
+                    TextFormField(
+                        key: const Key('inputPasswordTwo'),
+                        validator: (input) => validatePasswords(
+                            passwordOneController.text, input),
+                        onChanged: _onFieldChange,
+                        textInputAction: TextInputAction.go,
+                        onFieldSubmitted: (value) => _createUser(),
+                        obscureText: !_visiblePassword,
+                        decoration: customInputDecoration(
+                            'Gjenta passord', Icons.lock,
+                            passwordField: true,
+                            isVisible: _visiblePassword,
+                            onPressed: _toggleVisiblePassword)),
+                    inputFieldSpacer(),
+                    TextFormField(
+                        key: const Key('inputPhone'),
+                        validator: (input) => validatePhone(input),
+                        onSaved: (input) => _phone = input.toString(),
+                        onChanged: _onFieldChange,
+                        textInputAction: TextInputAction.go,
+                        onFieldSubmitted: (value) => _createUser(),
+                        decoration:
+                            customInputDecoration('Telefon', Icons.phone)),
+                    inputFieldSpacer(),
+                    AnimatedOpacity(
+                      opacity: _registerFailed ? 1.0 : 0.0,
+                      duration: const Duration(milliseconds: 200),
+                      child: Text(
+                        _registerFailed ? _feedback : '',
+                        key: const Key('feedback'),
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                        key: const Key('registerUserButton'),
+                        onPressed: _createUser,
+                        child: const Text('Opprett bruker',
+                            style: TextStyle(fontSize: 20)),
+                        style: ElevatedButton.styleFrom(
+                            fixedSize: const Size(180, 60)))
+                  ],
+                ))));
   }
 
   void _createUser() async {
