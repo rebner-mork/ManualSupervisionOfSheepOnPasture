@@ -44,26 +44,16 @@ class _CameraPageState extends State<CameraPage> {
         future: _initializeControllerFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            /*final size = MediaQuery.of(context).size;
-            final deviceRatio = size.width / size.height;
-            final xScale = _cameraController.value.aspectRatio / deviceRatio;*/
             return Stack(children: [
-              /*
-              AspectRatio(
-                aspectRatio: deviceRatio,
-                child: Transform(
-                  alignment: Alignment.center,
-                  transform: Matrix4.diagonal3Values(xScale, 1, 1),
-                  child: CameraPreview(_cameraController),
-                ),
-              ),
-              */
               CameraPreview(_cameraController),
               Positioned(
                   left: 10,
                   top: 10 + MediaQuery.of(context).viewPadding.top,
                   child: CircularButton(
-                    child: const Icon(Icons.cancel),
+                    child: const Icon(
+                      Icons.cancel,
+                      size: 42,
+                    ),
                     onPressed: () => Navigator.pop(context),
                   ))
             ]);

@@ -202,6 +202,9 @@ class _MainPageState extends State<MainPage> {
                                       break;
                                     case RegistrationType.cadaver:
                                       _tripData.registrations.add(data);
+                                      setState(() {
+                                        _sheepAmount += 1;
+                                      });
                                       break;
                                     default: // TODO: remove default when all types are added
                                       break;

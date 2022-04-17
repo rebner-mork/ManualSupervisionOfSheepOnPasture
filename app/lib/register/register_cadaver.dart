@@ -159,7 +159,7 @@ class _RegisterCadaverState extends State<RegisterCadaver> with RegisterPage {
                                     onPhotoChanged: (photoPath) =>
                                         photoPaths[2] = photoPath,
                                   ),
-                                  const SizedBox(width: 10),
+                                  SizedBox(width: widget.leftMargin),
                                 ],
                               )
                             ],
