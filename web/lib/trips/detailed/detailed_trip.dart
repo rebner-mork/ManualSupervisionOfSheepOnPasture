@@ -54,7 +54,7 @@ class _DetailedTripState extends State<DetailedTrip> {
     _fillDataMaps();
   }
 
-  Future<void> _initDataMaps() async {
+  void _initDataMaps() {
     for (String sheepKey in mainSheepRegistrationKeysToGui.keys) {
       sheepData[sheepKey] = 0;
     }
