@@ -72,7 +72,8 @@ class TripDataManager {
             fileReference
                 .putFile(File(registrations[i]['photos'][j]))
                 .then((_) {
-              File(registrations[i]['photos'][j]).deleteSync();
+              File('$applicationDocumentDirectoryPath/cadavers/${(registrations[i]['photos'][j] as String).split('/').last}')
+                  .deleteSync();
             });
           } on FirebaseException catch (e) {
             developer.log(e.toString());
