@@ -197,25 +197,23 @@ class _MainPageState extends State<MainPage> {
                                     _cancelSelectPositionMode,
                                 onRegistrationComplete:
                                     (Map<String, Object> data) {
+                                  _tripData.registrations.add(data);
                                   switch (_selectedRegistrationType) {
                                     case RegistrationType.sheep:
                                       int sheepAmountRegistered =
                                           data['sheep']! as int;
                                       if (sheepAmountRegistered > 0) {
-                                        _tripData.registrations.add(data);
                                         setState(() {
                                           _sheepAmount += sheepAmountRegistered;
                                         });
                                       }
                                       break;
                                     case RegistrationType.injury:
-                                      _tripData.registrations.add(data);
                                       setState(() {
                                         _sheepAmount += 1;
                                       });
                                       break;
                                     case RegistrationType.cadaver:
-                                      _tripData.registrations.add(data);
                                       setState(() {
                                         _sheepAmount += 1;
                                       });
