@@ -1,7 +1,5 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-
 import 'package:app/widgets/circular_buttons.dart';
 
 class DisplayPhotoWidget extends StatelessWidget {
