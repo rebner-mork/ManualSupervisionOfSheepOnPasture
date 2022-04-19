@@ -45,7 +45,7 @@ class _RegisterCadaverState extends State<RegisterCadaver> with RegisterPage {
   late String _selectedTieColor;
   late Map<String, int?> _ties;
 
-  List<String> _photoPaths = ["", "", ""];
+  final List<String> _photoPaths = ["", "", ""];
 
   late final TextEditingController _countryCodeController;
   final TextEditingController _farmNumberController = TextEditingController();

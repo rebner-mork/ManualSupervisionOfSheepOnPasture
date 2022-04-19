@@ -61,7 +61,7 @@ class TripDataManager {
     for (int i = 0; i < registrations.length; i++) {
       if (registrations[i].containsValue('cadaver') &&
           !registrations[i]['photos'].isEmpty) {
-        fullPhotoUrls.add([]);
+        fullPhotoUrls.add([]); //TODO ???
         indexes.add(i);
         for (int j = 0; j < registrations[i]['photos'].length; j++) {
           try {
@@ -72,6 +72,7 @@ class TripDataManager {
             fileReference
                 .putFile(File(registrations[i]['photos'][j]))
                 .then((_) {
+              //TODO ???
               File('$applicationDocumentDirectoryPath/cadavers/${(registrations[i]['photos'][j] as String).split('/').last}')
                   .deleteSync();
             });
