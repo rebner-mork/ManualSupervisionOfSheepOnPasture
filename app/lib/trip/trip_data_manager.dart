@@ -63,7 +63,7 @@ class TripDataManager {
     // Per cadaver registrations
     for (int i = 0; i < registrations.length; i++) {
       if (registrations[i].containsValue('cadaver') &&
-          !registrations[i]['photos'].isEmpty) {
+          registrations[i]['photos'].isNotEmpty) {
         cadaverPhotos[i] = [];
 
         // Per photo in a registration
