@@ -110,9 +110,9 @@ Row inputRow(String text, TextEditingController controller, IconData iconData,
             ))),
     const Spacer(),
     Flexible(
-        flex: 10,
-        child: Container(
-            constraints: const BoxConstraints(minWidth: 100),
+        flex: 11,
+        child: SizedBox(
+            width: 115,
             child: Text(
               text,
               style: const TextStyle(fontSize: 19),

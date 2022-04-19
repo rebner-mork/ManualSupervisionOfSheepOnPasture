@@ -66,6 +66,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
     'sheep': TextEditingController(),
     'lambs': TextEditingController(),
     'white': TextEditingController(),
+    'brown': TextEditingController(),
     'black': TextEditingController(),
     'blackHead': TextEditingController(),
   };
@@ -101,6 +102,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
 
     questions = List.from(distanceSheepQuestions);
     questionContexts = [
+      QuestionContext.numbers,
       QuestionContext.numbers,
       QuestionContext.numbers,
       QuestionContext.numbers,
@@ -303,8 +305,14 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
                 '${colorValueStringToColorString[eartagColor]}Ear']!,
             eartagColor == '0' ? Icons.close : Icons.local_offer,
             eartagColor == '0' ? Colors.grey : colorStringToColor[eartagColor]!,
-            scrollController: widget.ties.isNotEmpty ? scrollController : null,
-            key: widget.ties.isNotEmpty ? firstHeadlineFieldKeys[1] : null));
+            scrollController: widget.ties.isNotEmpty &&
+                    eartagColor == widget.eartags.keys.last
+                ? scrollController
+                : null,
+            key: widget.ties.isNotEmpty &&
+                    eartagColor == widget.eartags.keys.last
+                ? firstHeadlineFieldKeys[1]
+                : null));
         eartags.add(inputFieldSpacer());
       }
     }
@@ -352,7 +360,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
                             child: Column(children: [
                           const SizedBox(height: 10),
                           inputDividerWithHeadline('Antall'),
-                          inputRow('Sauer', _textControllers['sheep']!,
+                          inputRow('Sauer & lam', _textControllers['sheep']!,
                               RpgAwesome.sheep, Colors.grey),
                           inputFieldSpacer(),
                           inputRow('Lam', _textControllers['lambs']!,
@@ -365,6 +373,13 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
                             RpgAwesome.sheep,
                             Colors.white,
                           ),
+                          inputFieldSpacer(),
+                          inputRow(
+                              'Brune',
+                              _textControllers[
+                                  'brown']!, // TODO: legg til brun på oppsynsturer-web
+                              RpgAwesome.sheep,
+                              Colors.brown),
                           inputFieldSpacer(),
                           inputRow(
                             'Svarte',
