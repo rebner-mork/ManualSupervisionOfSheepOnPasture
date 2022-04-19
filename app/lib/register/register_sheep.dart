@@ -296,7 +296,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
   }
 
   List<Widget> _shortDistance() {
-    List eartags = [];
+    List eartags = [inputFieldSpacer()];
     List<Widget> ties = [];
 
     if (widget.eartags.isNotEmpty) {
