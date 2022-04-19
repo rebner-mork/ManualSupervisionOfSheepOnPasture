@@ -51,29 +51,37 @@ class TripDataManager {
   List<Map<String, dynamic>> registrations = [];
   List<LatLng> track = [];
 
-  void _storePhotos() {
-    FirebaseStorage photoStorage = FirebaseStorage.instance;
+// Uploads photos to firebase storage and updates registrations with firebase
+// storage references to their respective files
+  void _uploadPhotosAndPreparePaths() {
     String uid = FirebaseAuth.instance.currentUser!.uid;
 
-    final List<List<String>> fullPhotoUrls = [];
-    final List<int> indexes = [];
+    // Keys: indexes of cadavers in registration dataset
+    // Values: firebase storage references
+    final Map<int, List<String>> cadaverPhotos = {};
 
+    // Per cadaver registrations
     for (int i = 0; i < registrations.length; i++) {
       if (registrations[i].containsValue('cadaver') &&
           !registrations[i]['photos'].isEmpty) {
-        fullPhotoUrls.add([]); //TODO ???
-        indexes.add(i);
+        cadaverPhotos[i] = [];
+
+        // Per photo in a registration
         for (int j = 0; j < registrations[i]['photos'].length; j++) {
           try {
             String basename = path.basename(registrations[i]['photos'][j]);
+
+            // to be used location in cloud storage
             Reference fileReference =
-                photoStorage.ref('users/$uid/cadavers/$basename');
-            fullPhotoUrls.last.add('users/$uid/cadavers/$basename');
+                FirebaseStorage.instance.ref('users/$uid/cadavers/$basename');
+
+            cadaverPhotos[i]?.add(fileReference.fullPath);
+
+            // Upload then delete file
             fileReference
                 .putFile(File(registrations[i]['photos'][j]))
                 .then((_) {
-              //TODO ???
-              File('$applicationDocumentDirectoryPath/cadavers/${(registrations[i]['photos'][j] as String).split('/').last}')
+              File(applicationDocumentDirectoryPath + "/cadavers/" + basename)
                   .deleteSync();
             });
           } on FirebaseException catch (e) {
@@ -83,11 +91,9 @@ class TripDataManager {
       }
     }
 
-    for (int registrationIndex in indexes) {
-      registrations[registrationIndex]['photos'] = fullPhotoUrls.first;
-      if (fullPhotoUrls.isNotEmpty) {
-        fullPhotoUrls.removeAt(0);
-      }
+    // Updating from local file urls to firebase storage references
+    for (int i in cadaverPhotos.keys) {
+      registrations[i]['photos'] = cadaverPhotos[i];
     }
   }
 
@@ -96,7 +102,7 @@ class TripDataManager {
 
     // --- PHOTOS ---
 
-    _storePhotos();
+    _uploadPhotosAndPreparePaths();
 
     // --- TRIPS ---
 
