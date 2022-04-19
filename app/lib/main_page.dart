@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:app/map/map_widget.dart';
 import 'package:app/registration_options.dart';
 import 'package:app/trip/end_trip_dialog.dart';
-import 'package:app/trip/start_trip_page.dart';
 import 'package:app/trip/trip_data_manager.dart';
+import 'package:app/utils/constants.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/other.dart';
 import 'package:app/widgets/circular_buttons.dart';
@@ -58,6 +58,12 @@ class _MainPageState extends State<MainPage> {
   double iconSize = 42;
   bool _isLoading = true;
 
+  bool _inSelectPositionMode = false;
+  RegistrationType _selectedRegistrationType = RegistrationType.sheep;
+  Timer? _selectPositionTextTimer;
+  int selectPositionTextTimerDuration = 1200; // ms
+  bool _isSelectPositionTextVisible = true;
+
   @override
   void initState() {
     super.initState();
@@ -81,6 +87,62 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
+  void _startSelectPositionTextTimer() {
+    _isSelectPositionTextVisible = true;
+    _selectPositionTextTimer = Timer.periodic(
+        Duration(milliseconds: selectPositionTextTimerDuration), (timer) {
+      setState(() {
+        _isSelectPositionTextVisible = !_isSelectPositionTextVisible;
+      });
+    });
+  }
+
+  Future<bool> _backButtonPressed(BuildContext context) async {
+    if (_inSelectPositionMode) {
+      _cancelSelectPositionMode();
+      return false;
+    } else {
+      return _endTrip(context);
+    }
+  }
+
+  Future<bool> _endTrip(BuildContext context) async {
+    bool isConnected = await isConnectedToInternet();
+    await showEndTripDialog(context, isConnected).then((isFinished) {
+      if (isFinished) {
+        if (isConnected) {
+          _tripData.post();
+        } else {
+          _tripData.archive();
+        }
+        if (widget.onCompleted != null) {
+          widget.onCompleted!();
+        }
+        Navigator.pop(context);
+      }
+      return isFinished;
+    });
+    return false;
+  }
+
+  void _cancelSelectPositionMode() {
+    setState(() {
+      _inSelectPositionMode = false;
+      _selectedRegistrationType = RegistrationType.sheep;
+      if (_selectPositionTextTimer != null) {
+        _selectPositionTextTimer!.cancel();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    if (_selectPositionTextTimer != null) {
+      _selectPositionTextTimer!.cancel();
+    }
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -88,7 +150,7 @@ class _MainPageState extends State<MainPage> {
             ? const LoadingData()
             : WillPopScope(
                 onWillPop: () async {
-                  return _endTripButtonPressed(context, _tripData);
+                  return _backButtonPressed(context);
                 },
                 child: Scaffold(
                     endDrawer: Align(
@@ -99,15 +161,24 @@ class _MainPageState extends State<MainPage> {
                                     MediaQuery.of(context).viewPadding.bottom +
                                         50 + // height of CircularButton
                                         2 * buttonInset),
-                            child: const ClipRRect(
-                                borderRadius: BorderRadius.only(
+                            child: ClipRRect(
+                                borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(30),
                                     bottomLeft: Radius.circular(30)),
                                 child: SizedBox(
                                     width: 280,
                                     height: 520,
                                     child: Drawer(
-                                      child: RegistrationOptions(),
+                                      child: RegistrationOptions(
+                                          ties: widget.ties,
+                                          onRegisterOptionSelected:
+                                              (RegistrationType type) {
+                                            setState(() {
+                                              _inSelectPositionMode = true;
+                                              _selectedRegistrationType = type;
+                                              _startSelectPositionTextTimer();
+                                            });
+                                          }),
                                     ))))),
                     body: Stack(children: [
                       ValueListenableBuilder<bool>(
@@ -120,94 +191,124 @@ class _MainPageState extends State<MainPage> {
                                 eartags: widget.eartags,
                                 ties: widget.ties,
                                 deviceStartPosition: _deviceStartPosition,
-                                onSheepRegistered: (Map<String, Object> data) {
-                                  int sheepAmountRegistered =
-                                      data['sheep']! as int;
-                                  if (sheepAmountRegistered > 0) {
-                                    _tripData.registrations.add(data);
-                                    setState(() {
-                                      _sheepAmount += sheepAmountRegistered;
-                                    });
+                                registrationType: _selectedRegistrationType,
+                                onRegistrationCanceled:
+                                    _cancelSelectPositionMode,
+                                onRegistrationComplete:
+                                    (Map<String, Object> data) {
+                                  switch (_selectedRegistrationType) {
+                                    case RegistrationType.sheep:
+                                      int sheepAmountRegistered =
+                                          data['sheep']! as int;
+                                      if (sheepAmountRegistered > 0) {
+                                        _tripData.registrations.add(data);
+                                        setState(() {
+                                          _sheepAmount += sheepAmountRegistered;
+                                        });
+                                      }
+                                      break;
+                                    case RegistrationType.injury:
+                                      _tripData.registrations.add(data);
+                                      setState(() {
+                                        _sheepAmount += 1;
+                                      });
+                                      break;
+                                    default: // TODO: remove default when all types are added
+                                      break;
                                   }
+
+                                  _cancelSelectPositionMode();
                                 },
                                 onNewPosition: (position) =>
                                     _tripData.track.add(position),
                               )),
-                      Positioned(
-                        top: buttonInset +
-                            MediaQuery.of(context).viewPadding.top,
-                        left: buttonInset,
-                        child: CircularButton(
-                            child: Icon(
-                              Icons.cloud_upload,
-                              size: iconSize,
-                            ),
-                            onPressed: () {
-                              _endTripButtonPressed(context, _tripData);
-                            }),
-                      ),
-                      Positioned(
+                      if (_inSelectPositionMode)
+                        Positioned(
+                            top: buttonInset +
+                                MediaQuery.of(context).viewPadding.top,
+                            left: buttonInset,
+                            child: CircularButton(
+                                child: Icon(Icons.cancel, size: iconSize),
+                                onPressed: () {
+                                  _cancelSelectPositionMode();
+                                })),
+                      if (_inSelectPositionMode)
+                        Padding(
+                            padding: EdgeInsets.only(
+                                top: buttonInset +
+                                    MediaQuery.of(context).viewPadding.top,
+                                left: buttonInset + 50,
+                                right: 20),
+                            child: AnimatedOpacity(
+                                opacity:
+                                    _isSelectPositionTextVisible ? 1.0 : 0.3,
+                                duration: Duration(
+                                    milliseconds:
+                                        selectPositionTextTimerDuration),
+                                child: Text(
+                                  'Hold inne på posisjonen til ${registrationTypeToGui[_selectedRegistrationType]}',
+                                  style: const TextStyle(fontSize: 26),
+                                  textAlign: TextAlign.center,
+                                ))),
+                      if (!_inSelectPositionMode)
+                        Positioned(
                           top: buttonInset +
                               MediaQuery.of(context).viewPadding.top,
-                          right: buttonInset,
+                          left: buttonInset,
                           child: CircularButton(
-                            child: SettingsIcon(iconSize: iconSize),
-                            onPressed: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (_) => const SettingsDialog());
-                            },
-                          )),
-                      Positioned(
-                        bottom: buttonInset +
-                            MediaQuery.of(context).viewPadding.bottom,
-                        left: buttonInset,
-                        child: CircularButton(
-                          child: Sheepometer(
-                              sheepAmount: _sheepAmount, iconSize: iconSize),
-                          onPressed: () {},
-                          width: 62 +
-                              textSize(_sheepAmount.toString(),
-                                      circularButtonTextStyle)
-                                  .width,
+                              child: Icon(
+                                Icons.cloud_upload,
+                                size: iconSize,
+                              ),
+                              onPressed: () {
+                                _endTrip(context);
+                              }),
                         ),
-                      ),
-                      Builder(
-                          builder: (context) => Positioned(
-                              bottom: buttonInset +
-                                  MediaQuery.of(context).viewPadding.bottom,
-                              right: buttonInset,
-                              child: CircularButton(
-                                child: const Text(
-                                  '+?',
-                                  style: TextStyle(
-                                      fontSize: 28,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                onPressed: () {
-                                  Scaffold.of(context).openEndDrawer();
-                                },
-                              )))
+                      if (!_inSelectPositionMode)
+                        Positioned(
+                            top: buttonInset +
+                                MediaQuery.of(context).viewPadding.top,
+                            right: buttonInset,
+                            child: CircularButton(
+                              child: SettingsIcon(iconSize: iconSize),
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (_) => const SettingsDialog());
+                              },
+                            )),
+                      if (!_inSelectPositionMode)
+                        Positioned(
+                          bottom: buttonInset +
+                              MediaQuery.of(context).viewPadding.bottom,
+                          left: buttonInset,
+                          child: CircularButton(
+                            child: Sheepometer(
+                                sheepAmount: _sheepAmount, iconSize: iconSize),
+                            onPressed: () {},
+                            width: 62 +
+                                textSize(_sheepAmount.toString(),
+                                        circularButtonTextStyle)
+                                    .width,
+                          ),
+                        ),
+                      if (!_inSelectPositionMode)
+                        Builder(
+                            builder: (context) => Positioned(
+                                bottom: buttonInset +
+                                    MediaQuery.of(context).viewPadding.bottom,
+                                right: buttonInset,
+                                child: CircularButton(
+                                  child: const Text(
+                                    '+?',
+                                    style: TextStyle(
+                                        fontSize: 28,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  onPressed: () {
+                                    Scaffold.of(context).openEndDrawer();
+                                  },
+                                )))
                     ]))));
-  }
-
-  Future<bool> _endTripButtonPressed(
-      BuildContext context, TripDataManager _trip) async {
-    bool isConnected = await isConnectedToInternet();
-    await showEndTripDialog(context, isConnected).then((isFinished) {
-      if (isFinished) {
-        if (isConnected) {
-          _trip.post();
-        } else {
-          _trip.archive();
-        }
-        if (widget.onCompleted != null) {
-          widget.onCompleted!();
-        }
-        Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
-      }
-      return isFinished;
-    });
-    return false;
   }
 }

@@ -61,8 +61,40 @@ Marker getDevicePositionMarker(LatLng pos) {
           ));
 }
 
-Marker getSheepMarker(LatLng pos) {
+Marker getSheepMarker(LatLng pos, RegistrationType type,
+    {SheepMarkerColor color = SheepMarkerColor.green}) {
   const double size = 50;
+
+  final AssetImage image;
+
+  switch (type) {
+    case RegistrationType.sheep:
+      switch (color) {
+        case SheepMarkerColor.green:
+          image = const AssetImage('images/sheep_marker_green.png');
+          break;
+        case SheepMarkerColor.yellow:
+          image = const AssetImage('images/sheep_marker_yellow.png');
+          break;
+        case SheepMarkerColor.red:
+          image = const AssetImage('images/sheep_marker_red.png');
+          break;
+      }
+      break;
+    case RegistrationType.injury:
+      image = const AssetImage('images/sheep_marker_injury.png');
+      break;
+    case RegistrationType.cadaver:
+      image = const AssetImage('images/sheep_marker_cadaver.png');
+      break;
+    case RegistrationType.predator:
+      image = const AssetImage('images/predator_marker.png');
+      break;
+    case RegistrationType.note:
+      image = const AssetImage('images/note_marker.png');
+      break;
+  }
+
   return Marker(
       point: pos,
       anchorPos: AnchorPos.align(AnchorAlign.top),
@@ -70,8 +102,8 @@ Marker getSheepMarker(LatLng pos) {
       height: size,
       width: size,
       rotate: true,
-      builder: (context) => const Image(
-            image: AssetImage("images/sheep_marker_green.png"),
+      builder: (context) => Image(
+            image: image,
             width: size,
             height: size,
           ));

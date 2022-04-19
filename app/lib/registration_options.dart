@@ -1,8 +1,14 @@
+import 'package:app/utils/constants.dart';
 import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
 
 class RegistrationOptions extends StatefulWidget {
-  const RegistrationOptions({Key? key}) : super(key: key);
+  const RegistrationOptions(
+      {required this.ties, required this.onRegisterOptionSelected, Key? key})
+      : super(key: key);
+
+  final Map<String, int?> ties;
+  final Function(RegistrationType) onRegisterOptionSelected;
 
   @override
   State<RegistrationOptions> createState() => _RegistrationOptionsState();
@@ -24,12 +30,18 @@ class _RegistrationOptionsState extends State<RegistrationOptions> {
         RegistrationTypeListTile(
           text: 'Sau',
           assetImageName: 'images/sheep.png',
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context).pop();
+            widget.onRegisterOptionSelected(RegistrationType.sheep);
+          },
         ),
         RegistrationTypeListTile(
             text: 'Skade',
             assetImageName: 'images/sheep_injured.png',
-            onPressed: () {}),
+            onPressed: () {
+              Navigator.of(context).pop();
+              widget.onRegisterOptionSelected(RegistrationType.injury);
+            }),
         RegistrationTypeListTile(
             text: 'Kadaver',
             assetImageName: 'images/sheep_dead.png',
@@ -84,10 +96,10 @@ class RegistrationTypeListTile extends StatelessWidget {
                                   image: AssetImage(assetImageName),
                                   width: 55,
                                 ))),
-                        const SizedBox(width: 25),
-                        Flexible(
+                        Expanded(
                             child: Text(
                           text,
+                          textAlign: TextAlign.center,
                           style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ))

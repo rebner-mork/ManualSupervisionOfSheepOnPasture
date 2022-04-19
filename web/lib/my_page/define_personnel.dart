@@ -114,8 +114,10 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                     onPressed: () {
                       showDialog(
                           context: context,
-                          builder: (_) =>
-                              _deletePersonnelDialog(context, data.key));
+                          builder: (_) => Padding(
+                              padding: const EdgeInsets.only(left: 128),
+                              child:
+                                  _deletePersonnelDialog(context, data.key)));
                     },
                   ))),
             ]))
@@ -239,7 +241,6 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
         filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
         child: AlertDialog(
           title: Text("Slette '${_personnelEmails[index]}'?"),
-          content: const Text('Sletting kan ikke angres'),
           actions: [
             TextButton(
                 onPressed: () async {

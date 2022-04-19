@@ -1,3 +1,4 @@
+import 'package:app/register/register_injured_sheep.dart';
 import 'package:app/register/register_sheep.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -18,7 +19,9 @@ class MapWidget extends StatefulWidget {
       required this.deviceStartPosition,
       required this.eartags,
       required this.ties,
-      this.onSheepRegistered,
+      required this.registrationType,
+      required this.onRegistrationComplete,
+      required this.onRegistrationCanceled,
       this.onNewPosition,
       Key? key})
       : super(key: key) {
@@ -37,8 +40,11 @@ class MapWidget extends StatefulWidget {
 
   final LatLng deviceStartPosition;
 
-  final ValueChanged<Map<String, Object>>? onSheepRegistered;
+  final ValueChanged<Map<String, Object>>? onRegistrationComplete;
   final ValueChanged<LatLng>? onNewPosition;
+
+  final RegistrationType registrationType;
+  final VoidCallback onRegistrationCanceled;
 
   @override
   State<MapWidget> createState() => _MapState();
@@ -85,7 +91,7 @@ class _MapState extends State<MapWidget> {
     });
   }
 
-  void registerSheepByTap(LatLng targetPosition) async {
+  void registerSheep(LatLng targetPosition) {
     if (!mapAlreadyTapped) {
       mapAlreadyTapped = true;
 
@@ -103,11 +109,12 @@ class _MapState extends State<MapWidget> {
                       onCompletedSuccessfully: (Map<String, Object> data) {
                         mapAlreadyTapped = false;
 
+                        if (widget.onRegistrationComplete != null) {
+                          widget.onRegistrationComplete!(data);
+                        }
+
                         if (data['sheep']! as int > 0) {
                           setState(() {
-                            if (widget.onSheepRegistered != null) {
-                              widget.onSheepRegistered!(data);
-                            }
                             LatLng devicePosition = LatLng(
                                 (data['devicePosition']!
                                     as Map<String, double>)['latitude']!,
@@ -119,14 +126,65 @@ class _MapState extends State<MapWidget> {
                                 color: Colors.black,
                                 isDotted: true,
                                 strokeWidth: 5.0));
-                            registrationMarkers
-                                .add(map_utils.getSheepMarker(targetPosition));
+                            registrationMarkers.add(map_utils.getSheepMarker(
+                                targetPosition, RegistrationType.sheep));
                           });
                         }
                       },
                       onWillPop: () {
+                        widget.onRegistrationCanceled();
                         mapAlreadyTapped = false;
                       }))));
+    }
+  }
+
+  void registerInjuredSheep(LatLng targetPosition) {
+    if (!mapAlreadyTapped) {
+      mapAlreadyTapped = true;
+
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => RegisterInjuredSheep(
+                  ties: widget.ties,
+                  sheepPosition: targetPosition,
+                  onCompletedSuccessfully: (Map<String, Object> data) {
+                    if (widget.onRegistrationComplete != null) {
+                      widget.onRegistrationComplete!(data);
+                    }
+
+                    setState(() {
+                      LatLng devicePosition = LatLng(
+                          (data['devicePosition']!
+                              as Map<String, double>)['latitude']!,
+                          (data['devicePosition']!
+                              as Map<String, double>)['longitude']!);
+
+                      linesOfSight.add(Polyline(
+                          points: [devicePosition, targetPosition],
+                          color: Colors.black,
+                          isDotted: true,
+                          strokeWidth: 5.0));
+                      registrationMarkers.add(map_utils.getSheepMarker(
+                          targetPosition, RegistrationType.injury));
+                    });
+                  },
+                  onWillPop: () {
+                    widget.onRegistrationCanceled();
+                    mapAlreadyTapped = false;
+                  })));
+    }
+  }
+
+  void _startRegistration(LatLng point) {
+    switch (widget.registrationType) {
+      case RegistrationType.sheep:
+        registerSheep(point);
+        break;
+      case RegistrationType.injury:
+        registerInjuredSheep(point);
+        break;
+      default:
     }
   }
 
@@ -145,7 +203,7 @@ class _MapState extends State<MapWidget> {
           onMapCreated: (c) {
             _mapController = c;
           },
-          onTap: (_, point) => registerSheepByTap(point),
+          onLongPress: (_, point) => _startRegistration(point),
           zoom: OfflineZoomLevels.min,
           minZoom: OfflineZoomLevels.min,
           maxZoom: OfflineZoomLevels.max,
@@ -157,7 +215,6 @@ class _MapState extends State<MapWidget> {
           TileLayerOptions(
             tileProvider: const FileTileProvider(),
             urlTemplate: urlTemplate,
-            errorImage: const AssetImage("images/stripes.png"),
             attributionBuilder: (_) {
               return const Text(
                 "Kartverket",

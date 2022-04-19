@@ -16,17 +16,15 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Material(
-        child: FractionallySizedBox(
-      widthFactor: 0.6,
       child: Column(
         children: const [
           Spacer(),
           Flexible(
-            child: SignUpWidget(),
-            flex: 20,
-          ),
+              flex: 20,
+              child: SingleChildScrollView(
+                  key: Key('scrollView'), child: SignUpWidget())),
         ],
       ),
-    ));
+    );
   }
 }
