@@ -1,11 +1,11 @@
 import 'package:app/widgets/circular_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:app/utils/constants.dart' as constants;
 
 import 'dart:io';
 import 'package:path/path.dart' as p;
-
-import 'package:app/utils/constants.dart' as constants;
+import 'dart:developer' as developer;
 
 class CameraPage extends StatefulWidget {
   const CameraPage({Key? key, required this.onPhotoCaptured}) : super(key: key);
@@ -80,7 +80,7 @@ class _CameraPageState extends State<CameraPage> {
 
             Navigator.pop(context);
           } catch (e) {
-            debugPrint(e.toString());
+            developer.log(e.toString());
           }
         },
         child: const Icon(

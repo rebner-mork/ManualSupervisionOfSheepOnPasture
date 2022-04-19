@@ -35,8 +35,6 @@ class RegisterCadaver extends StatefulWidget {
 }
 
 class _RegisterCadaverState extends State<RegisterCadaver> with RegisterPage {
-  late String dropdownValue = widget.ties.keys.first;
-
   final _formKey = GlobalKey<FormState>();
 
   late LatLng _devicePosition;
@@ -47,7 +45,7 @@ class _RegisterCadaverState extends State<RegisterCadaver> with RegisterPage {
   late String _selectedTieColor;
   late Map<String, int?> _ties;
 
-  List<String> photoPaths = ["", "", ""];
+  List<String> _photoPaths = ["", "", ""];
 
   late final TextEditingController _countryCodeController;
   final TextEditingController _farmNumberController = TextEditingController();
@@ -145,19 +143,19 @@ class _RegisterCadaverState extends State<RegisterCadaver> with RegisterPage {
                                 children: [
                                   CameraInputButton(
                                       onPhotoChanged: (photoPath) {
-                                    photoPaths[0] = photoPath;
+                                    _photoPaths[0] = photoPath;
                                   }),
                                   const SizedBox(width: 10),
                                   CameraInputButton(
                                     onPhotoChanged: (photoPath) =>
-                                        photoPaths[1] = photoPath,
+                                        _photoPaths[1] = photoPath,
                                   ),
                                   const SizedBox(
                                     width: 10,
                                   ),
                                   CameraInputButton(
                                     onPhotoChanged: (photoPath) =>
-                                        photoPaths[2] = photoPath,
+                                        _photoPaths[2] = photoPath,
                                   ),
                                   SizedBox(width: widget.leftMargin),
                                 ],
@@ -179,7 +177,7 @@ class _RegisterCadaverState extends State<RegisterCadaver> with RegisterPage {
   void register() {
     _isValidationActivated = true;
     if (_formKey.currentState!.validate()) {
-      photoPaths.removeWhere((element) => element == "");
+      _photoPaths.removeWhere((element) => element == "");
 
       Map<String, Object> data = {
         ...getMetaRegistrationData(
@@ -193,7 +191,7 @@ class _RegisterCadaverState extends State<RegisterCadaver> with RegisterPage {
             _individualNumberController.text,
         'tieColor': _selectedTieColor,
         'note': _noteController.text,
-        'photos': photoPaths
+        'photos': _photoPaths
       };
 
       if (widget.onCompletedSuccessfully != null) {
