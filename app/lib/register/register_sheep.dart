@@ -377,12 +377,8 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
                               key: firstHeadlineFieldKeys[0],
                               ownKey: firstHeadlineFieldKeys[0]),
                           inputFieldSpacer(),
-                          inputRow(
-                              'Brune',
-                              _textControllers[
-                                  'brown']!, // TODO: legg til brun på oppsynsturer-web
-                              RpgAwesome.sheep,
-                              Colors.brown),
+                          inputRow('Brune', _textControllers['brown']!,
+                              RpgAwesome.sheep, Colors.brown),
                           inputFieldSpacer(),
                           inputRow(
                             'Svarte',
