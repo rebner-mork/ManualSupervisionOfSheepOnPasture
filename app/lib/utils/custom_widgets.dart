@@ -94,50 +94,54 @@ Row inputRow(String text, TextEditingController controller, IconData iconData,
     Color color,
     {double iconSize = defaultIconSize,
     ScrollController? scrollController,
-    GlobalKey? key}) {
-  return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-    Flexible(
-        flex: 5,
-        child: Container(
-            width: defaultIconSize + 3,
-            color: color == Colors.white
-                ? Colors.grey.shade400
-                : Colors.transparent,
-            child: Icon(
-              iconData,
-              color: color,
-              size: iconSize,
-            ))),
-    const Spacer(),
-    Flexible(
-        flex: 11,
-        child: SizedBox(
-            width: 115,
-            child: Text(
-              text,
-              style: const TextStyle(fontSize: 19),
-            ))),
-    const Spacer(),
-    Flexible(
-        flex: 20,
-        child: Container(
-            constraints: const BoxConstraints(maxWidth: 70),
-            child: TextFormField(
-              textAlign: TextAlign.center,
-              keyboardType: TextInputType.number,
-              textInputAction: TextInputAction.next,
-              controller: controller,
-              onFieldSubmitted: (_) => {
-                if (scrollController != null && key != null)
-                  scrollToKey(scrollController, key),
-              },
-              decoration: const InputDecoration(
-                hintText: '0',
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-              ),
-            )))
-  ]);
+    GlobalKey? key,
+    GlobalKey? ownKey}) {
+  return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      key: ownKey,
+      children: [
+        Flexible(
+            flex: 5,
+            child: Container(
+                width: defaultIconSize + 3,
+                color: color == Colors.white
+                    ? Colors.grey.shade400
+                    : Colors.transparent,
+                child: Icon(
+                  iconData,
+                  color: color,
+                  size: iconSize,
+                ))),
+        const Spacer(),
+        Flexible(
+            flex: 11,
+            child: SizedBox(
+                width: 115,
+                child: Text(
+                  text,
+                  style: const TextStyle(fontSize: 19),
+                ))),
+        const Spacer(),
+        Flexible(
+            flex: 20,
+            child: Container(
+                constraints: const BoxConstraints(maxWidth: 70),
+                child: TextFormField(
+                  textAlign: TextAlign.center,
+                  keyboardType: TextInputType.number,
+                  textInputAction: TextInputAction.next,
+                  controller: controller,
+                  onFieldSubmitted: (_) => {
+                    if (scrollController != null && key != null)
+                      scrollToKey(scrollController, key),
+                  },
+                  decoration: const InputDecoration(
+                    hintText: '0',
+                    border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                  ),
+                )))
+      ]);
 }
 
 Column inputDividerWithHeadline(String headline, [GlobalKey? key]) {
