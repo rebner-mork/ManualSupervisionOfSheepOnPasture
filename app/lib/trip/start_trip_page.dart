@@ -682,9 +682,9 @@ class NoFarmNoInternetInfo extends StatelessWidget {
               padding: EdgeInsets.only(left: 25),
               child: Text(
                   'Det ligger ingen gårdsinfo lokalt på enheten.\n'
-                  'For å gjøre oppsyn offline må du først logge\n'
-                  'inn med nettverksforbindelse, og laste ned\n'
-                  'kartet du skal gå i.',
+                  'For å gjøre oppsyn uten internett må du først\n'
+                  'logge inn med nettverksforbindelse, og laste\n'
+                  'ned kartet du skal gå i.',
                   style: TextStyle(fontSize: 16)))),
     ]);
   }

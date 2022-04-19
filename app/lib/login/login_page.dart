@@ -28,11 +28,11 @@ class _LoginPageState extends State<LoginPage> {
     super.didChangeDependencies();
 
     if (!_isConnectivityCheckComplete) {
-      _checkConnection();
+      _connectionStartUpRoutine();
     }
   }
 
-  Future<void> _checkConnection() async {
+  Future<void> _connectionStartUpRoutine() async {
     bool isConnected = await isConnectedToInternet();
     if (!isConnected) {
       Navigator.pushReplacement(

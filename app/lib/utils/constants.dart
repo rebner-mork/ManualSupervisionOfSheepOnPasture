@@ -14,7 +14,7 @@ late final String offlineFarmsFilePath;
 Future<void> setConstants() async {
   Directory dir = await getApplicationDocumentsDirectory();
   applicationDocumentDirectoryPath = dir.path;
-  offlineFarmsFilePath = '$applicationDocumentDirectoryPath/farms';
+  offlineFarmsFilePath = '$applicationDocumentDirectoryPath/farms.json';
 }
 
 final Map<String, String> colorValueStringToColorString = {
