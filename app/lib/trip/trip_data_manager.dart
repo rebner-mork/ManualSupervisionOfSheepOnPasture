@@ -75,7 +75,7 @@ class TripDataManager {
             Reference fileReference =
                 FirebaseStorage.instance.ref('users/$uid/cadavers/$basename');
 
-            cadaverPhotos[i]?.add(fileReference.fullPath);
+            cadaverPhotos[i]!.add(fileReference.fullPath);
 
             // Upload then delete file
             fileReference
