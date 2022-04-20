@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:app/utils/field_validation.dart';
 import 'package:flutter/material.dart';
 
