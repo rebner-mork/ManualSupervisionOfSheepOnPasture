@@ -24,9 +24,12 @@ SizedBox inputFieldSpacer() {
 }
 
 class LoadingData extends StatefulWidget {
-  const LoadingData({this.text = 'Laster inn...', Key? key}) : super(key: key);
+  const LoadingData(
+      {this.text = 'Laster inn...', this.smallCircleOnly = false, Key? key})
+      : super(key: key);
 
   final String text;
+  final bool smallCircleOnly;
 
   @override
   State<LoadingData> createState() => _LoadingDataState();
@@ -62,19 +65,27 @@ class _LoadingDataState extends State<LoadingData>
   @override
   Widget build(BuildContext context) {
     return Center(
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      SizedBox(
-          height: 48,
-          width: 48,
-          child: CircularProgressIndicator(
-            valueColor: _colorTween,
-            strokeWidth: 6,
-          )),
-      const SizedBox(height: 10),
-      Text(
-        widget.text,
-        style: const TextStyle(fontSize: 16),
-      )
-    ]));
+        child: widget.smallCircleOnly
+            ? SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                  valueColor: _colorTween,
+                  strokeWidth: 2.5,
+                ))
+            : Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                SizedBox(
+                    height: 48,
+                    width: 48,
+                    child: CircularProgressIndicator(
+                      valueColor: _colorTween,
+                      strokeWidth: 6,
+                    )),
+                const SizedBox(height: 10),
+                Text(
+                  widget.text,
+                  style: const TextStyle(fontSize: 16),
+                )
+              ]));
   }
 }

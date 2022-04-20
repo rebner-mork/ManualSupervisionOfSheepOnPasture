@@ -2,7 +2,10 @@ import 'dart:convert';
 import 'dart:developer' as developer;
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:path/path.dart' as path;
 
 import '../utils/constants.dart';
 
@@ -45,11 +48,61 @@ class TripDataManager {
   late String mapName;
   late final DateTime _startTime;
   DateTime? _stopTime;
-  List<dynamic> registrations = [];
+  List<Map<String, dynamic>> registrations = [];
   List<LatLng> track = [];
+
+// Uploads photos to firebase storage and updates registrations with firebase
+// storage references to their respective files
+  void _uploadPhotosAndPreparePaths() {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+
+    // Keys: indexes of cadavers in registration dataset
+    // Values: firebase storage references
+    final Map<int, List<String>> cadaverPhotos = {};
+
+    // Per cadaver registrations
+    for (int i = 0; i < registrations.length; i++) {
+      if (registrations[i].containsValue('cadaver') &&
+          registrations[i]['photos'].isNotEmpty) {
+        cadaverPhotos[i] = [];
+
+        // Per photo in a registration
+        for (int j = 0; j < registrations[i]['photos'].length; j++) {
+          try {
+            String basename = path.basename(registrations[i]['photos'][j]);
+
+            // to be used location in cloud storage
+            Reference fileReference =
+                FirebaseStorage.instance.ref('users/$uid/cadavers/$basename');
+
+            cadaverPhotos[i]!.add(fileReference.fullPath);
+
+            // Upload then delete file
+            fileReference
+                .putFile(File(registrations[i]['photos'][j]))
+                .then((_) {
+              File(applicationDocumentDirectoryPath + "/cadavers/" + basename)
+                  .deleteSync();
+            });
+          } on FirebaseException catch (e) {
+            developer.log(e.toString());
+          }
+        }
+      }
+    }
+
+    // Updating from local file urls to firebase storage references
+    for (int i in cadaverPhotos.keys) {
+      registrations[i]['photos'] = cadaverPhotos[i];
+    }
+  }
 
   void post() {
     _stopTime ??= DateTime.now();
+
+    // --- PHOTOS ---
+
+    _uploadPhotosAndPreparePaths();
 
     // --- TRIPS ---
 
@@ -135,7 +188,7 @@ class TripDataManager {
     };
 
     List<String> stringRegistrations = [];
-    for (Map<String, Object> registration in registrations) {
+    for (Map<String, dynamic> registration in registrations) {
       stringRegistrations.add(registration.toString());
     }
     data['registrations'] = stringRegistrations.toString();

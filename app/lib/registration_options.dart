@@ -45,7 +45,10 @@ class _RegistrationOptionsState extends State<RegistrationOptions> {
         RegistrationTypeListTile(
             text: 'Kadaver',
             assetImageName: 'images/sheep_dead.png',
-            onPressed: () {}),
+            onPressed: () {
+              Navigator.of(context).pop();
+              widget.onRegisterOptionSelected(RegistrationType.cadaver);
+            }),
         RegistrationTypeListTile(
             text: 'Rovdyr',
             assetImageName: 'images/predator.png',

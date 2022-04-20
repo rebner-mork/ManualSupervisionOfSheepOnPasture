@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:camera/camera.dart';
 
 abstract class OfflineZoomLevels {
   static double min = 16;
@@ -11,10 +12,15 @@ abstract class OfflineZoomLevels {
 late final String applicationDocumentDirectoryPath;
 late final String offlineFarmsFilePath;
 
+late final CameraDescription deviceCamera;
+
 Future<void> setConstants() async {
   Directory dir = await getApplicationDocumentsDirectory();
   applicationDocumentDirectoryPath = dir.path;
   offlineFarmsFilePath = '$applicationDocumentDirectoryPath/farms.json';
+
+  List<CameraDescription> cameras = await availableCameras();
+  deviceCamera = cameras.first;
 }
 
 final Map<String, String> colorValueStringToColorString = {
