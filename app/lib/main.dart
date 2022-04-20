@@ -1,3 +1,4 @@
+import 'firebase_options.dart';
 import 'package:app/login/login_page.dart';
 import 'package:app/providers/settings_provider.dart';
 import 'package:app/sign_up/sign_up_page.dart';
@@ -11,7 +12,9 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setConstants();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => SettingsProvider())

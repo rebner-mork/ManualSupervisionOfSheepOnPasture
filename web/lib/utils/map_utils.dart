@@ -13,7 +13,6 @@ Marker getSheepMarker(LatLng pos, String type) {
   const double size = 50;
 
   final AssetImage image;
-  debugPrint(type);
 
   switch (type) {
     case 'injuredSheep':
