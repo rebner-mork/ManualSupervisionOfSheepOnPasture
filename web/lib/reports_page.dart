@@ -160,6 +160,8 @@ class _ReportsPageState extends State<ReportsPage> {
             //TODO check if cadavers are supposed to count as sheep.
             totalSheepAmount++;
             break;
+          case 'note':
+            break;
           default:
             totalSheepAmount += registrationDoc['sheep'] as int;
             totalLambAmount += registrationDoc['lambs'] as int;
