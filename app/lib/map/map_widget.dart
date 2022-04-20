@@ -87,8 +87,7 @@ class _MapState extends State<MapWidget> {
       widget.onNewPosition!(userPosition);
     }
     setState(() {
-      //TODO denne lytter på en verdi utenfor widget-treet
-      Provider.of<SettingsProvider>(context).autoMoveMap
+      Provider.of<SettingsProvider>(context, listen: false).autoMoveMap
           ? _mapController.move(userPosition, _mapController.zoom)
           : null;
       _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition);
