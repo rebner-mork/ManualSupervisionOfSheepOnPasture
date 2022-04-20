@@ -86,11 +86,14 @@ class _MapState extends State<MapWidget> {
     if (widget.onNewPosition != null) {
       widget.onNewPosition!(userPosition);
     }
-    setState(() {
-      //_mapController.move(pos, _mapController.zoom);
-      _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition);
-      _movementPoints.add(userPosition);
-    });
+    if (mounted) {
+      setState(() {
+        //_mapController.move(pos, _mapController.zoom);
+        _currentPositionMarker =
+            map_utils.getDevicePositionMarker(userPosition);
+        _movementPoints.add(userPosition);
+      });
+    }
   }
 
   void registerSheep(LatLng targetPosition) {
