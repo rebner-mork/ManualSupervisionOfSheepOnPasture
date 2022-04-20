@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:web/main_tabs/main_tabs.dart';
 import 'package:web/utils/authentication.dart' as authentication;
 import 'package:web/utils/custom_widgets.dart';
@@ -18,6 +19,8 @@ class _LoginWidgetState extends State<LoginWidget> {
   String _password = '';
   String _loginMessage = '';
   bool _validationActivated = false;
+
+  final FocusNode _passwordFocusNode = FocusNode();
 
   void _toggleVisiblePassword() {
     setState(() {
@@ -48,6 +51,12 @@ class _LoginWidgetState extends State<LoginWidget> {
       _formKey.currentState!.save();
       _formKey.currentState!.validate();
     }
+  }
+
+  @override
+  void dispose() {
+    _passwordFocusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -83,20 +92,27 @@ class _LoginWidgetState extends State<LoginWidget> {
           inputFieldSpacer(),
           Container(
               constraints: const BoxConstraints(maxWidth: 400),
-              child: TextFormField(
-                  key: const Key('inputPassword'),
-                  textAlign: TextAlign.left,
-                  validator: (input) => validation.validatePassword(input),
-                  obscureText: _visiblePassword,
-                  onChanged: _onFieldChange,
-                  onSaved: (input) => _password = input.toString(),
-                  onFieldSubmitted: (_) {
-                    _logIn();
+              child: RawKeyboardListener(
+                  focusNode: _passwordFocusNode,
+                  onKey: (RawKeyEvent event) {
+                    if (event.logicalKey == LogicalKeyboardKey.tab) {
+                      _passwordFocusNode.nextFocus();
+                    }
                   },
-                  decoration: customInputDecoration('Passord', Icons.lock,
-                      passwordField: true,
-                      isVisible: !_visiblePassword,
-                      onPressed: _toggleVisiblePassword))),
+                  child: TextFormField(
+                      key: const Key('inputPassword'),
+                      textAlign: TextAlign.left,
+                      validator: (input) => validation.validatePassword(input),
+                      obscureText: _visiblePassword,
+                      onChanged: _onFieldChange,
+                      onSaved: (input) => _password = input.toString(),
+                      onFieldSubmitted: (_) {
+                        _logIn();
+                      },
+                      decoration: customInputDecoration('Passord', Icons.lock,
+                          passwordField: true,
+                          isVisible: !_visiblePassword,
+                          onPressed: _toggleVisiblePassword)))),
           const SizedBox(
             height: 5,
           ),

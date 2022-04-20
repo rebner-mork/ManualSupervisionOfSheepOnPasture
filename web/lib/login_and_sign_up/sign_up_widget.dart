@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:web/main_tabs/main_tabs.dart';
 import 'package:web/utils/authentication.dart';
 import 'package:web/utils/validation.dart';
@@ -21,6 +22,9 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   bool _validationActivated = false;
   late String _name, _email, _password, _phone;
   final passwordOneController = TextEditingController();
+
+  final FocusNode _passwordOneFocusNode = FocusNode();
+  final FocusNode _passwordTwoFocusNode = FocusNode();
 
   void _toggleVisiblePassword() {
     setState(() {
@@ -80,37 +84,53 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         decoration:
                             customInputDecoration('E-post', Icons.mail)),
                     inputFieldSpacer(),
-                    TextFormField(
-                        controller: passwordOneController,
-                        key: const Key('inputPasswordOne'),
-                        validator: (input) => validatePassword(input),
-                        onSaved: (input) => _password = input.toString(),
-                        onChanged: (_) {
-                          _onFieldChanged();
+                    RawKeyboardListener(
+                        focusNode: _passwordOneFocusNode,
+                        onKey: (RawKeyEvent event) {
+                          if (event.logicalKey == LogicalKeyboardKey.tab) {
+                            _passwordOneFocusNode.nextFocus();
+                          }
                         },
-                        textInputAction: TextInputAction.go,
-                        onFieldSubmitted: (value) => _createUserAndSignIn(),
-                        obscureText: !_visiblePassword,
-                        decoration: customInputDecoration('Passord', Icons.lock,
-                            passwordField: true,
-                            isVisible: _visiblePassword,
-                            onPressed: _toggleVisiblePassword)),
+                        child: TextFormField(
+                            controller: passwordOneController,
+                            key: const Key('inputPasswordOne'),
+                            validator: (input) => validatePassword(input),
+                            onSaved: (input) => _password = input.toString(),
+                            onChanged: (_) {
+                              _onFieldChanged();
+                            },
+                            textInputAction: TextInputAction.go,
+                            onFieldSubmitted: (value) => _createUserAndSignIn(),
+                            obscureText: !_visiblePassword,
+                            decoration: customInputDecoration(
+                                'Passord', Icons.lock,
+                                passwordField: true,
+                                isVisible: _visiblePassword,
+                                onPressed: _toggleVisiblePassword))),
                     inputFieldSpacer(),
-                    TextFormField(
-                        key: const Key('inputPasswordTwo'),
-                        validator: (input) => validatePasswords(
-                            passwordOneController.text, input),
-                        onChanged: (_) {
-                          _onFieldChanged();
+                    RawKeyboardListener(
+                        focusNode: FocusNode(),
+                        onKey: (RawKeyEvent event) {
+                          if (event.logicalKey == LogicalKeyboardKey.tab) {
+                            _passwordTwoFocusNode.nextFocus();
+                          }
                         },
-                        textInputAction: TextInputAction.go,
-                        onFieldSubmitted: (value) => _createUserAndSignIn(),
-                        obscureText: !_visiblePassword,
-                        decoration: customInputDecoration(
-                            'Gjenta passord', Icons.lock,
-                            passwordField: true,
-                            isVisible: _visiblePassword,
-                            onPressed: _toggleVisiblePassword)),
+                        child: TextFormField(
+                            key: const Key('inputPasswordTwo'),
+                            focusNode: _passwordTwoFocusNode,
+                            validator: (input) => validatePasswords(
+                                passwordOneController.text, input),
+                            onChanged: (_) {
+                              _onFieldChanged();
+                            },
+                            textInputAction: TextInputAction.go,
+                            onFieldSubmitted: (value) => _createUserAndSignIn(),
+                            obscureText: !_visiblePassword,
+                            decoration: customInputDecoration(
+                                'Gjenta passord', Icons.lock,
+                                passwordField: true,
+                                isVisible: _visiblePassword,
+                                onPressed: _toggleVisiblePassword))),
                     inputFieldSpacer(),
                     TextFormField(
                         key: const Key('inputPhone'),
@@ -178,6 +198,8 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   @override
   void dispose() {
     passwordOneController.dispose();
+    _passwordOneFocusNode.dispose();
+    _passwordTwoFocusNode.dispose();
     super.dispose();
   }
 }
