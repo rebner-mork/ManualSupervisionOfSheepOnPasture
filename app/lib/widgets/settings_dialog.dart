@@ -114,7 +114,7 @@ List<Widget> mapSettings(BuildContext context) {
         Provider.of<SettingsProvider>(context, listen: false)
             .toggleAutoMoveMap();
       },
-      margin: const EdgeInsets.only(left: 15),
+      margin: const EdgeInsets.only(left: 35),
     ),
   ];
 }
