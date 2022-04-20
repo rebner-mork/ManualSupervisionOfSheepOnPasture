@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import '../utils/map_utils.dart' as map_utils;
+import 'package:app/widgets/settings_dialog.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage(
@@ -54,8 +55,6 @@ class _MainPageState extends State<MainPage> {
   late final TripDataManager _tripData;
 
   late LatLng _deviceStartPosition;
-
-  bool _autoMoveMapMode = true;
 
   int _sheepAmount = 0;
   double iconSize = 42;
@@ -224,7 +223,6 @@ class _MainPageState extends State<MainPage> {
                                 },
                                 onNewPosition: (position) =>
                                     _tripData.track.add(position),
-                                autoMoveMapMode: _autoMoveMapMode,
                               )),
                       if (_inSelectPositionMode)
                         Positioned(
@@ -268,22 +266,6 @@ class _MainPageState extends State<MainPage> {
                                 _endTrip(context);
                               }),
                         ),
-                      if (!_inSelectPositionMode)
-                        Positioned(
-                            top: buttonInset +
-                                MediaQuery.of(context).viewPadding.top,
-                            right: buttonInset * 3 + 50,
-                            child: CircularButton(
-                              child: Icon(
-                                _autoMoveMapMode ? Icons.near_me : Icons.map,
-                                size: iconSize,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _autoMoveMapMode = !_autoMoveMapMode;
-                                });
-                              },
-                            )),
                       if (!_inSelectPositionMode)
                         Positioned(
                             top: buttonInset +
