@@ -296,7 +296,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
   }
 
   List<Widget> _shortDistance() {
-    List eartags = [inputFieldSpacer()];
+    List eartags = [];
     List<Widget> ties = [];
 
     if (widget.eartags.isNotEmpty) {
@@ -391,6 +391,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
                               RpgAwesome.sheep, Colors.black,
                               scrollController: scrollController,
                               key: firstHeadlineFieldKeys[1]),
+                          if (_isShortDistance) inputFieldSpacer(),
                           if (_isShortDistance) ..._shortDistance(),
                           const SizedBox(height: 80),
                         ]))),
