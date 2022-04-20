@@ -191,18 +191,18 @@ class _DetailedTripState extends State<DetailedTrip> {
     height += 50 +
         2 *
             (textSize('A', descriptionTextStyle).height +
-                (2 * tableCellPadding.top));
+                tableCellPadding.vertical);
 
     // SheepInfoTableHeight
     height += 2 *
         (textSize('A', tableRowDescriptionTextStyle).height +
-            (2 * tableCellPadding.top));
+            tableCellPadding.vertical);
 
     // InfoTableHeight
     height += textSize(('A'), headlineTextStyle).height +
         40 +
         textSize('A', tableRowDescriptionTextStyle).height +
-        (2 * tableCellPadding.top) +
+        tableCellPadding.vertical +
         (tieData.length > eartagData.length
             ? tieData.length * (25 + tableCellPadding.vertical)
             : eartagData.length * (25 + tableCellPadding.vertical));
@@ -210,35 +210,35 @@ class _DetailedTripState extends State<DetailedTrip> {
     // InjuredSheepTable
     if (injuredSheepData.isNotEmpty) {
       height += textSize(('A'), headlineTextStyle).height +
-          40 +
+          32 +
           textSize('S', injuryCadaverHeadlineTextStyle).height +
           textSize('A', descriptionTextStyle).height +
           tableCellPadding.vertical +
-          injuredSheepData.length * (35 + tableCellPadding.vertical);
+          injuredSheepData.length * (34 + tableCellPadding.vertical);
     }
 
     // CadaverTable
     if (cadaverData.isNotEmpty) {
       height += textSize(('A'), headlineTextStyle).height +
-          40 +
+          32 +
           textSize('S', injuryCadaverHeadlineTextStyle).height +
           textSize('A', descriptionTextStyle).height +
           tableCellPadding.vertical +
-          cadaverData.length * (35 + tableCellPadding.vertical);
+          cadaverData.length * (34 + tableCellPadding.vertical);
     }
 
     // NoteTable
-    int lineAmount = 0;
-
     if (noteData.isNotEmpty) {
+      int lineAmount = 0;
+
       for (String note in noteData) {
         lineAmount += (textSize(note, noteTableTextStyle).width /
                 (noteTableWidth - tableCellPadding.horizontal))
             .ceil();
       }
-      height += textSize(('A'), headlineTextStyle).height;
+      height += textSize(('A'), headlineTextStyle).height + 40;
       height += (lineAmount * textSize('A', noteTableTextStyle).height) +
-          noteData.length * (35 + tableCellPadding.vertical);
+          noteData.length * (2 + tableCellPadding.vertical);
     }
 
     return height;
