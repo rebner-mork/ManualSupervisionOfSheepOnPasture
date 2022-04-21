@@ -6,10 +6,12 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/plugin_api.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:async';
+import 'package:provider/provider.dart';
 
 import 'package:speech_to_text/speech_to_text.dart';
 import '../utils/map_utils.dart' as map_utils;
 import '../utils/constants.dart';
+import 'package:app/providers/settings_provider.dart';
 
 class MapWidget extends StatefulWidget {
   MapWidget(
@@ -86,7 +88,9 @@ class _MapState extends State<MapWidget> {
       widget.onNewPosition!(userPosition);
     }
     setState(() {
-      //_mapController.move(pos, _mapController.zoom);
+      Provider.of<SettingsProvider>(context, listen: false).autoMoveMap
+          ? _mapController.move(userPosition, _mapController.zoom)
+          : null;
       _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition);
       _movementPoints.add(userPosition);
     });
