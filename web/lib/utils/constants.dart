@@ -50,6 +50,7 @@ const Map<String, String> mainSheepRegistrationKeysToGui = {
   'sheep': 'Totalt',
   'lambs': 'Lam',
   'white': 'Hvite',
+  'brown': 'Brune',
   'black': 'Svarte',
   'blackHead': 'Svart hode'
 };

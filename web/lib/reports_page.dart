@@ -338,7 +338,7 @@ class _ReportsPageState extends State<ReportsPage> {
               style: columnHeaderTextStyle, textAlign: pw.TextAlign.center)),
       pw.Padding(
           padding: const pw.EdgeInsets.all(8),
-          child: pw.Text('Sauer',
+          child: pw.Text('Totalt',
               style: columnHeaderTextStyle, textAlign: pw.TextAlign.center)),
       pw.Padding(
           padding: const pw.EdgeInsets.all(8),

@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import '../utils/map_utils.dart' as map_utils;
+import 'package:app/widgets/settings_dialog.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage(
