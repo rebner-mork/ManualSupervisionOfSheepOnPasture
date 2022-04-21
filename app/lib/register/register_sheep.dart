@@ -58,7 +58,11 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
   final _formKey = GlobalKey<FormState>();
 
   final scrollController = ScrollController();
-  final List<GlobalKey> firstHeadlineFieldKeys = [GlobalKey(), GlobalKey()];
+  final List<GlobalKey> firstHeadlineFieldKeys = [
+    GlobalKey(),
+    GlobalKey(),
+    GlobalKey()
+  ];
   final List<int> firstHeadlineFieldIndexes = [distanceSheepQuestions.length];
   int currentHeadlineIndex = 0;
 
@@ -66,6 +70,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
     'sheep': TextEditingController(),
     'lambs': TextEditingController(),
     'white': TextEditingController(),
+    'brown': TextEditingController(),
     'black': TextEditingController(),
     'blackHead': TextEditingController(),
   };
@@ -101,6 +106,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
 
     questions = List.from(distanceSheepQuestions);
     questionContexts = [
+      QuestionContext.numbers,
       QuestionContext.numbers,
       QuestionContext.numbers,
       QuestionContext.numbers,
@@ -295,7 +301,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
 
     if (widget.eartags.isNotEmpty) {
       eartags.add(
-          inputDividerWithHeadline('Øremerker', firstHeadlineFieldKeys[0]));
+          inputDividerWithHeadline('Øremerker', firstHeadlineFieldKeys[1]));
       for (String eartagColor in widget.eartags.keys) {
         eartags.add(inputRow(
             colorValueStringToColorStringGuiPlural[eartagColor]!,
@@ -303,14 +309,20 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
                 '${colorValueStringToColorString[eartagColor]}Ear']!,
             eartagColor == '0' ? Icons.close : Icons.local_offer,
             eartagColor == '0' ? Colors.grey : colorStringToColor[eartagColor]!,
-            scrollController: widget.ties.isNotEmpty ? scrollController : null,
-            key: widget.ties.isNotEmpty ? firstHeadlineFieldKeys[1] : null));
+            scrollController: widget.ties.isNotEmpty &&
+                    eartagColor == widget.eartags.keys.last
+                ? scrollController
+                : null,
+            key: widget.ties.isNotEmpty &&
+                    eartagColor == widget.eartags.keys.last
+                ? firstHeadlineFieldKeys[2]
+                : null));
         eartags.add(inputFieldSpacer());
       }
     }
 
     if (widget.ties.isNotEmpty) {
-      ties.add(inputDividerWithHeadline('Slips', firstHeadlineFieldKeys[1]));
+      ties.add(inputDividerWithHeadline('Slips', firstHeadlineFieldKeys[2]));
       for (String tieColor in widget.ties.keys) {
         ties.add(inputRow(
             colorValueStringToColorStringGuiPlural[tieColor]!,
@@ -352,19 +364,21 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
                             child: Column(children: [
                           const SizedBox(height: 10),
                           inputDividerWithHeadline('Antall'),
-                          inputRow('Sauer', _textControllers['sheep']!,
+                          inputRow('Sauer & lam', _textControllers['sheep']!,
                               RpgAwesome.sheep, Colors.grey),
                           inputFieldSpacer(),
                           inputRow('Lam', _textControllers['lambs']!,
                               RpgAwesome.sheep, Colors.grey,
                               iconSize: 24),
                           inputFieldSpacer(),
-                          inputRow(
-                            'Hvite',
-                            _textControllers['white']!,
-                            RpgAwesome.sheep,
-                            Colors.white,
-                          ),
+                          inputRow('Hvite', _textControllers['white']!,
+                              RpgAwesome.sheep, Colors.white,
+                              scrollController: scrollController,
+                              key: firstHeadlineFieldKeys[0],
+                              ownKey: firstHeadlineFieldKeys[0]),
+                          inputFieldSpacer(),
+                          inputRow('Brune', _textControllers['brown']!,
+                              RpgAwesome.sheep, Colors.brown),
                           inputFieldSpacer(),
                           inputRow(
                             'Svarte',
@@ -376,7 +390,8 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
                           inputRow('Svart hode', _textControllers['blackHead']!,
                               RpgAwesome.sheep, Colors.black,
                               scrollController: scrollController,
-                              key: firstHeadlineFieldKeys[0]),
+                              key: firstHeadlineFieldKeys[1]),
+                          if (_isShortDistance) inputFieldSpacer(),
                           if (_isShortDistance) ..._shortDistance(),
                           const SizedBox(height: 80),
                         ]))),

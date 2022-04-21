@@ -1,7 +1,8 @@
 const List<String> distanceSheepQuestions = [
-  'Hvor mange sauer?',
+  'Hvor mange sauer og lam?',
   'Hvor mange lam?',
   'Hvor mange hvite?',
+  'Hvor mange brune?',
   'Hvor mange svarte?',
   'Hvor mange med svart hode?'
 ];
