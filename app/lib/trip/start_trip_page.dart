@@ -48,7 +48,7 @@ class _StartTripPageState extends State<StartTripPage>
   late String _selectedFarmName;
   late Map<String, bool>? _eartags;
   late Map<String, int>? _ties;
-  late final String _farmNumber;
+  late String _farmNumber;
 
   Map<String, Map<String, Map<String, double>>> _selectedFarmMaps = {};
   String _selectedFarmMap = '';
