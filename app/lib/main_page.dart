@@ -24,6 +24,7 @@ class MainPage extends StatefulWidget {
       required this.mapName,
       required this.farmId,
       required this.personnelEmail,
+      required this.farmNumber,
       required this.eartags,
       required this.ties,
       this.onCompleted,
@@ -42,6 +43,7 @@ class MainPage extends StatefulWidget {
 
   final String farmId;
   final String personnelEmail;
+  final String farmNumber;
 
   final Map<String, bool?> eartags;
   final Map<String, int?> ties;
@@ -190,6 +192,7 @@ class _MainPageState extends State<MainPage> {
                                 southEast: widget.southEast,
                                 stt: widget.speechToText,
                                 ongoingDialog: widget.ongoingDialog,
+                                farmNumber: widget.farmNumber,
                                 eartags: widget.eartags,
                                 ties: widget.ties,
                                 deviceStartPosition: _deviceStartPosition,
