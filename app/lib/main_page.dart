@@ -217,12 +217,7 @@ class _MainPageState extends State<MainPage> {
                                         _sheepAmount += 1;
                                       });
                                       break;
-                                    case RegistrationType.cadaver:
-                                      setState(() {
-                                        _sheepAmount += 1;
-                                      });
-                                      break;
-                                    default: // TODO: remove default when all types are added
+                                    default:
                                       break;
                                   }
 
