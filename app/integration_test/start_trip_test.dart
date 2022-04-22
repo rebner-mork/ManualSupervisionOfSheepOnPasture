@@ -18,7 +18,12 @@ void main() async {
   group('Start trip happy day scenario', () {
     testWidgets('Initial layout', (WidgetTester tester) async {
       await tester.pumpWidget(MultiProvider(providers: [
-        ChangeNotifierProvider(create: (context) => SettingsProvider())
+        ChangeNotifierProvider(
+            create: (context) => SettingsProvider(settings: {
+                  'autoDialog': false,
+                  'readBack': true,
+                  'autoMoveMap': true
+                }))
       ], child: const MaterialApp(home: StartTripPage())));
 
       expect(find.text('Start oppsynstur'), findsOneWidget);
@@ -42,7 +47,12 @@ void main() async {
 
     testWidgets('Download map', (WidgetTester tester) async {
       await tester.pumpWidget(MultiProvider(providers: [
-        ChangeNotifierProvider(create: (context) => SettingsProvider())
+        ChangeNotifierProvider(
+            create: (context) => SettingsProvider(settings: {
+                  'autoDialog': false,
+                  'readBack': true,
+                  'autoMoveMap': true
+                }))
       ], child: const MaterialApp(home: StartTripPage())));
       await tester.pumpAndSettle();
       await tester.pump(const Duration(milliseconds: 300));
@@ -74,7 +84,12 @@ void main() async {
     testWidgets('Initial layout', (WidgetTester tester) async {
       await setUpFarm(maps: null);
       await tester.pumpWidget(MultiProvider(providers: [
-        ChangeNotifierProvider(create: (context) => SettingsProvider())
+        ChangeNotifierProvider(
+            create: (context) => SettingsProvider(settings: {
+                  'autoDialog': false,
+                  'readBack': true,
+                  'autoMoveMap': true
+                }))
       ], child: const MaterialApp(home: StartTripPage())));
 
       expect(find.text('Start oppsynstur'), findsOneWidget);
@@ -107,7 +122,12 @@ void main() async {
       }
 
       await tester.pumpWidget(MultiProvider(providers: [
-        ChangeNotifierProvider(create: (context) => SettingsProvider())
+        ChangeNotifierProvider(
+            create: (context) => SettingsProvider(settings: {
+                  'autoDialog': false,
+                  'readBack': true,
+                  'autoMoveMap': true
+                }))
       ], child: const MaterialApp(home: StartTripPage())));
       await tester.pumpAndSettle();
       await tester.pump(const Duration(milliseconds: 300));
@@ -115,7 +135,7 @@ void main() async {
       expect(find.text('Laster inn...'), findsNothing);
       expect(
           find.text(
-              'Du er ikke registrert som oppsynspersonell hos noen gård. Ta kontakt med sauebonde.'),
+              'Du er ikke registrert som oppsynsperson,\nta kontakt med sauebonde.'),
           findsOneWidget);
     });
   });
