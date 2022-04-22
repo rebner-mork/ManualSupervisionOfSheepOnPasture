@@ -46,7 +46,7 @@ Map<String, Object> getMetaRegistrationData(
     required LatLng registrationPosition}) {
   return {
     'type': type,
-    'timeStamp': DateTime.now(),
+    'timestamp': DateTime.now(),
     'devicePosition': {
       'latitude': devicePosition.latitude,
       'longitude': devicePosition.longitude

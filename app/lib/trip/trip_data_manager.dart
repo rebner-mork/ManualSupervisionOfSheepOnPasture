@@ -48,7 +48,7 @@ class TripDataManager {
   late String mapName;
   late final DateTime _startTime;
   DateTime? _stopTime;
-  List<Map<String, dynamic>> registrations = [];
+  List<dynamic> registrations = [];
   List<LatLng> track = [];
 
 // Uploads photos to firebase storage and updates registrations with firebase
