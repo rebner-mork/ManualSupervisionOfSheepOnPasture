@@ -10,11 +10,14 @@ abstract class OfflineZoomLevels {
 }
 
 late final String applicationDocumentDirectoryPath;
+late final String settingsFilePath;
 late final CameraDescription deviceCamera;
 
 Future<void> setConstants() async {
   Directory dir = await getApplicationDocumentsDirectory();
   applicationDocumentDirectoryPath = dir.path;
+
+  settingsFilePath = '$applicationDocumentDirectoryPath/settings.json';
 
   List<CameraDescription> cameras = await availableCameras();
   deviceCamera = cameras.first;

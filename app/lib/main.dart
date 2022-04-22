@@ -1,3 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:app/utils/other.dart';
+
 import 'firebase_options.dart';
 import 'package:app/login/login_page.dart';
 import 'package:app/providers/settings_provider.dart';
@@ -17,7 +22,8 @@ void main() async {
   );
 
   runApp(MultiProvider(providers: [
-    ChangeNotifierProvider(create: (context) => SettingsProvider())
+    ChangeNotifierProvider(
+        create: (context) => SettingsProvider(settings: readSettings()))
   ], child: const MyApp()));
 }
 

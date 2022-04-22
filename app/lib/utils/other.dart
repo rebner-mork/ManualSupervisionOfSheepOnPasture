@@ -1,4 +1,8 @@
 import 'dart:async';
+import 'dart:collection';
+import 'dart:convert';
+import 'dart:io';
+import 'package:app/utils/constants.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
@@ -65,4 +69,21 @@ Future<bool> isConnectedToInternet() async {
   } catch (_) {
     return false;
   }
+}
+
+Map<String, bool> readSettings() {
+  Map<String, bool> settings = {
+    'autoDialog': false,
+    'readBack': true,
+    'autoMoveMap': true
+  };
+
+  if (File(settingsFilePath).existsSync()) {
+    settings = (jsonDecode(File(settingsFilePath).readAsStringSync()) as Map)
+        .map((key, value) => MapEntry(key, value));
+  } else {
+    File(settingsFilePath).writeAsStringSync(jsonEncode(settings));
+  }
+
+  return settings;
 }
