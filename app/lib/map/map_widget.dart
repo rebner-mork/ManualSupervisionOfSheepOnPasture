@@ -20,6 +20,7 @@ class MapWidget extends StatefulWidget {
       required this.stt,
       required this.ongoingDialog,
       required this.deviceStartPosition,
+      required this.farmNumber,
       required this.eartags,
       required this.ties,
       required this.registrationType,
@@ -38,6 +39,7 @@ class MapWidget extends StatefulWidget {
   final SpeechToText stt;
   final ValueNotifier<bool> ongoingDialog;
 
+  late final String farmNumber;
   final Map<String, bool?> eartags;
   final Map<String, int?> ties;
 
@@ -148,6 +150,7 @@ class _MapState extends State<MapWidget> {
           context,
           MaterialPageRoute(
               builder: (context) => RegisterInjuredSheep(
+                  farmNumber: widget.farmNumber,
                   ties: widget.ties,
                   sheepPosition: targetPosition,
                   onCompletedSuccessfully: (Map<String, Object> data) {

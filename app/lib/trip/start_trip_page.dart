@@ -46,6 +46,7 @@ class _StartTripPageState extends State<StartTripPage>
 
   final List<String> _farmNames = [];
   late String _selectedFarmName;
+  late String _farmNumber;
   late Map<String, bool>? _eartags;
   late Map<String, int>? _ties;
 
@@ -389,6 +390,7 @@ class _StartTripPageState extends State<StartTripPage>
                           _farmDocs[_farmNames.indexOf(_selectedFarmName)].id,
                       personnelEmail: FirebaseAuth.instance.currentUser!.email!,
                       mapName: _selectedFarmMap,
+                      farmNumber: _farmNumber,
                       eartags: _noEartagsDefined
                           ? possibleEartagsWithoutDefinition
                           : _eartags!,
@@ -432,6 +434,8 @@ class _StartTripPageState extends State<StartTripPage>
             'oppsynstur kan dermed ikke starte.';
       });
     }
+
+    _farmNumber = farmDoc['farmNumber'] ?? '';
 
     if (dbEartags != null && dbEartags.isNotEmpty) {
       _eartags = dbEartags.map((key, value) => MapEntry(key, value as bool));

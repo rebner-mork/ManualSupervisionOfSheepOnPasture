@@ -24,6 +24,7 @@ class MainPage extends StatefulWidget {
       required this.mapName,
       required this.farmId,
       required this.personnelEmail,
+      required this.farmNumber,
       required this.eartags,
       required this.ties,
       this.onCompleted,
@@ -43,6 +44,7 @@ class MainPage extends StatefulWidget {
   final String farmId;
   final String personnelEmail;
 
+  final String farmNumber;
   final Map<String, bool?> eartags;
   final Map<String, int?> ties;
 
@@ -110,19 +112,23 @@ class _MainPageState extends State<MainPage> {
 
   Future<bool> _endTrip(BuildContext context) async {
     bool isConnected = await isConnectedToInternet();
-    await showEndTripDialog(context, isConnected).then((isFinished) {
-      if (isFinished) {
-        if (isConnected) {
-          _tripData.post();
-        } else {
-          _tripData.archive();
-        }
-        if (widget.onCompleted != null) {
-          widget.onCompleted!();
-        }
+    await showEndTripDialog(context, isConnected).then((bool? isFinished) {
+      if (isFinished == null) {
         Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
+      } else {
+        if (isFinished) {
+          if (isConnected) {
+            _tripData.post();
+          } else {
+            _tripData.archive();
+          }
+          if (widget.onCompleted != null) {
+            widget.onCompleted!();
+          }
+          Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
+        }
       }
-      return isFinished;
+      return isFinished ?? true;
     });
     return false;
   }
@@ -186,6 +192,7 @@ class _MainPageState extends State<MainPage> {
                       ValueListenableBuilder<bool>(
                           valueListenable: widget.ongoingDialog,
                           builder: (context, value, child) => MapWidget(
+                                farmNumber: widget.farmNumber,
                                 northWest: widget.northWest,
                                 southEast: widget.southEast,
                                 stt: widget.speechToText,
