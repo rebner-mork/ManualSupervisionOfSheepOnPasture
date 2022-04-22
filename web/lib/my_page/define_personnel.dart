@@ -317,6 +317,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
       farmDoc.set({
         'maps': null,
         'name': null,
+        'farmNumber': null,
         'address': null,
         'ties': null,
         'eartags': null,

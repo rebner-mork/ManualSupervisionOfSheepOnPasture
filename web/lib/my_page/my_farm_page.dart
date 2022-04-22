@@ -22,8 +22,9 @@ class _MyFarmState extends State<MyFarm> {
   bool _validationActivated = false;
   bool _loadingData = true;
 
-  var farmNameController = TextEditingController();
-  var farmAddressController = TextEditingController();
+  final TextEditingController farmNameController = TextEditingController();
+  final TextEditingController farmAddressController = TextEditingController();
+  final TextEditingController farmNumberController = TextEditingController();
 
   @override
   void initState() {
@@ -108,6 +109,35 @@ class _MyFarmState extends State<MyFarm> {
             ],
           ),
           inputFieldSpacer(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Flexible(
+                  flex: 9,
+                  child: Container(
+                      constraints: const BoxConstraints(minWidth: 95),
+                      child: const Text('Gårdsnummer',
+                          style: TextStyle(fontSize: 16)))),
+              const Spacer(),
+              Flexible(
+                  flex: 8,
+                  child: Container(
+                      constraints: const BoxConstraints(maxWidth: 400),
+                      child: TextFormField(
+                          key: const Key('inputFarmNumber'),
+                          controller: farmNumberController,
+                          validator: (input) =>
+                              validateEartagFarmNumber(input), // TODO
+                          onChanged: (_) {
+                            _onFieldChanged();
+                          },
+                          onFieldSubmitted: (_) => _saveFarmInfo(),
+                          decoration: customInputDecoration(
+                              'Gårdsnummer', Icons.local_offer)))),
+              const Spacer()
+            ],
+          ),
+          inputFieldSpacer(),
           _loadingData
               ? const LoadingData()
               : AnimatedOpacity(
@@ -144,6 +174,7 @@ class _MyFarmState extends State<MyFarm> {
     if (doc.exists) {
       farmNameController.text = doc.get('name') ?? '';
       farmAddressController.text = doc.get('address') ?? '';
+      farmNumberController.text = doc.get('farmNumber') ?? '';
     }
     setState(() {
       _loadingData = false;
@@ -168,7 +199,8 @@ class _MyFarmState extends State<MyFarm> {
         if (doc.exists) {
           farmDoc.update({
             'name': farmNameController.text,
-            'address': farmAddressController.text
+            'address': farmAddressController.text,
+            'farmNumber': farmNumberController.text
           });
         } else {
           farmDoc.set({
@@ -177,7 +209,8 @@ class _MyFarmState extends State<MyFarm> {
             'eartags': null,
             'personnel': [FirebaseAuth.instance.currentUser!.email],
             'name': farmNameController.text,
-            'address': farmAddressController.text
+            'address': farmAddressController.text,
+            'farmNumber': farmNumberController.text
           });
         }
         setState(() {

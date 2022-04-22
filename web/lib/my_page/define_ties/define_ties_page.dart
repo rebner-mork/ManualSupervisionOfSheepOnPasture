@@ -398,6 +398,7 @@ class _MyTiesState extends State<MyTies> {
       farmDoc.set({
         'name': null,
         'address': null,
+        'farmNumber': null,
         'maps': null,
         'eartags': null,
         'personnel': [FirebaseAuth.instance.currentUser!.email],

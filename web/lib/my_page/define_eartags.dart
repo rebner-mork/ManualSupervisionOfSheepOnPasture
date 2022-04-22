@@ -359,6 +359,7 @@ class _MyEartagsState extends State<MyEartags> {
       farmDoc.set({
         'name': null,
         'address': null,
+        'farmNumber': null,
         'maps': null,
         'ties': null,
         'personnel': [FirebaseAuth.instance.currentUser!.email],
