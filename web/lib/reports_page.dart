@@ -151,18 +151,18 @@ class _ReportsPageState extends State<ReportsPage> {
       for (DocumentSnapshot<Object?> registrationDoc
           in registrationsQuerySnapshot.docs) {
         switch (registrationDoc['type']) {
+          case 'sheep':
+            totalSheepAmount += registrationDoc['sheep'] as int;
+            totalLambAmount += registrationDoc['lambs'] as int;
+            break;
           case 'injuredSheep':
             totalInjuredSheepAmount++;
             totalSheepAmount++;
             break;
           case 'cadaver':
             totalCadaverAmount++;
-            //TODO check if cadavers are supposed to count as sheep.
-            totalSheepAmount++;
             break;
           default:
-            totalSheepAmount += registrationDoc['sheep'] as int;
-            totalLambAmount += registrationDoc['lambs'] as int;
             break;
         }
       }
