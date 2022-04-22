@@ -126,14 +126,13 @@ class _MyFarmState extends State<MyFarm> {
                       child: TextFormField(
                           key: const Key('inputFarmNumber'),
                           controller: farmNumberController,
-                          validator: (input) =>
-                              validateEartagFarmNumber(input), // TODO
+                          validator: (input) => validateEartagFarmNumber(input),
                           onChanged: (_) {
                             _onFieldChanged();
                           },
                           onFieldSubmitted: (_) => _saveFarmInfo(),
                           decoration: customInputDecoration(
-                              'Gårdsnummer', Icons.local_offer)))),
+                              'Nummer', Icons.local_offer)))),
               const Spacer()
             ],
           ),
