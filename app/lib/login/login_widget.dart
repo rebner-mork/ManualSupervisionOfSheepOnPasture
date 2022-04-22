@@ -110,7 +110,6 @@ class _LoginWidgetState extends State<LoginWidget> {
   Future<void> signIn() async {
     final formState = _formKey.currentState;
     if (formState!.validate()) {
-      formState.save();
       try {
         await FirebaseAuth.instance.signInWithEmailAndPassword(
             email: _emailController.text, password: _passwordController.text);
