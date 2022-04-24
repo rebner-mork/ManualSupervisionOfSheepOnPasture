@@ -60,6 +60,9 @@ class _MainPageState extends State<MainPage> {
   int _lambAmount = 0;
   late Map<String, int> _registeredEartags;
   late Map<String, int> _registeredTies;
+  int _registeredInjuryAmount = 0;
+  int _registeredCadaverAmount = 0;
+  int _registeredPredatorAmount = 0;
 
   double iconSize = 42;
   bool _isLoading = true;
@@ -153,11 +156,18 @@ class _MainPageState extends State<MainPage> {
       case RegistrationType.injury:
         setState(() {
           _totalSheepAmount += 1;
+          _registeredInjuryAmount += 1;
         });
         break;
       case RegistrationType.cadaver:
         setState(() {
           _totalSheepAmount += 1;
+          _registeredCadaverAmount += 1;
+        });
+        break;
+      case RegistrationType.predator:
+        setState(() {
+          _registeredPredatorAmount += 1;
         });
         break;
       default: // TODO: remove default when all types are added
@@ -222,15 +232,21 @@ class _MainPageState extends State<MainPage> {
                                     bottomRight: Radius.circular(30)),
                                 child: SizedBox(
                                     width: 350,
-                                    height: 580, // TODO: høyere
+                                    height:
+                                        580, // TODO: finn en god høyde, blir det nødvendig med scroll-mulighet?
                                     child: Drawer(
                                         child: TripOverview(
                                             totalSheepAmount: _totalSheepAmount,
                                             lambAmount: _lambAmount,
                                             registeredEartags:
                                                 _registeredEartags,
-                                            registeredTies:
-                                                _registeredTies)))))),
+                                            registeredTies: _registeredTies,
+                                            injuredAmount:
+                                                _registeredInjuryAmount,
+                                            cadaverAmount:
+                                                _registeredCadaverAmount,
+                                            predatorAmount:
+                                                _registeredPredatorAmount)))))),
                     endDrawer: Align(
                         alignment: Alignment.bottomRight,
                         child: Padding(

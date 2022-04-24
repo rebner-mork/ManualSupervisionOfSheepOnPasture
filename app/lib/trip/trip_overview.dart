@@ -118,7 +118,66 @@ class TripOverview extends StatelessWidget {
           const SizedBox(width: horizontalRowSpace),
           const Text('Lam', style: tripOverviewDescriptionTextStyle),
         ]),
-        // TODO: add cadaver, injuredSheep, predators
+        const SizedBox(height: verticalTypeSpace + 5),
+        Row(children: [
+          SizedBox(
+              width: 90,
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: const [
+                    Image(
+                      image: AssetImage('images/sheep_injured.png'),
+                      height: 35,
+                    )
+                  ])),
+          const SizedBox(width: horizontalRowSpace),
+          SizedBox(
+              width: numberWidth,
+              child:
+                  Text('$injuredAmount', style: tripOverviewNumberTextStyle)),
+          const SizedBox(width: horizontalRowSpace),
+          const Text('Skadde', style: tripOverviewDescriptionTextStyle),
+        ]),
+        const SizedBox(height: verticalRowSpace),
+        Row(children: [
+          SizedBox(
+              width: 90,
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: const [
+                    Image(
+                      image: AssetImage('images/sheep_dead.png'),
+                      height: 35,
+                    )
+                  ])),
+          const SizedBox(width: horizontalRowSpace),
+          SizedBox(
+              width: numberWidth,
+              child:
+                  Text('$cadaverAmount', style: tripOverviewNumberTextStyle)),
+          const SizedBox(width: horizontalRowSpace),
+          const Text('Kadaver', style: tripOverviewDescriptionTextStyle),
+        ]),
+        const SizedBox(height: verticalRowSpace),
+        Row(children: [
+          SizedBox(
+              width: 90,
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: const [
+                    Image(
+                      image: AssetImage('images/predator.png'),
+                      height: 35,
+                    )
+                  ])),
+          const SizedBox(width: horizontalRowSpace),
+          SizedBox(
+              width: numberWidth,
+              child:
+                  Text('$predatorAmount', style: tripOverviewNumberTextStyle)),
+          const SizedBox(width: horizontalRowSpace),
+          const Text('Rovdyr', style: tripOverviewDescriptionTextStyle),
+        ]),
         const SizedBox(height: verticalTypeSpace + 5),
         ...registeredEartags.entries
             .map((MapEntry<String, Object> eartagMapEntry) => Row(
