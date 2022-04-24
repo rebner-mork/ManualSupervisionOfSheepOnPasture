@@ -1,3 +1,4 @@
+import 'package:app/utils/other.dart';
 import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/rpg_awesome_icons.dart';
@@ -5,8 +6,9 @@ import 'package:fluttericon/rpg_awesome_icons.dart';
 const tripOverviewNumberTextStyle =
     TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
 const tripOverviewDescriptionTextStyle = TextStyle(fontSize: 20);
-double verticalRowSpace = 5;
-double verticalTypeSpace = 20;
+const double verticalRowSpace = 5;
+const double verticalTypeSpace = 20;
+const double horizontalRowSpace = 15;
 
 class TripOverview extends StatelessWidget {
   const TripOverview(
@@ -28,41 +30,60 @@ class TripOverview extends StatelessWidget {
               style: drawerHeadlineTextStyle,
               textAlign: TextAlign.center,
             )),
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Column(children: [
-            const Icon(RpgAwesome.sheep, size: 30),
-            SizedBox(height: verticalRowSpace),
-            const Icon(RpgAwesome.sheep, size: 30),
-            SizedBox(height: verticalRowSpace),
-            const Icon(RpgAwesome.sheep, size: 24),
-            SizedBox(height: verticalTypeSpace),
-          ]),
-          const SizedBox(width: 15),
-          Column(
-            children: [
-              Text('$totalSheepAmount', style: tripOverviewNumberTextStyle),
-              SizedBox(height: verticalRowSpace),
-              Text('${totalSheepAmount - lambAmount}',
-                  style: tripOverviewNumberTextStyle),
-              SizedBox(height: verticalRowSpace),
-              Text('$lambAmount', style: tripOverviewNumberTextStyle),
-              SizedBox(height: verticalTypeSpace),
-            ],
-          ),
-          const SizedBox(width: 15),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('Sauer totalt',
-                  style: tripOverviewDescriptionTextStyle),
-              SizedBox(height: verticalRowSpace),
-              const Text('Sauer', style: tripOverviewDescriptionTextStyle),
-              SizedBox(height: verticalRowSpace),
-              const Text('Lam', style: tripOverviewDescriptionTextStyle),
-              SizedBox(height: verticalTypeSpace),
-            ],
-          )
-        ])
+        Row(children: [
+          SizedBox(
+              width: 90,
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: const [
+                    Image(
+                      image: AssetImage('images/sheep.png'),
+                      height: 30,
+                    ),
+                    Image(
+                      image: AssetImage('images/sheep.png'),
+                      height: 40,
+                    )
+                  ])),
+          const SizedBox(width: horizontalRowSpace),
+          Text('$totalSheepAmount', style: tripOverviewNumberTextStyle),
+          const SizedBox(width: horizontalRowSpace),
+          const Text('Sauer & Lam', style: tripOverviewDescriptionTextStyle),
+        ]),
+        const SizedBox(height: verticalRowSpace),
+        Row(children: [
+          const SizedBox(
+              width: 90,
+              child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Image(
+                    image: AssetImage('images/sheep.png'),
+                    height: 40,
+                  ))),
+          const SizedBox(width: horizontalRowSpace),
+          Text('${totalSheepAmount - lambAmount}',
+              style: tripOverviewNumberTextStyle),
+          const SizedBox(width: horizontalRowSpace),
+          const Text('Sauer', style: tripOverviewDescriptionTextStyle),
+        ]),
+        const SizedBox(height: 10 + verticalRowSpace),
+        Row(children: [
+          SizedBox(
+              width: 90,
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: const [
+                    Image(
+                      image: AssetImage('images/sheep.png'),
+                      height: 30,
+                    ),
+                    SizedBox(width: 5)
+                  ])),
+          const SizedBox(width: horizontalRowSpace),
+          Text('$lambAmount', style: tripOverviewNumberTextStyle),
+          const SizedBox(width: horizontalRowSpace),
+          const Text('Lam', style: tripOverviewDescriptionTextStyle),
+        ]),
       ],
     );
   }
