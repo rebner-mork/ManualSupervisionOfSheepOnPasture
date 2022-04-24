@@ -3,6 +3,7 @@ import 'package:app/map/map_widget.dart';
 import 'package:app/registration_options.dart';
 import 'package:app/trip/end_trip_dialog.dart';
 import 'package:app/trip/trip_data_manager.dart';
+import 'package:app/trip/trip_overview.dart';
 import 'package:app/utils/constants.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/other.dart';
@@ -55,7 +56,9 @@ class _MainPageState extends State<MainPage> {
 
   late LatLng _deviceStartPosition;
 
-  int _sheepAmount = 0;
+  int _totalSheepAmount = 0;
+  int _lambAmount = 0;
+
   double iconSize = 42;
   bool _isLoading = true;
 
@@ -154,6 +157,26 @@ class _MainPageState extends State<MainPage> {
                   return _backButtonPressed(context);
                 },
                 child: Scaffold(
+                    drawer: Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Padding(
+                            padding: EdgeInsets.only(
+                                bottom:
+                                    MediaQuery.of(context).viewPadding.bottom +
+                                        50 + // height of CircularButton
+                                        2 * buttonInset),
+                            child: ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                    topRight: Radius.circular(30),
+                                    bottomRight: Radius.circular(30)),
+                                child: SizedBox(
+                                    width: 280,
+                                    height: 520,
+                                    child: Drawer(
+                                        child: TripOverview(
+                                      totalSheepAmount: _totalSheepAmount,
+                                      lambAmount: _lambAmount,
+                                    )))))),
                     endDrawer: Align(
                         alignment: Alignment.bottomRight,
                         child: Padding(
@@ -202,20 +225,22 @@ class _MainPageState extends State<MainPage> {
                                     case RegistrationType.sheep:
                                       int sheepAmountRegistered =
                                           data['sheep']! as int;
+                                      _lambAmount += data['lambs'] as int;
                                       if (sheepAmountRegistered > 0) {
                                         setState(() {
-                                          _sheepAmount += sheepAmountRegistered;
+                                          _totalSheepAmount +=
+                                              sheepAmountRegistered;
                                         });
                                       }
                                       break;
                                     case RegistrationType.injury:
                                       setState(() {
-                                        _sheepAmount += 1;
+                                        _totalSheepAmount += 1;
                                       });
                                       break;
                                     case RegistrationType.cadaver:
                                       setState(() {
-                                        _sheepAmount += 1;
+                                        _totalSheepAmount += 1;
                                       });
                                       break;
                                     default: // TODO: remove default when all types are added
@@ -283,20 +308,24 @@ class _MainPageState extends State<MainPage> {
                               },
                             )),
                       if (!_inSelectPositionMode)
-                        Positioned(
-                          bottom: buttonInset +
-                              MediaQuery.of(context).viewPadding.bottom,
-                          left: buttonInset,
-                          child: CircularButton(
-                            child: Sheepometer(
-                                sheepAmount: _sheepAmount, iconSize: iconSize),
-                            onPressed: () {},
-                            width: 62 +
-                                textSize(_sheepAmount.toString(),
-                                        circularButtonTextStyle)
-                                    .width,
-                          ),
-                        ),
+                        Builder(
+                            builder: (context) => Positioned(
+                                  bottom: buttonInset +
+                                      MediaQuery.of(context).viewPadding.bottom,
+                                  left: buttonInset,
+                                  child: CircularButton(
+                                    child: Sheepometer(
+                                        sheepAmount: _totalSheepAmount,
+                                        iconSize: iconSize),
+                                    onPressed: () {
+                                      Scaffold.of(context).openDrawer();
+                                    },
+                                    width: 62 +
+                                        textSize(_totalSheepAmount.toString(),
+                                                circularButtonTextStyle)
+                                            .width,
+                                  ),
+                                )),
                       if (!_inSelectPositionMode)
                         Builder(
                             builder: (context) => Positioned(
