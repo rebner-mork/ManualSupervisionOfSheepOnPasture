@@ -101,8 +101,8 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
   Future<void> _initGpsQuestionsAndDialog() async {
     // TODO: try/catch (Unhandled Exception: Location services does not have permissions)
     await getDevicePosition();
-    _isShortDistance =
-        distance.distance(_devicePosition, widget.sheepPosition) < 50;
+    _isShortDistance = true;
+    //distance.distance(_devicePosition, widget.sheepPosition) < 50;
 
     questions = List.from(distanceSheepQuestions);
     questionContexts = [

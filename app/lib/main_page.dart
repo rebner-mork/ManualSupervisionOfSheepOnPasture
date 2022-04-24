@@ -58,6 +58,8 @@ class _MainPageState extends State<MainPage> {
 
   int _totalSheepAmount = 0;
   int _lambAmount = 0;
+  late Map<String, int> _registeredEartags;
+  late Map<String, int> _registeredTies;
 
   double iconSize = 42;
   bool _isLoading = true;
@@ -71,6 +73,9 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
+
+    _registeredEartags = widget.eartags.map((key, value) => MapEntry(key, 0));
+    _registeredTies = widget.ties.map((key, value) => MapEntry(key, 0));
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _setDeviceStartPosition();
@@ -139,6 +144,51 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
+  void _onRegistrationComplete(Map<String, Object> data) {
+    _tripData.registrations.add(data);
+    switch (_selectedRegistrationType) {
+      case RegistrationType.sheep:
+        _onSheepRegistrationComplete(data);
+        break;
+      case RegistrationType.injury:
+        setState(() {
+          _totalSheepAmount += 1;
+        });
+        break;
+      case RegistrationType.cadaver:
+        setState(() {
+          _totalSheepAmount += 1;
+        });
+        break;
+      default: // TODO: remove default when all types are added
+        break;
+    }
+
+    _cancelSelectPositionMode();
+  }
+
+  void _onSheepRegistrationComplete(Map<String, Object> data) {
+    int sheepAmountRegistered = data['sheep']! as int;
+    _lambAmount += data['lambs'] as int;
+    // If short-distance registration (TRENGS KANSKJE IKKE?)
+    //if (_registeredEartags.containsKey(_registeredEartags.keys.first)) {
+    for (String eartagColor in _registeredEartags.keys) {
+      _registeredEartags[eartagColor] = _registeredEartags[eartagColor]! +
+          (data['${colorValueStringToColorString[eartagColor]}Ear'] as int);
+    }
+
+    for (String tieColor in _registeredTies.keys) {
+      _registeredTies[tieColor] = _registeredTies[tieColor]! +
+          (data['${colorValueStringToColorString[tieColor]}Tie'] as int);
+    }
+    //}
+    if (sheepAmountRegistered > 0) {
+      setState(() {
+        _totalSheepAmount += sheepAmountRegistered;
+      });
+    }
+  }
+
   @override
   void dispose() {
     if (_selectPositionTextTimer != null) {
@@ -174,9 +224,12 @@ class _MainPageState extends State<MainPage> {
                                     height: 520,
                                     child: Drawer(
                                         child: TripOverview(
-                                      totalSheepAmount: _totalSheepAmount,
-                                      lambAmount: _lambAmount,
-                                    )))))),
+                                            totalSheepAmount: _totalSheepAmount,
+                                            lambAmount: _lambAmount,
+                                            registeredEartags:
+                                                _registeredEartags,
+                                            registeredTies:
+                                                _registeredTies)))))),
                     endDrawer: Align(
                         alignment: Alignment.bottomRight,
                         child: Padding(
@@ -220,34 +273,7 @@ class _MainPageState extends State<MainPage> {
                                     _cancelSelectPositionMode,
                                 onRegistrationComplete:
                                     (Map<String, Object> data) {
-                                  _tripData.registrations.add(data);
-                                  switch (_selectedRegistrationType) {
-                                    case RegistrationType.sheep:
-                                      int sheepAmountRegistered =
-                                          data['sheep']! as int;
-                                      _lambAmount += data['lambs'] as int;
-                                      if (sheepAmountRegistered > 0) {
-                                        setState(() {
-                                          _totalSheepAmount +=
-                                              sheepAmountRegistered;
-                                        });
-                                      }
-                                      break;
-                                    case RegistrationType.injury:
-                                      setState(() {
-                                        _totalSheepAmount += 1;
-                                      });
-                                      break;
-                                    case RegistrationType.cadaver:
-                                      setState(() {
-                                        _totalSheepAmount += 1;
-                                      });
-                                      break;
-                                    default: // TODO: remove default when all types are added
-                                      break;
-                                  }
-
-                                  _cancelSelectPositionMode();
+                                  _onRegistrationComplete(data);
                                 },
                                 onNewPosition: (position) =>
                                     _tripData.track.add(position),
