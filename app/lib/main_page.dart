@@ -231,7 +231,7 @@ class _MainPageState extends State<MainPage> {
                                     topRight: Radius.circular(30),
                                     bottomRight: Radius.circular(30)),
                                 child: SizedBox(
-                                    width: 350,
+                                    width: 320,
                                     height:
                                         580, // TODO: finn en god høyde, blir det nødvendig med scroll-mulighet?
                                     child: Drawer(
