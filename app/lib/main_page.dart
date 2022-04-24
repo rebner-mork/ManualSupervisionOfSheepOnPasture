@@ -170,18 +170,19 @@ class _MainPageState extends State<MainPage> {
   void _onSheepRegistrationComplete(Map<String, Object> data) {
     int sheepAmountRegistered = data['sheep']! as int;
     _lambAmount += data['lambs'] as int;
-    // If short-distance registration (TRENGS KANSKJE IKKE?)
-    //if (_registeredEartags.containsKey(_registeredEartags.keys.first)) {
-    for (String eartagColor in _registeredEartags.keys) {
-      _registeredEartags[eartagColor] = _registeredEartags[eartagColor]! +
-          (data['${colorValueStringToColorString[eartagColor]}Ear'] as int);
-    }
+    debugPrint(data.toString());
+    if (data.containsKey(
+        '${colorValueStringToColorString[_registeredEartags.keys.first]}Ear')) {
+      for (String eartagColor in _registeredEartags.keys) {
+        _registeredEartags[eartagColor] = _registeredEartags[eartagColor]! +
+            (data['${colorValueStringToColorString[eartagColor]}Ear'] as int);
+      }
 
-    for (String tieColor in _registeredTies.keys) {
-      _registeredTies[tieColor] = _registeredTies[tieColor]! +
-          (data['${colorValueStringToColorString[tieColor]}Tie'] as int);
+      for (String tieColor in _registeredTies.keys) {
+        _registeredTies[tieColor] = _registeredTies[tieColor]! +
+            (data['${colorValueStringToColorString[tieColor]}Tie'] as int);
+      }
     }
-    //}
     if (sheepAmountRegistered > 0) {
       setState(() {
         _totalSheepAmount += sheepAmountRegistered;
@@ -220,8 +221,8 @@ class _MainPageState extends State<MainPage> {
                                     topRight: Radius.circular(30),
                                     bottomRight: Radius.circular(30)),
                                 child: SizedBox(
-                                    width: 280,
-                                    height: 520,
+                                    width: 350,
+                                    height: 580, // TODO: høyere
                                     child: Drawer(
                                         child: TripOverview(
                                             totalSheepAmount: _totalSheepAmount,

@@ -3,7 +3,6 @@ import 'package:app/utils/other.dart';
 import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
-import 'package:fluttericon/rpg_awesome_icons.dart';
 
 const tripOverviewNumberTextStyle =
     TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
@@ -12,19 +11,38 @@ const double verticalRowSpace = 5;
 const double verticalTypeSpace = 20;
 const double horizontalRowSpace = 15;
 
+final double doubleDigitsWidth =
+    textSize('99', tripOverviewNumberTextStyle).width + 5;
+final double tripleDigitsWidth =
+    textSize('999', tripOverviewNumberTextStyle).width + 5;
+
 class TripOverview extends StatelessWidget {
-  const TripOverview(
+  TripOverview(
       {required this.totalSheepAmount,
       required this.lambAmount,
       required this.registeredEartags,
       required this.registeredTies,
+      required this.injuredAmount,
+      required this.cadaverAmount,
+      required this.predatorAmount,
       Key? key})
-      : super(key: key);
+      : super(key: key) {
+    numberWidth = totalSheepAmount < 10
+        ? horizontalRowSpace
+        : totalSheepAmount < 100
+            ? doubleDigitsWidth
+            : tripleDigitsWidth;
+  }
 
   final int totalSheepAmount;
   final int lambAmount;
   final Map<String, Object> registeredEartags;
   final Map<String, Object> registeredTies;
+  final int injuredAmount;
+  final int cadaverAmount;
+  final int predatorAmount;
+
+  late final double numberWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +73,10 @@ class TripOverview extends StatelessWidget {
                     )
                   ])),
           const SizedBox(width: horizontalRowSpace),
-          Text('$totalSheepAmount', style: tripOverviewNumberTextStyle),
+          SizedBox(
+              width: numberWidth,
+              child: Text('$totalSheepAmount',
+                  style: tripOverviewNumberTextStyle)),
           const SizedBox(width: horizontalRowSpace),
           const Text('Sauer & Lam', style: tripOverviewDescriptionTextStyle),
         ]),
@@ -70,8 +91,10 @@ class TripOverview extends StatelessWidget {
                     height: 35,
                   ))),
           const SizedBox(width: horizontalRowSpace),
-          Text('${totalSheepAmount - lambAmount}',
-              style: tripOverviewNumberTextStyle),
+          SizedBox(
+              width: numberWidth,
+              child: Text('${totalSheepAmount - lambAmount}',
+                  style: tripOverviewNumberTextStyle)),
           const SizedBox(width: horizontalRowSpace),
           const Text('Sauer', style: tripOverviewDescriptionTextStyle),
         ]),
@@ -89,10 +112,13 @@ class TripOverview extends StatelessWidget {
                     SizedBox(width: 2.5)
                   ])),
           const SizedBox(width: horizontalRowSpace),
-          Text('$lambAmount', style: tripOverviewNumberTextStyle),
+          SizedBox(
+              width: numberWidth,
+              child: Text('$lambAmount', style: tripOverviewNumberTextStyle)),
           const SizedBox(width: horizontalRowSpace),
           const Text('Lam', style: tripOverviewDescriptionTextStyle),
         ]),
+        // TODO: add cadaver, injuredSheep, predators
         const SizedBox(height: verticalTypeSpace + 5),
         ...registeredEartags.entries
             .map((MapEntry<String, Object> eartagMapEntry) => Row(
@@ -106,8 +132,10 @@ class TripOverview extends StatelessWidget {
                                 color:
                                     colorStringToColor[eartagMapEntry.key]))),
                     const SizedBox(width: horizontalRowSpace),
-                    Text('${eartagMapEntry.value}',
-                        style: tripOverviewNumberTextStyle),
+                    SizedBox(
+                        width: numberWidth,
+                        child: Text('${eartagMapEntry.value}',
+                            style: tripOverviewNumberTextStyle)),
                     const SizedBox(width: horizontalRowSpace),
                     Text(
                         '${colorValueStringToColorStringGuiPlural[eartagMapEntry.key]}',
@@ -128,8 +156,10 @@ class TripOverview extends StatelessWidget {
                                 size: 30,
                                 color: colorStringToColor[tieMapEntry.key]))),
                     const SizedBox(width: horizontalRowSpace),
-                    Text('${tieMapEntry.value}',
-                        style: tripOverviewNumberTextStyle),
+                    SizedBox(
+                        width: numberWidth,
+                        child: Text('${tieMapEntry.value}',
+                            style: tripOverviewNumberTextStyle)),
                     const SizedBox(width: horizontalRowSpace),
                     Text(
                         '${colorValueStringToColorStringGuiPlural[tieMapEntry.key]}',
