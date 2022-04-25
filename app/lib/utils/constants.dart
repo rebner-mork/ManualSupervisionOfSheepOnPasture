@@ -5,7 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:camera/camera.dart';
 
 abstract class OfflineZoomLevels {
-  static double min = 16;
+  static double min = 12;
   static double max = 17;
 }
 
