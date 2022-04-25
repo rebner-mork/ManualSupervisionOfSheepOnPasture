@@ -61,7 +61,7 @@ Marker getDevicePositionMarker(LatLng pos) {
           ));
 }
 
-Marker getSheepMarker(LatLng pos, RegistrationType type,
+Marker getMapMarker(LatLng pos, RegistrationType type,
     {SheepMarkerColor color = SheepMarkerColor.green}) {
   const double size = 50;
 

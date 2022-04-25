@@ -87,5 +87,6 @@ final Map<RegistrationType, String> registrationTypeToGui = {
   RegistrationType.sheep: 'sauen(e)',
   RegistrationType.injury: 'den skadde sauen',
   RegistrationType.cadaver: 'kadaveret',
-  RegistrationType.note: 'notatet'
+  RegistrationType.note: 'notatet',
+  RegistrationType.predator: 'rovdyret',
 };
