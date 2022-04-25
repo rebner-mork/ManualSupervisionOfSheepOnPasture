@@ -3,7 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:math';
 
-import 'package:web/trips/detailed/registration_details.dart';
+import 'package:web/trips/detailed/registration_details/registration_details.dart';
 
 abstract class MapProvider {
   static const String urlTemplate =

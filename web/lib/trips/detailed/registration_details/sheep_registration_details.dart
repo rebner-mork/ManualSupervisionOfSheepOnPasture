@@ -2,77 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttericon/rpg_awesome_icons.dart';
 import 'package:web/utils/constants.dart';
-import 'package:web/utils/other.dart';
-
-class RegistrationDetails extends StatelessWidget {
-  RegistrationDetails({required this.registration, Key? key})
-      : super(key: key) {
-    // TODO: remove constructor
-    switch (registration['type']) {
-      case 'sheep':
-        title = 'Registrert sau';
-        break;
-      case 'injuredSheep':
-        title = 'Registrert saueskade';
-        break;
-      case 'cadaver':
-        title = 'Registrert kadaver';
-        break;
-      case 'predator':
-        title = 'Registrert rovdyr';
-        break;
-      case 'note':
-        title = 'Registrert notat';
-        break;
-    }
-  }
-
-  final Map<String, dynamic> registration;
-  late final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    switch (registration['type']) {
-      case 'sheep':
-        return SheepRegistrationDetails(registration: registration);
-        title = 'Registrert sau';
-        break;
-      case 'injuredSheep':
-        title = 'Registrert saueskade';
-        break;
-      case 'cadaver':
-        title = 'Registrert kadaver';
-        break;
-      case 'predator':
-        title = 'Registrert rovdyr';
-        break;
-      case 'note':
-        title = 'Registrert notat';
-        break;
-    }
-
-    return const SimpleDialog(children: [Text('Det har skjedd en feil')]);
-  }
-}
-
-const TextStyle dialogHeadlineTextStyle =
-    TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
-
-const double iconSize = 35;
-
-const double verticalRowSpace = 5;
-const double verticalTypeSpace = 20;
-const double horizontalRowSpace = 15;
-
-const TextStyle registrationDetailsNumberTextStyle =
-    TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
-const TextStyle registrationDetailsDescriptionTextStyle =
-    TextStyle(fontSize: 22);
-
-final double doubleDigitsWidth =
-    textSize('99', registrationDetailsNumberTextStyle).width + 5;
-final double tripleDigitsWidth =
-    textSize('999', registrationDetailsNumberTextStyle).width + 5;
+import 'package:web/utils/styles.dart';
 
 class SheepRegistrationDetails extends StatelessWidget {
   SheepRegistrationDetails({required this.registration, Key? key})
@@ -90,7 +20,7 @@ class SheepRegistrationDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      contentPadding: const EdgeInsets.fromLTRB(5.0, 32.0, 0.0, 16.0),
+      contentPadding: const EdgeInsets.fromLTRB(10.0, 32.0, 0.0, 16.0),
       title: const Text('Registrert sau',
           style: dialogHeadlineTextStyle, textAlign: TextAlign.center),
       children: [
@@ -125,7 +55,10 @@ class SheepColumn extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: const [
-                      Image(
+                      Icon(RpgAwesome.sheep,
+                          size: iconSize - 10, color: Colors.grey),
+                      Icon(RpgAwesome.sheep, size: iconSize, color: Colors.grey)
+                      /*Image(
                         image: AssetImage('images/sheep.png'),
                         height: 30,
                         filterQuality: FilterQuality.high,
@@ -134,13 +67,14 @@ class SheepColumn extends StatelessWidget {
                         image: AssetImage('images/sheep.png'),
                         height: iconSize,
                         filterQuality: FilterQuality.high,
-                      )
+                      )*/
                     ])),
             const SizedBox(width: horizontalRowSpace),
             SizedBox(
                 width: numberWidth,
                 child: Text('${registration['sheep']}',
-                    style: registrationDetailsNumberTextStyle)),
+                    style: registrationDetailsNumberTextStyle,
+                    textAlign: TextAlign.center)),
             const SizedBox(width: horizontalRowSpace),
             const Text('Sauer & Lam',
                 style: registrationDetailsDescriptionTextStyle),
@@ -152,15 +86,20 @@ class SheepColumn extends StatelessWidget {
               width: 80,
               child: Align(
                   alignment: Alignment.centerRight,
-                  child: Image(
+                  child: Icon(RpgAwesome.sheep,
+                      size: iconSize,
+                      color: Colors
+                          .grey) /*Image(
                     image: AssetImage('images/sheep.png'),
                     height: iconSize,
-                  ))),
+                  )*/
+                  )),
           const SizedBox(width: horizontalRowSpace),
           SizedBox(
               width: numberWidth,
               child: Text('${registration['sheep'] - registration['lambs']}',
-                  style: registrationDetailsNumberTextStyle)),
+                  style: registrationDetailsNumberTextStyle,
+                  textAlign: TextAlign.center)),
           const SizedBox(width: horizontalRowSpace),
           const Text('Sauer', style: registrationDetailsDescriptionTextStyle),
         ]),
@@ -171,17 +110,19 @@ class SheepColumn extends StatelessWidget {
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: const [
-                    Image(
+                    Icon(RpgAwesome.sheep, size: iconSize, color: Colors.grey),
+                    /*Image(
                       image: AssetImage('images/sheep.png'),
                       height: 30,
-                    ),
+                    ),*/
                     SizedBox(width: 2.5)
                   ])),
           const SizedBox(width: horizontalRowSpace),
           SizedBox(
               width: numberWidth,
               child: Text('${registration['lambs']}',
-                  style: registrationDetailsNumberTextStyle)),
+                  style: registrationDetailsNumberTextStyle,
+                  textAlign: TextAlign.center)),
           const SizedBox(width: horizontalRowSpace),
           const Text('Lam', style: registrationDetailsDescriptionTextStyle),
         ]),
@@ -203,7 +144,8 @@ class SheepColumn extends StatelessWidget {
           SizedBox(
               width: numberWidth,
               child: Text('${registration['white']}',
-                  style: registrationDetailsNumberTextStyle)),
+                  style: registrationDetailsNumberTextStyle,
+                  textAlign: TextAlign.center)),
           const SizedBox(width: horizontalRowSpace),
           const Text('Hvite', style: registrationDetailsDescriptionTextStyle),
         ]),
@@ -222,7 +164,8 @@ class SheepColumn extends StatelessWidget {
           SizedBox(
               width: numberWidth,
               child: Text('${registration['brown']}',
-                  style: registrationDetailsNumberTextStyle)),
+                  style: registrationDetailsNumberTextStyle,
+                  textAlign: TextAlign.center)),
           const SizedBox(width: horizontalRowSpace),
           const Text('Brune', style: registrationDetailsDescriptionTextStyle),
         ]),
@@ -241,7 +184,8 @@ class SheepColumn extends StatelessWidget {
           SizedBox(
               width: numberWidth,
               child: Text('${registration['black']}',
-                  style: registrationDetailsNumberTextStyle)),
+                  style: registrationDetailsNumberTextStyle,
+                  textAlign: TextAlign.center)),
           const SizedBox(width: horizontalRowSpace),
           const Text('Svarte', style: registrationDetailsDescriptionTextStyle),
         ]),
@@ -260,9 +204,10 @@ class SheepColumn extends StatelessWidget {
           SizedBox(
               width: numberWidth,
               child: Text('${registration['blackHead']}',
-                  style: registrationDetailsNumberTextStyle)),
+                  style: registrationDetailsNumberTextStyle,
+                  textAlign: TextAlign.center)),
           const SizedBox(width: horizontalRowSpace),
-          const Text('Svart hode',
+          const Text('Svarte hoder',
               style: registrationDetailsDescriptionTextStyle),
         ]),
       ],
@@ -305,7 +250,7 @@ class EartagTieColumn extends StatelessWidget {
                   child: Align(
                       alignment: Alignment.centerRight,
                       child: Icon(Icons.local_offer,
-                          size: iconSize - 3,
+                          size: iconSize,
                           color: Color(int.parse(
                               possibleEartagColorStringToKey.keys.firstWhere(
                                   (element) =>
@@ -316,12 +261,13 @@ class EartagTieColumn extends StatelessWidget {
               SizedBox(
                   width: numberWidth,
                   child: Text('${registration[eartagKey]}',
-                      style: registrationDetailsNumberTextStyle)),
+                      style: registrationDetailsNumberTextStyle,
+                      textAlign: TextAlign.center)),
               const SizedBox(width: horizontalRowSpace),
               Text(
                   '${colorValueStringToColorStringGuiPlural[possibleEartagColorStringToKey.keys.firstWhere((element) => possibleEartagColorStringToKey[element] == eartagKey)]}',
                   style: registrationDetailsDescriptionTextStyle),
-              const SizedBox(height: verticalRowSpace + 30 + 3),
+              const SizedBox(height: verticalRowSpace + 30),
             ],
           )),
       const SizedBox(height: verticalTypeSpace),
@@ -332,7 +278,7 @@ class EartagTieColumn extends StatelessWidget {
                   child: Align(
                       alignment: Alignment.centerRight,
                       child: Icon(FontAwesome5.black_tie,
-                          size: iconSize - 3,
+                          size: iconSize - 2,
                           color: Color(int.parse(
                               possibleTieColorStringToKey.keys.firstWhere(
                                   (element) =>
@@ -343,12 +289,13 @@ class EartagTieColumn extends StatelessWidget {
               SizedBox(
                   width: numberWidth,
                   child: Text('${registration[tieKey]}',
-                      style: registrationDetailsNumberTextStyle)),
+                      style: registrationDetailsNumberTextStyle,
+                      textAlign: TextAlign.center)),
               const SizedBox(width: horizontalRowSpace),
               Text(
                   '${colorValueStringToColorStringGuiPlural[possibleTieColorStringToKey.keys.firstWhere((element) => possibleTieColorStringToKey[element] == tieKey)]}',
                   style: registrationDetailsDescriptionTextStyle),
-              const SizedBox(height: verticalRowSpace + 30 + 3),
+              const SizedBox(height: verticalRowSpace + 30 + 2),
             ],
           )),
     ]);

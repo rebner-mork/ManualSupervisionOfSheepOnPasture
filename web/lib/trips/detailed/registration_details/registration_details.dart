@@ -1,0 +1,33 @@
+import 'package:flutter/material.dart';
+import 'package:web/trips/detailed/registration_details/sheep_registration_details.dart';
+
+class RegistrationDetails extends StatelessWidget {
+  const RegistrationDetails({required this.registration, Key? key})
+      : super(key: key);
+
+  final Map<String, dynamic> registration;
+
+  @override
+  Widget build(BuildContext context) {
+    switch (registration['type']) {
+      case 'sheep':
+        return SheepRegistrationDetails(registration: registration);
+      /*title = 'Registrert sau';
+        break;*/
+      case 'injuredSheep':
+      /*title = 'Registrert saueskade';
+        break;*/
+      case 'cadaver':
+      /*title = 'Registrert kadaver';
+        break;*/
+      case 'predator':
+      /*title = 'Registrert rovdyr';
+        break;*/
+      case 'note':
+      /*title = 'Registrert notat';
+        break;*/
+    }
+
+    return const SimpleDialog(children: [Text('Det har skjedd en feil')]);
+  }
+}

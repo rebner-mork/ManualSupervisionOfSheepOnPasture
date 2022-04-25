@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:web/utils/other.dart';
 
 // Datatable
 const TextStyle dataColumnTextStyle =
@@ -25,3 +26,23 @@ const EdgeInsets tableCellPadding = EdgeInsets.all(8);
 
 TextStyle dropDownTextStyle = const TextStyle(fontSize: 16);
 const double dropdownArrowSize = 28;
+
+// Registration details
+const TextStyle dialogHeadlineTextStyle =
+    TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
+
+const double iconSize = 35;
+
+const double verticalRowSpace = 5;
+const double verticalTypeSpace = 20;
+const double horizontalRowSpace = 15;
+
+const TextStyle registrationDetailsNumberTextStyle =
+    TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
+const TextStyle registrationDetailsDescriptionTextStyle =
+    TextStyle(fontSize: 22);
+
+final double doubleDigitsWidth =
+    textSize('99', registrationDetailsNumberTextStyle).width + 5;
+final double tripleDigitsWidth =
+    textSize('999', registrationDetailsNumberTextStyle).width + 5;
