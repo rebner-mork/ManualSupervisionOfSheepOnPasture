@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 
 const tripOverviewNumberTextStyle =
-    TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
-const tripOverviewDescriptionTextStyle = TextStyle(fontSize: 20);
+    TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
+const tripOverviewDescriptionTextStyle = TextStyle(fontSize: 22);
 const double verticalRowSpace = 5;
 const double verticalTypeSpace = 20;
 const double horizontalRowSpace = 15;

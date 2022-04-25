@@ -231,9 +231,13 @@ class _MainPageState extends State<MainPage> {
                                     topRight: Radius.circular(30),
                                     bottomRight: Radius.circular(30)),
                                 child: SizedBox(
-                                    width: 320,
-                                    height:
-                                        580, // TODO: finn en god høyde, blir det nødvendig med scroll-mulighet?
+                                    width: 300,
+                                    height: MediaQuery.of(context).size.height -
+                                        MediaQuery.of(context)
+                                            .viewPadding
+                                            .bottom -
+                                        MediaQuery.of(context).viewPadding.top -
+                                        2 * (50 + 2 * buttonInset),
                                     child: Drawer(
                                         child: TripOverview(
                                             totalSheepAmount: _totalSheepAmount,
