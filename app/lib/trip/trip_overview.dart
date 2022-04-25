@@ -7,9 +7,12 @@ import 'package:fluttericon/font_awesome5_icons.dart';
 const tripOverviewNumberTextStyle =
     TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
 const tripOverviewDescriptionTextStyle = TextStyle(fontSize: 22);
+
 const double verticalRowSpace = 5;
 const double verticalTypeSpace = 20;
 const double horizontalRowSpace = 15;
+
+const double iconSize = 35;
 
 final double doubleDigitsWidth =
     textSize('99', tripOverviewNumberTextStyle).width + 5;
@@ -36,11 +39,11 @@ class TripOverview extends StatelessWidget {
 
   final int totalSheepAmount;
   final int lambAmount;
-  final Map<String, Object> registeredEartags;
-  final Map<String, Object> registeredTies;
   final int injuredAmount;
   final int cadaverAmount;
   final int predatorAmount;
+  final Map<String, Object> registeredEartags;
+  final Map<String, Object> registeredTies;
 
   late final double numberWidth;
 
@@ -58,7 +61,7 @@ class TripOverview extends StatelessWidget {
             )),
         Row(children: [
           SizedBox(
-              width: 90,
+              width: 80,
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -69,7 +72,7 @@ class TripOverview extends StatelessWidget {
                     ),
                     Image(
                       image: AssetImage('images/sheep.png'),
-                      height: 35,
+                      height: iconSize,
                     )
                   ])),
           const SizedBox(width: horizontalRowSpace),
@@ -83,12 +86,12 @@ class TripOverview extends StatelessWidget {
         const SizedBox(height: verticalRowSpace),
         Row(children: [
           const SizedBox(
-              width: 90,
+              width: 80,
               child: Align(
                   alignment: Alignment.centerRight,
                   child: Image(
                     image: AssetImage('images/sheep.png'),
-                    height: 35,
+                    height: iconSize,
                   ))),
           const SizedBox(width: horizontalRowSpace),
           SizedBox(
@@ -101,7 +104,7 @@ class TripOverview extends StatelessWidget {
         const SizedBox(height: verticalRowSpace + 5),
         Row(children: [
           SizedBox(
-              width: 90,
+              width: 80,
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: const [
@@ -121,13 +124,13 @@ class TripOverview extends StatelessWidget {
         const SizedBox(height: verticalTypeSpace + 5),
         Row(children: [
           SizedBox(
-              width: 90,
+              width: 80,
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: const [
                     Image(
                       image: AssetImage('images/sheep_injured.png'),
-                      height: 35,
+                      height: iconSize,
                     )
                   ])),
           const SizedBox(width: horizontalRowSpace),
@@ -141,13 +144,13 @@ class TripOverview extends StatelessWidget {
         const SizedBox(height: verticalRowSpace),
         Row(children: [
           SizedBox(
-              width: 90,
+              width: 80,
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: const [
                     Image(
                       image: AssetImage('images/sheep_dead.png'),
-                      height: 35,
+                      height: iconSize,
                     )
                   ])),
           const SizedBox(width: horizontalRowSpace),
@@ -161,13 +164,13 @@ class TripOverview extends StatelessWidget {
         const SizedBox(height: verticalRowSpace),
         Row(children: [
           SizedBox(
-              width: 90,
+              width: 80,
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: const [
                     Image(
                       image: AssetImage('images/predator.png'),
-                      height: 35,
+                      height: iconSize,
                     )
                   ])),
           const SizedBox(width: horizontalRowSpace),
@@ -183,11 +186,11 @@ class TripOverview extends StatelessWidget {
             .map((MapEntry<String, Object> eartagMapEntry) => Row(
                   children: [
                     SizedBox(
-                        width: 90,
+                        width: 80,
                         child: Align(
                             alignment: Alignment.centerRight,
                             child: Icon(Icons.local_offer,
-                                size: 30,
+                                size: iconSize - 3,
                                 color:
                                     colorStringToColor[eartagMapEntry.key]))),
                     const SizedBox(width: horizontalRowSpace),
@@ -208,11 +211,11 @@ class TripOverview extends StatelessWidget {
             .map((MapEntry<String, Object> tieMapEntry) => Row(
                   children: [
                     SizedBox(
-                        width: 90,
+                        width: 80,
                         child: Align(
                             alignment: Alignment.centerRight,
                             child: Icon(FontAwesome5.black_tie,
-                                size: 30,
+                                size: iconSize - 3,
                                 color: colorStringToColor[tieMapEntry.key]))),
                     const SizedBox(width: horizontalRowSpace),
                     SizedBox(

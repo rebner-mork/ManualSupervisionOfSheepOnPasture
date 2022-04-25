@@ -56,14 +56,6 @@ class _MainPageState extends State<MainPage> {
 
   late LatLng _deviceStartPosition;
 
-  int _totalSheepAmount = 0;
-  int _lambAmount = 0;
-  late Map<String, int> _registeredEartags;
-  late Map<String, int> _registeredTies;
-  int _registeredInjuryAmount = 0;
-  int _registeredCadaverAmount = 0;
-  int _registeredPredatorAmount = 0;
-
   double iconSize = 42;
   bool _isLoading = true;
 
@@ -72,6 +64,14 @@ class _MainPageState extends State<MainPage> {
   Timer? _selectPositionTextTimer;
   int selectPositionTextTimerDuration = 1200; // ms
   bool _isSelectPositionTextVisible = true;
+
+  int _registeredTotalSheepAmount = 0;
+  int _registeredLambAmount = 0;
+  int _registeredInjuryAmount = 0;
+  int _registeredCadaverAmount = 0;
+  int _registeredPredatorAmount = 0;
+  late Map<String, int> _registeredEartags;
+  late Map<String, int> _registeredTies;
 
   @override
   void initState() {
@@ -155,13 +155,13 @@ class _MainPageState extends State<MainPage> {
         break;
       case RegistrationType.injury:
         setState(() {
-          _totalSheepAmount += 1;
+          _registeredTotalSheepAmount += 1;
           _registeredInjuryAmount += 1;
         });
         break;
       case RegistrationType.cadaver:
         setState(() {
-          _totalSheepAmount += 1;
+          _registeredTotalSheepAmount += 1;
           _registeredCadaverAmount += 1;
         });
         break;
@@ -179,8 +179,8 @@ class _MainPageState extends State<MainPage> {
 
   void _onSheepRegistrationComplete(Map<String, Object> data) {
     int sheepAmountRegistered = data['sheep']! as int;
-    _lambAmount += data['lambs'] as int;
-    debugPrint(data.toString());
+    _registeredLambAmount += data['lambs'] as int;
+
     if (data.containsKey(
         '${colorValueStringToColorString[_registeredEartags.keys.first]}Ear')) {
       for (String eartagColor in _registeredEartags.keys) {
@@ -195,7 +195,7 @@ class _MainPageState extends State<MainPage> {
     }
     if (sheepAmountRegistered > 0) {
       setState(() {
-        _totalSheepAmount += sheepAmountRegistered;
+        _registeredTotalSheepAmount += sheepAmountRegistered;
       });
     }
   }
@@ -240,8 +240,9 @@ class _MainPageState extends State<MainPage> {
                                         2 * (50 + 2 * buttonInset),
                                     child: Drawer(
                                         child: TripOverview(
-                                            totalSheepAmount: _totalSheepAmount,
-                                            lambAmount: _lambAmount,
+                                            totalSheepAmount:
+                                                _registeredTotalSheepAmount,
+                                            lambAmount: _registeredLambAmount,
                                             registeredEartags:
                                                 _registeredEartags,
                                             registeredTies: _registeredTies,
@@ -362,13 +363,16 @@ class _MainPageState extends State<MainPage> {
                                   left: buttonInset,
                                   child: CircularButton(
                                     child: Sheepometer(
-                                        sheepAmount: _totalSheepAmount,
+                                        sheepAmount:
+                                            _registeredTotalSheepAmount,
                                         iconSize: iconSize),
                                     onPressed: () {
                                       Scaffold.of(context).openDrawer();
                                     },
                                     width: 62 +
-                                        textSize(_totalSheepAmount.toString(),
+                                        textSize(
+                                                _registeredTotalSheepAmount
+                                                    .toString(),
                                                 circularButtonTextStyle)
                                             .width,
                                   ),

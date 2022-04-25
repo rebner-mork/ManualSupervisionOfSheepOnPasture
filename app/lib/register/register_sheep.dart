@@ -102,7 +102,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
     // TODO: try/catch (Unhandled Exception: Location services does not have permissions)
     await getDevicePosition();
     _isShortDistance =
-        true; //distance.distance(_devicePosition, widget.sheepPosition) < 50;
+        distance.distance(_devicePosition, widget.sheepPosition) < 50;
 
     questions = List.from(distanceSheepQuestions);
     questionContexts = [
