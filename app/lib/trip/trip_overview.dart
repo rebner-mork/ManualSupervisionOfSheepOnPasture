@@ -79,7 +79,8 @@ class TripOverview extends StatelessWidget {
           SizedBox(
               width: numberWidth,
               child: Text('$totalSheepAmount',
-                  style: tripOverviewNumberTextStyle)),
+                  style: tripOverviewNumberTextStyle,
+                  textAlign: TextAlign.center)),
           const SizedBox(width: horizontalRowSpace),
           const Text('Sauer & Lam', style: tripOverviewDescriptionTextStyle),
         ]),
@@ -97,7 +98,8 @@ class TripOverview extends StatelessWidget {
           SizedBox(
               width: numberWidth,
               child: Text('${totalSheepAmount - lambAmount}',
-                  style: tripOverviewNumberTextStyle)),
+                  style: tripOverviewNumberTextStyle,
+                  textAlign: TextAlign.center)),
           const SizedBox(width: horizontalRowSpace),
           const Text('Sauer', style: tripOverviewDescriptionTextStyle),
         ]),
@@ -117,7 +119,9 @@ class TripOverview extends StatelessWidget {
           const SizedBox(width: horizontalRowSpace),
           SizedBox(
               width: numberWidth,
-              child: Text('$lambAmount', style: tripOverviewNumberTextStyle)),
+              child: Text('$lambAmount',
+                  style: tripOverviewNumberTextStyle,
+                  textAlign: TextAlign.center)),
           const SizedBox(width: horizontalRowSpace),
           const Text('Lam', style: tripOverviewDescriptionTextStyle),
         ]),
@@ -136,8 +140,9 @@ class TripOverview extends StatelessWidget {
           const SizedBox(width: horizontalRowSpace),
           SizedBox(
               width: numberWidth,
-              child:
-                  Text('$injuredAmount', style: tripOverviewNumberTextStyle)),
+              child: Text('$injuredAmount',
+                  style: tripOverviewNumberTextStyle,
+                  textAlign: TextAlign.center)),
           const SizedBox(width: horizontalRowSpace),
           const Text('Skadde', style: tripOverviewDescriptionTextStyle),
         ]),
@@ -156,8 +161,9 @@ class TripOverview extends StatelessWidget {
           const SizedBox(width: horizontalRowSpace),
           SizedBox(
               width: numberWidth,
-              child:
-                  Text('$cadaverAmount', style: tripOverviewNumberTextStyle)),
+              child: Text('$cadaverAmount',
+                  style: tripOverviewNumberTextStyle,
+                  textAlign: TextAlign.center)),
           const SizedBox(width: horizontalRowSpace),
           const Text('Kadaver', style: tripOverviewDescriptionTextStyle),
         ]),
@@ -176,8 +182,9 @@ class TripOverview extends StatelessWidget {
           const SizedBox(width: horizontalRowSpace),
           SizedBox(
               width: numberWidth,
-              child:
-                  Text('$predatorAmount', style: tripOverviewNumberTextStyle)),
+              child: Text('$predatorAmount',
+                  style: tripOverviewNumberTextStyle,
+                  textAlign: TextAlign.center)),
           const SizedBox(width: horizontalRowSpace),
           const Text('Rovdyr', style: tripOverviewDescriptionTextStyle),
         ]),
@@ -197,7 +204,8 @@ class TripOverview extends StatelessWidget {
                     SizedBox(
                         width: numberWidth,
                         child: Text('${eartagMapEntry.value}',
-                            style: tripOverviewNumberTextStyle)),
+                            style: tripOverviewNumberTextStyle,
+                            textAlign: TextAlign.center)),
                     const SizedBox(width: horizontalRowSpace),
                     Text(
                         '${colorValueStringToColorStringGuiPlural[eartagMapEntry.key]}',
@@ -221,7 +229,8 @@ class TripOverview extends StatelessWidget {
                     SizedBox(
                         width: numberWidth,
                         child: Text('${tieMapEntry.value}',
-                            style: tripOverviewNumberTextStyle)),
+                            style: tripOverviewNumberTextStyle,
+                            textAlign: TextAlign.center)),
                     const SizedBox(width: horizontalRowSpace),
                     Text(
                         '${colorValueStringToColorStringGuiPlural[tieMapEntry.key]}',
