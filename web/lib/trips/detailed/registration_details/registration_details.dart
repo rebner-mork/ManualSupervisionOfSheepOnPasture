@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web/trips/detailed/registration_details/injured_sheep_registration_details.dart';
 import 'package:web/trips/detailed/registration_details/sheep_registration_details.dart';
 
 class RegistrationDetails extends StatelessWidget {
@@ -12,9 +13,8 @@ class RegistrationDetails extends StatelessWidget {
     switch (registration['type']) {
       case 'sheep':
         return SheepRegistrationDetails(registration: registration);
-      /*title = 'Registrert sau';
-        break;*/
       case 'injuredSheep':
+        return InjuredSheepRegistrationDetails(registration: registration);
       /*title = 'Registrert saueskade';
         break;*/
       case 'cadaver':

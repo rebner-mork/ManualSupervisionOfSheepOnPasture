@@ -21,8 +21,12 @@ class SheepRegistrationDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return SimpleDialog(
       contentPadding: const EdgeInsets.fromLTRB(10.0, 32.0, 0.0, 16.0),
-      title: const Text('Registrert sau',
-          style: dialogHeadlineTextStyle, textAlign: TextAlign.center),
+      title: Text(
+          registration.keys.length > 10
+              ? 'Nær-registrert sau'
+              : 'Avstandsregistrert sau',
+          style: dialogHeadlineTextStyle,
+          textAlign: TextAlign.center),
       children: [
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           SheepColumn(registration: registration, numberWidth: numberWidth),
