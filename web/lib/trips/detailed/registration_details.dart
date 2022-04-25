@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttericon/rpg_awesome_icons.dart';
+import 'package:web/utils/constants.dart';
 import 'package:web/utils/other.dart';
 
 class RegistrationDetails extends StatelessWidget {
   RegistrationDetails({required this.registration, Key? key})
       : super(key: key) {
+    // TODO: remove constructor
     switch (registration['type']) {
       case 'sheep':
         title = 'Registrert sau';
@@ -49,11 +52,6 @@ class RegistrationDetails extends StatelessWidget {
     }
 
     return const SimpleDialog(children: [Text('Det har skjedd en feil')]);
-
-    /*return SimpleDialog(
-      title: Text(title,
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-    );*/
   }
 }
 
@@ -92,10 +90,33 @@ class SheepRegistrationDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
+      contentPadding: const EdgeInsets.fromLTRB(5.0, 32.0, 0.0, 16.0),
       title: const Text('Registrert sau',
           style: dialogHeadlineTextStyle, textAlign: TextAlign.center),
       children: [
-        const Padding(padding: EdgeInsets.only(top: 20)),
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          SheepColumn(registration: registration, numberWidth: numberWidth),
+          const SizedBox(width: 25),
+          EartagTieColumn(registration: registration, numberWidth: numberWidth)
+        ])
+      ],
+    );
+  }
+}
+
+class SheepColumn extends StatelessWidget {
+  const SheepColumn(
+      {required this.registration, required this.numberWidth, Key? key})
+      : super(key: key);
+
+  final Map<String, dynamic> registration;
+  final double numberWidth;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
         Row(
           children: [
             SizedBox(
@@ -246,5 +267,90 @@ class SheepRegistrationDetails extends StatelessWidget {
         ]),
       ],
     );
+  }
+}
+
+class EartagTieColumn extends StatelessWidget {
+  EartagTieColumn(
+      {required this.registration, required this.numberWidth, Key? key})
+      : super(key: key) {
+    eartagKeys = [];
+    tieKeys = [];
+
+    possibleEartagColorStringToKey.values.map((String eartagKey) {
+      if (registration.containsKey(eartagKey)) {
+        eartagKeys.add(eartagKey);
+      }
+    }).toList();
+
+    possibleTieColorStringToKey.values.map((String tieKey) {
+      if (registration.containsKey(tieKey)) {
+        tieKeys.add(tieKey);
+      }
+    }).toList();
+  }
+
+  final Map<String, dynamic> registration;
+  final double numberWidth;
+  late final List<String> eartagKeys;
+  late final List<String> tieKeys;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      ...eartagKeys.map((String eartagKey) => Row(
+            children: [
+              SizedBox(
+                  width: 80,
+                  child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Icon(Icons.local_offer,
+                          size: iconSize - 3,
+                          color: Color(int.parse(
+                              possibleEartagColorStringToKey.keys.firstWhere(
+                                  (element) =>
+                                      possibleEartagColorStringToKey[element] ==
+                                      eartagKey),
+                              radix: 16))))),
+              const SizedBox(width: horizontalRowSpace),
+              SizedBox(
+                  width: numberWidth,
+                  child: Text('${registration[eartagKey]}',
+                      style: registrationDetailsNumberTextStyle)),
+              const SizedBox(width: horizontalRowSpace),
+              Text(
+                  '${colorValueStringToColorStringGuiPlural[possibleEartagColorStringToKey.keys.firstWhere((element) => possibleEartagColorStringToKey[element] == eartagKey)]}',
+                  style: registrationDetailsDescriptionTextStyle),
+              const SizedBox(height: verticalRowSpace + 30 + 3),
+            ],
+          )),
+      const SizedBox(height: verticalTypeSpace),
+      ...tieKeys.map((String tieKey) => Row(
+            children: [
+              SizedBox(
+                  width: 80,
+                  child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Icon(FontAwesome5.black_tie,
+                          size: iconSize - 3,
+                          color: Color(int.parse(
+                              possibleTieColorStringToKey.keys.firstWhere(
+                                  (element) =>
+                                      possibleTieColorStringToKey[element] ==
+                                      tieKey),
+                              radix: 16))))),
+              const SizedBox(width: horizontalRowSpace),
+              SizedBox(
+                  width: numberWidth,
+                  child: Text('${registration[tieKey]}',
+                      style: registrationDetailsNumberTextStyle)),
+              const SizedBox(width: horizontalRowSpace),
+              Text(
+                  '${colorValueStringToColorStringGuiPlural[possibleTieColorStringToKey.keys.firstWhere((element) => possibleTieColorStringToKey[element] == tieKey)]}',
+                  style: registrationDetailsDescriptionTextStyle),
+              const SizedBox(height: verticalRowSpace + 30 + 3),
+            ],
+          )),
+    ]);
   }
 }
