@@ -23,7 +23,7 @@ class SheepRegistrationDetails extends StatelessWidget {
       contentPadding: const EdgeInsets.fromLTRB(10.0, 32.0, 0.0, 16.0),
       title: Text(
           registration.keys.length > 10
-              ? 'Nær-registrert sau'
+              ? 'Nærregistrert sau'
               : 'Avstandsregistrert sau',
           style: dialogHeadlineTextStyle,
           textAlign: TextAlign.center),
