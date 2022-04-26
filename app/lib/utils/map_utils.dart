@@ -62,14 +62,11 @@ Marker getDevicePositionMarker(LatLng pos) {
           ));
 }
 
-Marker getMarker(
+Marker getMapMarker(
     Map<String, dynamic> registration, LatLng pos, RegistrationType type,
     {SheepMarkerColor color = SheepMarkerColor.green}) {
   const double size = 50;
-
   final AssetImage image;
-
-  debugPrint(registration.toString());
 
   switch (type) {
     case RegistrationType.sheep:
@@ -92,7 +89,7 @@ Marker getMarker(
       image = const AssetImage('images/sheep_marker_cadaver.png');
       break;
     case RegistrationType.predator:
-      image = const AssetImage('images/predator_marker.png');
+      image = const AssetImage('images/predator_wolf_marker.png');
       break;
     case RegistrationType.note:
       image = const AssetImage('images/note_marker.png');

@@ -24,7 +24,7 @@ Marker getMarker(Map<String, dynamic> registration) {
       image = const AssetImage('images/sheep_marker_cadaver.png');
       break;
     case 'predator':
-      image = const AssetImage('images/predator_marker.png');
+      image = const AssetImage('images/predator_wolf_marker.png');
       break;
     case 'note':
       image = const AssetImage('images/note_marker.png');
