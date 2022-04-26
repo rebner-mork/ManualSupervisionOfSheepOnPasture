@@ -61,3 +61,5 @@ final double doubleDigitsWidth =
     textSize('99', registrationDetailsNumberTextStyle).width + 5;
 final double tripleDigitsWidth =
     textSize('999', registrationDetailsNumberTextStyle).width + 5;
+
+const EdgeInsets tableCellPadding = EdgeInsets.all(8);
