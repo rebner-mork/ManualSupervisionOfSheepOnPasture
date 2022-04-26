@@ -6,6 +6,8 @@ import 'package:web/trips/detailed/injured_sheep_table.dart';
 import 'package:web/trips/detailed/main_trip_info_table.dart';
 import 'package:web/trips/detailed/map_of_trip_widget.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:web/trips/detailed/predator_table.dart';
+import 'package:web/trips/detailed/note_table.dart';
 import 'package:web/trips/detailed/sheep_info_table.dart';
 import 'package:web/trips/detailed/info_table.dart';
 import 'package:web/utils/constants.dart';
@@ -39,6 +41,8 @@ class _DetailedTripState extends State<DetailedTrip> {
   Map<String, int> tieData = {};
   List<Map<String, dynamic>> injuredSheepData = [];
   List<Map<String, dynamic>> cadaverData = [];
+  List<Map<String, dynamic>> predatorData = [];
+  List<String> noteData = [];
 
   final double infoTablePadding = 25;
 
@@ -87,7 +91,12 @@ class _DetailedTripState extends State<DetailedTrip> {
           break;
         case 'cadaver':
           cadaverData.add(registration);
-          sheepData['sheep'] = sheepData['sheep']! + 1;
+          break;
+        case 'predator':
+          predatorData.add(registration);
+          break;
+        case 'note':
+          noteData.add(registration['note']);
           break;
         default:
       }
@@ -186,40 +195,65 @@ class _DetailedTripState extends State<DetailedTrip> {
     height += 50 +
         2 *
             (textSize('A', descriptionTextStyle).height +
-                (2 * tableCellPadding.top));
+                tableCellPadding.vertical);
 
     // SheepInfoTableHeight
     height += 2 *
         (textSize('A', tableRowDescriptionTextStyle).height +
-            (2 * tableCellPadding.top));
+            tableCellPadding.vertical);
 
     // InfoTableHeight
     height += textSize(('A'), headlineTextStyle).height +
         40 +
         textSize('A', tableRowDescriptionTextStyle).height +
-        (2 * tableCellPadding.top) +
+        tableCellPadding.vertical +
         (tieData.length > eartagData.length
-            ? tieData.length * (25 + (2 * tableCellPadding.top))
-            : eartagData.length * (25 + (2 * tableCellPadding.top)));
+            ? tieData.length * (25 + tableCellPadding.vertical)
+            : eartagData.length * (25 + tableCellPadding.vertical));
 
     // InjuredSheepTable
     if (injuredSheepData.isNotEmpty) {
-      height += textSize(('A'), headlineTextStyle).width +
-          40 +
+      height += textSize(('A'), headlineTextStyle).height +
+          32 +
           textSize('S', injuryCadaverHeadlineTextStyle).height +
           textSize('A', descriptionTextStyle).height +
-          (2 * tableCellPadding.top) +
-          injuredSheepData.length * (41 + (2 * tableCellPadding.top));
+          tableCellPadding.vertical +
+          injuredSheepData.length * (34 + tableCellPadding.vertical);
     }
 
     // CadaverTable
     if (cadaverData.isNotEmpty) {
-      height += textSize(('A'), headlineTextStyle).width +
-          40 +
+      height += textSize(('A'), headlineTextStyle).height +
+          32 +
           textSize('S', injuryCadaverHeadlineTextStyle).height +
           textSize('A', descriptionTextStyle).height +
-          (2 * tableCellPadding.top) +
-          cadaverData.length * (41 + (2 * tableCellPadding.top));
+          tableCellPadding.vertical +
+          cadaverData.length * (34 + tableCellPadding.vertical);
+    }
+
+    // NoteTable
+    if (noteData.isNotEmpty) {
+      int lineAmount = 0;
+
+      for (String note in noteData) {
+        lineAmount += (textSize(note, noteTableTextStyle).width /
+                (noteTableWidth - tableCellPadding.horizontal))
+            .ceil();
+        lineAmount += note.split("\n").length;
+      }
+      height += textSize(('A'), headlineTextStyle).height + 40;
+      height += (lineAmount * textSize('A', noteTableTextStyle).height) +
+          noteData.length * (2 + tableCellPadding.vertical);
+    }
+
+    // PredatorTable
+    if (predatorData.isNotEmpty) {
+      height += textSize(('A'), headlineTextStyle).height +
+          32 +
+          textSize('S', injuryCadaverHeadlineTextStyle).height +
+          textSize('A', descriptionTextStyle).height +
+          tableCellPadding.vertical +
+          predatorData.length * (34 + tableCellPadding.vertical);
     }
 
     return height;
@@ -338,7 +372,21 @@ class _DetailedTripState extends State<DetailedTrip> {
                                       const SizedBox(
                                           width:
                                               180) // CadaverTable width + 180 = InjuredSheepTable width
-                                    ])
+                                    ]),
+                              if (predatorData.isNotEmpty)
+                                const Headline(title: "Rovdyr"),
+                              if (predatorData.isNotEmpty)
+                                Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      PredatorTable(predatorData: predatorData),
+                                      const SizedBox(
+                                          width:
+                                              180) // CadaverTable width + 180 = InjuredSheepTable width
+                                    ]),
+                              if (noteData.isNotEmpty)
+                                const Headline(title: 'Notater'),
+                              if (noteData.isNotEmpty) NoteTable(data: noteData)
                             ],
                           )))))),
     ]);

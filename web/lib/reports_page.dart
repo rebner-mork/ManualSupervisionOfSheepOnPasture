@@ -147,6 +147,7 @@ class _ReportsPageState extends State<ReportsPage> {
       int totalLambAmount = 0;
       int totalInjuredSheepAmount = 0;
       int totalCadaverAmount = 0;
+      int totalPredatorAmount = 0;
 
       for (DocumentSnapshot<Object?> registrationDoc
           in registrationsQuerySnapshot.docs) {
@@ -162,6 +163,11 @@ class _ReportsPageState extends State<ReportsPage> {
           case 'cadaver':
             totalCadaverAmount++;
             break;
+          case 'predator':
+            totalPredatorAmount += registrationDoc['quantity'] as int;
+            break;
+          case 'note':
+            break;
           default:
             break;
         }
@@ -174,6 +180,7 @@ class _ReportsPageState extends State<ReportsPage> {
         'lambs': totalLambAmount,
         'injuredSheep': totalInjuredSheepAmount,
         'cadaver': totalCadaverAmount,
+        'predator': totalPredatorAmount,
       });
     }
     return tripSummaries;
@@ -200,6 +207,15 @@ class _ReportsPageState extends State<ReportsPage> {
                 pw.Padding(
                     padding: const pw.EdgeInsets.all(8),
                     child: pw.Text(farmDoc['name'])),
+              ]),
+              pw.TableRow(children: [
+                pw.Padding(
+                    padding: const pw.EdgeInsets.all(8),
+                    child:
+                        pw.Text('Gårdsnummner', style: columnHeaderTextStyle)),
+                pw.Padding(
+                    padding: const pw.EdgeInsets.all(8),
+                    child: pw.Text(farmDoc['farmNumber'])),
               ]),
               pw.TableRow(children: [
                 pw.Padding(
@@ -314,8 +330,8 @@ class _ReportsPageState extends State<ReportsPage> {
                                 textAlign: pw.TextAlign.center)),
                         pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
-                            child:
-                                pw.Text('x', textAlign: pw.TextAlign.center)),
+                            child: pw.Text('${tripMap['predator']}',
+                                textAlign: pw.TextAlign.center)),
                       ]);
                     }
                   })

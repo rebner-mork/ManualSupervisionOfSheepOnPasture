@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:app/map/map_widget.dart';
 import 'package:app/registration_options.dart';
 import 'package:app/trip/end_trip_dialog.dart';
-import 'package:app/trip/start_trip_page.dart';
 import 'package:app/trip/trip_data_manager.dart';
 import 'package:app/utils/constants.dart';
 import 'package:app/utils/custom_widgets.dart';
@@ -106,7 +105,7 @@ class _MainPageState extends State<MainPage> {
       _cancelSelectPositionMode();
       return false;
     } else {
-      return await _endTrip(context);
+      return _endTrip(context);
     }
   }
 
@@ -122,7 +121,7 @@ class _MainPageState extends State<MainPage> {
         if (widget.onCompleted != null) {
           widget.onCompleted!();
         }
-        Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
+        Navigator.pop(context);
       }
       return isFinished;
     });

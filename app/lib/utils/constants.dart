@@ -10,11 +10,14 @@ abstract class OfflineZoomLevels {
 }
 
 late final String applicationDocumentDirectoryPath;
+late final String offlineFarmsFilePath;
+
 late final CameraDescription deviceCamera;
 
 Future<void> setConstants() async {
   Directory dir = await getApplicationDocumentsDirectory();
   applicationDocumentDirectoryPath = dir.path;
+  offlineFarmsFilePath = '$applicationDocumentDirectoryPath/farms.json';
 
   List<CameraDescription> cameras = await availableCameras();
   deviceCamera = cameras.first;
@@ -87,5 +90,6 @@ final Map<RegistrationType, String> registrationTypeToGui = {
   RegistrationType.sheep: 'sauen(e)',
   RegistrationType.injury: 'den skadde sauen',
   RegistrationType.cadaver: 'kadaveret',
-  RegistrationType.note: 'notatet'
+  RegistrationType.note: 'notatet',
+  RegistrationType.predator: 'rovdyret',
 };
