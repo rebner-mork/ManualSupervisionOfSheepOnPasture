@@ -103,7 +103,7 @@ class InjuredSheepRegistrationDetails extends StatelessWidget {
                 width: 350,
                 child: Text(
                     (registration['note'] as String).isEmpty
-                        ? 'Ingen notat.'
+                        ? 'Ingen notat'
                         : '${registration['note']}',
                     style: const TextStyle(fontSize: 18),
                     textAlign: TextAlign.center)))

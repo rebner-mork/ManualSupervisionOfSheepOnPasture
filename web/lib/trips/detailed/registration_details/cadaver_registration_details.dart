@@ -95,12 +95,12 @@ class _CadaverRegistrationDetailsState
                       .width -
                   30)),
         ]),
-        const SizedBox(height: 20),
+        const SizedBox(height: 10),
         Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
             child: Text(
                 (widget.registration['note'] as String).isEmpty
-                    ? 'Ingen notat.'
+                    ? 'Ingen notat'
                     : '${widget.registration['note']}',
                 style: const TextStyle(fontSize: 18),
                 textAlign: TextAlign.center)),
@@ -109,7 +109,7 @@ class _CadaverRegistrationDetailsState
             : _photoUrls.isEmpty
                 ? const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 15),
-                    child: Text('Ingen bilder.',
+                    child: Text('Ingen bilder',
                         style: TextStyle(fontSize: 16),
                         textAlign: TextAlign.center))
                 : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
