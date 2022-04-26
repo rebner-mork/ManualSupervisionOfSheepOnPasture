@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttericon/rpg_awesome_icons.dart';
+import 'package:web/trips/detailed/registration_details/timestamp_widget.dart';
 import 'package:web/utils/constants.dart';
 import 'package:web/utils/styles.dart';
 
@@ -20,7 +21,7 @@ class SheepRegistrationDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      contentPadding: const EdgeInsets.fromLTRB(10.0, 32.0, 25.0, 16.0),
+      contentPadding: const EdgeInsets.fromLTRB(10.0, 32.0, 25.0, 10.0),
       title: Text(
           registration.keys.length > 10
               ? 'Nærregistrert sau'
@@ -36,7 +37,9 @@ class SheepRegistrationDetails extends StatelessWidget {
               if (registration.keys.length > 10) const SizedBox(width: 15),
               EartagTieColumn(
                   registration: registration, numberWidth: numberWidth),
-            ])
+            ]),
+        const SizedBox(height: 10),
+        TimestampWidget(timestamp: registration['timestamp'])
       ],
     );
   }

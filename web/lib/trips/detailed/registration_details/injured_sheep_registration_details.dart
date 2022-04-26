@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
+import 'package:web/trips/detailed/registration_details/timestamp_widget.dart';
 import 'package:web/utils/constants.dart';
 import 'package:web/utils/styles.dart';
 
@@ -15,7 +16,7 @@ class InjuredSheepRegistrationDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      contentPadding: const EdgeInsets.fromLTRB(10.0, 1.0, 0.0, 16.0),
+      contentPadding: const EdgeInsets.fromLTRB(10.0, 1.0, 0.0, 10.0),
       title: const Text('Saueskade',
           style: dialogHeadlineTextStyle, textAlign: TextAlign.center),
       children: [
@@ -98,7 +99,7 @@ class InjuredSheepRegistrationDetails extends StatelessWidget {
             )),
         const SizedBox(height: 10),
         Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
             child: SizedBox(
                 width: 250,
                 child: Text(
@@ -106,7 +107,8 @@ class InjuredSheepRegistrationDetails extends StatelessWidget {
                         ? 'Ingen notat'
                         : '${registration['note']}',
                     style: const TextStyle(fontSize: 18),
-                    textAlign: TextAlign.center)))
+                    textAlign: TextAlign.center))),
+        TimestampWidget(timestamp: registration['timestamp'])
       ],
     );
   }

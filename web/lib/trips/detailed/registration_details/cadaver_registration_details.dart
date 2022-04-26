@@ -1,6 +1,7 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
+import 'package:web/trips/detailed/registration_details/timestamp_widget.dart';
 import 'package:web/utils/constants.dart';
 import 'package:web/utils/custom_widgets.dart';
 import 'package:web/utils/other.dart';
@@ -51,7 +52,7 @@ class _CadaverRegistrationDetailsState
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      contentPadding: const EdgeInsets.fromLTRB(0, 10, 0.0, 8),
+      contentPadding: const EdgeInsets.fromLTRB(2.0, 10, 2.0, 5.0),
       title: const Text('Kadaver',
           style: dialogHeadlineTextStyle, textAlign: TextAlign.center),
       children: [
@@ -123,7 +124,9 @@ class _CadaverRegistrationDetailsState
                               const SizedBox(width: 8)
                             ]))
                         .toList()
-                  ])
+                  ]),
+        const SizedBox(height: 5),
+        TimestampWidget(timestamp: widget.registration['timestamp']),
       ],
     );
   }

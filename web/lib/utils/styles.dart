@@ -41,6 +41,7 @@ const TextStyle registrationDetailsNumberTextStyle =
     TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
 const TextStyle registrationDetailsDescriptionTextStyle =
     TextStyle(fontSize: 22);
+const TextStyle registrationDetailsTimestampTextStyle = TextStyle(fontSize: 18);
 
 final double doubleDigitsWidth =
     textSize('99', registrationDetailsNumberTextStyle).width + 5;
