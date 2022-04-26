@@ -53,7 +53,7 @@ class _ToggleButtonGroupState extends State<ToggleButtonGroup> {
                 ? widget.itemSize.height * 1.2
                 : widget.itemSize.height));
 
-    late final ButtonStyle isNotSelectedStyle = OutlinedButton.styleFrom(
+    final ButtonStyle isNotSelectedStyle = OutlinedButton.styleFrom(
         backgroundColor: Colors.transparent, fixedSize: widget.itemSize);
 
     List<Widget> currentRow = [];
