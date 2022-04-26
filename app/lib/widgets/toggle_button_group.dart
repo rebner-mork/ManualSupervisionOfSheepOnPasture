@@ -26,7 +26,6 @@ class ToggleButtonGroup extends StatefulWidget {
 }
 
 class _ToggleButtonGroupState extends State<ToggleButtonGroup> {
-  //
   dynamic value;
 
   late ValueNotifier<List<bool>> isSelected = ValueNotifier<List<bool>>(
@@ -46,8 +45,7 @@ class _ToggleButtonGroupState extends State<ToggleButtonGroup> {
   }
 
   List<Widget> generateToggleButtons() {
-    //
-    late final ButtonStyle isSelectedStyle = OutlinedButton.styleFrom(
+    final ButtonStyle isSelectedStyle = OutlinedButton.styleFrom(
         backgroundColor: Colors.green,
         fixedSize: Size(
             widget.itemSize.width,
@@ -55,7 +53,7 @@ class _ToggleButtonGroupState extends State<ToggleButtonGroup> {
                 ? widget.itemSize.height * 1.2
                 : widget.itemSize.height));
 
-    late final ButtonStyle isNotSelectedStyle = OutlinedButton.styleFrom(
+    final ButtonStyle isNotSelectedStyle = OutlinedButton.styleFrom(
         backgroundColor: Colors.transparent, fixedSize: widget.itemSize);
 
     List<Widget> currentRow = [];
