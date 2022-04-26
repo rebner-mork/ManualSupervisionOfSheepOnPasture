@@ -11,12 +11,15 @@ class NoteRegistrationDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      contentPadding: const EdgeInsets.fromLTRB(10.0, 32.0, 25.0, 10.0),
+      contentPadding: const EdgeInsets.fromLTRB(10.0, 10.0, 25.0, 10.0),
       title: const Text('Notat',
           style: dialogHeadlineTextStyle, textAlign: TextAlign.center),
       children: [
-        Text(registration['note'],
-            style: registrationDetailsDescriptionTextStyle),
+        Container(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: Text(registration['note'],
+                style: registrationDetailsDescriptionTextStyle,
+                textAlign: TextAlign.center)),
         const SizedBox(height: 10),
         TimestampWidget(timestamp: registration['timestamp'])
       ],
