@@ -1,3 +1,4 @@
+import 'package:app/registration_details/timestamp_widget.dart';
 import 'package:app/utils/constants.dart';
 import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
@@ -106,7 +107,9 @@ class InjuredSheepRegistrationDetails extends StatelessWidget {
                         ? 'Ingen notat'
                         : '${registration['note']}',
                     style: const TextStyle(fontSize: 18),
-                    textAlign: TextAlign.center)))
+                    textAlign: TextAlign.center))),
+        const SizedBox(height: 10),
+        TimestampWidget(date: registration['timestamp'])
       ],
     );
   }

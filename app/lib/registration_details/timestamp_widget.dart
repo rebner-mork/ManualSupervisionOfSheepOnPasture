@@ -1,13 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class TimestampWidget extends StatelessWidget {
-  TimestampWidget({required this.timestamp, Key? key}) : super(key: key) {
-    date = timestamp.toDate();
-  }
+  const TimestampWidget({required this.date, Key? key}) : super(key: key);
 
-  final Timestamp timestamp;
-  late final DateTime date;
+  final DateTime date;
 
   @override
   Widget build(BuildContext context) {

@@ -1,3 +1,4 @@
+import 'package:app/registration_details/timestamp_widget.dart';
 import 'package:app/utils/constants.dart';
 import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,7 @@ class SheepRegistrationDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return SimpleDialog(
       contentPadding: EdgeInsets.fromLTRB(
-          registration.keys.length > 10 ? 10.0 : 30.0, 32.0, 0.0, 16.0),
+          registration.keys.length > 10 ? 10.0 : 30.0, 32.0, 0.0, 10.0),
       title: Text(
           registration.keys.length > 10
               ? 'Nærregistrert sau'
@@ -33,7 +34,11 @@ class SheepRegistrationDetails extends StatelessWidget {
           SheepColumn(registration: registration, numberWidth: numberWidth),
           if (registration.keys.length > 10)
             const SizedBox(width: 25, height: verticalTypeSpace),
-          EartagTieColumn(registration: registration, numberWidth: numberWidth)
+          if (registration.keys.length > 10)
+            EartagTieColumn(
+                registration: registration, numberWidth: numberWidth),
+          const SizedBox(height: 10),
+          TimestampWidget(date: registration['timestamp'])
         ])
       ],
     );
@@ -61,9 +66,12 @@ class SheepColumn extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: const [
-                      Icon(RpgAwesome.sheep,
-                          size: iconSize - 10, color: Colors.grey),
-                      Icon(RpgAwesome.sheep, size: iconSize, color: Colors.grey)
+                      Image(
+                          image: AssetImage('images/sheep.png'),
+                          width: iconSize - 10),
+                      Image(
+                          image: AssetImage('images/sheep.png'),
+                          width: iconSize),
                     ])),
             const SizedBox(width: horizontalRowSpace),
             SizedBox(
@@ -81,9 +89,10 @@ class SheepColumn extends StatelessWidget {
           const SizedBox(
               width: 70,
               child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Icon(RpgAwesome.sheep,
-                      size: iconSize, color: Colors.grey))),
+                alignment: Alignment.centerRight,
+                child: Image(
+                    image: AssetImage('images/sheep.png'), width: iconSize),
+              )),
           const SizedBox(width: horizontalRowSpace),
           SizedBox(
               width: numberWidth,
@@ -100,8 +109,10 @@ class SheepColumn extends StatelessWidget {
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: const [
-                    Icon(RpgAwesome.sheep, size: iconSize, color: Colors.grey),
-                    SizedBox(width: 2.5)
+                    Image(
+                        image: AssetImage('images/sheep.png'),
+                        width: iconSize - 10),
+                    SizedBox(width: 5)
                   ])),
           const SizedBox(width: horizontalRowSpace),
           SizedBox(

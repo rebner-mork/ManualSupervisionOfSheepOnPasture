@@ -7,14 +7,14 @@ class DisplayPhotoWidget extends StatelessWidget {
       {Key? key,
       required this.photoPath,
       this.onDeletePhoto,
-      this.showButtons = true})
+      this.showDeleteButton = true})
       : super(key: key);
 
   final String photoPath;
 
   final VoidCallback? onDeletePhoto;
 
-  final bool showButtons;
+  final bool showDeleteButton;
 
   @override
   Widget build(BuildContext context) {
@@ -27,22 +27,23 @@ class DisplayPhotoWidget extends StatelessWidget {
         SizedBox(
             width: MediaQuery.of(context).size.width,
             child: Image.file(File(photoPath))),
-        if (showButtons)
-          Positioned(
-              right: MediaQuery.of(context).size.width / 2 + buttonWidth / 4,
-              bottom: MediaQuery.of(context).viewPadding.bottom + 15,
-              child: CircularButton(
-                height: buttonHeight,
-                width: buttonWidth,
-                child: const Icon(
-                  Icons.arrow_back,
-                  size: buttonHeight - 20,
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              )),
-        if (showButtons)
+        Positioned(
+            right: showDeleteButton
+                ? MediaQuery.of(context).size.width / 2 + buttonWidth / 4
+                : MediaQuery.of(context).size.width / 2 - buttonWidth / 2,
+            bottom: MediaQuery.of(context).viewPadding.bottom + 15,
+            child: CircularButton(
+              height: buttonHeight,
+              width: buttonWidth,
+              child: const Icon(
+                Icons.arrow_back,
+                size: buttonHeight - 20,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            )),
+        if (showDeleteButton)
           Positioned(
               left: MediaQuery.of(context).size.width / 2 + buttonWidth / 4,
               bottom: MediaQuery.of(context).viewPadding.bottom + 15,

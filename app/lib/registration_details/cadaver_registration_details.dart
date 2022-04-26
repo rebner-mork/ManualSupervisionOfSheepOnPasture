@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:app/registration_details/timestamp_widget.dart';
 import 'package:app/utils/camera/display_photo_widget.dart';
 import 'package:app/utils/constants.dart';
 import 'package:app/utils/styles.dart';
@@ -79,7 +80,7 @@ class _CadaverRegistrationDetailsState
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => DisplayPhotoWidget(
                                   photoPath: photoUrl as String,
-                                  showButtons: false)));
+                                  showDeleteButton: false)));
                         },
                         child: Container(
                           height: 150,
@@ -91,7 +92,9 @@ class _CadaverRegistrationDetailsState
                           )),
                         )))
                     .toList()
-              ])
+              ]),
+        const SizedBox(height: 10),
+        TimestampWidget(date: widget.registration['timestamp'])
       ],
     );
   }
