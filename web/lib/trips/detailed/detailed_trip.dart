@@ -248,12 +248,12 @@ class _DetailedTripState extends State<DetailedTrip> {
 
     // PredatorTable
     if (predatorData.isNotEmpty) {
-      height += textSize(('A'), headlineTextStyle).width +
-          40 +
+      height += textSize(('A'), headlineTextStyle).height +
+          32 +
           textSize('S', injuryCadaverHeadlineTextStyle).height +
           textSize('A', descriptionTextStyle).height +
-          (2 * tableCellPadding.top) +
-          predatorData.length * (41 + (2 * tableCellPadding.top));
+          tableCellPadding.vertical +
+          predatorData.length * (34 + tableCellPadding.vertical);
     }
 
     return height;
