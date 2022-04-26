@@ -21,7 +21,6 @@ class RegisterCadaver extends StatefulWidget {
       this.onWillPop})
       : super(key: key);
 
-  static const String route = 'register-cadaver';
 
   final String farmNumber;
   final Map<String, int?> ties;
