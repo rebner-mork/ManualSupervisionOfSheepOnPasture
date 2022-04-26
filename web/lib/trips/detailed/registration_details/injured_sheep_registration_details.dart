@@ -16,8 +16,8 @@ class InjuredSheepRegistrationDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return SimpleDialog(
       contentPadding: const EdgeInsets.fromLTRB(10.0, 1.0, 0.0, 16.0),
-      title: const Text('Registrert saueskade',
-          style: dialogHeadlineTextStyle, textAlign: TextAlign.left),
+      title: const Text('Saueskade',
+          style: dialogHeadlineTextStyle, textAlign: TextAlign.center),
       children: [
         Text('${eartag[0]}-${eartag[1]}\n${eartag[2]}-${eartag[3]}',
             style: const TextStyle(fontSize: 20), textAlign: TextAlign.center),

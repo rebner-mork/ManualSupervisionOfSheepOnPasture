@@ -29,7 +29,7 @@ const double dropdownArrowSize = 28;
 
 // Registration details
 const TextStyle dialogHeadlineTextStyle =
-    TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
+    TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
 
 const double iconSize = 35;
 

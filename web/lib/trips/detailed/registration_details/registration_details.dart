@@ -18,8 +18,6 @@ class RegistrationDetails extends StatelessWidget {
         return InjuredSheepRegistrationDetails(registration: registration);
       case 'cadaver':
         return CadaverRegistrationDetails(registration: registration);
-      /*title = 'Registrert kadaver';
-        break;*/
       case 'predator':
       /*title = 'Registrert rovdyr';
         break;*/

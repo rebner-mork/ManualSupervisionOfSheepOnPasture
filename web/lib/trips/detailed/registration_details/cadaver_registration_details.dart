@@ -52,8 +52,8 @@ class _CadaverRegistrationDetailsState
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      contentPadding: const EdgeInsets.fromLTRB(0, 25, 0.0, 8),
-      title: const Text('Registrert kadaver',
+      contentPadding: const EdgeInsets.fromLTRB(0, 10, 0.0, 8),
+      title: const Text('Kadaver',
           style: dialogHeadlineTextStyle, textAlign: TextAlign.center),
       children: [
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
