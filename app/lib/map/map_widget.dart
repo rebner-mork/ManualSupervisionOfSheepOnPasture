@@ -197,7 +197,7 @@ class _MapState extends State<MapWidget> {
                       linesOfSight.add(map_utils
                           .getLineOfSight([devicePosition, targetPosition]));
                       registrationMarkers.add(map_utils.getMapMarker(
-                          targetPosition, RegistrationType.injury));
+                          targetPosition, RegistrationType.cadaver));
                     });
                   },
                   onWillPop: () {
