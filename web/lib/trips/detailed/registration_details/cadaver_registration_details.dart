@@ -97,7 +97,8 @@ class _CadaverRegistrationDetailsState
                 (widget.registration['note'] as String).isEmpty
                     ? 'Ingen notat.'
                     : '${widget.registration['note']}',
-                style: const TextStyle(fontSize: 18))),
+                style: const TextStyle(fontSize: 18),
+                textAlign: TextAlign.center)),
         _isLoading
             ? const LoadingData(smallCircleOnly: true)
             : _photoUrls.isEmpty
