@@ -17,7 +17,6 @@ class RegisterPredator extends StatefulWidget {
       this.onWillPop})
       : super(key: key);
 
-  static const String route = 'register-predator';
 
   final LatLng predatorPosition;
 
