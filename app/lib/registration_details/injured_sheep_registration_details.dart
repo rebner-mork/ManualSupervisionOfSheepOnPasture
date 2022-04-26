@@ -42,10 +42,6 @@ class InjuredSheepRegistrationDetails extends StatelessWidget {
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Text(
-                                colorValueToStringGui[
-                                    '${registration['tieColor']}']!,
-                                style: registrationDetailsDescriptionTextStyle),
                             Icon(
                               registration['tieColor'] == '0'
                                   ? Icons.disabled_by_default
@@ -56,6 +52,18 @@ class InjuredSheepRegistrationDetails extends StatelessWidget {
                                   : Color(int.parse(registration['tieColor'],
                                       radix: 16)),
                             ),
+                            registration['tieColor'] == '0'
+                                ? Text(
+                                    colorValueToStringGui[
+                                            '${registration['tieColor']}']! +
+                                        ' slips',
+                                    style:
+                                        registrationDetailsDescriptionTextStyle)
+                                : Text(
+                                    colorValueToStringGui[
+                                        '${registration['tieColor']}']!,
+                                    style:
+                                        registrationDetailsDescriptionTextStyle),
                           ])),
                 ]),
                 TableRow(children: [

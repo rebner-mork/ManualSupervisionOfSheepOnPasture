@@ -1,3 +1,4 @@
+import 'package:app/registration_details/cadaver_registration_details.dart';
 import 'package:app/registration_details/injured_sheep_registration_details.dart';
 import 'package:app/registration_details/sheep_registration_details.dart';
 import 'package:flutter/material.dart';
@@ -15,9 +16,9 @@ class RegistrationDetails extends StatelessWidget {
         return SheepRegistrationDetails(registration: registration);
       case 'injuredSheep':
         return InjuredSheepRegistrationDetails(registration: registration);
-      /*case 'cadaver':
+      case 'cadaver':
         return CadaverRegistrationDetails(registration: registration);
-      case 'predator':*/
+      /*case 'predator':*/
       /*title = 'Registrert rovdyr';
         break;*/
       case 'note':
