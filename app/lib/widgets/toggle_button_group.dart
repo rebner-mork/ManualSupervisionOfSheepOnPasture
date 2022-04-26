@@ -45,7 +45,7 @@ class _ToggleButtonGroupState extends State<ToggleButtonGroup> {
   }
 
   List<Widget> generateToggleButtons() {
-    late final ButtonStyle isSelectedStyle = OutlinedButton.styleFrom(
+    final ButtonStyle isSelectedStyle = OutlinedButton.styleFrom(
         backgroundColor: Colors.green,
         fixedSize: Size(
             widget.itemSize.width,
