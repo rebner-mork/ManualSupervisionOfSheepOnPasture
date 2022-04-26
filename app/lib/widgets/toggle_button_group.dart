@@ -7,7 +7,8 @@ class ToggleButtonGroup extends StatefulWidget {
       this.onValueChanged,
       this.preselectedItem,
       this.itemSize = const Size(100, 60),
-      this.itemsPerRow})
+      this.itemsPerRow,
+      this.fontSize})
       : super(key: key);
 
   final Map<String, dynamic> valueLabelPairs;
@@ -17,6 +18,8 @@ class ToggleButtonGroup extends StatefulWidget {
 
   final Size itemSize;
   final int? itemsPerRow;
+
+  final double? fontSize;
 
   @override
   State<ToggleButtonGroup> createState() => _ToggleButtonGroupState();
@@ -95,7 +98,7 @@ class _ToggleButtonGroupState extends State<ToggleButtonGroup> {
               color: isSelected.value[i] ? Colors.white : Colors.black,
               fontWeight:
                   isSelected.value[i] ? FontWeight.bold : FontWeight.normal,
-              fontSize: widget.itemSize.height * 0.35),
+              fontSize: widget.fontSize ?? widget.itemSize.height * 0.35),
         ),
         style: isSelected.value[i] ? isSelectedStyle : isNotSelectedStyle,
       ));

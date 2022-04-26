@@ -91,6 +91,7 @@ class _RegisterPredatorState extends State<RegisterPredator> with RegisterPage {
                                 preselectedItem: "Bjørn",
                                 itemsPerRow: 2,
                                 itemSize: const Size(160, 100),
+                                fontSize: 30,
                                 onValueChanged: (value) => species = value,
                               ),
                               inputFieldSpacer(),
