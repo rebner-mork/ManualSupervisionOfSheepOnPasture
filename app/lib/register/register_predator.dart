@@ -31,7 +31,6 @@ class RegisterPredator extends StatefulWidget {
 }
 
 class _RegisterPredatorState extends State<RegisterPredator> with RegisterPage {
-  //
   late LatLng _devicePosition;
 
   bool _isLoading = true;
