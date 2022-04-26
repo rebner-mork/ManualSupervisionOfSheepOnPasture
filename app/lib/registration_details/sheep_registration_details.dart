@@ -20,7 +20,8 @@ class SheepRegistrationDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      contentPadding: const EdgeInsets.fromLTRB(10.0, 32.0, 0.0, 16.0),
+      contentPadding: EdgeInsets.fromLTRB(
+          registration.keys.length > 10 ? 10.0 : 30.0, 32.0, 0.0, 16.0),
       title: Text(
           registration.keys.length > 10
               ? 'Nærregistrert sau'
@@ -30,7 +31,8 @@ class SheepRegistrationDetails extends StatelessWidget {
       children: [
         Column(children: [
           SheepColumn(registration: registration, numberWidth: numberWidth),
-          const SizedBox(width: 25, height: verticalTypeSpace),
+          if (registration.keys.length > 10)
+            const SizedBox(width: 25, height: verticalTypeSpace),
           EartagTieColumn(registration: registration, numberWidth: numberWidth)
         ])
       ],
