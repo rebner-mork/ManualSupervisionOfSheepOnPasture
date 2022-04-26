@@ -20,7 +20,7 @@ class SheepRegistrationDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      contentPadding: const EdgeInsets.fromLTRB(10.0, 32.0, 0.0, 16.0),
+      contentPadding: const EdgeInsets.fromLTRB(10.0, 32.0, 25.0, 16.0),
       title: Text(
           registration.keys.length > 10
               ? 'Nærregistrert sau'
@@ -28,11 +28,15 @@ class SheepRegistrationDetails extends StatelessWidget {
           style: dialogHeadlineTextStyle,
           textAlign: TextAlign.center),
       children: [
-        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          SheepColumn(registration: registration, numberWidth: numberWidth),
-          const SizedBox(width: 25),
-          EartagTieColumn(registration: registration, numberWidth: numberWidth)
-        ])
+        Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SheepColumn(registration: registration, numberWidth: numberWidth),
+              if (registration.keys.length > 10) const SizedBox(width: 15),
+              EartagTieColumn(
+                  registration: registration, numberWidth: numberWidth),
+            ])
       ],
     );
   }
@@ -54,7 +58,7 @@ class SheepColumn extends StatelessWidget {
         Row(
           children: [
             SizedBox(
-                width: 80,
+                width: 70,
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -77,7 +81,7 @@ class SheepColumn extends StatelessWidget {
         const SizedBox(height: verticalRowSpace),
         Row(children: [
           const SizedBox(
-              width: 80,
+              width: 70,
               child: Align(
                   alignment: Alignment.centerRight,
                   child: Icon(RpgAwesome.sheep,
@@ -94,15 +98,11 @@ class SheepColumn extends StatelessWidget {
         const SizedBox(height: verticalRowSpace + 5),
         Row(children: [
           SizedBox(
-              width: 80,
+              width: 70,
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: const [
                     Icon(RpgAwesome.sheep, size: iconSize, color: Colors.grey),
-                    /*Image(
-                      image: AssetImage('images/sheep.png'),
-                      height: 30,
-                    ),*/
                     SizedBox(width: 2.5)
                   ])),
           const SizedBox(width: horizontalRowSpace),
@@ -117,7 +117,7 @@ class SheepColumn extends StatelessWidget {
         const SizedBox(height: verticalTypeSpace),
         Row(children: [
           SizedBox(
-              width: 80,
+              width: 70,
               child: Align(
                   alignment: Alignment.centerRight,
                   child: Container(
@@ -140,7 +140,7 @@ class SheepColumn extends StatelessWidget {
         const SizedBox(height: verticalRowSpace),
         Row(children: [
           const SizedBox(
-              width: 80,
+              width: 70,
               child: Align(
                   alignment: Alignment.centerRight,
                   child: Icon(
@@ -160,7 +160,7 @@ class SheepColumn extends StatelessWidget {
         const SizedBox(height: verticalRowSpace),
         Row(children: [
           const SizedBox(
-              width: 80,
+              width: 70,
               child: Align(
                   alignment: Alignment.centerRight,
                   child: Icon(
@@ -180,7 +180,7 @@ class SheepColumn extends StatelessWidget {
         const SizedBox(height: verticalRowSpace),
         Row(children: [
           const SizedBox(
-              width: 80,
+              width: 70,
               child: Align(
                   alignment: Alignment.centerRight,
                   child: Icon(
@@ -234,7 +234,7 @@ class EartagTieColumn extends StatelessWidget {
       ...eartagKeys.map((String eartagKey) => Row(
             children: [
               SizedBox(
-                  width: 80,
+                  width: 70,
                   child: Align(
                       alignment: Alignment.centerRight,
                       child: Icon(Icons.local_offer,
@@ -262,7 +262,7 @@ class EartagTieColumn extends StatelessWidget {
       ...tieKeys.map((String tieKey) => Row(
             children: [
               SizedBox(
-                  width: 80,
+                  width: 70,
                   child: Align(
                       alignment: Alignment.centerRight,
                       child: Icon(FontAwesome5.black_tie,
