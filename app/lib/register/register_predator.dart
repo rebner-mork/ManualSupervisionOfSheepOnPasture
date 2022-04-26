@@ -17,7 +17,6 @@ class RegisterPredator extends StatefulWidget {
       this.onWillPop})
       : super(key: key);
 
-
   final LatLng predatorPosition;
 
   final VoidCallback? onWillPop;
