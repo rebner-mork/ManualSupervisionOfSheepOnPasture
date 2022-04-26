@@ -230,7 +230,7 @@ class _MapState extends State<MapWidget> {
                       linesOfSight.add(map_utils
                           .getLineOfSight([devicePosition, targetPosition]));
                       registrationMarkers.add(map_utils.getMapMarker(
-                          targetPosition, RegistrationType.cadaver));
+                          targetPosition, RegistrationType.predator));
                     });
                   },
                   onWillPop: () {

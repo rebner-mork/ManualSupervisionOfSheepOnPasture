@@ -7,6 +7,7 @@ import 'package:app/register/register_page.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:app/utils/map_utils.dart' as map_utils;
 import 'package:app/utils/styles.dart';
+import 'package:app/widgets/toggle_button_group.dart';
 
 class RegisterPredator extends StatefulWidget {
   const RegisterPredator(
@@ -30,14 +31,14 @@ class RegisterPredator extends StatefulWidget {
 }
 
 class _RegisterPredatorState extends State<RegisterPredator> with RegisterPage {
-  final _formKey = GlobalKey<FormState>();
-
+  //
   late LatLng _devicePosition;
 
   bool _isLoading = true;
 
   final TextEditingController _noteController = TextEditingController();
 
+  String species = "";
   int quantity = 0;
 
   @override
@@ -67,7 +68,6 @@ class _RegisterPredatorState extends State<RegisterPredator> with RegisterPage {
               onPressed: () => backButtonPressed(context, widget.onWillPop)),
         ),
         body: Form(
-          key: _formKey,
           onWillPop: () => onWillPop(context, widget.onWillPop),
           child: _isLoading
               ? const LoadingData()
@@ -81,14 +81,26 @@ class _RegisterPredatorState extends State<RegisterPredator> with RegisterPage {
                               appbarBodySpacer(),
                               const RegistrationInputHeadline(title: 'Art'),
                               inputFieldSpacer(),
-                              // Widget herOutlineButton
+                              ToggleButtonGroup(
+                                valueLabelPairs: const {
+                                  "Bjørn": "bear",
+                                  "Ulv": "wolf",
+                                  "Jerv": "wolverine",
+                                  "Gaupe": "lynx"
+                                },
+                                preselectedItem: "Bjørn",
+                                itemsPerRow: 2,
+                                itemSize: const Size(160, 100),
+                                onValueChanged: (value) => species = value,
+                              ),
+                              inputFieldSpacer(),
                               const RegistrationInputHeadline(title: 'Antall'),
                               inputFieldSpacer(),
                               ToggleButtonGroup(
-                                valueLabelParis: const {"1": 1, "2": 2, "3": 3},
+                                valueLabelPairs: const {"1": 1, "2": 2, "3": 3},
+                                preselectedItem: "1",
                                 onValueChanged: (value) => quantity = value,
                               ),
-                              // Widget her
                               inputFieldSpacer(),
                               const RegistrationInputHeadline(title: 'Notat'),
                               inputFieldSpacer(),
@@ -111,101 +123,24 @@ class _RegisterPredatorState extends State<RegisterPredator> with RegisterPage {
 
   @override
   void register() {
-    if (_formKey.currentState!.validate()) {
-      Map<String, Object> data = {
-        ...getMetaRegistrationData(
-            type: 'predator',
-            devicePosition: _devicePosition,
-            registrationPosition: widget.predatorPosition),
-        'species': 'foo',
-        'quantity': quantity,
-        'note': _noteController.text,
-      };
+    Map<String, Object> data = {
+      ...getMetaRegistrationData(
+          type: 'predator',
+          devicePosition: _devicePosition,
+          registrationPosition: widget.predatorPosition),
+      'species': species,
+      'quantity': quantity,
+      'note': _noteController.text,
+    };
 
-      if (widget.onCompletedSuccessfully != null) {
-        widget.onCompletedSuccessfully!(data);
-      }
-      if (widget.onWillPop != null) {
-        widget.onWillPop!();
-      }
-      if (Navigator.canPop(context)) {
-        Navigator.pop(context);
-      }
+    if (widget.onCompletedSuccessfully != null) {
+      widget.onCompletedSuccessfully!(data);
     }
-  }
-}
-
-class ToggleButtonGroup extends StatefulWidget {
-  ToggleButtonGroup(
-      {Key? key, required this.valueLabelParis, this.onValueChanged})
-      : super(key: key);
-
-  final Map<String, dynamic> valueLabelParis;
-
-  final ValueChanged<dynamic>? onValueChanged;
-  @override
-  State<ToggleButtonGroup> createState() => _ToggleButtonGroupState();
-}
-
-class _ToggleButtonGroupState extends State<ToggleButtonGroup> {
-  //
-  late ValueNotifier<List<bool>> isSelected = ValueNotifier<List<bool>>(
-      List.filled(widget.valueLabelParis.length, false));
-
-  dynamic value;
-
-  final ButtonStyle isSelectedStyle = OutlinedButton.styleFrom(
-      backgroundColor: Colors.green, fixedSize: const Size(50, 50));
-
-  final ButtonStyle isNotSelectedStyle = OutlinedButton.styleFrom(
-      backgroundColor: Colors.transparent, fixedSize: const Size(40, 40));
-
-  List<Widget> toggleButtons = [];
-
-  List<Widget> generateToggleButtons() {
-    List<Widget> toggleButtons = [];
-
-    int index = 0;
-
-    for (String key in widget.valueLabelParis.keys) {
-      toggleButtons.add(OutlinedButton(
-        onPressed: () {
-          value = widget.valueLabelParis[key];
-          setState(() {
-            isSelected = ValueNotifier<List<bool>>(
-                List.filled(widget.valueLabelParis.length, false));
-            isSelected
-                    .value[widget.valueLabelParis.keys.toList().indexOf(key)] =
-                true;
-          });
-          if (widget.onValueChanged != null) {
-            //widget.!onValueChanged(value);
-          }
-        },
-        child: Text(
-          key,
-        ),
-        style:
-            isSelected.value[widget.valueLabelParis.keys.toList().indexOf(key)]
-                ? isSelectedStyle
-                : isNotSelectedStyle,
-      ));
-
-      if (index != widget.valueLabelParis.length - 1) {
-        toggleButtons.add(const SizedBox(width: 10));
-        index++;
-      }
+    if (widget.onWillPop != null) {
+      widget.onWillPop!();
     }
-
-    return toggleButtons;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<List<bool>>(
-        valueListenable: isSelected,
-        builder: (context, value, child) => Row(
-              children: [...generateToggleButtons()],
-            ));
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
   }
 }
