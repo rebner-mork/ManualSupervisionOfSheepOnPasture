@@ -20,13 +20,15 @@ const List<String> injuryTypes = [
 
 class RegisterInjuredSheep extends StatefulWidget {
   const RegisterInjuredSheep(
-      {required this.ties,
+      {required this.farmNumber,
+      required this.ties,
       required this.sheepPosition,
       required this.onCompletedSuccessfully,
       this.onWillPop,
       Key? key})
       : super(key: key);
 
+  final String farmNumber;
   final Map<String, int?> ties;
   final LatLng sheepPosition;
 
@@ -46,8 +48,9 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep>
   bool _isValidationActivated = false;
 
   late final TextEditingController _countryCodeController;
-  final TextEditingController _farmNumberController = TextEditingController();
-  late final TextEditingController _individualNumberController;
+  late final TextEditingController _farmNumberController;
+  final TextEditingController _individualNumberController =
+      TextEditingController();
   final TextEditingController _noteController = TextEditingController();
 
   late String _selectedTieColor;
@@ -62,7 +65,7 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep>
     super.initState();
 
     _countryCodeController = TextEditingController(text: 'MT-NO');
-    _individualNumberController = TextEditingController();
+    _farmNumberController = TextEditingController(text: widget.farmNumber);
     _selectedTieColor = Colors.transparent.value.toRadixString(16);
     _selectedInjuryType = injuryTypes.first;
 

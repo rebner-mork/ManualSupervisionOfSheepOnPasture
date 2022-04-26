@@ -14,14 +14,14 @@ import 'package:app/utils/styles.dart';
 class RegisterCadaver extends StatefulWidget {
   const RegisterCadaver(
       {Key? key,
+      required this.farmNumber,
       required this.cadaverPosition,
       required this.ties,
       required this.onCompletedSuccessfully,
       this.onWillPop})
       : super(key: key);
 
-  static const String route = 'register-cadaver';
-
+  final String farmNumber;
   final Map<String, int?> ties;
   final LatLng cadaverPosition;
 
@@ -48,8 +48,9 @@ class _RegisterCadaverState extends State<RegisterCadaver> with RegisterPage {
   final List<String> _photoPaths = ["", "", ""];
 
   late final TextEditingController _countryCodeController;
-  final TextEditingController _farmNumberController = TextEditingController();
-  late final TextEditingController _individualNumberController;
+  late final TextEditingController _farmNumberController;
+  final TextEditingController _individualNumberController =
+      TextEditingController();
   final TextEditingController _noteController = TextEditingController();
 
   @override
@@ -57,7 +58,7 @@ class _RegisterCadaverState extends State<RegisterCadaver> with RegisterPage {
     super.initState();
 
     _countryCodeController = TextEditingController(text: 'MT-NO');
-    _individualNumberController = TextEditingController();
+    _farmNumberController = TextEditingController(text: widget.farmNumber);
     _selectedTieColor = Colors.transparent.value.toRadixString(16);
 
     _ties = {...widget.ties};

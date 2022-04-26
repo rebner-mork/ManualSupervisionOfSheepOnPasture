@@ -152,6 +152,10 @@ class _ReportsPageState extends State<ReportsPage> {
       for (DocumentSnapshot<Object?> registrationDoc
           in registrationsQuerySnapshot.docs) {
         switch (registrationDoc['type']) {
+          case 'sheep':
+            totalSheepAmount += registrationDoc['sheep'] as int;
+            totalLambAmount += registrationDoc['lambs'] as int;
+            break;
           case 'injuredSheep':
             totalInjuredSheepAmount++;
             totalSheepAmount++;
@@ -165,8 +169,6 @@ class _ReportsPageState extends State<ReportsPage> {
           case 'note':
             break;
           default:
-            totalSheepAmount += registrationDoc['sheep'] as int;
-            totalLambAmount += registrationDoc['lambs'] as int;
             break;
         }
       }
@@ -205,6 +207,15 @@ class _ReportsPageState extends State<ReportsPage> {
                 pw.Padding(
                     padding: const pw.EdgeInsets.all(8),
                     child: pw.Text(farmDoc['name'])),
+              ]),
+              pw.TableRow(children: [
+                pw.Padding(
+                    padding: const pw.EdgeInsets.all(8),
+                    child:
+                        pw.Text('Gårdsnummner', style: columnHeaderTextStyle)),
+                pw.Padding(
+                    padding: const pw.EdgeInsets.all(8),
+                    child: pw.Text(farmDoc['farmNumber'])),
               ]),
               pw.TableRow(children: [
                 pw.Padding(
