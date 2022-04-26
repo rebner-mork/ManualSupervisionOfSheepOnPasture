@@ -6,6 +6,7 @@ import 'package:web/trips/detailed/injured_sheep_table.dart';
 import 'package:web/trips/detailed/main_trip_info_table.dart';
 import 'package:web/trips/detailed/map_of_trip_widget.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:web/trips/detailed/predator_table.dart';
 import 'package:web/trips/detailed/sheep_info_table.dart';
 import 'package:web/trips/detailed/info_table.dart';
 import 'package:web/utils/constants.dart';
@@ -39,6 +40,7 @@ class _DetailedTripState extends State<DetailedTrip> {
   Map<String, int> tieData = {};
   List<Map<String, dynamic>> injuredSheepData = [];
   List<Map<String, dynamic>> cadaverData = [];
+  List<Map<String, dynamic>> predatorData = [];
 
   final double infoTablePadding = 25;
 
@@ -87,7 +89,9 @@ class _DetailedTripState extends State<DetailedTrip> {
           break;
         case 'cadaver':
           cadaverData.add(registration);
-          sheepData['sheep'] = sheepData['sheep']! + 1;
+          break;
+        case 'predator':
+          predatorData.add(registration);
           break;
         default:
       }
@@ -222,6 +226,16 @@ class _DetailedTripState extends State<DetailedTrip> {
           cadaverData.length * (41 + (2 * tableCellPadding.top));
     }
 
+    // PredatorTable
+    if (predatorData.isNotEmpty) {
+      height += textSize(('A'), headlineTextStyle).width +
+          40 +
+          textSize('S', injuryCadaverHeadlineTextStyle).height +
+          textSize('A', descriptionTextStyle).height +
+          (2 * tableCellPadding.top) +
+          predatorData.length * (41 + (2 * tableCellPadding.top));
+    }
+
     return height;
   }
 
@@ -338,7 +352,18 @@ class _DetailedTripState extends State<DetailedTrip> {
                                       const SizedBox(
                                           width:
                                               180) // CadaverTable width + 180 = InjuredSheepTable width
-                                    ])
+                                    ]),
+                              if (predatorData.isNotEmpty)
+                                const Headline(title: "Rovdyr"),
+                              if (predatorData.isNotEmpty)
+                                Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      PredatorTable(predatorData: predatorData),
+                                      const SizedBox(
+                                          width:
+                                              180) // CadaverTable width + 180 = InjuredSheepTable width
+                                    ]),
                             ],
                           )))))),
     ]);
