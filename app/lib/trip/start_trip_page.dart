@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
 
@@ -20,9 +21,11 @@ import 'trip_data_manager.dart';
 import '../utils/other.dart';
 
 class StartTripPage extends StatefulWidget {
-  const StartTripPage({Key? key}) : super(key: key);
+  const StartTripPage({Key? key, this.isConnected = true}) : super(key: key);
 
   static const String route = 'start-trip';
+  final bool isConnected;
+
   static const IconData downloadedIcon = Icons.download_done;
   static const IconData notDownloadedIcon = Icons.download_for_offline_sharp;
 
@@ -42,7 +45,7 @@ class _StartTripPageState extends State<StartTripPage>
   late SpeechToText _speechToText;
   final ValueNotifier<bool> _ongoingDialog = ValueNotifier<bool>(false);
 
-  late List<QueryDocumentSnapshot> _farmDocs;
+  List<Map<String, dynamic>> _farmDocs = [];
 
   final List<String> _farmNames = [];
   late String _selectedFarmName;
@@ -124,8 +127,9 @@ class _StartTripPageState extends State<StartTripPage>
     return Material(
         child: Scaffold(
             appBar: AppBar(
-              title: const Text('Start oppsynstur'),
-              centerTitle: true,
+              title: Text(widget.isConnected
+                  ? 'Start oppsynstur'
+                  : 'Start oppsynstur offline'),
               actions: const [SettingsIconButton()],
             ),
             body: Stack(children: [
@@ -133,7 +137,11 @@ class _StartTripPageState extends State<StartTripPage>
                   ? const LoadingData()
                   : Column(
                       children: _farmNames.isEmpty
-                          ? [const NoFarmInfo()]
+                          ? [
+                              widget.isConnected
+                                  ? const NoFarmInfo()
+                                  : const NoFarmNoInternetInfo()
+                            ]
                           : [
                               appbarBodySpacer(),
                               _farmNameRow(),
@@ -265,10 +273,14 @@ class _StartTripPageState extends State<StartTripPage>
                 iconSize: downloadIconSize,
                 icon: Icon(
                   _mapIcon,
-                  color: _mapDownloaded ? Colors.green : null,
+                  color: _mapDownloaded
+                      ? Colors.green
+                      : widget.isConnected
+                          ? null
+                          : Colors.red,
                 ),
                 onPressed: () {
-                  if (!_mapDownloaded) {
+                  if (widget.isConnected && !_mapDownloaded) {
                     setState(() {
                       _animationController.repeat();
                       _downloadingMap = true;
@@ -322,7 +334,15 @@ class _StartTripPageState extends State<StartTripPage>
         mapBounds['southEast']!, OfflineZoomLevels.min, OfflineZoomLevels.max);
     _mapIcon = _mapDownloaded
         ? StartTripPage.downloadedIcon
-        : StartTripPage.notDownloadedIcon;
+        : widget.isConnected
+            ? StartTripPage.notDownloadedIcon
+            : Icons.clear;
+    if (!widget.isConnected && !_mapDownloaded) {
+      setState(() {
+        _feedbackText =
+            'Kan ikke starte oppsynstur,\nvalgt kart er ikke nedlastet';
+      });
+    }
   }
 
   ElevatedButton startTripButton() {
@@ -334,11 +354,20 @@ class _StartTripPageState extends State<StartTripPage>
       style: ButtonStyle(
           fixedSize:
               MaterialStateProperty.all(Size.fromHeight(mainButtonHeight)),
-          backgroundColor: MaterialStateProperty.all(
-              (_noMapsDefined || _downloadingMap) ? Colors.grey : null)),
+          backgroundColor: MaterialStateProperty.all((_noMapsDefined ||
+                  _downloadingMap ||
+                  (!widget.isConnected && !_mapDownloaded))
+              ? Colors.grey
+              : null)),
       onPressed: () async {
         if (!_noMapsDefined) {
-          _startTrip();
+          if (widget.isConnected) {
+            _startTrip();
+          } else {
+            if (_mapDownloaded) {
+              _startTrip();
+            }
+          }
         }
       },
     );
@@ -385,8 +414,8 @@ class _StartTripPageState extends State<StartTripPage>
                       },
                       northWest: mapBounds['northWest']!,
                       southEast: mapBounds['southEast']!,
-                      farmId:
-                          _farmDocs[_farmNames.indexOf(_selectedFarmName)].id,
+                      farmId: _farmDocs[_farmNames.indexOf(_selectedFarmName)]
+                          ['farmId'],
                       personnelEmail: FirebaseAuth.instance.currentUser!.email!,
                       mapName: _selectedFarmMap,
                       eartags: _noEartagsDefined
@@ -413,7 +442,7 @@ class _StartTripPageState extends State<StartTripPage>
                         (key, value) => MapEntry(key, value as double))))));
   }
 
-  Future<void> _readFarmMaps(QueryDocumentSnapshot farmDoc) async {
+  Future<void> _readFarmMaps(Map<String, dynamic> farmDoc) async {
     LinkedHashMap<String, dynamic>? dbMaps = farmDoc['maps'];
     LinkedHashMap<String, dynamic>? dbEartags = farmDoc['eartags'];
     LinkedHashMap<String, dynamic>? dbTies = farmDoc['ties'];
@@ -464,19 +493,52 @@ class _StartTripPageState extends State<StartTripPage>
   }
 
   Future<void> _readFarms() async {
-    QuerySnapshot farmsSnapshot = await FirebaseFirestore.instance
-        .collection('farms')
-        .where('personnel',
-            arrayContains: FirebaseAuth.instance.currentUser!.email)
-        .get();
-    _farmDocs = farmsSnapshot.docs;
+    if (widget.isConnected) {
+      QuerySnapshot farmsSnapshot = await FirebaseFirestore.instance
+          .collection('farms')
+          .where('personnel',
+              arrayContains: FirebaseAuth.instance.currentUser!.email)
+          .get();
+
+      _farmDocs = farmsSnapshot.docs.map((QueryDocumentSnapshot farmDoc) {
+        Map<String, dynamic> farmMap = farmDoc.data() as Map<String, dynamic>;
+        farmMap.addAll({'farmId': farmDoc.id});
+        return farmMap;
+      }).toList();
+
+      try {
+        await File(offlineFarmsFilePath).delete();
+      } on FileSystemException catch (_) {}
+    } else {
+      try {
+        _farmDocs =
+            (json.decode(File(offlineFarmsFilePath).readAsStringSync()) as List)
+                .map((e) => e as Map<String, dynamic>)
+                .toList();
+      } on FileSystemException catch (_) {}
+    }
+
+    List<Object> offlineFarmData = [];
+    Map<String, dynamic> offlineFarmElement;
 
     if (_farmDocs.isNotEmpty) {
       for (int i = 0; i < _farmDocs.length; i++) {
         _farmNames.add(_farmDocs[i]['name']);
+
+        if (widget.isConnected) {
+          offlineFarmElement = _farmDocs[i];
+          offlineFarmElement.remove('personnel');
+          offlineFarmData.add(offlineFarmElement);
+        }
+
         if (i == 0) {
           _readFarmMaps(_farmDocs.first);
         }
+      }
+
+      if (widget.isConnected) {
+        File(offlineFarmsFilePath)
+            .writeAsStringSync(json.encode(offlineFarmData));
       }
 
       if (_farmNames.isNotEmpty) {
@@ -574,7 +636,8 @@ class NoFarmInfo extends StatelessWidget {
           child: Padding(
               padding: EdgeInsets.only(left: 25),
               child: Text(
-                  'Du er ikke registrert som oppsynsperson,\nta kontakt med sauebonde.',
+                  'Du er ikke registrert som oppsynsperson,\n'
+                  'ta kontakt med sauebonde.',
                   style: TextStyle(fontSize: 16)))),
       const SizedBox(height: 30),
       const Align(
@@ -589,7 +652,39 @@ class NoFarmInfo extends StatelessWidget {
           child: Padding(
               padding: EdgeInsets.only(left: 25),
               child: Text(
-                  '1: Logg inn på web-løsning med samme bruker.\n2: Lagre gårdsinformasjon på \'Min side\'.\n3: Logg inn i appen og start oppsynstur.',
+                  '1: Logg inn på web-løsning med samme bruker.\n'
+                  '2: Lagre gårdsinformasjon på \'Min side\'.\n'
+                  '3: Logg inn i appen og start oppsynstur.',
+                  style: TextStyle(fontSize: 16)))),
+    ]);
+  }
+}
+
+class NoFarmNoInternetInfo extends StatelessWidget {
+  const NoFarmNoInternetInfo({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      appbarBodySpacer(),
+      const Text('Kan ikke starte oppsynstur', style: TextStyle(fontSize: 26)),
+      const SizedBox(height: 40),
+      const Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+              padding: EdgeInsets.only(left: 15),
+              child: Text('Ingen nettverksforbindelse',
+                  style: TextStyle(fontSize: 22)))),
+      const SizedBox(height: 10),
+      const Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+              padding: EdgeInsets.only(left: 25),
+              child: Text(
+                  'Det ligger ingen gårdsinfo lokalt på enheten.\n'
+                  'For å gjøre oppsyn uten internett må du først\n'
+                  'logge inn med nettverksforbindelse, og laste\n'
+                  'ned kartet du skal gå i.',
                   style: TextStyle(fontSize: 16)))),
     ]);
   }

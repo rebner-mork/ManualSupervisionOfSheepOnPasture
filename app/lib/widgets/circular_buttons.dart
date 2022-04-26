@@ -1,5 +1,6 @@
 import 'package:app/utils/custom_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:app/widgets/settings_dialog.dart';
 
 TextStyle circularButtonTextStyle =
     const TextStyle(fontSize: 30, fontWeight: FontWeight.bold);

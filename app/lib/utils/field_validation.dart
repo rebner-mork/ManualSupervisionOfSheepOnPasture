@@ -76,3 +76,10 @@ String? validateEartagIndividualNumber(String number) {
   }
   return null;
 }
+
+String? validateNotEmpty(String input) {
+  if (input.isEmpty) {
+    return 'Kan ikke være tom';
+  }
+  return null;
+}

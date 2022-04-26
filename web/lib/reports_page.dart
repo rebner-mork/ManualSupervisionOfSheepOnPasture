@@ -162,6 +162,8 @@ class _ReportsPageState extends State<ReportsPage> {
           case 'predator':
             totalPredatorAmount += registrationDoc['quantity'] as int;
             break;
+          case 'note':
+            break;
           default:
             totalSheepAmount += registrationDoc['sheep'] as int;
             totalLambAmount += registrationDoc['lambs'] as int;
