@@ -21,7 +21,6 @@ class RegisterCadaver extends StatefulWidget {
       this.onWillPop})
       : super(key: key);
 
-
   final String farmNumber;
   final Map<String, int?> ties;
   final LatLng cadaverPosition;
