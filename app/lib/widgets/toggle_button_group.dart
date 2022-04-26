@@ -26,7 +26,6 @@ class ToggleButtonGroup extends StatefulWidget {
 }
 
 class _ToggleButtonGroupState extends State<ToggleButtonGroup> {
-  //
   dynamic value;
 
   late ValueNotifier<List<bool>> isSelected = ValueNotifier<List<bool>>(
