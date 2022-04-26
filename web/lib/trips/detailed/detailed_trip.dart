@@ -235,6 +235,7 @@ class _DetailedTripState extends State<DetailedTrip> {
         lineAmount += (textSize(note, noteTableTextStyle).width /
                 (noteTableWidth - tableCellPadding.horizontal))
             .ceil();
+        lineAmount += note.split("\n").length;
       }
       height += textSize(('A'), headlineTextStyle).height + 40;
       height += (lineAmount * textSize('A', noteTableTextStyle).height) +
