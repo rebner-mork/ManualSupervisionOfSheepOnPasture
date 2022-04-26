@@ -1,8 +1,8 @@
+import 'package:app/utils/constants.dart';
+import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttericon/rpg_awesome_icons.dart';
-import 'package:web/utils/constants.dart';
-import 'package:web/utils/styles.dart';
 
 class SheepRegistrationDetails extends StatelessWidget {
   SheepRegistrationDetails({required this.registration, Key? key})
@@ -28,9 +28,9 @@ class SheepRegistrationDetails extends StatelessWidget {
           style: dialogHeadlineTextStyle,
           textAlign: TextAlign.center),
       children: [
-        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Column(children: [
           SheepColumn(registration: registration, numberWidth: numberWidth),
-          const SizedBox(width: 25),
+          const SizedBox(width: 25, height: verticalTypeSpace),
           EartagTieColumn(registration: registration, numberWidth: numberWidth)
         ])
       ],
@@ -54,7 +54,7 @@ class SheepColumn extends StatelessWidget {
         Row(
           children: [
             SizedBox(
-                width: 80,
+                width: 70,
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -77,7 +77,7 @@ class SheepColumn extends StatelessWidget {
         const SizedBox(height: verticalRowSpace),
         Row(children: [
           const SizedBox(
-              width: 80,
+              width: 70,
               child: Align(
                   alignment: Alignment.centerRight,
                   child: Icon(RpgAwesome.sheep,
@@ -94,15 +94,11 @@ class SheepColumn extends StatelessWidget {
         const SizedBox(height: verticalRowSpace + 5),
         Row(children: [
           SizedBox(
-              width: 80,
+              width: 70,
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: const [
                     Icon(RpgAwesome.sheep, size: iconSize, color: Colors.grey),
-                    /*Image(
-                      image: AssetImage('images/sheep.png'),
-                      height: 30,
-                    ),*/
                     SizedBox(width: 2.5)
                   ])),
           const SizedBox(width: horizontalRowSpace),
@@ -117,7 +113,7 @@ class SheepColumn extends StatelessWidget {
         const SizedBox(height: verticalTypeSpace),
         Row(children: [
           SizedBox(
-              width: 80,
+              width: 70,
               child: Align(
                   alignment: Alignment.centerRight,
                   child: Container(
@@ -140,7 +136,7 @@ class SheepColumn extends StatelessWidget {
         const SizedBox(height: verticalRowSpace),
         Row(children: [
           const SizedBox(
-              width: 80,
+              width: 70,
               child: Align(
                   alignment: Alignment.centerRight,
                   child: Icon(
@@ -160,7 +156,7 @@ class SheepColumn extends StatelessWidget {
         const SizedBox(height: verticalRowSpace),
         Row(children: [
           const SizedBox(
-              width: 80,
+              width: 70,
               child: Align(
                   alignment: Alignment.centerRight,
                   child: Icon(
@@ -180,7 +176,7 @@ class SheepColumn extends StatelessWidget {
         const SizedBox(height: verticalRowSpace),
         Row(children: [
           const SizedBox(
-              width: 80,
+              width: 70,
               child: Align(
                   alignment: Alignment.centerRight,
                   child: Icon(
@@ -234,7 +230,7 @@ class EartagTieColumn extends StatelessWidget {
       ...eartagKeys.map((String eartagKey) => Row(
             children: [
               SizedBox(
-                  width: 80,
+                  width: 70,
                   child: Align(
                       alignment: Alignment.centerRight,
                       child: Icon(Icons.local_offer,
@@ -262,7 +258,7 @@ class EartagTieColumn extends StatelessWidget {
       ...tieKeys.map((String tieKey) => Row(
             children: [
               SizedBox(
-                  width: 80,
+                  width: 70,
                   child: Align(
                       alignment: Alignment.centerRight,
                       child: Icon(FontAwesome5.black_tie,

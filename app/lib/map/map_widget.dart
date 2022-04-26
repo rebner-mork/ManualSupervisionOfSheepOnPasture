@@ -128,8 +128,8 @@ class _MapState extends State<MapWidget> {
 
                             linesOfSight.add(map_utils.getLineOfSight(
                                 [devicePosition, targetPosition]));
-                            registrationMarkers.add(map_utils.getSheepMarker(
-                                targetPosition, RegistrationType.sheep));
+                            registrationMarkers.add(map_utils.getMarker(
+                                data, targetPosition, RegistrationType.sheep));
                           });
                         }
                       },
@@ -164,8 +164,8 @@ class _MapState extends State<MapWidget> {
 
                       linesOfSight.add(map_utils
                           .getLineOfSight([devicePosition, targetPosition]));
-                      registrationMarkers.add(map_utils.getSheepMarker(
-                          targetPosition, RegistrationType.injury));
+                      registrationMarkers.add(map_utils.getMarker(
+                          data, targetPosition, RegistrationType.injury));
                     });
                   },
                   onWillPop: () {
@@ -199,8 +199,8 @@ class _MapState extends State<MapWidget> {
 
                       linesOfSight.add(map_utils
                           .getLineOfSight([devicePosition, targetPosition]));
-                      registrationMarkers.add(map_utils.getSheepMarker(
-                          targetPosition, RegistrationType.cadaver));
+                      registrationMarkers.add(map_utils.getMarker(
+                          data, targetPosition, RegistrationType.cadaver));
                     });
                   },
                   onWillPop: () {

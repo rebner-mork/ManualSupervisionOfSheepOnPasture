@@ -1,3 +1,4 @@
+import 'package:app/utils/other.dart';
 import 'package:flutter/material.dart';
 
 // Appbar
@@ -40,3 +41,23 @@ TextStyle drawerHeadlineTextStyle =
 
 // Registration pages
 const TextStyle registrationFieldHeadlineTextStyle = TextStyle(fontSize: 26);
+
+// Registration details
+const TextStyle dialogHeadlineTextStyle =
+    TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
+
+const double iconSize = 35;
+
+const double verticalRowSpace = 5;
+const double verticalTypeSpace = 20;
+const double horizontalRowSpace = 15;
+
+const TextStyle registrationDetailsNumberTextStyle =
+    TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
+const TextStyle registrationDetailsDescriptionTextStyle =
+    TextStyle(fontSize: 22);
+
+final double doubleDigitsWidth =
+    textSize('99', registrationDetailsNumberTextStyle).width + 5;
+final double tripleDigitsWidth =
+    textSize('999', registrationDetailsNumberTextStyle).width + 5;
