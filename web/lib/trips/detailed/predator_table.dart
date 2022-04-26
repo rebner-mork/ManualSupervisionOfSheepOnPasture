@@ -78,7 +78,7 @@ class _PredatorTableState extends State<PredatorTable> {
                                   children: [
                                     Text(
                                         (registration['note'] as String).isEmpty
-                                            ? 'Ingen notat.'
+                                            ? 'Ingen notat'
                                             : '${registration['note']}',
                                         style: const TextStyle(fontSize: 18),
                                         textAlign: TextAlign.center),
