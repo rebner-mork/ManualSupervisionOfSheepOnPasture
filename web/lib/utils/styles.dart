@@ -37,10 +37,14 @@ const double verticalRowSpace = 5;
 const double verticalTypeSpace = 20;
 const double horizontalRowSpace = 15;
 
+const double registrationNoteWidthNarrow = 250;
+const double registrationNoteWidthWide = 350;
+
 const TextStyle registrationDetailsNumberTextStyle =
     TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
 const TextStyle registrationDetailsDescriptionTextStyle =
     TextStyle(fontSize: 22);
+const TextStyle registrationNoteTextStyle = TextStyle(fontSize: 18);
 
 final double doubleDigitsWidth =
     textSize('99', registrationDetailsNumberTextStyle).width + 5;

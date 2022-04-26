@@ -40,8 +40,6 @@ class _CadaverRegistrationDetailsState
             await FirebaseStorage.instance.ref().child(url).getDownloadURL();
         _photoUrls.add(downloadUrl);
       }
-    } else {
-      _photoUrls.add('');
     }
 
     setState(() {
@@ -57,6 +55,7 @@ class _CadaverRegistrationDetailsState
           style: dialogHeadlineTextStyle, textAlign: TextAlign.center),
       children: [
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          if (widget.registration['tieColor'] == '0') const SizedBox(width: 45),
           Text('${eartag[0]}-${eartag[1]}\n${eartag[2]}-${eartag[3]}',
               style: const TextStyle(fontSize: 20),
               textAlign: TextAlign.center),
@@ -84,34 +83,31 @@ class _CadaverRegistrationDetailsState
               : Text(
                   colorValueToStringGui['${widget.registration['tieColor']}']!,
                   style: registrationDetailsDescriptionTextStyle),
-          SizedBox(
-              width: (textSize(
-                          '${eartag[0]}-${eartag[1]}\n${eartag[2]}-${eartag[3]}',
-                          const TextStyle(fontSize: 20))
-                      .width -
-                  textSize(
-                          colorValueToStringGui[
-                              '${widget.registration['tieColor']}']!,
-                          registrationDetailsDescriptionTextStyle)
-                      .width -
-                  30)),
+          const SizedBox(width: 40)
         ]),
         const SizedBox(height: 10),
         Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-            child: Text(
-                (widget.registration['note'] as String).isEmpty
-                    ? 'Ingen notat'
-                    : '${widget.registration['note']}',
-                style: const TextStyle(fontSize: 18),
-                textAlign: TextAlign.center)),
+            child: SizedBox(
+                width: textSize('${widget.registration['note']}',
+                                registrationNoteTextStyle)
+                            .width >
+                        registrationNoteWidthNarrow
+                    ? registrationNoteWidthWide
+                    : registrationNoteWidthNarrow,
+                child: Text(
+                    (widget.registration['note'] as String).isEmpty
+                        ? 'Ingen notat'
+                        : '${widget.registration['note']}',
+                    style: registrationNoteTextStyle,
+                    textAlign: TextAlign.center))),
         _isLoading
             ? const LoadingData(smallCircleOnly: true)
             : _photoUrls.isEmpty
                 ? const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 15),
                     child: Text('Ingen bilder',
-                        style: TextStyle(fontSize: 16),
+                        style: registrationNoteTextStyle,
                         textAlign: TextAlign.center))
                 : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                     ...(_photoUrls)

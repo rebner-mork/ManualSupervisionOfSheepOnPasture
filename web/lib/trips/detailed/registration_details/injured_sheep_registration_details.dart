@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:web/trips/detailed/registration_details/timestamp_widget.dart';
 import 'package:web/utils/constants.dart';
+import 'package:web/utils/other.dart';
 import 'package:web/utils/styles.dart';
 
 class InjuredSheepRegistrationDetails extends StatelessWidget {
@@ -101,12 +102,17 @@ class InjuredSheepRegistrationDetails extends StatelessWidget {
         Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
             child: SizedBox(
-                width: 250,
+                width: textSize('${registration['note']}',
+                                registrationNoteTextStyle)
+                            .width >
+                        registrationNoteWidthNarrow
+                    ? registrationNoteWidthWide
+                    : registrationNoteWidthNarrow,
                 child: Text(
                     (registration['note'] as String).isEmpty
                         ? 'Ingen notat'
                         : '${registration['note']}',
-                    style: const TextStyle(fontSize: 18),
+                    style: registrationNoteTextStyle,
                     textAlign: TextAlign.center))),
         TimestampWidget(timestamp: registration['timestamp'])
       ],

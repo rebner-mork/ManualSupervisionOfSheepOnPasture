@@ -16,9 +16,11 @@ class NoteRegistrationDetails extends StatelessWidget {
           style: dialogHeadlineTextStyle, textAlign: TextAlign.center),
       children: [
         Container(
-            constraints: const BoxConstraints(maxWidth: 600),
+            constraints:
+                const BoxConstraints(maxWidth: registrationNoteWidthWide),
             child: Text(registration['note'],
-                style: registrationDetailsDescriptionTextStyle,
+                style: TextStyle(
+                    fontSize: registrationNoteTextStyle.fontSize! - 2),
                 textAlign: TextAlign.center)),
         const SizedBox(height: 10),
         TimestampWidget(timestamp: registration['timestamp'])

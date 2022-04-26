@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web/trips/detailed/registration_details/predator_registration_details.dart';
 import 'package:web/utils/styles.dart';
 import 'package:web/utils/constants.dart' as constants;
 
@@ -67,23 +68,9 @@ class _PredatorTableState extends State<PredatorTable> {
                       onPressed: () {
                         showDialog(
                             context: context,
-                            builder: (BuildContext context) => SimpleDialog(
-                                  title: const Text(
-                                    'Rovdyr',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  titleTextStyle: const TextStyle(fontSize: 26),
-                                  contentPadding: const EdgeInsets.fromLTRB(
-                                      0.0, 1.0, 0.0, 16.0),
-                                  children: [
-                                    Text(
-                                        (registration['note'] as String).isEmpty
-                                            ? 'Ingen notat'
-                                            : '${registration['note']}',
-                                        style: const TextStyle(fontSize: 18),
-                                        textAlign: TextAlign.center),
-                                  ],
-                                ));
+                            builder: (BuildContext context) =>
+                                PredatorRegistrationDetails(
+                                    registration: registration));
                       }))
             ],
           );

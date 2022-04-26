@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:web/trips/detailed/registration_details/cadaver_registration_details.dart';
 import 'package:web/trips/detailed/registration_details/injured_sheep_registration_details.dart';
 import 'package:web/trips/detailed/registration_details/note_registration_details.dart';
+import 'package:web/trips/detailed/registration_details/predator_registration_details.dart';
 import 'package:web/trips/detailed/registration_details/sheep_registration_details.dart';
 
 class RegistrationDetails extends StatelessWidget {
@@ -20,8 +21,7 @@ class RegistrationDetails extends StatelessWidget {
       case 'cadaver':
         return CadaverRegistrationDetails(registration: registration);
       case 'predator':
-      /*title = 'Registrert rovdyr';
-        break;*/
+        return PredatorRegistrationDetails(registration: registration);
       case 'note':
         return NoteRegistrationDetails(registration: registration);
     }
