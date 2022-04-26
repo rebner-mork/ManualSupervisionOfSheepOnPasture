@@ -1,5 +1,6 @@
 import 'package:app/registration_details/cadaver_registration_details.dart';
 import 'package:app/registration_details/injured_sheep_registration_details.dart';
+import 'package:app/registration_details/note_registration_details.dart';
 import 'package:app/registration_details/sheep_registration_details.dart';
 import 'package:flutter/material.dart';
 
@@ -22,8 +23,7 @@ class RegistrationDetails extends StatelessWidget {
       /*title = 'Registrert rovdyr';
         break;*/
       case 'note':
-      /*title = 'Registrert notat';
-        break;*/
+        return NoteRegistrationDetails(registration: registration);
     }
 
     return const SimpleDialog(children: [Text('Det har skjedd en feil')]);
