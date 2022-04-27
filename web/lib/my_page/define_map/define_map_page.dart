@@ -210,6 +210,7 @@ class _DefineMapPageState extends State<DefineMapPage> {
         'maps': dataMap,
         'name': null,
         'address': null,
+        'farmNumber': null,
         'ties': null,
         'eartags': null,
         'personnel': [FirebaseAuth.instance.currentUser!.email]

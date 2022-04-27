@@ -52,9 +52,17 @@ class _RegistrationOptionsState extends State<RegistrationOptions> {
         RegistrationTypeListTile(
             text: 'Rovdyr',
             assetImageName: 'images/predator.png',
-            onPressed: () {}),
+            onPressed: () {
+              Navigator.of(context).pop();
+              widget.onRegisterOptionSelected(RegistrationType.predator);
+            }),
         RegistrationTypeListTile(
-            text: 'Notat', assetImageName: 'images/note.png', onPressed: () {}),
+            text: 'Notat',
+            assetImageName: 'images/note.png',
+            onPressed: () {
+              Navigator.of(context).pop();
+              widget.onRegisterOptionSelected(RegistrationType.note);
+            }),
       ],
     );
   }

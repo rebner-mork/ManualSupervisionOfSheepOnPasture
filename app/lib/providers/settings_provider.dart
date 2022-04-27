@@ -18,7 +18,6 @@ class SettingsProvider extends ChangeNotifier {
 
   void setSttAvailability(bool available) {
     sttAvailable = available;
-    writeSettings();
     notifyListeners();
   }
 
