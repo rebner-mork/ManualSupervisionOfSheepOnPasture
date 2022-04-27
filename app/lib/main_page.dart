@@ -24,6 +24,7 @@ class MainPage extends StatefulWidget {
       required this.mapName,
       required this.farmId,
       required this.personnelEmail,
+      required this.farmNumber,
       required this.eartags,
       required this.ties,
       this.onCompleted,
@@ -42,6 +43,7 @@ class MainPage extends StatefulWidget {
 
   final String farmId;
   final String personnelEmail;
+  final String farmNumber;
 
   final Map<String, bool?> eartags;
   final Map<String, int?> ties;
@@ -170,7 +172,7 @@ class _MainPageState extends State<MainPage> {
           _registeredPredatorAmount += 1;
         });
         break;
-      default: // TODO: remove default when all types are added
+      case RegistrationType.note:
         break;
     }
 
@@ -287,6 +289,7 @@ class _MainPageState extends State<MainPage> {
                                 southEast: widget.southEast,
                                 stt: widget.speechToText,
                                 ongoingDialog: widget.ongoingDialog,
+                                farmNumber: widget.farmNumber,
                                 eartags: widget.eartags,
                                 ties: widget.ties,
                                 deviceStartPosition: _deviceStartPosition,
@@ -296,6 +299,28 @@ class _MainPageState extends State<MainPage> {
                                 onRegistrationComplete:
                                     (Map<String, Object> data) {
                                   _onRegistrationComplete(data);
+                                  _tripData.registrations.add(data);
+                                  switch (_selectedRegistrationType) {
+                                    case RegistrationType.sheep:
+                                      int sheepAmountRegistered =
+                                          data['sheep']! as int;
+                                      if (sheepAmountRegistered > 0) {
+                                        setState(() {
+                                          _registeredTotalSheepAmount +=
+                                              sheepAmountRegistered;
+                                        });
+                                      }
+                                      break;
+                                    case RegistrationType.injury:
+                                      setState(() {
+                                        _registeredTotalSheepAmount += 1;
+                                      });
+                                      break;
+                                    default:
+                                      break;
+                                  }
+
+                                  _cancelSelectPositionMode();
                                 },
                                 onNewPosition: (position) =>
                                     _tripData.track.add(position),

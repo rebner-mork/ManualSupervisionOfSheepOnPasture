@@ -58,3 +58,14 @@ String? validateLength(String? input, int minLength, String feedback) {
   }
   return null;
 }
+
+String? validateEartagFarmNumber(String? number) {
+  if (number!.isEmpty) {
+    return 'Skriv gårdsnummer';
+  } else if (int.tryParse(number) == null) {
+    return 'Gårdsnummer kan kun bestå av siffer';
+  } else if (number.length != 7 && number.length != 8) {
+    return '7-8 siffer';
+  }
+  return null;
+}
