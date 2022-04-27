@@ -26,12 +26,7 @@ void main() {
       (WidgetTester tester) async {
     await tester.pumpWidget(MultiProvider(
         providers: [
-          ChangeNotifierProvider(
-              create: (context) => SettingsProvider(settings: {
-                    'autoDialog': false,
-                    'readBack': true,
-                    'autoMoveMap': true
-                  }))
+          ChangeNotifierProvider(create: (context) => SettingsProvider())
         ],
         child: MaterialApp(
             home: RegisterSheep(
@@ -67,12 +62,7 @@ void main() {
 
     await tester.pumpWidget(MultiProvider(
         providers: [
-          ChangeNotifierProvider(
-              create: (context) => SettingsProvider(settings: {
-                    'autoDialog': false,
-                    'readBack': true,
-                    'autoMoveMap': true
-                  }))
+          ChangeNotifierProvider(create: (context) => SettingsProvider())
         ],
         child: MaterialApp(
             home: RegisterSheep(
@@ -119,12 +109,7 @@ void main() {
       (WidgetTester tester) async {
     await tester.pumpWidget(MultiProvider(
         providers: [
-          ChangeNotifierProvider(
-              create: (context) => SettingsProvider(settings: {
-                    'autoDialog': false,
-                    'readBack': true,
-                    'autoMoveMap': true
-                  }))
+          ChangeNotifierProvider(create: (context) => SettingsProvider())
         ],
         child: MaterialApp(
             home: RegisterSheep(
@@ -150,12 +135,7 @@ void main() {
   testWidgets('Alert-dialog on back button', (WidgetTester tester) async {
     await tester.pumpWidget(MultiProvider(
         providers: [
-          ChangeNotifierProvider(
-              create: (context) => SettingsProvider(settings: {
-                    'autoDialog': false,
-                    'readBack': true,
-                    'autoMoveMap': true
-                  }))
+          ChangeNotifierProvider(create: (context) => SettingsProvider())
         ],
         child: MaterialApp(
             home: RegisterSheep(

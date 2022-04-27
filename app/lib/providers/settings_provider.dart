@@ -4,8 +4,24 @@ import 'dart:io';
 import 'package:app/utils/constants.dart';
 import 'package:flutter/material.dart';
 
+Map<String, bool> defaultSettings = {
+  'autoDialog': false,
+  'readBack': true,
+  'autoMoveMap': true
+};
+
 class SettingsProvider extends ChangeNotifier {
-  SettingsProvider({required Map<String, bool> settings, this.sttAvailable}) {
+  SettingsProvider({this.sttAvailable}) {
+    Map<String, bool> settings;
+
+    if (File(settingsFilePath).existsSync()) {
+      settings = (jsonDecode(File(settingsFilePath).readAsStringSync()) as Map)
+          .map((key, value) => MapEntry(key, value));
+    } else {
+      settings = defaultSettings;
+      File(settingsFilePath).writeAsStringSync(jsonEncode(settings));
+    }
+
     autoDialog = settings['autoDialog']!;
     readBack = settings['readBack']!;
     autoMoveMap = settings['autoMoveMap']!;

@@ -69,20 +69,3 @@ Future<bool> isConnectedToInternet() async {
     return false;
   }
 }
-
-Map<String, bool> readSettings() {
-  Map<String, bool> settings = {
-    'autoDialog': false,
-    'readBack': true,
-    'autoMoveMap': true
-  };
-
-  if (File(settingsFilePath).existsSync()) {
-    settings = (jsonDecode(File(settingsFilePath).readAsStringSync()) as Map)
-        .map((key, value) => MapEntry(key, value));
-  } else {
-    File(settingsFilePath).writeAsStringSync(jsonEncode(settings));
-  }
-
-  return settings;
-}

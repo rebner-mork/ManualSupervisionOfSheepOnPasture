@@ -18,12 +18,7 @@ void main() async {
   group('Start trip happy day scenario', () {
     testWidgets('Initial layout', (WidgetTester tester) async {
       await tester.pumpWidget(MultiProvider(providers: [
-        ChangeNotifierProvider(
-            create: (context) => SettingsProvider(settings: {
-                  'autoDialog': false,
-                  'readBack': true,
-                  'autoMoveMap': true
-                }))
+        ChangeNotifierProvider(create: (context) => SettingsProvider())
       ], child: const MaterialApp(home: StartTripPage())));
 
       expect(find.text('Start oppsynstur'), findsOneWidget);
@@ -47,12 +42,7 @@ void main() async {
 
     testWidgets('Download map', (WidgetTester tester) async {
       await tester.pumpWidget(MultiProvider(providers: [
-        ChangeNotifierProvider(
-            create: (context) => SettingsProvider(settings: {
-                  'autoDialog': false,
-                  'readBack': true,
-                  'autoMoveMap': true
-                }))
+        ChangeNotifierProvider(create: (context) => SettingsProvider())
       ], child: const MaterialApp(home: StartTripPage())));
       await tester.pumpAndSettle();
       await tester.pump(const Duration(milliseconds: 300));
@@ -84,12 +74,7 @@ void main() async {
     testWidgets('Initial layout', (WidgetTester tester) async {
       await setUpFarm(maps: null);
       await tester.pumpWidget(MultiProvider(providers: [
-        ChangeNotifierProvider(
-            create: (context) => SettingsProvider(settings: {
-                  'autoDialog': false,
-                  'readBack': true,
-                  'autoMoveMap': true
-                }))
+        ChangeNotifierProvider(create: (context) => SettingsProvider())
       ], child: const MaterialApp(home: StartTripPage())));
 
       expect(find.text('Start oppsynstur'), findsOneWidget);
@@ -122,12 +107,7 @@ void main() async {
       }
 
       await tester.pumpWidget(MultiProvider(providers: [
-        ChangeNotifierProvider(
-            create: (context) => SettingsProvider(settings: {
-                  'autoDialog': false,
-                  'readBack': true,
-                  'autoMoveMap': true
-                }))
+        ChangeNotifierProvider(create: (context) => SettingsProvider())
       ], child: const MaterialApp(home: StartTripPage())));
       await tester.pumpAndSettle();
       await tester.pump(const Duration(milliseconds: 300));
