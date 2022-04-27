@@ -20,7 +20,6 @@ class _LoginWidgetState extends State<LoginWidget> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _validationActivated = false;
-  late String _email, _password;
 
   void _toggleVisiblePassword() {
     setState(() {
@@ -57,7 +56,6 @@ class _LoginWidgetState extends State<LoginWidget> {
               key: const Key('inputEmail'),
               validator: (input) => validateEmail(input),
               controller: _emailController,
-              onSaved: (input) => _email = input.toString(),
               onChanged: _onFieldChange,
               textInputAction: TextInputAction.go,
               onFieldSubmitted: (value) => signIn(),
@@ -73,7 +71,6 @@ class _LoginWidgetState extends State<LoginWidget> {
               key: const Key('inputPassword'),
               validator: (input) => validatePassword(input),
               controller: _passwordController,
-              onSaved: (input) => _password = input.toString(),
               onChanged: _onFieldChange,
               textInputAction: TextInputAction.go,
               onFieldSubmitted: (value) => signIn(),
