@@ -19,11 +19,26 @@ class _LoginWidgetState extends State<LoginWidget> {
   bool _loginFailed = false;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _validationActivated = false;
+  late String _email, _password;
 
   void _toggleVisiblePassword() {
     setState(() {
       _visiblePassword = !_visiblePassword;
     });
+  }
+
+  void _onFieldChange(String input) {
+    if (_loginFailed) {
+      setState(() {
+        _loginFailed = false;
+      });
+    }
+
+    if (_validationActivated) {
+      _formKey.currentState!.save();
+      _formKey.currentState!.validate();
+    }
   }
 
   @override
@@ -42,13 +57,8 @@ class _LoginWidgetState extends State<LoginWidget> {
               key: const Key('inputEmail'),
               validator: (input) => validateEmail(input),
               controller: _emailController,
-              onChanged: (text) {
-                if (_loginFailed) {
-                  setState(() {
-                    _loginFailed = false;
-                  });
-                }
-              },
+              onSaved: (input) => _email = input.toString(),
+              onChanged: _onFieldChange,
               textInputAction: TextInputAction.go,
               onFieldSubmitted: (value) => signIn(),
               decoration: const InputDecoration(
@@ -63,13 +73,8 @@ class _LoginWidgetState extends State<LoginWidget> {
               key: const Key('inputPassword'),
               validator: (input) => validatePassword(input),
               controller: _passwordController,
-              onChanged: (text) {
-                if (_loginFailed) {
-                  setState(() {
-                    _loginFailed = false;
-                  });
-                }
-              },
+              onSaved: (input) => _password = input.toString(),
+              onChanged: _onFieldChange,
               textInputAction: TextInputAction.go,
               onFieldSubmitted: (value) => signIn(),
               obscureText: !_visiblePassword,
@@ -109,6 +114,11 @@ class _LoginWidgetState extends State<LoginWidget> {
 
   Future<void> signIn() async {
     final formState = _formKey.currentState;
+
+    setState(() {
+      _validationActivated = true;
+    });
+
     if (formState!.validate()) {
       try {
         await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -122,6 +132,7 @@ class _LoginWidgetState extends State<LoginWidget> {
         Navigator.pushNamed(context, StartTripPage.route);
       } catch (e) {
         setState(() {
+          _validationActivated = true;
           _loginFailed = true;
         });
       }

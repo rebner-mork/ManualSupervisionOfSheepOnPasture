@@ -1,5 +1,7 @@
 import 'package:app/register/register_cadaver.dart';
 import 'package:app/register/register_injured_sheep.dart';
+import 'package:app/register/register_predator.dart';
+import 'package:app/register/register_note.dart';
 import 'package:app/register/register_sheep.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -39,9 +41,9 @@ class MapWidget extends StatefulWidget {
   final SpeechToText stt;
   final ValueNotifier<bool> ongoingDialog;
 
-  late final String farmNumber;
   final Map<String, bool?> eartags;
   final Map<String, int?> ties;
+  final String farmNumber;
 
   final LatLng deviceStartPosition;
 
@@ -89,13 +91,17 @@ class _MapState extends State<MapWidget> {
     if (widget.onNewPosition != null) {
       widget.onNewPosition!(userPosition);
     }
-    setState(() {
-      Provider.of<SettingsProvider>(context, listen: false).autoMoveMap
-          ? _mapController.move(userPosition, _mapController.zoom)
-          : null;
-      _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition);
-      _movementPoints.add(userPosition);
-    });
+
+    if (mounted) {
+      setState(() {
+        Provider.of<SettingsProvider>(context, listen: false).autoMoveMap
+            ? _mapController.move(userPosition, _mapController.zoom)
+            : null;
+        _currentPositionMarker =
+            map_utils.getDevicePositionMarker(userPosition);
+        _movementPoints.add(userPosition);
+      });
+    }
   }
 
   void registerSheep(LatLng targetPosition) {
@@ -130,7 +136,7 @@ class _MapState extends State<MapWidget> {
 
                             linesOfSight.add(map_utils.getLineOfSight(
                                 [devicePosition, targetPosition]));
-                            registrationMarkers.add(map_utils.getSheepMarker(
+                            registrationMarkers.add(map_utils.getMapMarker(
                                 targetPosition, RegistrationType.sheep));
                           });
                         }
@@ -167,7 +173,7 @@ class _MapState extends State<MapWidget> {
 
                       linesOfSight.add(map_utils
                           .getLineOfSight([devicePosition, targetPosition]));
-                      registrationMarkers.add(map_utils.getSheepMarker(
+                      registrationMarkers.add(map_utils.getMapMarker(
                           targetPosition, RegistrationType.injury));
                     });
                   },
@@ -186,6 +192,7 @@ class _MapState extends State<MapWidget> {
           context,
           MaterialPageRoute(
               builder: (context) => RegisterCadaver(
+                  farmNumber: widget.farmNumber,
                   ties: widget.ties,
                   cadaverPosition: targetPosition,
                   onCompletedSuccessfully: (Map<String, Object> data) {
@@ -202,7 +209,7 @@ class _MapState extends State<MapWidget> {
 
                       linesOfSight.add(map_utils
                           .getLineOfSight([devicePosition, targetPosition]));
-                      registrationMarkers.add(map_utils.getSheepMarker(
+                      registrationMarkers.add(map_utils.getMapMarker(
                           targetPosition, RegistrationType.cadaver));
                     });
                   },
@@ -211,6 +218,69 @@ class _MapState extends State<MapWidget> {
                     mapAlreadyTapped = false;
                   })));
     }
+  }
+
+  void registerPredator(LatLng targetPosition) {
+    if (!mapAlreadyTapped) {
+      mapAlreadyTapped = true;
+
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => RegisterPredator(
+                  predatorPosition: targetPosition,
+                  onCompletedSuccessfully: (Map<String, Object> data) {
+                    if (widget.onRegistrationComplete != null) {
+                      widget.onRegistrationComplete!(data);
+                    }
+                    setState(() {
+                      LatLng devicePosition = LatLng(
+                          (data['devicePosition']!
+                              as Map<String, double>)['latitude']!,
+                          (data['devicePosition']!
+                              as Map<String, double>)['longitude']!);
+
+                      linesOfSight.add(map_utils
+                          .getLineOfSight([devicePosition, targetPosition]));
+                      registrationMarkers.add(map_utils.getMapMarker(
+                          targetPosition, RegistrationType.predator));
+                    });
+                  },
+                  onWillPop: () {
+                    widget.onRegistrationCanceled();
+                    mapAlreadyTapped = false;
+                  })));
+    }
+  }
+
+  void registerNote(LatLng targetPosition) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => RegisterNote(
+                notePosition: targetPosition,
+                onCompletedSuccessfully: (Map<String, Object> data) {
+                  if (widget.onRegistrationComplete != null) {
+                    widget.onRegistrationComplete!(data);
+                  }
+
+                  setState(() {
+                    LatLng devicePosition = LatLng(
+                        (data['devicePosition']!
+                            as Map<String, double>)['latitude']!,
+                        (data['devicePosition']!
+                            as Map<String, double>)['longitude']!);
+
+                    linesOfSight.add(map_utils
+                        .getLineOfSight([devicePosition, targetPosition]));
+                    registrationMarkers.add(map_utils.getMapMarker(
+                        targetPosition, RegistrationType.note));
+                  });
+                },
+                onWillPop: () {
+                  widget.onRegistrationCanceled();
+                  mapAlreadyTapped = false;
+                })));
   }
 
   void _startRegistration(LatLng point) {
@@ -223,6 +293,12 @@ class _MapState extends State<MapWidget> {
         break;
       case RegistrationType.cadaver:
         registerCadaver(point);
+        break;
+      case RegistrationType.predator:
+        registerPredator(point);
+        break;
+      case RegistrationType.note:
+        registerNote(point);
         break;
       default:
     }
@@ -243,16 +319,6 @@ class _MapState extends State<MapWidget> {
           onMapCreated: (c) {
             _mapController = c;
           },
-          /*onLongPress: (_, point) {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => RegisterCadaver(
-                          ties: widget.ties,
-                          cadaverPosition: point,
-                          onCompletedSuccessfully: (_) => print('ree'),
-                        )));
-          },*/
           onLongPress: (_, point) => _startRegistration(point),
           zoom: OfflineZoomLevels.min,
           minZoom: OfflineZoomLevels.min,

@@ -174,6 +174,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
                   onPressed: () {
                     setState(() {
                       _showNewPersonnelRow = true;
+                      _helpText = '';
                     });
                   },
                 ))
@@ -183,39 +184,47 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
   Future<void> _saveNewPersonnel() async {
     String email = _newEmailController.text;
 
-    bool userExists = false;
-    QuerySnapshot userQuerySnapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .where('email', isEqualTo: email)
-        .get();
-    if (userQuerySnapshot.size != 0) {
-      userExists = true;
-    }
-
-    setState(() {
-      if (email.isEmpty) {
-        _helpText = 'E-post kan ikke være tom';
-      } else if (_personnelEmails.contains(email)) {
-        _helpText = nonUniqueEmail;
-      } else if (validateEmail(email) != null) {
-        _helpText = email == ''
-            ? 'E-post kan ikke være tom'
-            : "'$email' har ikke gyldig format for e-post";
-      } else {
-        if (userExists) {
-          _helpText = '';
-          _showNewPersonnelRow = false;
-          _personnelNames.add(userQuerySnapshot.docs.first['name']);
-          _personnelPhones.add(userQuerySnapshot.docs.first['phone']);
-          _personnelEmails.add(email);
-          _newEmailController = TextEditingController(text: '');
-
-          _savePersonnelData();
-        } else {
-          _helpText = 'Det finnes ingen bruker med e-posten \'$email\'';
-        }
+    if (email == FirebaseAuth.instance.currentUser!.email) {
+      _newEmailController.text = '';
+      setState(() {
+        _helpText = 'Det er ikke nødvendig å legge til din egen bruker.';
+        _showNewPersonnelRow = false;
+      });
+    } else {
+      bool userExists = false;
+      QuerySnapshot userQuerySnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: email)
+          .get();
+      if (userQuerySnapshot.size != 0) {
+        userExists = true;
       }
-    });
+
+      setState(() {
+        if (email.isEmpty) {
+          _helpText = 'E-post kan ikke være tom';
+        } else if (_personnelEmails.contains(email)) {
+          _helpText = nonUniqueEmail;
+        } else if (validateEmail(email) != null) {
+          _helpText = email == ''
+              ? 'E-post kan ikke være tom'
+              : "'$email' har ikke gyldig format for e-post";
+        } else {
+          if (userExists) {
+            _helpText = '';
+            _showNewPersonnelRow = false;
+            _personnelNames.add(userQuerySnapshot.docs.first['name']);
+            _personnelPhones.add(userQuerySnapshot.docs.first['phone']);
+            _personnelEmails.add(email);
+            _newEmailController = TextEditingController(text: '');
+
+            _savePersonnelData();
+          } else {
+            _helpText = 'Det finnes ingen bruker med e-posten \'$email\'';
+          }
+        }
+      });
+    }
   }
 
   void _validateEmails() {
@@ -317,6 +326,7 @@ class _DefinePersonnelState extends State<DefinePersonnel> {
       farmDoc.set({
         'maps': null,
         'name': null,
+        'farmNumber': null,
         'address': null,
         'ties': null,
         'eartags': null,

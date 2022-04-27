@@ -297,6 +297,7 @@ class ModerateSevereToggle extends StatelessWidget {
                       child: Text(
                         'Moderat',
                         style: TextStyle(
+                            color: isModerate ? Colors.white : Colors.black,
                             fontSize: 22,
                             fontWeight: isModerate
                                 ? FontWeight.bold
@@ -320,6 +321,7 @@ class ModerateSevereToggle extends StatelessWidget {
                       child: Text(
                         'Alvorlig',
                         style: TextStyle(
+                            color: isSevere ? Colors.white : Colors.black,
                             fontSize: 22,
                             fontWeight:
                                 isSevere ? FontWeight.bold : FontWeight.normal),
