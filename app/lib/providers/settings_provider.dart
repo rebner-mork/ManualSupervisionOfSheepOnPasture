@@ -36,6 +36,7 @@ class SettingsProvider extends ChangeNotifier {
 
   void toggleAutoMoveMap() {
     autoMoveMap = !autoMoveMap;
+    writeSettings();
     notifyListeners();
   }
 
