@@ -80,10 +80,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
   final Map<String, bool> _isFieldValid = <String, bool>{
     'sheep': true,
     'lambs': true,
-    'white': true,
-    'brown': true,
-    'black': true,
-    'blackHead': true
+    'colors': true
   };
 
   late LatLng _devicePosition;
@@ -97,7 +94,6 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
   List<String> colors = colorsFilter.keys.toList();
 
   bool _isLoading = true;
-  late bool _allFieldsValid;
   String _validatorText = '';
 
   @override
@@ -287,11 +283,11 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
   bool _validateInput() {
     Map<String, int> registeredData = gatherRegisteredData(_textControllers);
 
+    // Total sheepamount vs. lambamount
     if (registeredData['lambs']! > registeredData['sheep']!) {
       setState(() {
         _isFieldValid['sheep'] = false;
         _isFieldValid['lambs'] = false;
-        _allFieldsValid = false;
         _validatorText = 'Antall lam er høyere enn sauer & lam';
       });
       return false;
@@ -303,8 +299,24 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
       });
     }
 
+    // Total sheepamount vs. sum of colors
+    if (registeredData['white']! +
+            registeredData['brown']! +
+            registeredData['black']! +
+            registeredData['blackHead']! >
+        registeredData['sheep']!) {
+      setState(() {
+        _isFieldValid['colors'] = false;
+        _validatorText = 'Summen av ullfarger er høyere enn antall sauer & lam';
+      });
+      return false;
+    } else if (_isFieldValid['colors']! == false) {
+      setState(() {
+        _isFieldValid['colors'] = true;
+      });
+    }
+
     setState(() {
-      _allFieldsValid = true;
       _validatorText = '';
     });
     return true;
@@ -411,7 +423,8 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
                           if (_validatorText.isNotEmpty)
                             Text(_validatorText,
                                 style: const TextStyle(
-                                    fontSize: 18, color: Colors.red)),
+                                    fontSize: 18, color: Colors.red),
+                                textAlign: TextAlign.center),
                           SizedBox(height: _validatorText.isEmpty ? 10 : 0),
                           inputDividerWithHeadline('Antall'),
                           inputRow('Sauer & lam', _textControllers['sheep']!,
@@ -429,22 +442,26 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
                               RpgAwesome.sheep, Colors.white,
                               scrollController: scrollController,
                               key: firstHeadlineFieldKeys[0],
-                              ownKey: firstHeadlineFieldKeys[0]),
+                              ownKey: firstHeadlineFieldKeys[0],
+                              isFieldValid: _isFieldValid['colors']!,
+                              onChanged: _validateInput),
                           inputFieldSpacer(),
                           inputRow('Brune', _textControllers['brown']!,
-                              RpgAwesome.sheep, Colors.brown),
+                              RpgAwesome.sheep, Colors.brown,
+                              isFieldValid: _isFieldValid['colors']!,
+                              onChanged: _validateInput),
                           inputFieldSpacer(),
-                          inputRow(
-                            'Svarte',
-                            _textControllers['black']!,
-                            RpgAwesome.sheep,
-                            Colors.black,
-                          ),
+                          inputRow('Svarte', _textControllers['black']!,
+                              RpgAwesome.sheep, Colors.black,
+                              isFieldValid: _isFieldValid['colors']!,
+                              onChanged: _validateInput),
                           inputFieldSpacer(),
                           inputRow('Svart hode', _textControllers['blackHead']!,
                               RpgAwesome.sheep, Colors.black,
                               scrollController: scrollController,
-                              key: firstHeadlineFieldKeys[1]),
+                              key: firstHeadlineFieldKeys[1],
+                              isFieldValid: _isFieldValid['colors']!,
+                              onChanged: _validateInput),
                           if (_isShortDistance) inputFieldSpacer(),
                           if (_isShortDistance) ..._shortDistance(),
                           const SizedBox(height: 80),
