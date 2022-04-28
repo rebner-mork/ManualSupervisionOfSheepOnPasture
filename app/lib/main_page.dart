@@ -14,6 +14,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import '../utils/map_utils.dart' as map_utils;
 import 'package:app/widgets/settings_dialog.dart';
+import 'package:app/trip/start_trip_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage(
@@ -122,19 +123,23 @@ class _MainPageState extends State<MainPage> {
 
   Future<bool> _endTrip(BuildContext context) async {
     bool isConnected = await isConnectedToInternet();
-    await showEndTripDialog(context, isConnected).then((isFinished) {
-      if (isFinished) {
-        if (isConnected) {
-          _tripData.post();
-        } else {
-          _tripData.archive();
+    await showEndTripDialog(context, isConnected).then((bool? isFinished) {
+      if (isFinished == null) {
+        Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
+      } else {
+        if (isFinished) {
+          if (isConnected) {
+            _tripData.post();
+          } else {
+            _tripData.archive();
+          }
+          if (widget.onCompleted != null) {
+            widget.onCompleted!();
+          }
+          Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
         }
-        if (widget.onCompleted != null) {
-          widget.onCompleted!();
-        }
-        Navigator.pop(context);
       }
-      return isFinished;
+      return isFinished ?? true;
     });
     return false;
   }
@@ -285,11 +290,11 @@ class _MainPageState extends State<MainPage> {
                       ValueListenableBuilder<bool>(
                           valueListenable: widget.ongoingDialog,
                           builder: (context, value, child) => MapWidget(
+                                farmNumber: widget.farmNumber,
                                 northWest: widget.northWest,
                                 southEast: widget.southEast,
                                 stt: widget.speechToText,
                                 ongoingDialog: widget.ongoingDialog,
-                                farmNumber: widget.farmNumber,
                                 eartags: widget.eartags,
                                 ties: widget.ties,
                                 deviceStartPosition: _deviceStartPosition,

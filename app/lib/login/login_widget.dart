@@ -17,8 +17,9 @@ class _LoginWidgetState extends State<LoginWidget> {
   final _formKey = GlobalKey<FormState>();
   bool _visiblePassword = false;
   bool _loginFailed = false;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _validationActivated = false;
-  late String _email, _password;
 
   void _toggleVisiblePassword() {
     setState(() {
@@ -54,7 +55,7 @@ class _LoginWidgetState extends State<LoginWidget> {
             TextFormField(
               key: const Key('inputEmail'),
               validator: (input) => validateEmail(input),
-              onSaved: (input) => _email = input.toString(),
+              controller: _emailController,
               onChanged: _onFieldChange,
               textInputAction: TextInputAction.go,
               onFieldSubmitted: (value) => signIn(),
@@ -69,7 +70,7 @@ class _LoginWidgetState extends State<LoginWidget> {
             TextFormField(
               key: const Key('inputPassword'),
               validator: (input) => validatePassword(input),
-              onSaved: (input) => _password = input.toString(),
+              controller: _passwordController,
               onChanged: _onFieldChange,
               textInputAction: TextInputAction.go,
               onFieldSubmitted: (value) => signIn(),
@@ -116,13 +117,14 @@ class _LoginWidgetState extends State<LoginWidget> {
     });
 
     if (formState!.validate()) {
-      formState.save();
       try {
-        await FirebaseAuth.instance
-            .signInWithEmailAndPassword(email: _email, password: _password);
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: _emailController.text, password: _passwordController.text);
 
         setState(() {
           _loginFailed = false;
+          _emailController.text = '';
+          _passwordController.text = '';
         });
         Navigator.pushNamed(context, StartTripPage.route);
       } catch (e) {
