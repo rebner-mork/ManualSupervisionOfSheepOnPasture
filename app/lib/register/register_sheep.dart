@@ -289,7 +289,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
       setState(() {
         _isFieldValid['sheep'] = false;
         _isFieldValid['lambs'] = false;
-        _validatorText = 'Antall lam er høyere enn sauer & lam';
+        _validatorText = 'Det er flere lam enn sauer & lam';
       });
       return false;
     } else if (_isFieldValid['sheep'] == false ||
@@ -308,12 +308,14 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
         registeredData['sheep']!) {
       setState(() {
         _isFieldValid['colors'] = false;
+        _isFieldValid['sheep'] = false;
         _validatorText = 'Summen av ullfarger er høyere enn antall sauer & lam';
       });
       return false;
-    } else if (_isFieldValid['colors']! == false) {
+    } else if (_isFieldValid['colors'] == false) {
       setState(() {
         _isFieldValid['colors'] = true;
+        _isFieldValid['sheep'] = true;
       });
     }
 
@@ -333,11 +335,40 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
       if (eartagSum > registeredData['sheep']!) {
         setState(() {
           _isFieldValid['eartags'] = false;
+          _isFieldValid['sheep'] = false;
+          _validatorText = 'Det er flere øremerker enn sauer & lam';
         });
         return false;
       } else if (_isFieldValid['eartags'] == false) {
         setState(() {
           _isFieldValid['eartags'] = true;
+          _isFieldValid['sheep'] = true;
+        });
+      }
+
+      int tieSum = widget.ties.keys
+          .map((String tieColor) =>
+              _textControllers['${colorValueStringToColorString[tieColor]}Tie']!
+                      .text
+                      .isNotEmpty
+                  ? int.parse(_textControllers[
+                          '${colorValueStringToColorString[tieColor]}Tie']!
+                      .text)
+                  : 0)
+          .toList()
+          .reduce((value, element) => value + element);
+
+      if (tieSum > registeredData['sheep']!) {
+        setState(() {
+          _isFieldValid['ties'] = false;
+          _isFieldValid['sheep'] = false;
+          _validatorText = 'Det er flere slips enn sauer & lam';
+        });
+        return false;
+      } else if (_isFieldValid['ties'] == false) {
+        setState(() {
+          _isFieldValid['ties'] = true;
+          _isFieldValid['sheep'] = true;
         });
       }
     }
@@ -409,10 +440,13 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
       ties.add(inputDividerWithHeadline('Slips', firstHeadlineFieldKeys[2]));
       for (String tieColor in widget.ties.keys) {
         ties.add(inputRow(
-            colorValueStringToColorStringGuiPlural[tieColor]!,
-            _textControllers['${colorValueStringToColorString[tieColor]}Tie']!,
-            tieColor == '0' ? Icons.close : FontAwesome5.black_tie,
-            tieColor == '0' ? Colors.grey : colorStringToColor[tieColor]!));
+          colorValueStringToColorStringGuiPlural[tieColor]!,
+          _textControllers['${colorValueStringToColorString[tieColor]}Tie']!,
+          tieColor == '0' ? Icons.close : FontAwesome5.black_tie,
+          tieColor == '0' ? Colors.grey : colorStringToColor[tieColor]!,
+          isFieldValid: _isFieldValid['ties']!,
+          onChanged: _validateInput,
+        ));
         ties.add(inputFieldSpacer());
       }
     }
@@ -495,30 +529,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
                               const SizedBox(height: 80),
                             ]))),
                         if (_validatorText.isNotEmpty)
-                          const SizedBox(height: 10),
-                        if (_validatorText.isNotEmpty)
-                          Padding(
-                              padding: const EdgeInsets.only(top: 5),
-                              child: Align(
-                                  alignment: Alignment.topCenter,
-                                  child: Container(
-                                      constraints: BoxConstraints(
-                                          maxWidth: MediaQuery.of(context)
-                                                  .size
-                                                  .width -
-                                              10),
-                                      decoration: const BoxDecoration(
-                                          color: Colors.red,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(10))),
-                                      child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 7, horizontal: 8),
-                                          child: Text(_validatorText,
-                                              style: const TextStyle(
-                                                  fontSize: 18,
-                                                  color: Colors.white),
-                                              textAlign: TextAlign.center))))),
+                          FeedbackMessage(text: _validatorText)
                       ]),
                 floatingActionButton: !_isLoading && !widget.ongoingDialog.value
                     ? Row(
@@ -546,5 +557,32 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
                     : null,
                 floatingActionButtonLocation:
                     FloatingActionButtonLocation.centerFloat)));
+  }
+}
+
+class FeedbackMessage extends StatelessWidget {
+  const FeedbackMessage({required this.text, Key? key}) : super(key: key);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.only(top: 5),
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+                constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width - 10),
+                decoration: const BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 7, horizontal: 8),
+                    child: Text(text,
+                        style:
+                            const TextStyle(fontSize: 18, color: Colors.white),
+                        textAlign: TextAlign.center)))));
   }
 }
