@@ -48,7 +48,11 @@ void main() {
       }
     }
 
-    await downloadTiles(northWest, southEast, minZoom, maxZoom);
+    await downloadTiles(
+        northWest: northWest,
+        southEast: southEast,
+        minZoom: minZoom,
+        maxZoom: maxZoom);
 
     Directory mapDir = Directory(basePath);
     await for (var entity in mapDir.list(recursive: true, followLinks: false)) {
@@ -67,7 +71,11 @@ void main() {
 
     int oldLength = acutalDirectoryListing.length;
 
-    await downloadTiles(northWest, southEast, minZoom, maxZoom);
+    await downloadTiles(
+        northWest: northWest,
+        southEast: southEast,
+        minZoom: minZoom,
+        maxZoom: maxZoom);
 
     acutalDirectoryListing = [];
     await for (var entity in mapDir.list(recursive: true, followLinks: false)) {

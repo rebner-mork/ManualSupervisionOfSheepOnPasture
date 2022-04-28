@@ -1,6 +1,7 @@
 enum QuestionContext { numbers, colors }
 
-String correctErroneousInput(String input, QuestionContext questionContext) {
+String correctErroneousInput(
+    {required String input, required QuestionContext questionContext}) {
   String correctedInput = '';
 
   input = input.toLowerCase();

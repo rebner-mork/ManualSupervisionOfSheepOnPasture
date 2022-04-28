@@ -61,8 +61,10 @@ Marker getDevicePositionMarker(LatLng pos) {
           ));
 }
 
-Marker getMapMarker(LatLng pos, RegistrationType type,
-    {SheepMarkerColor color = SheepMarkerColor.green}) {
+Marker getMapMarker(
+    {required LatLng position,
+    required RegistrationType type,
+    SheepMarkerColor color = SheepMarkerColor.green}) {
   const double size = 50;
 
   final AssetImage image;
@@ -96,7 +98,7 @@ Marker getMapMarker(LatLng pos, RegistrationType type,
   }
 
   return Marker(
-      point: pos,
+      point: position,
       anchorPos: AnchorPos.align(AnchorAlign.top),
       rotateAlignment: Alignment.bottomCenter,
       height: size,
@@ -130,7 +132,10 @@ int getTileIndexY(double latitude, int zoom) {
 }
 
 int numberOfTiles(
-    LatLng northWest, LatLng southEast, double minZoom, double maxZoom) {
+    {required LatLng northWest,
+    required LatLng southEast,
+    required double minZoom,
+    required double maxZoom}) {
   int _numberOfTiles = 0;
   for (int zoom = minZoom.toInt(); zoom <= maxZoom.toInt(); zoom++) {
     int west = getTileIndexX(northWest.longitude, zoom);
@@ -181,10 +186,17 @@ Future<void> _downloadTile(int x, int y, int zoom) async {
 }
 
 Future<void> downloadTiles(
-    LatLng northWest, LatLng southEast, double minZoom, double maxZoom,
-    {ValueChanged<double>? progressIndicator}) async {
+    {required LatLng northWest,
+    required LatLng southEast,
+    required double minZoom,
+    required double maxZoom,
+    ValueChanged<double>? progressIndicator}) async {
   int currentTileNumber = 0;
-  int totalTileNumber = numberOfTiles(northWest, southEast, minZoom, maxZoom);
+  int totalTileNumber = numberOfTiles(
+      northWest: northWest,
+      southEast: southEast,
+      minZoom: minZoom,
+      maxZoom: maxZoom);
 
   for (int zoom = minZoom.toInt(); zoom <= maxZoom.toInt(); zoom++) {
     int west = getTileIndexX(northWest.longitude, zoom);
@@ -204,7 +216,10 @@ Future<void> downloadTiles(
 }
 
 bool isEveryTileDownloaded(
-    LatLng northWest, LatLng southEast, double minZoom, double maxZoom) {
+    {required LatLng northWest,
+    required LatLng southEast,
+    required double minZoom,
+    required double maxZoom}) {
   for (int zoom = minZoom.toInt(); zoom <= maxZoom.toInt(); zoom++) {
     int west = getTileIndexX(northWest.longitude, zoom);
     int east = getTileIndexX(southEast.longitude, zoom);

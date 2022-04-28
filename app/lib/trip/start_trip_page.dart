@@ -288,12 +288,13 @@ class _StartTripPageState extends State<StartTripPage>
                       _feedbackText = 'Laster ned kart...';
                     });
                     downloadTiles(
-                        mapBounds['northWest']!,
-                        mapBounds['southEast']!,
-                        OfflineZoomLevels.min,
-                        OfflineZoomLevels.max, progressIndicator: (value) {
-                      _downloadProgress = value;
-                    }).then((_) => {
+                        northWest: mapBounds['northWest']!,
+                        southEast: mapBounds['southEast']!,
+                        minZoom: OfflineZoomLevels.min,
+                        maxZoom: OfflineZoomLevels.max,
+                        progressIndicator: (value) {
+                          _downloadProgress = value;
+                        }).then((_) => {
                           setState(() {
                             _downloadingMap = false;
                             _mapDownloaded = true;
@@ -331,8 +332,11 @@ class _StartTripPageState extends State<StartTripPage>
 
   void updateIcon() {
     setMapBounds();
-    _mapDownloaded = isEveryTileDownloaded(mapBounds['northWest']!,
-        mapBounds['southEast']!, OfflineZoomLevels.min, OfflineZoomLevels.max);
+    _mapDownloaded = isEveryTileDownloaded(
+        northWest: mapBounds['northWest']!,
+        southEast: mapBounds['southEast']!,
+        minZoom: OfflineZoomLevels.min,
+        maxZoom: OfflineZoomLevels.max);
     _mapIcon = _mapDownloaded
         ? StartTripPage.downloadedIcon
         : widget.isConnected
@@ -381,14 +385,15 @@ class _StartTripPageState extends State<StartTripPage>
         _downloadingMap = true;
       });
       await downloadTiles(
-          mapBounds['northWest']!,
-          mapBounds['southEast']!,
-          OfflineZoomLevels.min,
-          OfflineZoomLevels.max, progressIndicator: (value) {
-        setState(() {
-          _downloadProgress = value;
-        });
-      });
+          northWest: mapBounds['northWest']!,
+          southEast: mapBounds['southEast']!,
+          minZoom: OfflineZoomLevels.min,
+          maxZoom: OfflineZoomLevels.max,
+          progressIndicator: (value) {
+            setState(() {
+              _downloadProgress = value;
+            });
+          });
     }
 
     setState(() {

@@ -190,10 +190,12 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
       } else {
         if (questionContext == QuestionContext.numbers &&
             !numbers.contains(spokenWord)) {
-          spokenWord = correctErroneousInput(spokenWord, questionContext);
+          spokenWord = correctErroneousInput(
+              input: spokenWord, questionContext: questionContext);
         } else if (questionContext == QuestionContext.colors &&
             !colors.contains(spokenWord)) {
-          spokenWord = correctErroneousInput(spokenWord, questionContext);
+          spokenWord = correctErroneousInput(
+              input: spokenWord, questionContext: questionContext);
         }
 
         if (spokenWord == '') {
@@ -211,8 +213,9 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
 
           if (questionIndex < questions.length) {
             if (firstHeadlineFieldIndexes.contains(questionIndex)) {
-              scrollToKey(scrollController,
-                  firstHeadlineFieldKeys[currentHeadlineIndex++]);
+              scrollToKey(
+                  scrollController: scrollController,
+                  key: firstHeadlineFieldKeys[currentHeadlineIndex++]);
             }
 
             await _speak(questions[questionIndex]);

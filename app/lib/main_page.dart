@@ -290,8 +290,9 @@ class _MainPageState extends State<MainPage> {
                                 sheepAmount: _sheepAmount, iconSize: iconSize),
                             onPressed: () {},
                             width: 62 +
-                                textSize(_sheepAmount.toString(),
-                                        circularButtonTextStyle)
+                                textSize(
+                                        text: _sheepAmount.toString(),
+                                        style: circularButtonTextStyle)
                                     .width,
                           ),
                         ),

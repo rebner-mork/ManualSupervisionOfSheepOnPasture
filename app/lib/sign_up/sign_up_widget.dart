@@ -66,8 +66,8 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         onChanged: _onFieldChange,
                         textInputAction: TextInputAction.go,
                         onFieldSubmitted: (value) => _createUser(),
-                        decoration:
-                            customInputDecoration('Fullt navn', Icons.badge)),
+                        decoration: customInputDecoration(
+                            labelText: 'Fullt navn', icon: Icons.badge)),
                     const InputFieldSpacer(),
                     TextFormField(
                         key: const Key('inputEmail'),
@@ -76,8 +76,8 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         onChanged: _onFieldChange,
                         textInputAction: TextInputAction.go,
                         onFieldSubmitted: (value) => _createUser(),
-                        decoration:
-                            customInputDecoration('E-post', Icons.mail)),
+                        decoration: customInputDecoration(
+                            labelText: 'E-post', icon: Icons.mail)),
                     const InputFieldSpacer(),
                     TextFormField(
                         controller: passwordOneController,
@@ -88,7 +88,9 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         textInputAction: TextInputAction.go,
                         onFieldSubmitted: (value) => _createUser(),
                         obscureText: !_visiblePassword,
-                        decoration: customInputDecoration('Passord', Icons.lock,
+                        decoration: customInputDecoration(
+                            labelText: 'Passord',
+                            icon: Icons.lock,
                             passwordField: true,
                             isVisible: _visiblePassword,
                             onPressed: _toggleVisiblePassword)),
@@ -102,7 +104,8 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         onFieldSubmitted: (value) => _createUser(),
                         obscureText: !_visiblePassword,
                         decoration: customInputDecoration(
-                            'Gjenta passord', Icons.lock,
+                            labelText: 'Gjenta passord',
+                            icon: Icons.lock,
                             passwordField: true,
                             isVisible: _visiblePassword,
                             onPressed: _toggleVisiblePassword)),
@@ -114,8 +117,8 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         onChanged: _onFieldChange,
                         textInputAction: TextInputAction.go,
                         onFieldSubmitted: (value) => _createUser(),
-                        decoration:
-                            customInputDecoration('Telefon', Icons.phone)),
+                        decoration: customInputDecoration(
+                            labelText: 'Telefon', icon: Icons.phone)),
                     const InputFieldSpacer(),
                     AnimatedOpacity(
                       opacity: _registerFailed ? 1.0 : 0.0,
@@ -148,7 +151,8 @@ class _SignUpWidgetState extends State<SignUpWidget> {
     if (formState!.validate()) {
       formState.save();
       try {
-        String? response = await createUser(_name, _email, _password, _phone);
+        String? response = await createUser(
+            name: _name, email: _email, password: _password, phone: _phone);
 
         setState(() {
           _registerFailed = response == null ? false : true;

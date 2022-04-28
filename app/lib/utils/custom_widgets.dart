@@ -141,7 +141,9 @@ class InputRow extends StatelessWidget {
                     controller: controller,
                     onFieldSubmitted: (_) => {
                       if (scrollController != null && globalKey != null)
-                        scrollToKey(scrollController!, globalKey!),
+                        scrollToKey(
+                            scrollController: scrollController!,
+                            key: globalKey!),
                     },
                     decoration: const InputDecoration(
                       hintText: '0',

@@ -41,8 +41,10 @@ TextStyle drawerHeadlineTextStyle =
 // Registration pages
 const TextStyle registrationFieldHeadlineTextStyle = TextStyle(fontSize: 26);
 
-InputDecoration customInputDecoration(String labelText, IconData icon,
-    {bool passwordField = false,
+InputDecoration customInputDecoration(
+    {required String labelText,
+    required IconData icon,
+    bool passwordField = false,
     bool isVisible = false,
     void Function()? onPressed}) {
   return InputDecoration(
