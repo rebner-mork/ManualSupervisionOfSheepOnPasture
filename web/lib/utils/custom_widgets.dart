@@ -19,8 +19,13 @@ InputDecoration customInputDecoration(String labelText, IconData icon,
           : null);
 }
 
-SizedBox inputFieldSpacer() {
-  return const SizedBox(height: 18);
+class InputFieldSpacer extends StatelessWidget {
+  const InputFieldSpacer({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(height: 18);
+  }
 }
 
 class LoadingData extends StatefulWidget {

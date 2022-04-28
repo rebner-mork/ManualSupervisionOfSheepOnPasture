@@ -56,7 +56,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                   children: [
                     const Icon(Icons.account_circle,
                         size: 90, color: Colors.black54),
-                    inputFieldSpacer(),
+                    const InputFieldSpacer(),
                     TextFormField(
                         key: const Key('inputName'),
                         textCapitalization: TextCapitalization.words,
@@ -67,7 +67,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         onFieldSubmitted: (value) => _createUser(),
                         decoration:
                             customInputDecoration('Fullt navn', Icons.badge)),
-                    inputFieldSpacer(),
+                    const InputFieldSpacer(),
                     TextFormField(
                         key: const Key('inputEmail'),
                         validator: (input) => validateEmail(input),
@@ -77,7 +77,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         onFieldSubmitted: (value) => _createUser(),
                         decoration:
                             customInputDecoration('E-post', Icons.mail)),
-                    inputFieldSpacer(),
+                    const InputFieldSpacer(),
                     TextFormField(
                         controller: passwordOneController,
                         key: const Key('inputPasswordOne'),
@@ -91,7 +91,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                             passwordField: true,
                             isVisible: _visiblePassword,
                             onPressed: _toggleVisiblePassword)),
-                    inputFieldSpacer(),
+                    const InputFieldSpacer(),
                     TextFormField(
                         key: const Key('inputPasswordTwo'),
                         validator: (input) => validatePasswords(
@@ -105,7 +105,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                             passwordField: true,
                             isVisible: _visiblePassword,
                             onPressed: _toggleVisiblePassword)),
-                    inputFieldSpacer(),
+                    const InputFieldSpacer(),
                     TextFormField(
                         key: const Key('inputPhone'),
                         validator: (input) => validatePhone(input),
@@ -115,7 +115,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         onFieldSubmitted: (value) => _createUser(),
                         decoration:
                             customInputDecoration('Telefon', Icons.phone)),
-                    inputFieldSpacer(),
+                    const InputFieldSpacer(),
                     AnimatedOpacity(
                       opacity: _registerFailed ? 1.0 : 0.0,
                       duration: const Duration(milliseconds: 200),

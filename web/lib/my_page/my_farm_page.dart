@@ -79,7 +79,7 @@ class _MyFarmState extends State<MyFarm> {
               const Spacer()
             ],
           ),
-          inputFieldSpacer(),
+          const InputFieldSpacer(),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -108,7 +108,7 @@ class _MyFarmState extends State<MyFarm> {
               const Spacer()
             ],
           ),
-          inputFieldSpacer(),
+          const InputFieldSpacer(),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -136,7 +136,7 @@ class _MyFarmState extends State<MyFarm> {
               const Spacer()
             ],
           ),
-          inputFieldSpacer(),
+          const InputFieldSpacer(),
           _loadingData
               ? const LoadingData()
               : AnimatedOpacity(

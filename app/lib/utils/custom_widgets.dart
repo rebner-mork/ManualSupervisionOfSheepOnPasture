@@ -22,12 +22,22 @@ InputDecoration customInputDecoration(String labelText, IconData icon,
           : null);
 }
 
-SizedBox inputFieldSpacer() {
-  return const SizedBox(height: 18);
+class InputFieldSpacer extends StatelessWidget {
+  const InputFieldSpacer({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(height: 18);
+  }
 }
 
-SizedBox appbarBodySpacer() {
-  return const SizedBox(height: 20);
+class AppbarBodySpacer extends StatelessWidget {
+  const AppbarBodySpacer({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(height: 20);
+  }
 }
 
 const double defaultIconSize = 30;

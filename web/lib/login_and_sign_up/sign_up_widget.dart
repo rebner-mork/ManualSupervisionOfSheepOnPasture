@@ -71,7 +71,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         onFieldSubmitted: (value) => _createUserAndSignIn(),
                         decoration:
                             customInputDecoration('Fullt navn', Icons.badge)),
-                    inputFieldSpacer(),
+                    const InputFieldSpacer(),
                     TextFormField(
                         key: const Key('inputEmail'),
                         validator: (input) => validateEmail(input),
@@ -83,7 +83,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         onFieldSubmitted: (value) => _createUserAndSignIn(),
                         decoration:
                             customInputDecoration('E-post', Icons.mail)),
-                    inputFieldSpacer(),
+                    const InputFieldSpacer(),
                     RawKeyboardListener(
                         focusNode: _passwordOneFocusNode,
                         onKey: (RawKeyEvent event) {
@@ -107,7 +107,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                                 passwordField: true,
                                 isVisible: _visiblePassword,
                                 onPressed: _toggleVisiblePassword))),
-                    inputFieldSpacer(),
+                    const InputFieldSpacer(),
                     RawKeyboardListener(
                         focusNode: FocusNode(),
                         onKey: (RawKeyEvent event) {
@@ -131,7 +131,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                                 passwordField: true,
                                 isVisible: _visiblePassword,
                                 onPressed: _toggleVisiblePassword))),
-                    inputFieldSpacer(),
+                    const InputFieldSpacer(),
                     TextFormField(
                         key: const Key('inputPhone'),
                         validator: (input) => validatePhone(input),
@@ -143,7 +143,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         onFieldSubmitted: (value) => _createUserAndSignIn(),
                         decoration:
                             customInputDecoration('Telefon', Icons.phone)),
-                    inputFieldSpacer(),
+                    const InputFieldSpacer(),
                     AnimatedOpacity(
                       opacity: _registerFailed ? 1.0 : 0.0,
                       duration: const Duration(milliseconds: 200),

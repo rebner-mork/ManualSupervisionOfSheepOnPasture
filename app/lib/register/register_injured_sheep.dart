@@ -108,10 +108,10 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep>
                           margin: const EdgeInsets.only(left: leftMargin),
                           child: Column(
                             children: [
-                              appbarBodySpacer(),
+                              const AppbarBodySpacer(),
                               const RegistrationInputHeadline(
                                   title: 'Øremerke'),
-                              inputFieldSpacer(),
+                              const InputFieldSpacer(),
                               EartagInput(
                                 formKey: _formKey,
                                 countryCodeController: _countryCodeController,
@@ -121,7 +121,7 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep>
                                 isValidationActivated: _isValidationActivated,
                               ),
                               const RegistrationInputHeadline(title: 'Slips'),
-                              inputFieldSpacer(),
+                              const InputFieldSpacer(),
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -138,9 +138,9 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep>
                                     ),
                                     const SizedBox(width: 40),
                                   ]),
-                              inputFieldSpacer(),
+                              const InputFieldSpacer(),
                               const RegistrationInputHeadline(title: 'Skade'),
-                              inputFieldSpacer(),
+                              const InputFieldSpacer(),
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -155,7 +155,7 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep>
                                         }),
                                     const SizedBox(width: leftMargin),
                                   ]),
-                              inputFieldSpacer(),
+                              const InputFieldSpacer(),
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -177,9 +177,9 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep>
                                     ),
                                     const SizedBox(width: leftMargin),
                                   ]),
-                              inputFieldSpacer(),
+                              const InputFieldSpacer(),
                               const RegistrationInputHeadline(title: 'Notat'),
-                              inputFieldSpacer(),
+                              const InputFieldSpacer(),
                               NoteFormField(
                                   textController: _noteController,
                                   rightMargin: leftMargin),

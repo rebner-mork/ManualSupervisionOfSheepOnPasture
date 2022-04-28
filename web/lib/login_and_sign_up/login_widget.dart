@@ -89,7 +89,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                     labelText: "E-post",
                     border: OutlineInputBorder()),
               )),
-          inputFieldSpacer(),
+          const InputFieldSpacer(),
           Container(
               constraints: const BoxConstraints(maxWidth: 400),
               child: RawKeyboardListener(

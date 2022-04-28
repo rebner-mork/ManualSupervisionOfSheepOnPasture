@@ -317,7 +317,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
                     eartagColor == widget.eartags.keys.last
                 ? firstHeadlineFieldKeys[2]
                 : null));
-        eartags.add(inputFieldSpacer());
+        eartags.add(const InputFieldSpacer());
       }
     }
 
@@ -329,7 +329,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
             _textControllers['${colorValueStringToColorString[tieColor]}Tie']!,
             tieColor == '0' ? Icons.close : FontAwesome5.black_tie,
             tieColor == '0' ? Colors.grey : colorStringToColor[tieColor]!));
-        ties.add(inputFieldSpacer());
+        ties.add(const InputFieldSpacer());
       }
     }
 
@@ -366,32 +366,32 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
                           inputDividerWithHeadline('Antall'),
                           inputRow('Sauer & lam', _textControllers['sheep']!,
                               RpgAwesome.sheep, Colors.grey),
-                          inputFieldSpacer(),
+                          const InputFieldSpacer(),
                           inputRow('Lam', _textControllers['lambs']!,
                               RpgAwesome.sheep, Colors.grey,
                               iconSize: 24),
-                          inputFieldSpacer(),
+                          const InputFieldSpacer(),
                           inputRow('Hvite', _textControllers['white']!,
                               RpgAwesome.sheep, Colors.white,
                               scrollController: scrollController,
                               key: firstHeadlineFieldKeys[0],
                               ownKey: firstHeadlineFieldKeys[0]),
-                          inputFieldSpacer(),
+                          const InputFieldSpacer(),
                           inputRow('Brune', _textControllers['brown']!,
                               RpgAwesome.sheep, Colors.brown),
-                          inputFieldSpacer(),
+                          const InputFieldSpacer(),
                           inputRow(
                             'Svarte',
                             _textControllers['black']!,
                             RpgAwesome.sheep,
                             Colors.black,
                           ),
-                          inputFieldSpacer(),
+                          const InputFieldSpacer(),
                           inputRow('Svart hode', _textControllers['blackHead']!,
                               RpgAwesome.sheep, Colors.black,
                               scrollController: scrollController,
                               key: firstHeadlineFieldKeys[1]),
-                          if (_isShortDistance) inputFieldSpacer(),
+                          if (_isShortDistance) const InputFieldSpacer(),
                           if (_isShortDistance) ..._shortDistance(),
                           const SizedBox(height: 80),
                         ]))),

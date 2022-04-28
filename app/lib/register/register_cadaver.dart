@@ -100,10 +100,10 @@ class _RegisterCadaverState extends State<RegisterCadaver> with RegisterPage {
                           margin: EdgeInsets.only(left: widget.leftMargin),
                           child: Column(
                             children: [
-                              appbarBodySpacer(),
+                              const AppbarBodySpacer(),
                               const RegistrationInputHeadline(
                                   title: 'Øremerke'),
-                              inputFieldSpacer(),
+                              const InputFieldSpacer(),
                               EartagInput(
                                 formKey: _formKey,
                                 countryCodeController: _countryCodeController,
@@ -113,7 +113,7 @@ class _RegisterCadaverState extends State<RegisterCadaver> with RegisterPage {
                                 isValidationActivated: _isValidationActivated,
                               ),
                               const RegistrationInputHeadline(title: 'Slips'),
-                              inputFieldSpacer(),
+                              const InputFieldSpacer(),
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -130,15 +130,15 @@ class _RegisterCadaverState extends State<RegisterCadaver> with RegisterPage {
                                     ),
                                     const SizedBox(width: 40),
                                   ]),
-                              inputFieldSpacer(),
+                              const InputFieldSpacer(),
                               const RegistrationInputHeadline(title: 'Notat'),
-                              inputFieldSpacer(),
+                              const InputFieldSpacer(),
                               NoteFormField(
                                   textController: _noteController,
                                   rightMargin: widget.leftMargin),
-                              inputFieldSpacer(),
+                              const InputFieldSpacer(),
                               const RegistrationInputHeadline(title: 'Bilder'),
-                              inputFieldSpacer(),
+                              const InputFieldSpacer(),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
