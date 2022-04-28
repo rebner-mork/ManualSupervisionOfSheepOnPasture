@@ -186,8 +186,9 @@ class _RegisterInjuredSheepState extends State<RegisterInjuredSheep>
                             ],
                           )))),
         ),
-        floatingActionButton:
-            _isLoading ? null : completeRegistrationButton(context, register),
+        floatingActionButton: _isLoading
+            ? null
+            : CompleteRegistrationButton(context: context, onPressed: register),
         floatingActionButtonLocation:
             MediaQuery.of(context).viewInsets.bottom == 0
                 ? FloatingActionButtonLocation.centerFloat

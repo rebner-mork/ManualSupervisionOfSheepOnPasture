@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:web/main_tabs/main_tabs.dart';
 import 'package:web/utils/authentication.dart' as authentication;
 import 'package:web/utils/custom_widgets.dart';
+import 'package:web/utils/styles.dart';
 import '../utils/validation.dart' as validation;
 
 class LoginWidget extends StatefulWidget {

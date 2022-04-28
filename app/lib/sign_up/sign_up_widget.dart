@@ -2,6 +2,7 @@ import 'package:app/trip/start_trip_page.dart';
 import 'package:app/utils/authentication.dart';
 import 'package:app/utils/field_validation.dart';
 import 'package:app/utils/custom_widgets.dart';
+import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
 
 class SignUpWidget extends StatefulWidget {

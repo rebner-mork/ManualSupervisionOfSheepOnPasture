@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:web/main_tabs/main_tabs.dart';
 import 'package:web/utils/authentication.dart';
+import 'package:web/utils/styles.dart';
 import 'package:web/utils/validation.dart';
 import 'package:web/utils/custom_widgets.dart';
 import 'package:flutter/material.dart';

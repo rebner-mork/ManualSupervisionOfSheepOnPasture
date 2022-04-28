@@ -25,3 +25,22 @@ const EdgeInsets tableCellPadding = EdgeInsets.all(8);
 
 TextStyle dropDownTextStyle = const TextStyle(fontSize: 16);
 const double dropdownArrowSize = 28;
+
+InputDecoration customInputDecoration(String labelText, IconData icon,
+    {bool passwordField = false,
+    bool isVisible = false,
+    void Function()? onPressed}) {
+  return InputDecoration(
+      labelText: labelText,
+      alignLabelWithHint: true,
+      border: const OutlineInputBorder(),
+      prefixIcon: Icon(icon),
+      suffixIcon: passwordField
+          ? IconButton(
+              icon: Icon(
+                isVisible ? Icons.visibility : Icons.visibility_off,
+              ),
+              color: isVisible ? Colors.green : Colors.grey,
+              onPressed: onPressed)
+          : null);
+}

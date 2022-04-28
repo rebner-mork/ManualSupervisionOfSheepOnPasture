@@ -300,15 +300,17 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
     List<Widget> ties = [];
 
     if (widget.eartags.isNotEmpty) {
-      eartags.add(
-          inputDividerWithHeadline('Øremerker', firstHeadlineFieldKeys[1]));
+      eartags.add(InputDividerWithHeadline(
+          headline: 'Øremerker', globalKey: firstHeadlineFieldKeys[1]));
       for (String eartagColor in widget.eartags.keys) {
-        eartags.add(inputRow(
-            colorValueStringToColorStringGuiPlural[eartagColor]!,
-            _textControllers[
+        eartags.add(InputRow(
+            text: colorValueStringToColorStringGuiPlural[eartagColor]!,
+            controller: _textControllers[
                 '${colorValueStringToColorString[eartagColor]}Ear']!,
-            eartagColor == '0' ? Icons.close : Icons.local_offer,
-            eartagColor == '0' ? Colors.grey : colorStringToColor[eartagColor]!,
+            iconData: eartagColor == '0' ? Icons.close : Icons.local_offer,
+            color: eartagColor == '0'
+                ? Colors.grey
+                : colorStringToColor[eartagColor]!,
             scrollController: widget.ties.isNotEmpty &&
                     eartagColor == widget.eartags.keys.last
                 ? scrollController
@@ -322,13 +324,16 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
     }
 
     if (widget.ties.isNotEmpty) {
-      ties.add(inputDividerWithHeadline('Slips', firstHeadlineFieldKeys[2]));
+      ties.add(InputDividerWithHeadline(
+          headline: 'Slips', globalKey: firstHeadlineFieldKeys[2]));
       for (String tieColor in widget.ties.keys) {
-        ties.add(inputRow(
-            colorValueStringToColorStringGuiPlural[tieColor]!,
-            _textControllers['${colorValueStringToColorString[tieColor]}Tie']!,
-            tieColor == '0' ? Icons.close : FontAwesome5.black_tie,
-            tieColor == '0' ? Colors.grey : colorStringToColor[tieColor]!));
+        ties.add(InputRow(
+            text: colorValueStringToColorStringGuiPlural[tieColor]!,
+            controller: _textControllers[
+                '${colorValueStringToColorString[tieColor]}Tie']!,
+            iconData: tieColor == '0' ? Icons.close : FontAwesome5.black_tie,
+            color:
+                tieColor == '0' ? Colors.grey : colorStringToColor[tieColor]!));
         ties.add(const InputFieldSpacer());
       }
     }
@@ -363,32 +368,47 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
                         child: Center(
                             child: Column(children: [
                           const SizedBox(height: 10),
-                          inputDividerWithHeadline('Antall'),
-                          inputRow('Sauer & lam', _textControllers['sheep']!,
-                              RpgAwesome.sheep, Colors.grey),
+                          const InputDividerWithHeadline(headline: 'Antall'),
+                          InputRow(
+                              text: 'Sauer & lam',
+                              controller: _textControllers['sheep']!,
+                              iconData: RpgAwesome.sheep,
+                              color: Colors.grey),
                           const InputFieldSpacer(),
-                          inputRow('Lam', _textControllers['lambs']!,
-                              RpgAwesome.sheep, Colors.grey,
+                          InputRow(
+                              text: 'Lam',
+                              controller: _textControllers['lambs']!,
+                              iconData: RpgAwesome.sheep,
+                              color: Colors.grey,
                               iconSize: 24),
                           const InputFieldSpacer(),
-                          inputRow('Hvite', _textControllers['white']!,
-                              RpgAwesome.sheep, Colors.white,
+                          InputRow(
+                              text: 'Hvite',
+                              controller: _textControllers['white']!,
+                              iconData: RpgAwesome.sheep,
+                              color: Colors.white,
                               scrollController: scrollController,
                               key: firstHeadlineFieldKeys[0],
                               ownKey: firstHeadlineFieldKeys[0]),
                           const InputFieldSpacer(),
-                          inputRow('Brune', _textControllers['brown']!,
-                              RpgAwesome.sheep, Colors.brown),
+                          InputRow(
+                              text: 'Brune',
+                              controller: _textControllers['brown']!,
+                              iconData: RpgAwesome.sheep,
+                              color: Colors.brown),
                           const InputFieldSpacer(),
-                          inputRow(
-                            'Svarte',
-                            _textControllers['black']!,
-                            RpgAwesome.sheep,
-                            Colors.black,
+                          InputRow(
+                            text: 'Svarte',
+                            controller: _textControllers['black']!,
+                            iconData: RpgAwesome.sheep,
+                            color: Colors.black,
                           ),
                           const InputFieldSpacer(),
-                          inputRow('Svart hode', _textControllers['blackHead']!,
-                              RpgAwesome.sheep, Colors.black,
+                          InputRow(
+                              text: 'Svart hode',
+                              controller: _textControllers['blackHead']!,
+                              iconData: RpgAwesome.sheep,
+                              color: Colors.black,
                               scrollController: scrollController,
                               key: firstHeadlineFieldKeys[1]),
                           if (_isShortDistance) const InputFieldSpacer(),
@@ -405,8 +425,9 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
                           if (widget.stt.isAvailable)
                             Padding(
                                 padding: const EdgeInsets.only(left: 10),
-                                child: startDialogButton(() =>
-                                    _startDialog(questions, questionContexts))),
+                                child: StartDialogButton(
+                                    onPressed: () => _startDialog(
+                                        questions, questionContexts))),
                           MediaQuery.of(context).viewInsets.bottom == 0
                               ? const SizedBox(
                                   width: 20,
@@ -414,8 +435,8 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
                               : const Spacer(),
                           Padding(
                               padding: const EdgeInsets.only(right: 10),
-                              child:
-                                  completeRegistrationButton(context, register))
+                              child: CompleteRegistrationButton(
+                                  context: context, onPressed: register))
                         ],
                       )
                     : null,

@@ -107,7 +107,8 @@ class _RegisterNoteState extends State<RegisterNote> with RegisterPage {
                         ))),
             floatingActionButton: _isLoading
                 ? null
-                : completeRegistrationButton(context, register),
+                : CompleteRegistrationButton(
+                    context: context, onPressed: register),
             floatingActionButtonLocation:
                 MediaQuery.of(context).viewInsets.bottom == 0
                     ? FloatingActionButtonLocation.centerFloat
