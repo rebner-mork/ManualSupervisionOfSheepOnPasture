@@ -92,6 +92,8 @@ Row inputRow(String text, TextEditingController controller, IconData iconData,
     Color color,
     {double iconSize = defaultIconSize,
     ScrollController? scrollController,
+    bool isFieldValid = true,
+    VoidCallback? onChanged,
     GlobalKey? key,
     GlobalKey? ownKey}) {
   return Row(
@@ -133,10 +135,27 @@ Row inputRow(String text, TextEditingController controller, IconData iconData,
                     if (scrollController != null && key != null)
                       scrollToKey(scrollController, key),
                   },
-                  decoration: const InputDecoration(
+                  onChanged: (_) => {
+                    if (onChanged != null) {onChanged()}
+                  },
+                  decoration: InputDecoration(
+                    focusedBorder: OutlineInputBorder(
+                        gapPadding: 4.0,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(4.0)),
+                        borderSide: isFieldValid
+                            ? const BorderSide(color: Colors.grey)
+                            : const BorderSide(color: Colors.red)),
+                    enabledBorder: OutlineInputBorder(
+                        gapPadding: 4.0,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(4.0)),
+                        borderSide: isFieldValid
+                            ? const BorderSide(color: Colors.grey)
+                            : const BorderSide(color: Colors.red)),
                     hintText: '0',
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                    border: const OutlineInputBorder(),
+                    contentPadding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
                   ),
                 )))
       ]);

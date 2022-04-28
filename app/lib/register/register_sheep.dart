@@ -7,6 +7,7 @@ import 'package:app/utils/question_sets.dart';
 import 'package:app/utils/speech_input_filters.dart';
 import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:provider/provider.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
@@ -66,13 +67,23 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
   final List<int> firstHeadlineFieldIndexes = [distanceSheepQuestions.length];
   int currentHeadlineIndex = 0;
 
-  final _textControllers = <String, TextEditingController>{
+  final Map<String, TextEditingController> _textControllers =
+      <String, TextEditingController>{
     'sheep': TextEditingController(),
     'lambs': TextEditingController(),
     'white': TextEditingController(),
     'brown': TextEditingController(),
     'black': TextEditingController(),
     'blackHead': TextEditingController(),
+  };
+
+  final Map<String, bool> _isFieldValid = <String, bool>{
+    'sheep': true,
+    'lambs': true,
+    'white': true,
+    'brown': true,
+    'black': true,
+    'blackHead': true
   };
 
   late LatLng _devicePosition;
@@ -86,6 +97,8 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
   List<String> colors = colorsFilter.keys.toList();
 
   bool _isLoading = true;
+  late bool _allFieldsValid;
+  String _validatorText = '';
 
   @override
   void initState() {
@@ -122,6 +135,8 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
         questionContexts.add(QuestionContext.numbers);
         _textControllers['${colorValueStringToColorString[eartagColor]}Ear'] =
             TextEditingController();
+        _isFieldValid['${colorValueStringToColorString[eartagColor]}Ear'] =
+            true;
       }
 
       firstHeadlineFieldIndexes.add(questions.length);
@@ -131,6 +146,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
         questionContexts.add(QuestionContext.numbers);
         _textControllers['${colorValueStringToColorString[tieColor]}Tie'] =
             TextEditingController();
+        _isFieldValid['${colorValueStringToColorString[tieColor]}Tie'] = true;
       }
     }
 
@@ -250,20 +266,48 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
 
   @override
   void register() {
-    Map<String, Object> data = {
-      ...getMetaRegistrationData(
-          type: 'sheep',
-          devicePosition: _devicePosition,
-          registrationPosition: widget.sheepPosition),
-      ...gatherRegisteredData(_textControllers)
-    };
+    if (_validateInput()) {
+      Map<String, Object> data = {
+        ...getMetaRegistrationData(
+            type: 'sheep',
+            devicePosition: _devicePosition,
+            registrationPosition: widget.sheepPosition),
+        ...gatherRegisteredData(_textControllers)
+      };
 
-    if (widget.onCompletedSuccessfully != null) {
-      widget.onCompletedSuccessfully!(data);
+      if (widget.onCompletedSuccessfully != null) {
+        widget.onCompletedSuccessfully!(data);
+      }
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
     }
-    if (Navigator.canPop(context)) {
-      Navigator.pop(context);
+  }
+
+  bool _validateInput() {
+    Map<String, int> registeredData = gatherRegisteredData(_textControllers);
+
+    if (registeredData['lambs']! > registeredData['sheep']!) {
+      setState(() {
+        _isFieldValid['sheep'] = false;
+        _isFieldValid['lambs'] = false;
+        _allFieldsValid = false;
+        _validatorText = 'Antall lam er høyere enn sauer & lam';
+      });
+      return false;
+    } else if (_isFieldValid['sheep'] == false ||
+        _isFieldValid['lambs'] == false) {
+      setState(() {
+        _isFieldValid['sheep'] = true;
+        _isFieldValid['lambs'] = true;
+      });
     }
+
+    setState(() {
+      _allFieldsValid = true;
+      _validatorText = '';
+    });
+    return true;
   }
 
   Future<void> _backButtonPressed() async {
@@ -362,14 +406,24 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
                         controller: scrollController,
                         child: Center(
                             child: Column(children: [
-                          const SizedBox(height: 10),
+                          if (_validatorText.isNotEmpty)
+                            const SizedBox(height: 10),
+                          if (_validatorText.isNotEmpty)
+                            Text(_validatorText,
+                                style: const TextStyle(
+                                    fontSize: 18, color: Colors.red)),
+                          SizedBox(height: _validatorText.isEmpty ? 10 : 0),
                           inputDividerWithHeadline('Antall'),
                           inputRow('Sauer & lam', _textControllers['sheep']!,
-                              RpgAwesome.sheep, Colors.grey),
+                              RpgAwesome.sheep, Colors.grey,
+                              isFieldValid: _isFieldValid['sheep']!,
+                              onChanged: _validateInput),
                           inputFieldSpacer(),
                           inputRow('Lam', _textControllers['lambs']!,
                               RpgAwesome.sheep, Colors.grey,
-                              iconSize: 24),
+                              iconSize: 24,
+                              isFieldValid: _isFieldValid['lambs']!,
+                              onChanged: _validateInput),
                           inputFieldSpacer(),
                           inputRow('Hvite', _textControllers['white']!,
                               RpgAwesome.sheep, Colors.white,
