@@ -201,7 +201,9 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
           await _speak(response);
           await _listen(questionContexts[questionIndex]);
         } else {
-          await _speak(spokenWord, language: 'en-US');
+          if (Provider.of<SettingsProvider>(context, listen: false).readBack) {
+            await _speak(spokenWord, language: 'en-US');
+          }
 
           setState(() {
             _textControllers.values.elementAt(questionIndex).text = spokenWord;
