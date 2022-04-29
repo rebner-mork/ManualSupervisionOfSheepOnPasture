@@ -24,8 +24,9 @@ class MainTripInfoTable extends StatelessWidget {
       columnWidths: {
         // Combined width should match 410 (combined width of SheepInfoTable)
         0: const FixedColumnWidth(80),
-        1: textSize(personnelName, tableRowTextStyle).width > 330
-            ? FixedColumnWidth(textSize(personnelName, tableRowTextStyle).width)
+        1: textSize(text: personnelName, style: tableRowTextStyle).width > 330
+            ? FixedColumnWidth(
+                textSize(text: personnelName, style: tableRowTextStyle).width)
             : const FixedColumnWidth(330)
       },
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,

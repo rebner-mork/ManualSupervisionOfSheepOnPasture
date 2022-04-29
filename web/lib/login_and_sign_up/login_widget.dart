@@ -36,7 +36,7 @@ class _LoginWidgetState extends State<LoginWidget> {
     });
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      tmp = await authentication.signIn(_email, _password);
+      tmp = await authentication.signIn(email: _email, password: _password);
       if (tmp == '') {
         Navigator.pushNamed(context, MainTabs.route);
       } else {
@@ -110,7 +110,9 @@ class _LoginWidgetState extends State<LoginWidget> {
                       onFieldSubmitted: (_) {
                         _logIn();
                       },
-                      decoration: customInputDecoration('Passord', Icons.lock,
+                      decoration: customInputDecoration(
+                          labelText: 'Passord',
+                          icon: Icons.lock,
                           passwordField: true,
                           isVisible: !_visiblePassword,
                           onPressed: _toggleVisiblePassword)))),

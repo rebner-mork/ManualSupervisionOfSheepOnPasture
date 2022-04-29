@@ -118,11 +118,11 @@ Polyline getLineOfSight(List<LatLng> points) {
 
 // --- INDEX CALCULATIONS ---
 
-int getTileIndexX(double longitude, int zoom) {
+int getTileIndexX({required double longitude, required int zoom}) {
   return (((longitude + 180) / 360) * pow(2, zoom)).floor();
 }
 
-int getTileIndexY(double latitude, int zoom) {
+int getTileIndexY({required double latitude, required int zoom}) {
   var latitudeInRadians = latitude * (pi / 180);
   return ((1 -
               ((log(tan(latitudeInRadians) + (1 / cos(latitudeInRadians)))) /
@@ -138,10 +138,10 @@ int numberOfTiles(
     required double maxZoom}) {
   int _numberOfTiles = 0;
   for (int zoom = minZoom.toInt(); zoom <= maxZoom.toInt(); zoom++) {
-    int west = getTileIndexX(northWest.longitude, zoom);
-    int east = getTileIndexX(southEast.longitude, zoom);
-    int north = getTileIndexY(northWest.latitude, zoom);
-    int south = getTileIndexY(southEast.latitude, zoom);
+    int west = getTileIndexX(longitude: northWest.longitude, zoom: zoom);
+    int east = getTileIndexX(longitude: southEast.longitude, zoom: zoom);
+    int north = getTileIndexY(latitude: northWest.latitude, zoom: zoom);
+    int south = getTileIndexY(latitude: southEast.latitude, zoom: zoom);
 
     _numberOfTiles += (east - west + 1) * (south - north + 1);
   }
@@ -151,7 +151,11 @@ int numberOfTiles(
 // --- PATHS ---
 
 String _getTileUrl(
-    String urlTemplate, int x, int y, int zoom, List<String> subdomains) {
+    {required String urlTemplate,
+    required int x,
+    required int y,
+    required int zoom,
+    required List<String> subdomains}) {
   var random = Random();
   return urlTemplate
       .replaceFirst("{z}", zoom.toString())
@@ -164,23 +168,35 @@ String getLocalUrlTemplate() {
   return applicationDocumentDirectoryPath + "/maps/{z}/{x}/{y}.png";
 }
 
-String _getLocalTileUrl(int x, int y, int z) {
-  return _getTileUrl(getLocalUrlTemplate(), x, y, z, [""]);
+String _getLocalTileUrl({required int x, required int y, required int z}) {
+  return _getTileUrl(
+      urlTemplate: getLocalUrlTemplate(),
+      x: x,
+      y: y,
+      zoom: z,
+      subdomains: [""]);
 }
 
-String _getServerTileUrl(int x, int y, int z) {
-  return _getTileUrl(MapProvider.urlTemplate, x, y, z, MapProvider.subdomains);
+String _getServerTileUrl({required int x, required int y, required int z}) {
+  return _getTileUrl(
+      urlTemplate: MapProvider.urlTemplate,
+      x: x,
+      y: y,
+      zoom: z,
+      subdomains: MapProvider.subdomains);
 }
 
 // --- DOWNLOADS ---
 
-Future<void> _downloadTile(int x, int y, int zoom) async {
-  String localFilePath = _getLocalTileUrl(x, y, zoom);
+Future<void> _downloadTile(
+    {required int x, required int y, required int zoom}) async {
+  String localFilePath = _getLocalTileUrl(x: x, y: y, z: zoom);
   String localDirPath = localFilePath.replaceAll(y.toString() + ".png", "");
 
   if (!File(localFilePath).existsSync()) {
     await Directory(localDirPath).create(recursive: true);
-    var response = await http.get(Uri.parse(_getServerTileUrl(x, y, zoom)));
+    var response =
+        await http.get(Uri.parse(_getServerTileUrl(x: x, y: y, z: zoom)));
     File(localFilePath).writeAsBytesSync(response.bodyBytes);
   }
 }
@@ -199,14 +215,14 @@ Future<void> downloadTiles(
       maxZoom: maxZoom);
 
   for (int zoom = minZoom.toInt(); zoom <= maxZoom.toInt(); zoom++) {
-    int west = getTileIndexX(northWest.longitude, zoom);
-    int east = getTileIndexX(southEast.longitude, zoom);
-    int north = getTileIndexY(northWest.latitude, zoom);
-    int south = getTileIndexY(southEast.latitude, zoom);
+    int west = getTileIndexX(longitude: northWest.longitude, zoom: zoom);
+    int east = getTileIndexX(longitude: southEast.longitude, zoom: zoom);
+    int north = getTileIndexY(latitude: northWest.latitude, zoom: zoom);
+    int south = getTileIndexY(latitude: southEast.latitude, zoom: zoom);
 
     for (int x = west; x <= east; x++) {
       for (int y = north; y <= south; y++) {
-        await _downloadTile(x, y, zoom);
+        await _downloadTile(x: x, y: y, zoom: zoom);
         if (progressIndicator != null) {
           progressIndicator(++currentTileNumber / totalTileNumber);
         }
@@ -221,14 +237,14 @@ bool isEveryTileDownloaded(
     required double minZoom,
     required double maxZoom}) {
   for (int zoom = minZoom.toInt(); zoom <= maxZoom.toInt(); zoom++) {
-    int west = getTileIndexX(northWest.longitude, zoom);
-    int east = getTileIndexX(southEast.longitude, zoom);
-    int north = getTileIndexY(northWest.latitude, zoom);
-    int south = getTileIndexY(southEast.latitude, zoom);
+    int west = getTileIndexX(longitude: northWest.longitude, zoom: zoom);
+    int east = getTileIndexX(longitude: southEast.longitude, zoom: zoom);
+    int north = getTileIndexY(latitude: northWest.latitude, zoom: zoom);
+    int south = getTileIndexY(latitude: southEast.latitude, zoom: zoom);
 
     for (int x = west; x <= east; x++) {
       for (int y = north; y <= south; y++) {
-        String path = _getLocalTileUrl(x, y, zoom);
+        String path = _getLocalTileUrl(x: x, y: y, z: zoom);
         if (!File(path).existsSync()) {
           return false;
         }

@@ -24,7 +24,7 @@ const TextStyle mapHeadlineTextStyle = TextStyle(
 const TextStyle headlineTextStyle = TextStyle(fontSize: 24);
 
 class DetailedTrip extends StatefulWidget {
-  const DetailedTrip(this.tripData, {Key? key}) : super(key: key);
+  const DetailedTrip({required this.tripData, Key? key}) : super(key: key);
 
   final Map<String, Object> tripData;
 
@@ -186,26 +186,26 @@ class _DetailedTripState extends State<DetailedTrip> {
     double height = 0;
 
     // Date-headline
-    height += 20 + textSize('2022', mainHeadlineTextStyle).height;
+    height += 20 + textSize(text: '2022', style: mainHeadlineTextStyle).height;
 
     // Mapname
-    height += textSize('A', mapHeadlineTextStyle).height;
+    height += textSize(text: 'A', style: mapHeadlineTextStyle).height;
 
     // MainTripInfoTable
     height += 50 +
         2 *
-            (textSize('A', descriptionTextStyle).height +
+            (textSize(text: 'A', style: descriptionTextStyle).height +
                 tableCellPadding.vertical);
 
     // SheepInfoTableHeight
     height += 2 *
-        (textSize('A', tableRowDescriptionTextStyle).height +
+        (textSize(text: 'A', style: tableRowDescriptionTextStyle).height +
             tableCellPadding.vertical);
 
     // InfoTableHeight
-    height += textSize(('A'), headlineTextStyle).height +
+    height += textSize(text: 'A', style: headlineTextStyle).height +
         40 +
-        textSize('A', tableRowDescriptionTextStyle).height +
+        textSize(text: 'A', style: tableRowDescriptionTextStyle).height +
         tableCellPadding.vertical +
         (tieData.length > eartagData.length
             ? tieData.length * (25 + tableCellPadding.vertical)
@@ -213,20 +213,20 @@ class _DetailedTripState extends State<DetailedTrip> {
 
     // InjuredSheepTable
     if (injuredSheepData.isNotEmpty) {
-      height += textSize(('A'), headlineTextStyle).height +
+      height += textSize(text: 'A', style: headlineTextStyle).height +
           32 +
-          textSize('S', injuryCadaverHeadlineTextStyle).height +
-          textSize('A', descriptionTextStyle).height +
+          textSize(text: 'S', style: injuryCadaverHeadlineTextStyle).height +
+          textSize(text: 'A', style: descriptionTextStyle).height +
           tableCellPadding.vertical +
           injuredSheepData.length * (34 + tableCellPadding.vertical);
     }
 
     // CadaverTable
     if (cadaverData.isNotEmpty) {
-      height += textSize(('A'), headlineTextStyle).height +
+      height += textSize(text: 'A', style: headlineTextStyle).height +
           32 +
-          textSize('S', injuryCadaverHeadlineTextStyle).height +
-          textSize('A', descriptionTextStyle).height +
+          textSize(text: 'S', style: injuryCadaverHeadlineTextStyle).height +
+          textSize(text: 'A', style: descriptionTextStyle).height +
           tableCellPadding.vertical +
           cadaverData.length * (34 + tableCellPadding.vertical);
     }
@@ -236,22 +236,23 @@ class _DetailedTripState extends State<DetailedTrip> {
       int lineAmount = 0;
 
       for (String note in noteData) {
-        lineAmount += (textSize(note, noteTableTextStyle).width /
+        lineAmount += (textSize(text: note, style: noteTableTextStyle).width /
                 (noteTableWidth - tableCellPadding.horizontal))
             .ceil();
         lineAmount += note.split("\n").length;
       }
-      height += textSize(('A'), headlineTextStyle).height + 40;
-      height += (lineAmount * textSize('A', noteTableTextStyle).height) +
-          noteData.length * (2 + tableCellPadding.vertical);
+      height += textSize(text: 'A', style: headlineTextStyle).height + 40;
+      height +=
+          (lineAmount * textSize(text: 'A', style: noteTableTextStyle).height) +
+              noteData.length * (2 + tableCellPadding.vertical);
     }
 
     // PredatorTable
     if (predatorData.isNotEmpty) {
-      height += textSize(('A'), headlineTextStyle).height +
+      height += textSize(text: 'A', style: headlineTextStyle).height +
           32 +
-          textSize('S', injuryCadaverHeadlineTextStyle).height +
-          textSize('A', descriptionTextStyle).height +
+          textSize(text: 'S', style: injuryCadaverHeadlineTextStyle).height +
+          textSize(text: 'A', style: descriptionTextStyle).height +
           tableCellPadding.vertical +
           predatorData.length * (34 + tableCellPadding.vertical);
     }
@@ -288,14 +289,16 @@ class _DetailedTripState extends State<DetailedTrip> {
                           child: Column(
                             children: [
                               SizedBox(
-                                  width: textSize(dateText(),
-                                                  mainHeadlineTextStyle)
+                                  width: textSize(
+                                                  text: dateText(),
+                                                  style: mainHeadlineTextStyle)
                                               .width >
                                           (2 *
                                               (infoTableWidth +
                                                   infoTablePadding))
-                                      ? textSize(dateText(),
-                                                  mainHeadlineTextStyle)
+                                      ? textSize(
+                                                  text: dateText(),
+                                                  style: mainHeadlineTextStyle)
                                               .width +
                                           60
                                       : 2 *

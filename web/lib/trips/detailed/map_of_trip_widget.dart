@@ -43,9 +43,10 @@ class _MapOfTripWidgetState extends State<MapOfTripWidget> {
 
     registrationMarkers = widget.registrations
         .map((Map<String, dynamic> registration) => map_utils.getSheepMarker(
-            LatLng(registration['registrationPosition']['latitude']! as double,
+            position: LatLng(
+                registration['registrationPosition']['latitude']! as double,
                 registration['registrationPosition']['longitude']! as double),
-            registration['type']))
+            type: registration['type']))
         .toList();
   }
 

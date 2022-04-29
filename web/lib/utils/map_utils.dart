@@ -9,7 +9,7 @@ abstract class MapProvider {
   static final List<String> subdomains = ['', '2', '3'];
 }
 
-Marker getSheepMarker(LatLng pos, String type) {
+Marker getSheepMarker({required LatLng position, required String type}) {
   const double size = 50;
 
   final AssetImage image;
@@ -33,7 +33,7 @@ Marker getSheepMarker(LatLng pos, String type) {
   }
 
   return Marker(
-      point: pos,
+      point: position,
       anchorPos: AnchorPos.align(AnchorAlign.top),
       rotateAlignment: Alignment.bottomCenter,
       height: size,
@@ -47,10 +47,10 @@ Marker getSheepMarker(LatLng pos, String type) {
           ));
 }
 
-Marker getCornerMarker(LatLng pos, bool upperLeft) {
+Marker getCornerMarker({required LatLng position, required bool upperLeft}) {
   const double size = 50;
   return Marker(
-      point: pos,
+      point: position,
       height: size,
       width: size,
       builder: (context) => Transform.rotate(
@@ -62,18 +62,19 @@ Marker getCornerMarker(LatLng pos, bool upperLeft) {
           )));
 }
 
-NetworkImage getMapNetworkImage(LatLng northWest, LatLng southEast, int zoom) {
+NetworkImage getMapNetworkImage(
+    {required LatLng northWest, required LatLng southEast, required int zoom}) {
   LatLng centerPoint = LatLngBounds(
           LatLng(southEast.latitude, northWest.longitude),
           LatLng(northWest.latitude, southEast.longitude))
       .center;
-  int x = getTileIndexX(centerPoint.longitude, zoom);
-  int y = getTileIndexY(centerPoint.latitude, zoom);
+  int x = getTileIndexX(longitude: centerPoint.longitude, zoom: zoom);
+  int y = getTileIndexY(latitude: centerPoint.latitude, zoom: zoom);
 
-  return NetworkImage(_getTileUrl(x, y, zoom), scale: 2);
+  return NetworkImage(_getTileUrl(x: x, y: y, zoom: zoom), scale: 2);
 }
 
-String _getTileUrl(int x, int y, int zoom) {
+String _getTileUrl({required int x, required int y, required int zoom}) {
   var random = Random();
   return MapProvider.urlTemplate
       .replaceFirst("{z}", zoom.toString())
@@ -85,11 +86,11 @@ String _getTileUrl(int x, int y, int zoom) {
               .subdomains[random.nextInt(MapProvider.subdomains.length)]);
 }
 
-int getTileIndexX(double longitude, int zoom) {
+int getTileIndexX({required double longitude, required int zoom}) {
   return (((longitude + 180) / 360) * pow(2, zoom)).floor();
 }
 
-int getTileIndexY(double latitude, int zoom) {
+int getTileIndexY({required double latitude, required int zoom}) {
   var latitudeInRadians = latitude * (pi / 180);
   return ((1 -
               ((log(tan(latitudeInRadians) + (1 / cos(latitudeInRadians)))) /

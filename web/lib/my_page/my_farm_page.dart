@@ -74,8 +74,8 @@ class _MyFarmState extends State<MyFarm> {
                             _onFieldChanged();
                           },
                           onFieldSubmitted: (_) => _saveFarmInfo(),
-                          decoration:
-                              customInputDecoration('Navn', Icons.badge)))),
+                          decoration: customInputDecoration(
+                              labelText: 'Navn', icon: Icons.badge)))),
               const Spacer()
             ],
           ),
@@ -103,8 +103,8 @@ class _MyFarmState extends State<MyFarm> {
                             _onFieldChanged();
                           },
                           onFieldSubmitted: (_) => _saveFarmInfo(),
-                          decoration:
-                              customInputDecoration('Adresse', Icons.place)))),
+                          decoration: customInputDecoration(
+                              labelText: 'Adresse', icon: Icons.place)))),
               const Spacer()
             ],
           ),
@@ -132,7 +132,7 @@ class _MyFarmState extends State<MyFarm> {
                           },
                           onFieldSubmitted: (_) => _saveFarmInfo(),
                           decoration: customInputDecoration(
-                              'Nummer', Icons.local_offer)))),
+                              labelText: 'Nummer', icon: Icons.local_offer)))),
               const Spacer()
             ],
           ),

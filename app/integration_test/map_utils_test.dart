@@ -29,10 +29,10 @@ void main() {
 
     //Construct expected directory listing
     for (int zoom = minZoom.toInt(); zoom <= maxZoom.toInt(); zoom++) {
-      int west = getTileIndexX(northWest.longitude, zoom);
-      int east = getTileIndexX(southEast.longitude, zoom);
-      int north = getTileIndexY(northWest.latitude, zoom);
-      int south = getTileIndexY(southEast.latitude, zoom);
+      int west = getTileIndexX(longitude: northWest.longitude, zoom: zoom);
+      int east = getTileIndexX(longitude: southEast.longitude, zoom: zoom);
+      int north = getTileIndexY(latitude: northWest.latitude, zoom: zoom);
+      int south = getTileIndexY(latitude: southEast.latitude, zoom: zoom);
       String currentPath = basePath + slash + zoom.toString();
       expectedDirectoryListing.add(currentPath);
       for (int x = west; x <= east; x++) {
