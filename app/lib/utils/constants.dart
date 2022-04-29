@@ -26,6 +26,25 @@ Future<void> setConstants() async {
   deviceCamera = cameras.first;
 }
 
+final Map<String, String> possibleTieColorStringToKey = {
+  Colors.red.value.toRadixString(16): 'redTie',
+  Colors.blue.value.toRadixString(16): 'blueTie',
+  Colors.yellow.value.toRadixString(16): 'yellowTie',
+  Colors.green.value.toRadixString(16): 'greenTie',
+  Colors.orange.value.toRadixString(16): 'orangeTie',
+  Colors.pink.value.toRadixString(16): 'pinkTie',
+  Colors.transparent.value.toRadixString(16): 'transparentTie'
+};
+
+final Map<String, String> possibleEartagColorStringToKey = {
+  Colors.red.value.toRadixString(16): 'redEar',
+  Colors.blue.value.toRadixString(16): 'blueEar',
+  Colors.yellow.value.toRadixString(16): 'yellowEar',
+  Colors.green.value.toRadixString(16): 'greenEar',
+  Colors.orange.value.toRadixString(16): 'orangeEar',
+  Colors.pink.value.toRadixString(16): 'pinkEar'
+};
+
 final Map<String, String> colorValueStringToColorString = {
   Colors.transparent.value.toRadixString(16): 'transparent',
   Colors.red.value.toRadixString(16): 'red',
@@ -95,4 +114,11 @@ final Map<RegistrationType, String> registrationTypeToGui = {
   RegistrationType.cadaver: 'kadaveret',
   RegistrationType.note: 'notatet',
   RegistrationType.predator: 'rovdyret',
+};
+
+final Map<String, String> predatorEnglishKeyToNorwegianGui = <String, String>{
+  "bear": "Bjørn",
+  "lynx": "Gaupe",
+  "wolf": "Ulv",
+  "wolverine": "Jerv",
 };

@@ -72,6 +72,11 @@ flutter:
     - images/sheep_marker_cadaver.png
     - images/predator_wolf_marker.png
     - images/note_marker.png
+    - images/sheep.png
+    - images/sheep_injured.png
+    - images/sheep_dead.png
+    - images/predator.png
+    - images/note.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

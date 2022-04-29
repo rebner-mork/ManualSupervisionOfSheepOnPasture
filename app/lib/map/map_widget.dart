@@ -137,7 +137,7 @@ class _MapState extends State<MapWidget> {
                             linesOfSight.add(map_utils.getLineOfSight(
                                 [devicePosition, targetPosition]));
                             registrationMarkers.add(map_utils.getMapMarker(
-                                targetPosition, RegistrationType.sheep));
+                                data, targetPosition, RegistrationType.sheep));
                           });
                         }
                       },
@@ -174,7 +174,7 @@ class _MapState extends State<MapWidget> {
                       linesOfSight.add(map_utils
                           .getLineOfSight([devicePosition, targetPosition]));
                       registrationMarkers.add(map_utils.getMapMarker(
-                          targetPosition, RegistrationType.injury));
+                          data, targetPosition, RegistrationType.injury));
                     });
                   },
                   onWillPop: () {
@@ -210,7 +210,7 @@ class _MapState extends State<MapWidget> {
                       linesOfSight.add(map_utils
                           .getLineOfSight([devicePosition, targetPosition]));
                       registrationMarkers.add(map_utils.getMapMarker(
-                          targetPosition, RegistrationType.cadaver));
+                          data, targetPosition, RegistrationType.cadaver));
                     });
                   },
                   onWillPop: () {
@@ -243,7 +243,7 @@ class _MapState extends State<MapWidget> {
                       linesOfSight.add(map_utils
                           .getLineOfSight([devicePosition, targetPosition]));
                       registrationMarkers.add(map_utils.getMapMarker(
-                          targetPosition, RegistrationType.predator));
+                          data, targetPosition, RegistrationType.predator));
                     });
                   },
                   onWillPop: () {
@@ -274,7 +274,7 @@ class _MapState extends State<MapWidget> {
                     linesOfSight.add(map_utils
                         .getLineOfSight([devicePosition, targetPosition]));
                     registrationMarkers.add(map_utils.getMapMarker(
-                        targetPosition, RegistrationType.note));
+                        data, targetPosition, RegistrationType.note));
                   });
                 },
                 onWillPop: () {

@@ -4,12 +4,17 @@ import 'package:app/widgets/circular_buttons.dart';
 
 class DisplayPhotoWidget extends StatelessWidget {
   const DisplayPhotoWidget(
-      {Key? key, required this.photoPath, this.onDeletePhoto})
+      {Key? key,
+      required this.photoPath,
+      this.onDeletePhoto,
+      this.showDeleteButton = true})
       : super(key: key);
 
   final String photoPath;
 
   final VoidCallback? onDeletePhoto;
+
+  final bool showDeleteButton;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +28,9 @@ class DisplayPhotoWidget extends StatelessWidget {
             width: MediaQuery.of(context).size.width,
             child: Image.file(File(photoPath))),
         Positioned(
-            right: MediaQuery.of(context).size.width / 2 + buttonWidth / 4,
+            right: showDeleteButton
+                ? MediaQuery.of(context).size.width / 2 + buttonWidth / 4
+                : MediaQuery.of(context).size.width / 2 - buttonWidth / 2,
             bottom: MediaQuery.of(context).viewPadding.bottom + 15,
             child: CircularButton(
               height: buttonHeight,
@@ -36,22 +43,23 @@ class DisplayPhotoWidget extends StatelessWidget {
                 Navigator.pop(context);
               },
             )),
-        Positioned(
-            left: MediaQuery.of(context).size.width / 2 + buttonWidth / 4,
-            bottom: MediaQuery.of(context).viewPadding.bottom + 15,
-            child: CircularButton(
-                height: buttonHeight,
-                width: buttonWidth,
-                child: const Icon(
-                  Icons.delete,
-                  size: buttonHeight - 20,
-                ),
-                onPressed: () {
-                  if (onDeletePhoto != null) {
-                    onDeletePhoto!();
-                  }
-                  Navigator.pop(context);
-                })),
+        if (showDeleteButton)
+          Positioned(
+              left: MediaQuery.of(context).size.width / 2 + buttonWidth / 4,
+              bottom: MediaQuery.of(context).viewPadding.bottom + 15,
+              child: CircularButton(
+                  height: buttonHeight,
+                  width: buttonWidth,
+                  child: const Icon(
+                    Icons.delete,
+                    size: buttonHeight - 20,
+                  ),
+                  onPressed: () {
+                    if (onDeletePhoto != null) {
+                      onDeletePhoto!();
+                    }
+                    Navigator.pop(context);
+                  })),
       ]),
     );
   }
