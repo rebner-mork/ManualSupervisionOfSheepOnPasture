@@ -115,10 +115,3 @@ final Map<RegistrationType, String> registrationTypeToGui = {
   RegistrationType.note: 'notatet',
   RegistrationType.predator: 'rovdyret',
 };
-
-final Map<String, String> predatorEnglishKeyToNorwegianGui = <String, String>{
-  "bear": "Bjørn",
-  "lynx": "Gaupe",
-  "wolf": "Ulv",
-  "wolverine": "Jerv",
-};

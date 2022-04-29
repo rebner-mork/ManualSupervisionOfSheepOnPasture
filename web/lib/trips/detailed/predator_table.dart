@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web/trips/detailed/registration_details/predator_registration_details.dart';
 import 'package:web/utils/styles.dart';
-import 'package:web/utils/constants.dart' as constants;
 
 class PredatorTable extends StatefulWidget {
   const PredatorTable({required this.predatorData, Key? key}) : super(key: key);
@@ -49,7 +48,7 @@ class _PredatorTableState extends State<PredatorTable> {
               Padding(
                   padding: tableCellPadding,
                   child: Text(
-                    '${constants.predatorEnglishKeyToNorwegianGui[registration['species']]}',
+                    '${registration['species']}',
                     style: tableRowTextStyle,
                     textAlign: TextAlign.center,
                   )),

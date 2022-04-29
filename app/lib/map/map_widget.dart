@@ -233,6 +233,7 @@ class _MapState extends State<MapWidget> {
                     if (widget.onRegistrationComplete != null) {
                       widget.onRegistrationComplete!(data);
                     }
+
                     setState(() {
                       LatLng devicePosition = LatLng(
                           (data['devicePosition']!

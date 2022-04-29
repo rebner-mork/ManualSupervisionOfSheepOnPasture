@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:web/trips/detailed/registration_details/timestamp_widget.dart';
-import 'package:web/utils/constants.dart';
 import 'package:web/utils/styles.dart';
 
 class PredatorRegistrationDetails extends StatelessWidget {
@@ -33,9 +32,7 @@ class PredatorRegistrationDetails extends StatelessWidget {
                     ),
                     Padding(
                         padding: tableCellPadding,
-                        child: Text(
-                            predatorEnglishKeyToNorwegianGui[
-                                registration['species']]!,
+                        child: Text(registration['species']!,
                             style: registrationDetailsDescriptionTextStyle))
                   ]),
                   TableRow(children: [

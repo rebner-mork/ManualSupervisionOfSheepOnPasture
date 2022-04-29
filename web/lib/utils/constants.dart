@@ -74,10 +74,3 @@ final Map<Color, String> dialogColorToString = <Color, String>{
   const Color(0xFFE91E63): 'rosa',
   const Color(0x00000000): '\'ingen\''
 };
-
-final Map<String, String> predatorEnglishKeyToNorwegianGui = <String, String>{
-  "bear": "Bjørn",
-  "lynx": "Gaupe",
-  "wolf": "Ulv",
-  "wolverine": "Jerv",
-};
