@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web/trips/detailed/registration_details/injured_sheep_registration_details.dart';
 import 'package:web/utils/styles.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 
@@ -95,31 +96,9 @@ class InjuredSheepTable extends StatelessWidget {
                       onPressed: () {
                         showDialog(
                             context: context,
-                            builder: (BuildContext context) => SimpleDialog(
-                                  title: const Text(
-                                    'Saueskade',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  titleTextStyle: const TextStyle(fontSize: 26),
-                                  contentPadding: const EdgeInsets.fromLTRB(
-                                      0.0, 1.0, 0.0, 16.0),
-                                  children: [
-                                    Text(
-                                        '${eartag[0]}-${eartag[1]}\n${eartag[2]}-${eartag[3]}',
-                                        style: const TextStyle(fontSize: 18),
-                                        textAlign: TextAlign.center),
-                                    Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 15, vertical: 15),
-                                        child: Text(
-                                            (registration['note'] as String)
-                                                    .isEmpty
-                                                ? 'Ingen notat.'
-                                                : '${registration['note']}',
-                                            style:
-                                                const TextStyle(fontSize: 16))),
-                                  ],
-                                ));
+                            builder: (BuildContext context) =>
+                                InjuredSheepRegistrationDetails(
+                                    registration: registration));
                       }))
             ],
           );

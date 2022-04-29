@@ -48,7 +48,7 @@ void main() {
     expect(find.text('Avstandsregistrering sau'), findsOneWidget);
 
     expect(find.text('Antall'), findsOneWidget);
-    expect(find.text('Sauer'), findsOneWidget);
+    expect(find.text('Sauer & lam'), findsOneWidget);
     expect(find.text('Lam'), findsOneWidget);
     expect(find.text('Hvite'), findsOneWidget);
     expect(find.text('Svarte'), findsOneWidget);
@@ -84,7 +84,7 @@ void main() {
     expect(find.text('Nærregistrering sau'), findsOneWidget);
 
     expect(find.text('Antall'), findsOneWidget);
-    expect(find.text('Sauer'), findsOneWidget);
+    expect(find.text('Sauer & lam'), findsOneWidget);
     expect(find.text('Lam'), findsOneWidget);
     expect(find.text('Hvite'), findsOneWidget);
     expect(find.text('Svarte'), findsOneWidget);
@@ -93,7 +93,7 @@ void main() {
 
     expect(find.text('Slips'), findsOneWidget);
     expect(find.byIcon(FontAwesome5.black_tie), findsWidgets);
-    expect(find.text('Uten'), findsOneWidget);
+    expect(find.text('Ingen'), findsOneWidget);
     expect(find.text('Gule'), findsOneWidget);
 
     expect(find.text('Øremerker'), findsOneWidget);

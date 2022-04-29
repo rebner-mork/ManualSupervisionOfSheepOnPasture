@@ -138,7 +138,8 @@ class _MapState extends State<MapWidget> {
                                 [devicePosition, targetPosition]));
                             registrationMarkers.add(map_utils.getMapMarker(
                                 position: targetPosition,
-                                type: RegistrationType.sheep));
+                                type: RegistrationType.sheep,
+                                registration: data));
                           });
                         }
                       },
@@ -176,7 +177,8 @@ class _MapState extends State<MapWidget> {
                           .getLineOfSight([devicePosition, targetPosition]));
                       registrationMarkers.add(map_utils.getMapMarker(
                           position: targetPosition,
-                          type: RegistrationType.injury));
+                          type: RegistrationType.injury,
+                          registration: data));
                     });
                   },
                   onWillPop: () {
@@ -213,7 +215,8 @@ class _MapState extends State<MapWidget> {
                           .getLineOfSight([devicePosition, targetPosition]));
                       registrationMarkers.add(map_utils.getMapMarker(
                           position: targetPosition,
-                          type: RegistrationType.cadaver));
+                          type: RegistrationType.cadaver,
+                          registration: data));
                     });
                   },
                   onWillPop: () {
@@ -236,6 +239,7 @@ class _MapState extends State<MapWidget> {
                     if (widget.onRegistrationComplete != null) {
                       widget.onRegistrationComplete!(data);
                     }
+
                     setState(() {
                       LatLng devicePosition = LatLng(
                           (data['devicePosition']!
@@ -247,7 +251,8 @@ class _MapState extends State<MapWidget> {
                           .getLineOfSight([devicePosition, targetPosition]));
                       registrationMarkers.add(map_utils.getMapMarker(
                           position: targetPosition,
-                          type: RegistrationType.predator));
+                          type: RegistrationType.predator,
+                          registration: data));
                     });
                   },
                   onWillPop: () {
@@ -280,6 +285,7 @@ class _MapState extends State<MapWidget> {
                     registrationMarkers.add(map_utils.getMapMarker(
                       position: targetPosition,
                       type: RegistrationType.note,
+                      registration: data,
                     ));
                   });
                 },

@@ -36,6 +36,16 @@ final Map<String, String> colorValueToStringGui = {
   Colors.pink.value.toRadixString(16): 'Rosa'
 };
 
+final Map<String, String> colorValueStringToColorStringGuiPlural = {
+  Colors.transparent.value.toRadixString(16): 'Ingen',
+  Colors.red.value.toRadixString(16): 'Røde',
+  Colors.blue.value.toRadixString(16): 'Blå',
+  Colors.yellow.value.toRadixString(16): 'Gule',
+  Colors.green.value.toRadixString(16): 'Grønne',
+  Colors.orange.value.toRadixString(16): 'Oransje',
+  Colors.pink.value.toRadixString(16): 'Rosa'
+};
+
 final Map<String, Color> colorStringToColor = {
   Colors.transparent.value.toRadixString(16): Colors.transparent,
   Colors.red.value.toRadixString(16): Colors.red,
@@ -63,11 +73,4 @@ final Map<Color, String> dialogColorToString = <Color, String>{
   const Color(0xFFFF9800): 'oransje',
   const Color(0xFFE91E63): 'rosa',
   const Color(0x00000000): '\'ingen\''
-};
-
-final Map<String, String> predatorEnglishKeyToNorwegianGui = <String, String>{
-  "bear": "Bjørn",
-  "lynx": "Gaupe",
-  "wolf": "Ulv",
-  "wolverine": "Jerv",
 };

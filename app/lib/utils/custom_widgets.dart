@@ -25,9 +25,12 @@ class AppbarBodySpacer extends StatelessWidget {
 const double defaultIconSize = 30;
 
 class LoadingData extends StatefulWidget {
-  const LoadingData({this.text = 'Laster inn...', Key? key}) : super(key: key);
+  const LoadingData(
+      {this.text = 'Laster inn...', this.smallCircleOnly = false, Key? key})
+      : super(key: key);
 
   final String text;
+  final bool smallCircleOnly;
 
   @override
   State<LoadingData> createState() => _LoadingDataState();
@@ -63,20 +66,28 @@ class _LoadingDataState extends State<LoadingData>
   @override
   Widget build(BuildContext context) {
     return Center(
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      SizedBox(
-          height: 48,
-          width: 48,
-          child: CircularProgressIndicator(
-            valueColor: _colorTween,
-            strokeWidth: 6,
-          )),
-      const SizedBox(height: 10),
-      Text(
-        widget.text,
-        style: feedbackTextStyle,
-      )
-    ]));
+        child: widget.smallCircleOnly
+            ? SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                  valueColor: _colorTween,
+                  strokeWidth: 2.5,
+                ))
+            : Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                SizedBox(
+                    height: 48,
+                    width: 48,
+                    child: CircularProgressIndicator(
+                      valueColor: _colorTween,
+                      strokeWidth: 6,
+                    )),
+                const SizedBox(height: 10),
+                Text(
+                  widget.text,
+                  style: feedbackTextStyle,
+                )
+              ]));
   }
 }
 
@@ -88,6 +99,8 @@ class InputRow extends StatelessWidget {
       required this.color,
       this.iconSize = defaultIconSize,
       this.scrollController,
+      this.isFieldValid = true,
+      this.onChanged,
       this.globalKey,
       this.ownKey,
       Key? key})
@@ -99,6 +112,8 @@ class InputRow extends StatelessWidget {
   final Color color;
   final double iconSize;
   final ScrollController? scrollController;
+  final bool isFieldValid;
+  final VoidCallback? onChanged;
   final GlobalKey? globalKey;
   final GlobalKey? ownKey;
 
@@ -145,10 +160,27 @@ class InputRow extends StatelessWidget {
                             scrollController: scrollController!,
                             key: globalKey!),
                     },
-                    decoration: const InputDecoration(
+                    onChanged: (_) => {
+                      if (onChanged != null) {onChanged!()}
+                    },
+                    decoration: InputDecoration(
+                      focusedBorder: OutlineInputBorder(
+                          gapPadding: 4.0,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(4.0)),
+                          borderSide: isFieldValid
+                              ? const BorderSide(color: Colors.grey)
+                              : const BorderSide(color: Colors.red)),
+                      enabledBorder: OutlineInputBorder(
+                          gapPadding: 4.0,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(4.0)),
+                          borderSide: isFieldValid
+                              ? const BorderSide(color: Colors.grey)
+                              : const BorderSide(color: Colors.red)),
                       hintText: '0',
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                      border: const OutlineInputBorder(),
+                      contentPadding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
                     ),
                   )))
         ]);

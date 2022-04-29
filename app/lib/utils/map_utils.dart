@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:io';
+import 'package:app/registration_details/registration_details.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
@@ -62,11 +63,11 @@ Marker getDevicePositionMarker(LatLng pos) {
 }
 
 Marker getMapMarker(
-    {required LatLng position,
+    {required Map<String, dynamic> registration,
+    required LatLng position,
     required RegistrationType type,
     SheepMarkerColor color = SheepMarkerColor.green}) {
   const double size = 50;
-
   final AssetImage image;
 
   switch (type) {
@@ -95,6 +96,9 @@ Marker getMapMarker(
     case RegistrationType.note:
       image = const AssetImage('images/note_marker.png');
       break;
+    default:
+      image = const AssetImage('images/sheep_marker_green.png');
+      break;
   }
 
   return Marker(
@@ -104,11 +108,17 @@ Marker getMapMarker(
       height: size,
       width: size,
       rotate: true,
-      builder: (context) => Image(
+      builder: (context) => GestureDetector(
+          onTap: () => showDialog(
+              context: context,
+              builder: (context) =>
+                  RegistrationDetails(registration: registration)),
+          child: Image(
             image: image,
             width: size,
             height: size,
-          ));
+            filterQuality: FilterQuality.medium,
+          )));
 }
 
 Polyline getLineOfSight(List<LatLng> points) {

@@ -3,6 +3,7 @@ import 'package:app/map/map_widget.dart';
 import 'package:app/registration_options.dart';
 import 'package:app/trip/end_trip_dialog.dart';
 import 'package:app/trip/trip_data_manager.dart';
+import 'package:app/trip/trip_overview.dart';
 import 'package:app/utils/constants.dart';
 import 'package:app/utils/custom_widgets.dart';
 import 'package:app/utils/other.dart';
@@ -13,6 +14,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import '../utils/map_utils.dart' as map_utils;
 import 'package:app/widgets/settings_dialog.dart';
+import 'package:app/trip/start_trip_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage(
@@ -57,7 +59,6 @@ class _MainPageState extends State<MainPage> {
 
   late LatLng _deviceStartPosition;
 
-  int _sheepAmount = 0;
   double iconSize = 42;
   bool _isLoading = true;
 
@@ -67,9 +68,20 @@ class _MainPageState extends State<MainPage> {
   int selectPositionTextTimerDuration = 1200; // ms
   bool _isSelectPositionTextVisible = true;
 
+  int _registeredTotalSheepAmount = 0;
+  int _registeredLambAmount = 0;
+  int _registeredInjuryAmount = 0;
+  int _registeredCadaverAmount = 0;
+  int _registeredPredatorAmount = 0;
+  late Map<String, int> _registeredEartags;
+  late Map<String, int> _registeredTies;
+
   @override
   void initState() {
     super.initState();
+
+    _registeredEartags = widget.eartags.map((key, value) => MapEntry(key, 0));
+    _registeredTies = widget.ties.map((key, value) => MapEntry(key, 0));
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _setDeviceStartPosition();
@@ -111,19 +123,23 @@ class _MainPageState extends State<MainPage> {
 
   Future<bool> _endTrip(BuildContext context) async {
     bool isConnected = await isConnectedToInternet();
-    await showEndTripDialog(context, isConnected).then((isFinished) {
-      if (isFinished) {
-        if (isConnected) {
-          _tripData.post();
-        } else {
-          _tripData.archive();
+    await showEndTripDialog(context, isConnected).then((bool? isFinished) {
+      if (isFinished == null) {
+        Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
+      } else {
+        if (isFinished) {
+          if (isConnected) {
+            _tripData.post();
+          } else {
+            _tripData.archive();
+          }
+          if (widget.onCompleted != null) {
+            widget.onCompleted!();
+          }
+          Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
         }
-        if (widget.onCompleted != null) {
-          widget.onCompleted!();
-        }
-        Navigator.pop(context);
       }
-      return isFinished;
+      return isFinished ?? true;
     });
     return false;
   }
@@ -136,6 +152,60 @@ class _MainPageState extends State<MainPage> {
         _selectPositionTextTimer!.cancel();
       }
     });
+  }
+
+  void _onRegistrationComplete(Map<String, Object> data) {
+    _tripData.registrations.add(data);
+
+    switch (_selectedRegistrationType) {
+      case RegistrationType.sheep:
+        _onSheepRegistrationComplete(data);
+        break;
+      case RegistrationType.injury:
+        setState(() {
+          _registeredTotalSheepAmount += 1;
+          _registeredInjuryAmount += 1;
+        });
+        break;
+      case RegistrationType.cadaver:
+        setState(() {
+          _registeredTotalSheepAmount += 1;
+          _registeredCadaverAmount += 1;
+        });
+        break;
+      case RegistrationType.predator:
+        setState(() {
+          _registeredPredatorAmount += 1;
+        });
+        break;
+      case RegistrationType.note:
+        break;
+    }
+
+    _cancelSelectPositionMode();
+  }
+
+  void _onSheepRegistrationComplete(Map<String, Object> data) {
+    int sheepAmountRegistered = data['sheep']! as int;
+    _registeredLambAmount += data['lambs'] as int;
+
+    if (data.containsKey(
+        '${colorValueStringToColorString[_registeredEartags.keys.first]}Ear')) {
+      for (String eartagColor in _registeredEartags.keys) {
+        _registeredEartags[eartagColor] = _registeredEartags[eartagColor]! +
+            (data['${colorValueStringToColorString[eartagColor]}Ear'] as int);
+      }
+
+      for (String tieColor in _registeredTies.keys) {
+        _registeredTies[tieColor] = _registeredTies[tieColor]! +
+            (data['${colorValueStringToColorString[tieColor]}Tie'] as int);
+      }
+    }
+    if (sheepAmountRegistered > 0) {
+      setState(() {
+        _registeredTotalSheepAmount += sheepAmountRegistered;
+      });
+    }
   }
 
   @override
@@ -156,6 +226,40 @@ class _MainPageState extends State<MainPage> {
                   return _backButtonPressed(context);
                 },
                 child: Scaffold(
+                    drawer: Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Padding(
+                            padding: EdgeInsets.only(
+                                bottom:
+                                    MediaQuery.of(context).viewPadding.bottom +
+                                        50 + // height of CircularButton
+                                        2 * buttonInset),
+                            child: ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                    topRight: Radius.circular(30),
+                                    bottomRight: Radius.circular(30)),
+                                child: SizedBox(
+                                    width: 300,
+                                    height: MediaQuery.of(context).size.height -
+                                        MediaQuery.of(context)
+                                            .viewPadding
+                                            .bottom -
+                                        MediaQuery.of(context).viewPadding.top -
+                                        2 * (50 + 2 * buttonInset),
+                                    child: Drawer(
+                                        child: TripOverview(
+                                            totalSheepAmount:
+                                                _registeredTotalSheepAmount,
+                                            lambAmount: _registeredLambAmount,
+                                            registeredEartags:
+                                                _registeredEartags,
+                                            registeredTies: _registeredTies,
+                                            injuredAmount:
+                                                _registeredInjuryAmount,
+                                            cadaverAmount:
+                                                _registeredCadaverAmount,
+                                            predatorAmount:
+                                                _registeredPredatorAmount)))))),
                     endDrawer: Align(
                         alignment: Alignment.bottomRight,
                         child: Padding(
@@ -187,11 +291,11 @@ class _MainPageState extends State<MainPage> {
                       ValueListenableBuilder<bool>(
                           valueListenable: widget.ongoingDialog,
                           builder: (context, value, child) => MapWidget(
+                                farmNumber: widget.farmNumber,
                                 northWest: widget.northWest,
                                 southEast: widget.southEast,
                                 stt: widget.speechToText,
                                 ongoingDialog: widget.ongoingDialog,
-                                farmNumber: widget.farmNumber,
                                 eartags: widget.eartags,
                                 ties: widget.ties,
                                 deviceStartPosition: _deviceStartPosition,
@@ -200,27 +304,27 @@ class _MainPageState extends State<MainPage> {
                                     _cancelSelectPositionMode,
                                 onRegistrationComplete:
                                     (Map<String, Object> data) {
-                                  _tripData.registrations.add(data);
                                   switch (_selectedRegistrationType) {
                                     case RegistrationType.sheep:
                                       int sheepAmountRegistered =
                                           data['sheep']! as int;
                                       if (sheepAmountRegistered > 0) {
                                         setState(() {
-                                          _sheepAmount += sheepAmountRegistered;
+                                          _registeredTotalSheepAmount +=
+                                              sheepAmountRegistered;
                                         });
                                       }
                                       break;
                                     case RegistrationType.injury:
                                       setState(() {
-                                        _sheepAmount += 1;
+                                        _registeredTotalSheepAmount += 1;
                                       });
                                       break;
                                     default:
                                       break;
                                   }
 
-                                  _cancelSelectPositionMode();
+                                  _onRegistrationComplete(data);
                                 },
                                 onNewPosition: (position) =>
                                     _tripData.track.add(position),
@@ -281,21 +385,28 @@ class _MainPageState extends State<MainPage> {
                               },
                             )),
                       if (!_inSelectPositionMode)
-                        Positioned(
-                          bottom: buttonInset +
-                              MediaQuery.of(context).viewPadding.bottom,
-                          left: buttonInset,
-                          child: CircularButton(
-                            child: Sheepometer(
-                                sheepAmount: _sheepAmount, iconSize: iconSize),
-                            onPressed: () {},
-                            width: 62 +
-                                textSize(
-                                        text: _sheepAmount.toString(),
-                                        style: circularButtonTextStyle)
-                                    .width,
-                          ),
-                        ),
+                        Builder(
+                            builder: (context) => Positioned(
+                                  bottom: buttonInset +
+                                      MediaQuery.of(context).viewPadding.bottom,
+                                  left: buttonInset,
+                                  child: CircularButton(
+                                    child: Sheepometer(
+                                        sheepAmount:
+                                            _registeredTotalSheepAmount,
+                                        iconSize: iconSize),
+                                    onPressed: () {
+                                      Scaffold.of(context).openDrawer();
+                                    },
+                                    width: 62 +
+                                        textSize(
+                                                text:
+                                                    _registeredTotalSheepAmount
+                                                        .toString(),
+                                                style: circularButtonTextStyle)
+                                            .width,
+                                  ),
+                                )),
                       if (!_inSelectPositionMode)
                         Builder(
                             builder: (context) => Positioned(

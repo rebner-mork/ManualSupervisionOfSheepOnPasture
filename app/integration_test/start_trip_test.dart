@@ -115,7 +115,7 @@ void main() async {
       expect(find.text('Laster inn...'), findsNothing);
       expect(
           find.text(
-              'Du er ikke registrert som oppsynspersonell hos noen gård. Ta kontakt med sauebonde.'),
+              'Du er ikke registrert som oppsynsperson,\nta kontakt med sauebonde.'),
           findsOneWidget);
     });
   });

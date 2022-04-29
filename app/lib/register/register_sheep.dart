@@ -66,13 +66,22 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
   final List<int> firstHeadlineFieldIndexes = [distanceSheepQuestions.length];
   int currentHeadlineIndex = 0;
 
-  final _textControllers = <String, TextEditingController>{
+  final Map<String, TextEditingController> _textControllers =
+      <String, TextEditingController>{
     'sheep': TextEditingController(),
     'lambs': TextEditingController(),
     'white': TextEditingController(),
     'brown': TextEditingController(),
     'black': TextEditingController(),
     'blackHead': TextEditingController(),
+  };
+
+  final Map<String, bool> _isFieldValid = <String, bool>{
+    'sheep': true,
+    'lambs': true,
+    'colors': true,
+    'eartags': true,
+    'ties': true
   };
 
   late LatLng _devicePosition;
@@ -86,6 +95,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
   List<String> colors = colorsFilter.keys.toList();
 
   bool _isLoading = true;
+  String _validatorText = '';
 
   @override
   void initState() {
@@ -122,6 +132,8 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
         questionContexts.add(QuestionContext.numbers);
         _textControllers['${colorValueStringToColorString[eartagColor]}Ear'] =
             TextEditingController();
+        _isFieldValid['${colorValueStringToColorString[eartagColor]}Ear'] =
+            true;
       }
 
       firstHeadlineFieldIndexes.add(questions.length);
@@ -131,6 +143,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
         questionContexts.add(QuestionContext.numbers);
         _textControllers['${colorValueStringToColorString[tieColor]}Tie'] =
             TextEditingController();
+        _isFieldValid['${colorValueStringToColorString[tieColor]}Tie'] = true;
       }
     }
 
@@ -203,7 +216,9 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
           await _speak(response);
           await _listen(questionContexts[questionIndex]);
         } else {
-          await _speak(spokenWord, language: 'en-US');
+          if (Provider.of<SettingsProvider>(context, listen: false).readBack) {
+            await _speak(spokenWord, language: 'en-US');
+          }
 
           setState(() {
             _textControllers.values.elementAt(questionIndex).text = spokenWord;
@@ -226,6 +241,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
             setState(() {
               widget.ongoingDialog.value = false;
             });
+            _validateInput();
           }
         }
       }
@@ -253,20 +269,140 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
 
   @override
   void register() {
-    Map<String, Object> data = {
-      ...getMetaRegistrationData(
-          type: 'sheep',
-          devicePosition: _devicePosition,
-          registrationPosition: widget.sheepPosition),
-      ...gatherRegisteredData(_textControllers)
-    };
+    if (_validateInput()) {
+      Map<String, Object> data = {
+        ...getMetaRegistrationData(
+            type: 'sheep',
+            devicePosition: _devicePosition,
+            registrationPosition: widget.sheepPosition),
+        ...gatherRegisteredData(_textControllers)
+      };
 
-    if (widget.onCompletedSuccessfully != null) {
-      widget.onCompletedSuccessfully!(data);
+      if (widget.onCompletedSuccessfully != null) {
+        widget.onCompletedSuccessfully!(data);
+      }
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
     }
-    if (Navigator.canPop(context)) {
-      Navigator.pop(context);
+  }
+
+  bool _validateInput() {
+    Map<String, int> registeredData = gatherRegisteredData(_textControllers);
+
+    bool returnValue = true;
+
+    // Total sheepamount vs. lambamount
+    if (registeredData['lambs']! > registeredData['sheep']!) {
+      setState(() {
+        _isFieldValid['sheep'] = false;
+        _isFieldValid['lambs'] = false;
+        _validatorText = 'Det er flere lam enn sauer & lam';
+      });
+      returnValue = false;
+    } else if (_isFieldValid['lambs'] == false) {
+      setState(() {
+        _isFieldValid['lambs'] = true;
+        if (returnValue) {
+          _isFieldValid['sheep'] = true;
+        }
+      });
     }
+
+    // Total sheepamount vs. sum of colors
+    if (registeredData['white']! +
+            registeredData['brown']! +
+            registeredData['black']! +
+            registeredData['blackHead']! >
+        registeredData['sheep']!) {
+      setState(() {
+        _isFieldValid['colors'] = false;
+        _isFieldValid['sheep'] = false;
+        _validatorText = 'Summen av ullfarger er høyere enn antall sauer & lam';
+      });
+      returnValue = false;
+    } else if (_isFieldValid['colors'] == false) {
+      setState(() {
+        _isFieldValid['colors'] = true;
+        if (returnValue) {
+          _isFieldValid['sheep'] = true;
+        }
+      });
+    }
+
+    if (_isShortDistance) {
+      int eartagSum = widget.eartags.keys
+          .map((String eartagColor) => _textControllers[
+                      '${colorValueStringToColorString[eartagColor]}Ear']!
+                  .text
+                  .isNotEmpty
+              ? int.parse(_textControllers[
+                      '${colorValueStringToColorString[eartagColor]}Ear']!
+                  .text)
+              : 0)
+          .toList()
+          .reduce((value, element) => value + element);
+
+      if (eartagSum > registeredData['sheep']!) {
+        setState(() {
+          _isFieldValid['eartags'] = false;
+          _isFieldValid['sheep'] = false;
+          _validatorText = 'Det er flere øremerker enn sauer & lam';
+        });
+        returnValue = false;
+      } else if (_isFieldValid['eartags'] == false) {
+        setState(() {
+          _isFieldValid['eartags'] = true;
+          if (returnValue) {
+            _isFieldValid['sheep'] = true;
+          }
+        });
+      }
+
+      int tieSum = widget.ties.keys
+          .map((String tieColor) =>
+              _textControllers['${colorValueStringToColorString[tieColor]}Tie']!
+                      .text
+                      .isNotEmpty
+                  ? int.parse(_textControllers[
+                          '${colorValueStringToColorString[tieColor]}Tie']!
+                      .text)
+                  : 0)
+          .toList()
+          .reduce((value, element) => value + element);
+
+      if (tieSum > registeredData['sheep']!) {
+        setState(() {
+          _isFieldValid['ties'] = false;
+          _isFieldValid['sheep'] = false;
+          _validatorText = 'Det er flere slips enn sauer & lam';
+        });
+        returnValue = false;
+      } else if (_isFieldValid['ties'] == false) {
+        setState(() {
+          _isFieldValid['ties'] = true;
+          if (returnValue) {
+            _isFieldValid['sheep'] = true;
+          }
+        });
+      }
+    }
+    bool? allFieldsValid = _isFieldValid.keys.map((String key) {
+      if (!_isFieldValid[key]!) {
+        return false;
+      }
+    }).first;
+
+    setState(() {
+      if (allFieldsValid == null) {
+        _isFieldValid['sheep'] = true;
+        _validatorText = '';
+      } else {
+        _isFieldValid['sheep'] = false;
+      }
+    });
+
+    return returnValue;
   }
 
   Future<void> _backButtonPressed() async {
@@ -314,11 +450,13 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
             color: eartagColor == '0'
                 ? Colors.grey
                 : colorStringToColor[eartagColor]!,
+            isFieldValid: _isFieldValid['eartags']!,
+            onChanged: _validateInput,
             scrollController: widget.ties.isNotEmpty &&
                     eartagColor == widget.eartags.keys.last
                 ? scrollController
                 : null,
-            key: widget.ties.isNotEmpty &&
+            globalKey: widget.ties.isNotEmpty &&
                     eartagColor == widget.eartags.keys.last
                 ? firstHeadlineFieldKeys[2]
                 : null));
@@ -331,16 +469,17 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
           headline: 'Slips', globalKey: firstHeadlineFieldKeys[2]));
       for (String tieColor in widget.ties.keys) {
         ties.add(InputRow(
-            text: colorValueStringToColorStringGuiPlural[tieColor]!,
-            controller: _textControllers[
-                '${colorValueStringToColorString[tieColor]}Tie']!,
-            iconData: tieColor == '0' ? Icons.close : FontAwesome5.black_tie,
-            color:
-                tieColor == '0' ? Colors.grey : colorStringToColor[tieColor]!));
+          text: colorValueStringToColorStringGuiPlural[tieColor]!,
+          controller: _textControllers[
+              '${colorValueStringToColorString[tieColor]}Tie']!,
+          iconData: tieColor == '0' ? Icons.close : FontAwesome5.black_tie,
+          color: tieColor == '0' ? Colors.grey : colorStringToColor[tieColor]!,
+          isFieldValid: _isFieldValid['ties']!,
+          onChanged: _validateInput,
+        ));
         ties.add(const InputFieldSpacer());
       }
     }
-
     return [...eartags, ...ties];
   }
 
@@ -366,58 +505,74 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
                 ),
                 body: _isLoading
                     ? const LoadingData()
-                    : SingleChildScrollView(
-                        controller: scrollController,
-                        child: Center(
-                            child: Column(children: [
-                          const SizedBox(height: 10),
-                          const InputDividerWithHeadline(headline: 'Antall'),
-                          InputRow(
-                              text: 'Sauer & lam',
-                              controller: _textControllers['sheep']!,
-                              iconData: RpgAwesome.sheep,
-                              color: Colors.grey),
-                          const InputFieldSpacer(),
-                          InputRow(
-                              text: 'Lam',
-                              controller: _textControllers['lambs']!,
-                              iconData: RpgAwesome.sheep,
-                              color: Colors.grey,
-                              iconSize: 24),
-                          const InputFieldSpacer(),
-                          InputRow(
-                              text: 'Hvite',
-                              controller: _textControllers['white']!,
-                              iconData: RpgAwesome.sheep,
-                              color: Colors.white,
-                              scrollController: scrollController,
-                              key: firstHeadlineFieldKeys[0],
-                              ownKey: firstHeadlineFieldKeys[0]),
-                          const InputFieldSpacer(),
-                          InputRow(
-                              text: 'Brune',
-                              controller: _textControllers['brown']!,
-                              iconData: RpgAwesome.sheep,
-                              color: Colors.brown),
-                          const InputFieldSpacer(),
-                          InputRow(
-                            text: 'Svarte',
-                            controller: _textControllers['black']!,
-                            iconData: RpgAwesome.sheep,
-                            color: Colors.black,
-                          ),
-                          const InputFieldSpacer(),
-                          InputRow(
-                              text: 'Svart hode',
-                              controller: _textControllers['blackHead']!,
-                              iconData: RpgAwesome.sheep,
-                              color: Colors.black,
-                              scrollController: scrollController,
-                              key: firstHeadlineFieldKeys[1]),
-                          if (_isShortDistance) const InputFieldSpacer(),
-                          if (_isShortDistance) ..._shortDistance(),
-                          const SizedBox(height: 80),
-                        ]))),
+                    : Stack(children: [
+                        SingleChildScrollView(
+                            controller: scrollController,
+                            child: Center(
+                                child: Column(children: [
+                              const SizedBox(height: 10),
+                              const InputDividerWithHeadline(
+                                  headline: 'Antall'),
+                              InputRow(
+                                  text: 'Sauer & lam',
+                                  controller: _textControllers['sheep']!,
+                                  iconData: RpgAwesome.sheep,
+                                  color: Colors.grey,
+                                  onChanged: _validateInput,
+                                  isFieldValid: _isFieldValid['sheep']!),
+                              const InputFieldSpacer(),
+                              InputRow(
+                                  text: 'Lam',
+                                  controller: _textControllers['lambs']!,
+                                  iconData: RpgAwesome.sheep,
+                                  color: Colors.grey,
+                                  iconSize: 24,
+                                  onChanged: _validateInput,
+                                  isFieldValid: _isFieldValid['lambs']!),
+                              const InputFieldSpacer(),
+                              InputRow(
+                                  text: 'Hvite',
+                                  controller: _textControllers['white']!,
+                                  iconData: RpgAwesome.sheep,
+                                  color: Colors.white,
+                                  scrollController: scrollController,
+                                  globalKey: firstHeadlineFieldKeys[0],
+                                  ownKey: firstHeadlineFieldKeys[0],
+                                  onChanged: _validateInput,
+                                  isFieldValid: _isFieldValid['colors']!),
+                              const InputFieldSpacer(),
+                              InputRow(
+                                  text: 'Brune',
+                                  controller: _textControllers['brown']!,
+                                  iconData: RpgAwesome.sheep,
+                                  color: Colors.brown,
+                                  onChanged: _validateInput,
+                                  isFieldValid: _isFieldValid['colors']!),
+                              const InputFieldSpacer(),
+                              InputRow(
+                                  text: 'Svarte',
+                                  controller: _textControllers['black']!,
+                                  iconData: RpgAwesome.sheep,
+                                  color: Colors.black,
+                                  onChanged: _validateInput,
+                                  isFieldValid: _isFieldValid['colors']!),
+                              const InputFieldSpacer(),
+                              InputRow(
+                                  text: 'Svart hode',
+                                  controller: _textControllers['blackHead']!,
+                                  isFieldValid: _isFieldValid['colors']!,
+                                  iconData: RpgAwesome.sheep,
+                                  color: Colors.black,
+                                  onChanged: _validateInput,
+                                  scrollController: scrollController,
+                                  globalKey: firstHeadlineFieldKeys[1]),
+                              if (_isShortDistance) const InputFieldSpacer(),
+                              if (_isShortDistance) ..._shortDistance(),
+                              const SizedBox(height: 80),
+                            ]))),
+                        if (_validatorText.isNotEmpty)
+                          FeedbackMessage(text: _validatorText)
+                      ]),
                 floatingActionButton: !_isLoading && !widget.ongoingDialog.value
                     ? Row(
                         mainAxisAlignment:
@@ -445,5 +600,32 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
                     : null,
                 floatingActionButtonLocation:
                     FloatingActionButtonLocation.centerFloat)));
+  }
+}
+
+class FeedbackMessage extends StatelessWidget {
+  const FeedbackMessage({required this.text, Key? key}) : super(key: key);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.only(top: 5),
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+                constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width - 10),
+                decoration: const BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 7, horizontal: 8),
+                    child: Text(text,
+                        style:
+                            const TextStyle(fontSize: 18, color: Colors.white),
+                        textAlign: TextAlign.center)))));
   }
 }

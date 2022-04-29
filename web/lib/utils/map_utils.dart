@@ -3,18 +3,20 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:math';
 
+import 'package:web/trips/detailed/registration_details/registration_details.dart';
+
 abstract class MapProvider {
   static const String urlTemplate =
       "https://opencache{s}.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}";
   static final List<String> subdomains = ['', '2', '3'];
 }
 
-Marker getSheepMarker({required LatLng position, required String type}) {
+Marker getMarker(Map<String, dynamic> registration) {
   const double size = 50;
 
   final AssetImage image;
 
-  switch (type) {
+  switch (registration['type']) {
     case 'injuredSheep':
       image = const AssetImage('images/sheep_marker_injury.png');
       break;
@@ -33,18 +35,24 @@ Marker getSheepMarker({required LatLng position, required String type}) {
   }
 
   return Marker(
-      point: position,
+      point: LatLng(registration['registrationPosition']['latitude']! as double,
+          registration['registrationPosition']['longitude']! as double),
       anchorPos: AnchorPos.align(AnchorAlign.top),
       rotateAlignment: Alignment.bottomCenter,
       height: size,
       width: size,
       rotate: true,
-      builder: (context) => Image(
+      builder: (context) => GestureDetector(
+          onTap: () => showDialog(
+              context: context,
+              builder: (context) =>
+                  RegistrationDetails(registration: registration)),
+          child: Image(
             image: image,
             width: size,
             height: size,
             filterQuality: FilterQuality.medium,
-          ));
+          )));
 }
 
 Marker getCornerMarker({required LatLng position, required bool upperLeft}) {

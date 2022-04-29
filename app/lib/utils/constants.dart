@@ -5,11 +5,12 @@ import 'package:path_provider/path_provider.dart';
 import 'package:camera/camera.dart';
 
 abstract class OfflineZoomLevels {
-  static double min = 16;
+  static double min = 12;
   static double max = 17;
 }
 
 late final String applicationDocumentDirectoryPath;
+late final String settingsFilePath;
 late final String offlineFarmsFilePath;
 
 late final CameraDescription deviceCamera;
@@ -19,9 +20,30 @@ Future<void> setConstants() async {
   applicationDocumentDirectoryPath = dir.path;
   offlineFarmsFilePath = '$applicationDocumentDirectoryPath/farms.json';
 
+  settingsFilePath = '$applicationDocumentDirectoryPath/settings.json';
+
   List<CameraDescription> cameras = await availableCameras();
   deviceCamera = cameras.first;
 }
+
+final Map<String, String> possibleTieColorStringToKey = {
+  Colors.red.value.toRadixString(16): 'redTie',
+  Colors.blue.value.toRadixString(16): 'blueTie',
+  Colors.yellow.value.toRadixString(16): 'yellowTie',
+  Colors.green.value.toRadixString(16): 'greenTie',
+  Colors.orange.value.toRadixString(16): 'orangeTie',
+  Colors.pink.value.toRadixString(16): 'pinkTie',
+  Colors.transparent.value.toRadixString(16): 'transparentTie'
+};
+
+final Map<String, String> possibleEartagColorStringToKey = {
+  Colors.red.value.toRadixString(16): 'redEar',
+  Colors.blue.value.toRadixString(16): 'blueEar',
+  Colors.yellow.value.toRadixString(16): 'yellowEar',
+  Colors.green.value.toRadixString(16): 'greenEar',
+  Colors.orange.value.toRadixString(16): 'orangeEar',
+  Colors.pink.value.toRadixString(16): 'pinkEar'
+};
 
 final Map<String, String> colorValueStringToColorString = {
   Colors.transparent.value.toRadixString(16): 'transparent',

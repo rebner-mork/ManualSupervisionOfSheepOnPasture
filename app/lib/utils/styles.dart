@@ -1,3 +1,4 @@
+import 'package:app/utils/other.dart';
 import 'package:flutter/material.dart';
 
 // Appbar
@@ -60,3 +61,28 @@ InputDecoration customInputDecoration(
               onPressed: onPressed)
           : null);
 }
+
+// Registration details
+const TextStyle dialogHeadlineTextStyle =
+    TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
+
+const double iconSize = 35;
+
+const double verticalRowSpace = 5;
+const double verticalTypeSpace = 20;
+const double horizontalRowSpace = 15;
+
+const TextStyle registrationDetailsNumberTextStyle =
+    TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
+const TextStyle registrationDetailsDescriptionTextStyle =
+    TextStyle(fontSize: 22);
+const TextStyle registrationNoteTextStyle = TextStyle(fontSize: 18);
+
+const double registrationNoteWidthWide = 350;
+
+final double doubleDigitsWidth =
+    textSize(text: '99', style: registrationDetailsNumberTextStyle).width + 5;
+final double tripleDigitsWidth =
+    textSize(text: '999', style: registrationDetailsNumberTextStyle).width + 5;
+
+const EdgeInsets tableCellPadding = EdgeInsets.all(8);

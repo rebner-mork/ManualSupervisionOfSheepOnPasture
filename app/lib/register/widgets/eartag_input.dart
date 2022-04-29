@@ -63,7 +63,7 @@ class _EartagInputState extends State<EartagInput> {
               },
               keyboardType: const TextInputType.numberWithOptions(),
               decoration: const InputDecoration(
-                  labelText: 'Gård', border: OutlineInputBorder()))),
+                  labelText: 'Gårdsnr', border: OutlineInputBorder()))),
       const SizedBox(width: 10),
       SizedBox(
           width: 90,

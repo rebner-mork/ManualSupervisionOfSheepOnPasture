@@ -49,9 +49,9 @@ class _StartTripPageState extends State<StartTripPage>
 
   final List<String> _farmNames = [];
   late String _selectedFarmName;
+  late String _farmNumber;
   late Map<String, bool>? _eartags;
   late Map<String, int>? _ties;
-  late String _farmNumber;
 
   Map<String, Map<String, Map<String, double>>> _selectedFarmMaps = {};
   String _selectedFarmMap = '';
@@ -105,6 +105,7 @@ class _StartTripPageState extends State<StartTripPage>
   }
 
   void _speechToTextError(SpeechRecognitionError error) {
+    debugPrint('error');
     setState(() {
       _ongoingDialog.value = false;
     });
@@ -214,13 +215,12 @@ class _StartTripPageState extends State<StartTripPage>
                     _noMapsDefined = false;
                     _noEartagsDefined = false;
                     _noTiesDefined = false;
-                    _readFarmMaps(_farmDocs[_farmNames.indexOf(newFarmName!)]);
                     setState(() {
-                      _selectedFarmName = newFarmName;
+                      _selectedFarmName = newFarmName!;
                       _feedbackText = '';
                       _eartagAndTieText = '';
-                      updateIcon();
                     });
+                    _readFarmMaps(_farmDocs[_farmNames.indexOf(newFarmName!)]);
                   }
                 })),
         // To fill space of download-icon in _farmMapRow (+ 10 from SizedBox)

@@ -11,8 +11,8 @@ class EndTripDialog extends StatelessWidget {
     return SimpleDialog(
         title: Text(
           isConnected
-              ? "Avslutt og last opp oppsynstur?"
-              : "Avslutt og arkiver oppsynstur på enheten?",
+              ? "Fullfør og last opp oppsynstur?"
+              : "Fullfør og arkiver oppsynstur på enheten?",
           textAlign: TextAlign.center,
         ),
         children: [
@@ -36,24 +36,37 @@ class EndTripDialog extends StatelessWidget {
           ),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             SimpleDialogOption(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
                 child: Center(
-                    child: Text("Nei, fortsett",
-                        style: cancelDialogButtonTextStyle)),
+                    child: Text('Forkast',
+                        style: TextStyle(
+                            color: Colors.red,
+                            fontSize: okDialogButtonTextStyle.fontSize,
+                            fontWeight: okDialogButtonTextStyle.fontWeight))),
+                onPressed: () => {Navigator.pop(context, null)}),
+            SimpleDialogOption(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                child: Center(
+                    child:
+                        Text("Fortsett", style: cancelDialogButtonTextStyle)),
                 onPressed: () => Navigator.pop(context, false)),
             SimpleDialogOption(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
               child: Center(
                   child: Text(
-                "Ja, avslutt",
+                "Fullfør",
                 style: okDialogButtonTextStyle,
               )),
               onPressed: () => Navigator.pop(context, true),
             ),
-          ])
+          ]),
         ]);
   }
 }
 
-Future<bool> showEndTripDialog(BuildContext context, connected) async {
+Future<bool?> showEndTripDialog(BuildContext context, connected) async {
   return await showDialog(
       context: context,
       builder: (BuildContext context) {
