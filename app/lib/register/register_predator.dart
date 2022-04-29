@@ -80,10 +80,10 @@ class _RegisterPredatorState extends State<RegisterPredator> with RegisterPage {
                               inputFieldSpacer(),
                               ToggleButtonGroup(
                                 valueLabelPairs: const {
-                                  "Bjørn": "bear",
-                                  "Ulv": "wolf",
-                                  "Jerv": "wolverine",
-                                  "Gaupe": "lynx"
+                                  "Bjørn": "Bjørn",
+                                  "Ulv": "Ulv",
+                                  "Jerv": "Jerv",
+                                  "Gaupe": "Gaupe"
                                 },
                                 preselectedItem: "Bjørn",
                                 itemsPerRow: 2,
