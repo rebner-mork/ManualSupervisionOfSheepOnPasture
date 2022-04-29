@@ -42,7 +42,8 @@ class EndTripDialog extends StatelessWidget {
                     child: Text('Forkast',
                         style: TextStyle(
                             color: Colors.red,
-                            fontSize: okDialogButtonTextStyle.fontSize))),
+                            fontSize: okDialogButtonTextStyle.fontSize,
+                            fontWeight: okDialogButtonTextStyle.fontWeight))),
                 onPressed: () => {Navigator.pop(context, null)}),
             SimpleDialogOption(
                 padding:
