@@ -156,6 +156,7 @@ class _MainPageState extends State<MainPage> {
 
   void _onRegistrationComplete(Map<String, Object> data) {
     _tripData.registrations.add(data);
+
     switch (_selectedRegistrationType) {
       case RegistrationType.sheep:
         _onSheepRegistrationComplete(data);
@@ -303,8 +304,6 @@ class _MainPageState extends State<MainPage> {
                                     _cancelSelectPositionMode,
                                 onRegistrationComplete:
                                     (Map<String, Object> data) {
-                                  _onRegistrationComplete(data);
-                                  _tripData.registrations.add(data);
                                   switch (_selectedRegistrationType) {
                                     case RegistrationType.sheep:
                                       int sheepAmountRegistered =
@@ -325,7 +324,7 @@ class _MainPageState extends State<MainPage> {
                                       break;
                                   }
 
-                                  _cancelSelectPositionMode();
+                                  _onRegistrationComplete(data);
                                 },
                                 onNewPosition: (position) =>
                                     _tripData.track.add(position),
