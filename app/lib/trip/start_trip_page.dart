@@ -144,18 +144,18 @@ class _StartTripPageState extends State<StartTripPage>
                                   : const NoFarmNoInternetInfo()
                             ]
                           : [
-                              appbarBodySpacer(),
+                              const AppbarBodySpacer(),
                               _farmNameRow(),
-                              inputFieldSpacer(),
+                              const InputFieldSpacer(),
                               if (!_noMapsDefined) _farmMapRow(),
-                              if (!_noMapsDefined) inputFieldSpacer(),
+                              if (!_noMapsDefined) const InputFieldSpacer(),
                               Text(
                                 _feedbackText,
                                 style: _noMapsDefined
                                     ? feedbackErrorTextStyle
                                     : feedbackTextStyle,
                               ),
-                              inputFieldSpacer(),
+                              const InputFieldSpacer(),
                               Visibility(
                                   visible: _downloadingMap,
                                   child: Padding(
@@ -165,9 +165,9 @@ class _StartTripPageState extends State<StartTripPage>
                                         value: _downloadProgress,
                                         minHeight: 10,
                                       ))),
-                              inputFieldSpacer(),
+                              const InputFieldSpacer(),
                               startTripButton(),
-                              inputFieldSpacer(),
+                              const InputFieldSpacer(),
                               Text(_eartagAndTieText, style: feedbackTextStyle),
                             ],
                     ),
@@ -287,12 +287,13 @@ class _StartTripPageState extends State<StartTripPage>
                       _feedbackText = 'Laster ned kart...';
                     });
                     downloadTiles(
-                        mapBounds['northWest']!,
-                        mapBounds['southEast']!,
-                        OfflineZoomLevels.min,
-                        OfflineZoomLevels.max, progressIndicator: (value) {
-                      _downloadProgress = value;
-                    }).then((_) => {
+                        northWest: mapBounds['northWest']!,
+                        southEast: mapBounds['southEast']!,
+                        minZoom: OfflineZoomLevels.min,
+                        maxZoom: OfflineZoomLevels.max,
+                        progressIndicator: (value) {
+                          _downloadProgress = value;
+                        }).then((_) => {
                           setState(() {
                             _downloadingMap = false;
                             _mapDownloaded = true;
@@ -330,8 +331,11 @@ class _StartTripPageState extends State<StartTripPage>
 
   void updateIcon() {
     setMapBounds();
-    _mapDownloaded = isEveryTileDownloaded(mapBounds['northWest']!,
-        mapBounds['southEast']!, OfflineZoomLevels.min, OfflineZoomLevels.max);
+    _mapDownloaded = isEveryTileDownloaded(
+        northWest: mapBounds['northWest']!,
+        southEast: mapBounds['southEast']!,
+        minZoom: OfflineZoomLevels.min,
+        maxZoom: OfflineZoomLevels.max);
     _mapIcon = _mapDownloaded
         ? StartTripPage.downloadedIcon
         : widget.isConnected
@@ -380,14 +384,15 @@ class _StartTripPageState extends State<StartTripPage>
         _downloadingMap = true;
       });
       await downloadTiles(
-          mapBounds['northWest']!,
-          mapBounds['southEast']!,
-          OfflineZoomLevels.min,
-          OfflineZoomLevels.max, progressIndicator: (value) {
-        setState(() {
-          _downloadProgress = value;
-        });
-      });
+          northWest: mapBounds['northWest']!,
+          southEast: mapBounds['southEast']!,
+          minZoom: OfflineZoomLevels.min,
+          maxZoom: OfflineZoomLevels.max,
+          progressIndicator: (value) {
+            setState(() {
+              _downloadProgress = value;
+            });
+          });
     }
 
     setState(() {
@@ -623,18 +628,18 @@ class NoFarmInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      appbarBodySpacer(),
-      const Text('Kan ikke starte oppsynstur', style: TextStyle(fontSize: 26)),
-      const SizedBox(height: 40),
-      const Align(
+    return Column(children: const [
+      AppbarBodySpacer(),
+      Text('Kan ikke starte oppsynstur', style: TextStyle(fontSize: 26)),
+      SizedBox(height: 40),
+      Align(
           alignment: Alignment.centerLeft,
           child: Padding(
               padding: EdgeInsets.only(left: 15),
               child: Text('Skal du gå for noen andres gård?',
                   style: TextStyle(fontSize: 22)))),
-      const SizedBox(height: 10),
-      const Align(
+      SizedBox(height: 10),
+      Align(
           alignment: Alignment.centerLeft,
           child: Padding(
               padding: EdgeInsets.only(left: 25),
@@ -642,15 +647,15 @@ class NoFarmInfo extends StatelessWidget {
                   'Du er ikke registrert som oppsynsperson,\n'
                   'ta kontakt med sauebonde.',
                   style: TextStyle(fontSize: 16)))),
-      const SizedBox(height: 30),
-      const Align(
+      SizedBox(height: 30),
+      Align(
           alignment: Alignment.centerLeft,
           child: Padding(
               padding: EdgeInsets.only(left: 15),
               child: Text('Skal du gå for din egen gård?',
                   style: TextStyle(fontSize: 22)))),
-      const SizedBox(height: 10),
-      const Align(
+      SizedBox(height: 10),
+      Align(
           alignment: Alignment.centerLeft,
           child: Padding(
               padding: EdgeInsets.only(left: 25),
@@ -668,18 +673,18 @@ class NoFarmNoInternetInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      appbarBodySpacer(),
-      const Text('Kan ikke starte oppsynstur', style: TextStyle(fontSize: 26)),
-      const SizedBox(height: 40),
-      const Align(
+    return Column(children: const [
+      AppbarBodySpacer(),
+      Text('Kan ikke starte oppsynstur', style: TextStyle(fontSize: 26)),
+      SizedBox(height: 40),
+      Align(
           alignment: Alignment.centerLeft,
           child: Padding(
               padding: EdgeInsets.only(left: 15),
               child: Text('Ingen nettverksforbindelse',
                   style: TextStyle(fontSize: 22)))),
-      const SizedBox(height: 10),
-      const Align(
+      SizedBox(height: 10),
+      Align(
           alignment: Alignment.centerLeft,
           child: Padding(
               padding: EdgeInsets.only(left: 25),

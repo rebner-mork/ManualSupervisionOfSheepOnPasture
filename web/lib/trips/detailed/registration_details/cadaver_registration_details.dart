@@ -89,8 +89,9 @@ class _CadaverRegistrationDetailsState
         Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
             child: SizedBox(
-                width: textSize('${widget.registration['note']}',
-                                registrationNoteTextStyle)
+                width: textSize(
+                                text: '${widget.registration['note']}',
+                                style: registrationNoteTextStyle)
                             .width >
                         registrationNoteWidthNarrow
                     ? registrationNoteWidthWide

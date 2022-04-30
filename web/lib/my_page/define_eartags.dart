@@ -98,8 +98,8 @@ class _MyEartagsState extends State<MyEartags> {
         .asMap()
         .entries
         .map((MapEntry<int, Color> data) => DataRow(cells: [
-              _eartagCell(data.key, data.value),
-              _ownerCell(data.key, _eartagOwners[data.key]),
+              _eartagCell(index: data.key, color: data.value),
+              _ownerCell(index: data.key, isOwner: _eartagOwners[data.key]),
               DataCell(IconButton(
                 icon: Icon(Icons.delete, color: Colors.grey.shade800, size: 26),
                 splashRadius: 22,
@@ -128,7 +128,7 @@ class _MyEartagsState extends State<MyEartags> {
     ]);
   }
 
-  DataCell _eartagCell(int index, Color color) {
+  DataCell _eartagCell({required int index, required Color color}) {
     return DataCell(Container(
         color: !_eartagsAdded &&
                 !_eartagsDeleted &&
@@ -145,14 +145,15 @@ class _MyEartagsState extends State<MyEartags> {
                     .map((String value) => Color(int.parse(value, radix: 16)))
                     .toList(),
                 onChanged: (Color? newColor) {
-                  _onColorChanged(newColor!, index, color);
+                  _onColorChanged(
+                      newColor: newColor!, index: index, ownColor: color);
                 },
                 isTie: false),
           ),
         ])));
   }
 
-  DataCell _ownerCell(int index, bool isOwner) {
+  DataCell _ownerCell({required int index, required bool isOwner}) {
     return DataCell(Container(
         color: !_eartagsAdded &&
                 !_eartagsDeleted &&
@@ -212,7 +213,8 @@ class _MyEartagsState extends State<MyEartags> {
     });
   }
 
-  void _onColorChanged(Color newColor, int index, Color ownColor) {
+  void _onColorChanged(
+      {required Color newColor, required int index, required Color ownColor}) {
     if (newColor != ownColor) {
       setState(() {
         _eartagColors[index] = newColor;

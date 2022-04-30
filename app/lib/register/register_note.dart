@@ -95,9 +95,9 @@ class _RegisterNoteState extends State<RegisterNote> with RegisterPage {
                         margin: const EdgeInsets.only(left: 40),
                         child: Column(
                           children: [
-                            appbarBodySpacer(),
+                            const AppbarBodySpacer(),
                             const RegistrationInputHeadline(title: 'Notat'),
-                            inputFieldSpacer(),
+                            const InputFieldSpacer(),
                             NoteFormField(
                                 textController: _noteController,
                                 rightMargin: 40,
@@ -107,7 +107,8 @@ class _RegisterNoteState extends State<RegisterNote> with RegisterPage {
                         ))),
             floatingActionButton: _isLoading
                 ? null
-                : completeRegistrationButton(context, register),
+                : CompleteRegistrationButton(
+                    context: context, onPressed: register),
             floatingActionButtonLocation:
                 MediaQuery.of(context).viewInsets.bottom == 0
                     ? FloatingActionButtonLocation.centerFloat

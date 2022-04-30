@@ -349,9 +349,9 @@ class _DefineMapPageState extends State<DefineMapPage> {
               DataCell(Image(
                   height: _rowHeight - 10,
                   image: getMapNetworkImage(
-                      _mapCoordinates[data.key]['northWest']!,
-                      _mapCoordinates[data.key]['southEast']!,
-                      13))),
+                      northWest: _mapCoordinates[data.key]['northWest']!,
+                      southEast: _mapCoordinates[data.key]['southEast']!,
+                      zoom: 13))),
               DataCell(
                   TextField(
                     controller: _mapNameControllers[data.key],

@@ -99,7 +99,7 @@ class _MyTiesState extends State<MyTies> {
                   ]));
   }
 
-  DataCell _tieCell(int index, Color color) {
+  DataCell _tieCell({required int index, required Color color}) {
     return DataCell(Container(
         color: !_tiesAdded &&
                 !_tiesDeleted &&
@@ -116,7 +116,8 @@ class _MyTiesState extends State<MyTies> {
                     .map((String value) => Color(int.parse(value, radix: 16)))
                     .toList(),
                 onChanged: (Color? newColor) {
-                  _onColorChanged(newColor!, index, color);
+                  _onColorChanged(
+                      newColor: newColor!, index: index, ownColor: color);
                 },
                 isTie: true),
           ),
@@ -153,7 +154,7 @@ class _MyTiesState extends State<MyTies> {
         .asMap()
         .entries
         .map((MapEntry<int, Color> data) => DataRow(cells: [
-              _tieCell(data.key, data.value),
+              _tieCell(index: data.key, color: data.value),
               _lambCell(data.key),
               _deleteCell(data.key)
             ]))
@@ -276,7 +277,8 @@ class _MyTiesState extends State<MyTies> {
         ));
   }
 
-  void _onColorChanged(Color newColor, int index, Color ownColor) {
+  void _onColorChanged(
+      {required Color newColor, required int index, required Color ownColor}) {
     _helpText = '';
 
     if (newColor != ownColor) {

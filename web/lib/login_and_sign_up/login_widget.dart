@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:web/main_tabs/main_tabs.dart';
 import 'package:web/utils/authentication.dart' as authentication;
 import 'package:web/utils/custom_widgets.dart';
+import 'package:web/utils/styles.dart';
 import '../utils/validation.dart' as validation;
 
 class LoginWidget extends StatefulWidget {
@@ -35,7 +36,7 @@ class _LoginWidgetState extends State<LoginWidget> {
     });
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      tmp = await authentication.signIn(_email, _password);
+      tmp = await authentication.signIn(email: _email, password: _password);
       if (tmp == '') {
         Navigator.pushNamed(context, MainTabs.route);
       } else {
@@ -89,7 +90,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                     labelText: "E-post",
                     border: OutlineInputBorder()),
               )),
-          inputFieldSpacer(),
+          const InputFieldSpacer(),
           Container(
               constraints: const BoxConstraints(maxWidth: 400),
               child: RawKeyboardListener(
@@ -109,7 +110,9 @@ class _LoginWidgetState extends State<LoginWidget> {
                       onFieldSubmitted: (_) {
                         _logIn();
                       },
-                      decoration: customInputDecoration('Passord', Icons.lock,
+                      decoration: customInputDecoration(
+                          labelText: 'Passord',
+                          icon: Icons.lock,
                           passwordField: true,
                           isVisible: !_visiblePassword,
                           onPressed: _toggleVisiblePassword)))),

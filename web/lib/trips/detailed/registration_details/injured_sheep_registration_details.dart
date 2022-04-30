@@ -102,8 +102,9 @@ class InjuredSheepRegistrationDetails extends StatelessWidget {
         Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
             child: SizedBox(
-                width: textSize('${registration['note']}',
-                                registrationNoteTextStyle)
+                width: textSize(
+                                text: '${registration['note']}',
+                                style: registrationNoteTextStyle)
                             .width >
                         registrationNoteWidthNarrow
                     ? registrationNoteWidthWide

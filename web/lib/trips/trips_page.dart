@@ -109,7 +109,7 @@ class _TripsPageState extends State<TripsPage> {
                 child: _isLoadingDetailedTrip
                     ? const LoadingData()
                     : _selectedTripData != null
-                        ? DetailedTrip(_selectedTripData!)
+                        ? DetailedTrip(tripData: _selectedTripData!)
                         : const Text(
                             'Klikk på en oppsynstur i lista til venstre for å se detaljer.',
                             style: feedbackTextStyle))),

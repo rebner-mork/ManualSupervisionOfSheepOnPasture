@@ -121,8 +121,11 @@ class _ReportsPageState extends State<ReportsPage> {
 
     // Create PDF-document
     final pw.Document pdf = pw.Document();
-    pdf.addPage(metaPdfPage(farmDoc, farmOwnerQuerySnapshot.docs.first,
-        personnelFromYearNames, tripAmountFromYear));
+    pdf.addPage(metaPdfPage(
+        farmDoc: farmDoc,
+        farmOwnerDoc: farmOwnerQuerySnapshot.docs.first,
+        personnel: personnelFromYearNames,
+        tripAmount: tripAmountFromYear));
     pdf.addPage(pdfTripsTablePages(tripSummaries));
 
     return pdf.save();
@@ -186,7 +189,11 @@ class _ReportsPageState extends State<ReportsPage> {
     return tripSummaries;
   }
 
-  pw.Page metaPdfPage(farmDoc, farmOwnerDoc, personnel, tripAmount) {
+  pw.Page metaPdfPage(
+      {required DocumentSnapshot farmDoc,
+      required QueryDocumentSnapshot<Object?> farmOwnerDoc,
+      required List<String> personnel,
+      required int tripAmount}) {
     return pw.Page(build: (pw.Context context) {
       return pw.Column(children: [
         pw.Padding(

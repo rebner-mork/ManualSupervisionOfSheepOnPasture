@@ -1,6 +1,7 @@
 enum QuestionContext { numbers, colors }
 
-String correctErroneousInput(String input, QuestionContext questionContext) {
+String correctErroneousInput(
+    {required String input, required QuestionContext questionContext}) {
   String correctedInput = '';
 
   input = input.toLowerCase();
@@ -52,6 +53,7 @@ final Map<String, List<String>> numbersFilter = {
   '12': ['twelve', 'tyler', 'corral', 'to health']
 };
 
+//Not currently used but left here for later development
 final Map<String, List<String>?> colorsFilter = {
   'white': ['what', 'light', 'whites'],
   'black': ['lack', 'block', 'blacks'],
@@ -71,8 +73,8 @@ final Map<String, List<String>?> colorsFilter = {
   'yellow': ['mellow', 'yeah love'],
   'blue': ['glue', 'boo', 'play', 'flute', 'bleed', 'lou', 'luke'],
   'green': ['great', 'when'],
-  'purple': null, // TODO: test
-  'pink': null, // TODO: test
-  'grey': null, // TODO: test
-  'orange': null // TODO: test
+  'purple': null, // test
+  'pink': null, // test
+  'grey': null, // test
+  'orange': null // test
 };

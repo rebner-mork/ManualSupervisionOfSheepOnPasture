@@ -75,9 +75,9 @@ class _RegisterPredatorState extends State<RegisterPredator> with RegisterPage {
                           margin: EdgeInsets.only(left: widget.leftMargin),
                           child: Column(
                             children: [
-                              appbarBodySpacer(),
+                              const AppbarBodySpacer(),
                               const RegistrationInputHeadline(title: 'Art'),
-                              inputFieldSpacer(),
+                              const InputFieldSpacer(),
                               ToggleButtonGroup(
                                 valueLabelPairs: const {
                                   "Bjørn": "Bjørn",
@@ -91,26 +91,27 @@ class _RegisterPredatorState extends State<RegisterPredator> with RegisterPage {
                                 fontSize: 30,
                                 onValueChanged: (value) => species = value,
                               ),
-                              inputFieldSpacer(),
+                              const InputFieldSpacer(),
                               const RegistrationInputHeadline(title: 'Antall'),
-                              inputFieldSpacer(),
+                              const InputFieldSpacer(),
                               ToggleButtonGroup(
                                 valueLabelPairs: const {"1": 1, "2": 2, "3": 3},
                                 preselectedItem: "1",
                                 onValueChanged: (value) => quantity = value,
                               ),
-                              inputFieldSpacer(),
+                              const InputFieldSpacer(),
                               const RegistrationInputHeadline(title: 'Notat'),
-                              inputFieldSpacer(),
+                              const InputFieldSpacer(),
                               NoteFormField(
                                   textController: _noteController,
                                   rightMargin: widget.leftMargin),
-                              inputFieldSpacer(),
+                              const InputFieldSpacer(),
                             ],
                           )))),
         ),
-        floatingActionButton:
-            _isLoading ? null : completeRegistrationButton(context, register),
+        floatingActionButton: _isLoading
+            ? null
+            : CompleteRegistrationButton(context: context, onPressed: register),
         floatingActionButtonLocation:
             MediaQuery.of(context).viewInsets.bottom == 0
                 ? FloatingActionButtonLocation.centerFloat

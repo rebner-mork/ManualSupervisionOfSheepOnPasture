@@ -42,6 +42,26 @@ TextStyle drawerHeadlineTextStyle =
 // Registration pages
 const TextStyle registrationFieldHeadlineTextStyle = TextStyle(fontSize: 26);
 
+InputDecoration customInputDecoration(
+    {required String labelText,
+    required IconData icon,
+    bool passwordField = false,
+    bool isVisible = false,
+    void Function()? onPressed}) {
+  return InputDecoration(
+      labelText: labelText,
+      alignLabelWithHint: true,
+      border: const OutlineInputBorder(),
+      prefixIcon: Icon(icon),
+      suffixIcon: passwordField
+          ? IconButton(
+              icon: Icon(isVisible ? Icons.visibility : Icons.visibility_off,
+                  size: 20),
+              color: isVisible ? Colors.green : Colors.grey,
+              onPressed: onPressed)
+          : null);
+}
+
 // Registration details
 const TextStyle dialogHeadlineTextStyle =
     TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
@@ -61,8 +81,8 @@ const TextStyle registrationNoteTextStyle = TextStyle(fontSize: 18);
 const double registrationNoteWidthWide = 350;
 
 final double doubleDigitsWidth =
-    textSize('99', registrationDetailsNumberTextStyle).width + 5;
+    textSize(text: '99', style: registrationDetailsNumberTextStyle).width + 5;
 final double tripleDigitsWidth =
-    textSize('999', registrationDetailsNumberTextStyle).width + 5;
+    textSize(text: '999', style: registrationDetailsNumberTextStyle).width + 5;
 
 const EdgeInsets tableCellPadding = EdgeInsets.all(8);

@@ -400,9 +400,10 @@ class _MainPageState extends State<MainPage> {
                                     },
                                     width: 62 +
                                         textSize(
-                                                _registeredTotalSheepAmount
-                                                    .toString(),
-                                                circularButtonTextStyle)
+                                                text:
+                                                    _registeredTotalSheepAmount
+                                                        .toString(),
+                                                style: circularButtonTextStyle)
                                             .width,
                                   ),
                                 )),

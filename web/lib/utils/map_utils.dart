@@ -55,33 +55,34 @@ Marker getMarker(Map<String, dynamic> registration) {
           )));
 }
 
-Marker getCornerMarker(LatLng pos, bool upperLeft) {
+Marker getCornerMarker({required LatLng position, required bool isUpperLeft}) {
   const double size = 50;
   return Marker(
-      point: pos,
+      point: position,
       height: size,
       width: size,
       builder: (context) => Transform.rotate(
           angle: 45 * pi / 180,
           child: Icon(
-            upperLeft ? Icons.chevron_right : Icons.chevron_left,
+            isUpperLeft ? Icons.chevron_right : Icons.chevron_left,
             color: Colors.pink,
             size: size,
           )));
 }
 
-NetworkImage getMapNetworkImage(LatLng northWest, LatLng southEast, int zoom) {
+NetworkImage getMapNetworkImage(
+    {required LatLng northWest, required LatLng southEast, required int zoom}) {
   LatLng centerPoint = LatLngBounds(
           LatLng(southEast.latitude, northWest.longitude),
           LatLng(northWest.latitude, southEast.longitude))
       .center;
-  int x = getTileIndexX(centerPoint.longitude, zoom);
-  int y = getTileIndexY(centerPoint.latitude, zoom);
+  int x = getTileIndexX(longitude: centerPoint.longitude, zoom: zoom);
+  int y = getTileIndexY(latitude: centerPoint.latitude, zoom: zoom);
 
-  return NetworkImage(_getTileUrl(x, y, zoom), scale: 2);
+  return NetworkImage(_getTileUrl(x: x, y: y, zoom: zoom), scale: 2);
 }
 
-String _getTileUrl(int x, int y, int zoom) {
+String _getTileUrl({required int x, required int y, required int zoom}) {
   var random = Random();
   return MapProvider.urlTemplate
       .replaceFirst("{z}", zoom.toString())
@@ -93,11 +94,11 @@ String _getTileUrl(int x, int y, int zoom) {
               .subdomains[random.nextInt(MapProvider.subdomains.length)]);
 }
 
-int getTileIndexX(double longitude, int zoom) {
+int getTileIndexX({required double longitude, required int zoom}) {
   return (((longitude + 180) / 360) * pow(2, zoom)).floor();
 }
 
-int getTileIndexY(double latitude, int zoom) {
+int getTileIndexY({required double latitude, required int zoom}) {
   var latitudeInRadians = latitude * (pi / 180);
   return ((1 -
               ((log(tan(latitudeInRadians) + (1 / cos(latitudeInRadians)))) /

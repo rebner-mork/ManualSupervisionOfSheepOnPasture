@@ -51,7 +51,7 @@ class _LoginWidgetState extends State<LoginWidget> {
               size: 90,
               color: Colors.black54,
             ),
-            inputFieldSpacer(),
+            const InputFieldSpacer(),
             TextFormField(
               key: const Key('inputEmail'),
               validator: (input) => validateEmail(input),
@@ -66,7 +66,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                 prefixIcon: Icon(Icons.mail),
               ),
             ),
-            inputFieldSpacer(),
+            const InputFieldSpacer(),
             TextFormField(
               key: const Key('inputPassword'),
               validator: (input) => validatePassword(input),
@@ -88,7 +88,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                       color: !_visiblePassword ? Colors.grey : Colors.green,
                       onPressed: _toggleVisiblePassword)),
             ),
-            inputFieldSpacer(),
+            const InputFieldSpacer(),
             AnimatedOpacity(
               opacity: _loginFailed ? 1.0 : 0.0,
               duration: const Duration(milliseconds: 200),

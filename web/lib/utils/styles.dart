@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:web/utils/other.dart';
 
@@ -27,6 +26,27 @@ const EdgeInsets tableCellPadding = EdgeInsets.all(8);
 TextStyle dropDownTextStyle = const TextStyle(fontSize: 16);
 const double dropdownArrowSize = 28;
 
+InputDecoration customInputDecoration(
+    {required String labelText,
+    required IconData icon,
+    bool passwordField = false,
+    bool isVisible = false,
+    void Function()? onPressed}) {
+  return InputDecoration(
+      labelText: labelText,
+      alignLabelWithHint: true,
+      border: const OutlineInputBorder(),
+      prefixIcon: Icon(icon),
+      suffixIcon: passwordField
+          ? IconButton(
+              icon: Icon(
+                isVisible ? Icons.visibility : Icons.visibility_off,
+              ),
+              color: isVisible ? Colors.green : Colors.grey,
+              onPressed: onPressed)
+          : null);
+}
+
 // Registration details
 const TextStyle dialogHeadlineTextStyle =
     TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
@@ -47,6 +67,6 @@ const TextStyle registrationDetailsDescriptionTextStyle =
 const TextStyle registrationNoteTextStyle = TextStyle(fontSize: 18);
 
 final double doubleDigitsWidth =
-    textSize('99', registrationDetailsNumberTextStyle).width + 5;
+    textSize(text: '99', style: registrationDetailsNumberTextStyle).width + 5;
 final double tripleDigitsWidth =
-    textSize('999', registrationDetailsNumberTextStyle).width + 5;
+    textSize(text: '999', style: registrationDetailsNumberTextStyle).width + 5;

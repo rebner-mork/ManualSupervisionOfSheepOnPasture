@@ -15,9 +15,9 @@ const double horizontalRowSpace = 15;
 const double iconSize = 35;
 
 final double doubleDigitsWidth =
-    textSize('99', tripOverviewNumberTextStyle).width + 5;
+    textSize(text: '99', style: tripOverviewNumberTextStyle).width + 5;
 final double tripleDigitsWidth =
-    textSize('999', tripOverviewNumberTextStyle).width + 5;
+    textSize(text: '999', style: tripOverviewNumberTextStyle).width + 5;
 
 class TripOverview extends StatelessWidget {
   TripOverview(

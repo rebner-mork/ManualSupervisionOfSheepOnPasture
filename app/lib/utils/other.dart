@@ -4,8 +4,10 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
-void scrollToKey(ScrollController scrollController, GlobalKey key,
-    {bool hasAppbar = false}) {
+void scrollToKey(
+    {required ScrollController scrollController,
+    required GlobalKey key,
+    bool hasAppbar = false}) {
   // https://stackoverflow.com/questions/54291245/get-y-position-of-container-on-flutter
   RenderBox box = key.currentContext!.findRenderObject() as RenderBox;
   Offset position = box.localToGlobal(Offset.zero);
@@ -31,7 +33,7 @@ Map<String, int> gatherRegisteredData(
 }
 
 // https://stackoverflow.com/questions/52659759/how-can-i-get-the-size-of-the-text-widget-in-flutter
-Size textSize(String text, TextStyle style) {
+Size textSize({required String text, required TextStyle style}) {
   final TextPainter textPainter = TextPainter(
       text: TextSpan(text: text, style: style),
       maxLines: 1,

@@ -4,30 +4,22 @@ import 'package:app/utils/other.dart';
 import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
 
-InputDecoration customInputDecoration(String labelText, IconData icon,
-    {bool passwordField = false,
-    bool isVisible = false,
-    void Function()? onPressed}) {
-  return InputDecoration(
-      labelText: labelText,
-      alignLabelWithHint: true,
-      border: const OutlineInputBorder(),
-      prefixIcon: Icon(icon),
-      suffixIcon: passwordField
-          ? IconButton(
-              icon: Icon(isVisible ? Icons.visibility : Icons.visibility_off,
-                  size: 20),
-              color: isVisible ? Colors.green : Colors.grey,
-              onPressed: onPressed)
-          : null);
+class InputFieldSpacer extends StatelessWidget {
+  const InputFieldSpacer({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(height: 18);
+  }
 }
 
-SizedBox inputFieldSpacer() {
-  return const SizedBox(height: 18);
-}
+class AppbarBodySpacer extends StatelessWidget {
+  const AppbarBodySpacer({Key? key}) : super(key: key);
 
-SizedBox appbarBodySpacer() {
-  return const SizedBox(height: 20);
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(height: 20);
+  }
 }
 
 const double defaultIconSize = 30;
@@ -99,104 +91,137 @@ class _LoadingDataState extends State<LoadingData>
   }
 }
 
-Row inputRow(String text, TextEditingController controller, IconData iconData,
-    Color color,
-    {double iconSize = defaultIconSize,
-    ScrollController? scrollController,
-    bool isFieldValid = true,
-    VoidCallback? onChanged,
-    GlobalKey? key,
-    GlobalKey? ownKey}) {
-  return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      key: ownKey,
-      children: [
-        Flexible(
-            flex: 5,
-            child: Container(
-                width: defaultIconSize + 3,
-                color: color == Colors.white
-                    ? Colors.grey.shade400
-                    : Colors.transparent,
-                child: Icon(
-                  iconData,
-                  color: color,
-                  size: iconSize,
-                ))),
-        const Spacer(),
-        Flexible(
-            flex: 11,
-            child: SizedBox(
-                width: 115,
-                child: Text(
-                  text,
-                  style: const TextStyle(fontSize: 19),
-                ))),
-        const Spacer(),
-        Flexible(
-            flex: 20,
-            child: Container(
-                constraints: const BoxConstraints(maxWidth: 70),
-                child: TextFormField(
-                  textAlign: TextAlign.center,
-                  keyboardType: TextInputType.number,
-                  textInputAction: TextInputAction.next,
-                  controller: controller,
-                  onFieldSubmitted: (_) => {
-                    if (scrollController != null && key != null)
-                      scrollToKey(scrollController, key),
-                  },
-                  onChanged: (_) => {
-                    if (onChanged != null) {onChanged()}
-                  },
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                        gapPadding: 4.0,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(4.0)),
-                        borderSide: isFieldValid
-                            ? const BorderSide(color: Colors.grey)
-                            : const BorderSide(color: Colors.red)),
-                    enabledBorder: OutlineInputBorder(
-                        gapPadding: 4.0,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(4.0)),
-                        borderSide: isFieldValid
-                            ? const BorderSide(color: Colors.grey)
-                            : const BorderSide(color: Colors.red)),
-                    hintText: '0',
-                    border: const OutlineInputBorder(),
-                    contentPadding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                  ),
-                )))
-      ]);
+class InputRow extends StatelessWidget {
+  const InputRow(
+      {required this.text,
+      required this.controller,
+      required this.iconData,
+      required this.color,
+      this.iconSize = defaultIconSize,
+      this.scrollController,
+      this.isFieldValid = true,
+      this.onChanged,
+      this.globalKey,
+      this.ownKey,
+      Key? key})
+      : super(key: key);
+
+  final String text;
+  final TextEditingController controller;
+  final IconData iconData;
+  final Color color;
+  final double iconSize;
+  final ScrollController? scrollController;
+  final bool isFieldValid;
+  final VoidCallback? onChanged;
+  final GlobalKey? globalKey;
+  final GlobalKey? ownKey;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        key: ownKey,
+        children: [
+          Flexible(
+              flex: 5,
+              child: Container(
+                  width: defaultIconSize + 3,
+                  color: color == Colors.white
+                      ? Colors.grey.shade400
+                      : Colors.transparent,
+                  child: Icon(
+                    iconData,
+                    color: color,
+                    size: iconSize,
+                  ))),
+          const Spacer(),
+          Flexible(
+              flex: 11,
+              child: SizedBox(
+                  width: 115,
+                  child: Text(
+                    text,
+                    style: const TextStyle(fontSize: 19),
+                  ))),
+          const Spacer(),
+          Flexible(
+              flex: 20,
+              child: Container(
+                  constraints: const BoxConstraints(maxWidth: 70),
+                  child: TextFormField(
+                    textAlign: TextAlign.center,
+                    keyboardType: TextInputType.number,
+                    textInputAction: TextInputAction.next,
+                    controller: controller,
+                    onFieldSubmitted: (_) => {
+                      if (scrollController != null && globalKey != null)
+                        scrollToKey(
+                            scrollController: scrollController!,
+                            key: globalKey!),
+                    },
+                    onChanged: (_) => {
+                      if (onChanged != null) {onChanged!()}
+                    },
+                    decoration: InputDecoration(
+                      focusedBorder: OutlineInputBorder(
+                          gapPadding: 4.0,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(4.0)),
+                          borderSide: isFieldValid
+                              ? const BorderSide(color: Colors.grey)
+                              : const BorderSide(color: Colors.red)),
+                      enabledBorder: OutlineInputBorder(
+                          gapPadding: 4.0,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(4.0)),
+                          borderSide: isFieldValid
+                              ? const BorderSide(color: Colors.grey)
+                              : const BorderSide(color: Colors.red)),
+                      hintText: '0',
+                      border: const OutlineInputBorder(),
+                      contentPadding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                    ),
+                  )))
+        ]);
+  }
 }
 
-Column inputDividerWithHeadline(String headline, [GlobalKey? key]) {
-  return Column(key: key, children: [
-    const SizedBox(height: 10),
-    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      const Flexible(
-          child: Divider(
-        thickness: 3,
-        color: Colors.grey,
-        endIndent: 5,
-      )),
-      Flexible(
-          flex: 5,
-          child: Text(
-            headline,
-            style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
-          )),
-      const Flexible(
-          child: Divider(
-        thickness: 3,
-        color: Colors.grey,
-        indent: 5,
-      ))
-    ]),
-    const SizedBox(height: 10),
-  ]);
+class InputDividerWithHeadline extends StatelessWidget {
+  const InputDividerWithHeadline(
+      {required this.headline, this.globalKey, Key? key})
+      : super(key: key);
+
+  final String headline;
+  final GlobalKey? globalKey;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(key: globalKey, children: [
+      const SizedBox(height: 10),
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Flexible(
+            child: Divider(
+          thickness: 3,
+          color: Colors.grey,
+          endIndent: 5,
+        )),
+        Flexible(
+            flex: 5,
+            child: Text(
+              headline,
+              style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+            )),
+        const Flexible(
+            child: Divider(
+          thickness: 3,
+          color: Colors.grey,
+          indent: 5,
+        ))
+      ]),
+      const SizedBox(height: 10),
+    ]);
+  }
 }
 
 Future<bool> cancelRegistrationDialog(BuildContext context) async {
@@ -224,47 +249,45 @@ Future<bool> cancelRegistrationDialog(BuildContext context) async {
       });
 }
 
-BackdropFilter speechNotEnabledDialog(
-    BuildContext context, MaterialPageRoute route) {
-  return BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-      child: AlertDialog(
-        title: const Text("Taleregistrering kan ikke brukes"),
-        content: const Text(
-            'Enheten er ikke satt opp til å bruke taleregistrering.'),
-        actions: [
-          TextButton(
-              onPressed: () {
-                Navigator.of(context).pop('dialog');
-                Navigator.of(context).pushReplacement(route);
-              },
-              child: const Text('Til manuell registrering')),
-        ],
-      ));
+class CompleteRegistrationButton extends StatelessWidget {
+  const CompleteRegistrationButton(
+      {required this.context, required this.onPressed, Key? key})
+      : super(key: key);
+
+  final BuildContext context;
+  final void Function() onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return MediaQuery.of(context).viewInsets.bottom == 0
+        ? FloatingActionButton.extended(
+            heroTag: 'completeOralRegistrationButton',
+            onPressed: onPressed,
+            label: const Text('Fullfør registrering',
+                style: TextStyle(fontSize: 19)))
+        : FloatingActionButton(
+            onPressed: onPressed,
+            child: const Icon(
+              Icons.check,
+              size: 35,
+            ));
+  }
 }
 
-FloatingActionButton completeRegistrationButton(
-    BuildContext context, void Function() onPressed) {
-  return MediaQuery.of(context).viewInsets.bottom == 0
-      ? FloatingActionButton.extended(
-          heroTag: 'completeOralRegistrationButton',
-          onPressed: onPressed,
-          label: const Text('Fullfør registrering',
-              style: TextStyle(fontSize: 19)))
-      : FloatingActionButton(
-          onPressed: onPressed,
-          child: const Icon(
-            Icons.check,
-            size: 35,
-          ));
-}
+class StartDialogButton extends StatelessWidget {
+  const StartDialogButton({required this.onPressed, Key? key})
+      : super(key: key);
 
-FloatingActionButton startDialogButton(void Function() onPressed) {
-  return FloatingActionButton(
-    heroTag: 'startDialogButton',
-    onPressed: onPressed,
-    child: const Icon(Icons.mic, size: 30),
-  );
+  final void Function() onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      heroTag: 'startDialogButton',
+      onPressed: onPressed,
+      child: const Icon(Icons.mic, size: 30),
+    );
+  }
 }
 
 class SettingsIcon extends StatelessWidget {

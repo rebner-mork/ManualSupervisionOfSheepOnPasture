@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:web/main_tabs/main_tabs.dart';
 import 'package:web/utils/authentication.dart';
+import 'package:web/utils/styles.dart';
 import 'package:web/utils/validation.dart';
 import 'package:web/utils/custom_widgets.dart';
 import 'package:flutter/material.dart';
@@ -69,9 +70,9 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         },
                         textInputAction: TextInputAction.go,
                         onFieldSubmitted: (value) => _createUserAndSignIn(),
-                        decoration:
-                            customInputDecoration('Fullt navn', Icons.badge)),
-                    inputFieldSpacer(),
+                        decoration: customInputDecoration(
+                            labelText: 'Fullt navn', icon: Icons.badge)),
+                    const InputFieldSpacer(),
                     TextFormField(
                         key: const Key('inputEmail'),
                         validator: (input) => validateEmail(input),
@@ -81,9 +82,9 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         },
                         textInputAction: TextInputAction.go,
                         onFieldSubmitted: (value) => _createUserAndSignIn(),
-                        decoration:
-                            customInputDecoration('E-post', Icons.mail)),
-                    inputFieldSpacer(),
+                        decoration: customInputDecoration(
+                            labelText: 'E-post', icon: Icons.mail)),
+                    const InputFieldSpacer(),
                     RawKeyboardListener(
                         focusNode: _passwordOneFocusNode,
                         onKey: (RawKeyEvent event) {
@@ -103,11 +104,12 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                             onFieldSubmitted: (value) => _createUserAndSignIn(),
                             obscureText: !_visiblePassword,
                             decoration: customInputDecoration(
-                                'Passord', Icons.lock,
+                                labelText: 'Passord',
+                                icon: Icons.lock,
                                 passwordField: true,
                                 isVisible: _visiblePassword,
                                 onPressed: _toggleVisiblePassword))),
-                    inputFieldSpacer(),
+                    const InputFieldSpacer(),
                     RawKeyboardListener(
                         focusNode: FocusNode(),
                         onKey: (RawKeyEvent event) {
@@ -127,11 +129,12 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                             onFieldSubmitted: (value) => _createUserAndSignIn(),
                             obscureText: !_visiblePassword,
                             decoration: customInputDecoration(
-                                'Gjenta passord', Icons.lock,
+                                labelText: 'Gjenta passord',
+                                icon: Icons.lock,
                                 passwordField: true,
                                 isVisible: _visiblePassword,
                                 onPressed: _toggleVisiblePassword))),
-                    inputFieldSpacer(),
+                    const InputFieldSpacer(),
                     TextFormField(
                         key: const Key('inputPhone'),
                         validator: (input) => validatePhone(input),
@@ -141,9 +144,9 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         },
                         textInputAction: TextInputAction.go,
                         onFieldSubmitted: (value) => _createUserAndSignIn(),
-                        decoration:
-                            customInputDecoration('Telefon', Icons.phone)),
-                    inputFieldSpacer(),
+                        decoration: customInputDecoration(
+                            labelText: 'Telefon', icon: Icons.phone)),
+                    const InputFieldSpacer(),
                     AnimatedOpacity(
                       opacity: _registerFailed ? 1.0 : 0.0,
                       duration: const Duration(milliseconds: 200),
@@ -174,7 +177,8 @@ class _SignUpWidgetState extends State<SignUpWidget> {
     if (formState!.validate()) {
       formState.save();
       try {
-        String? response = await createUser(_name, _email, _password, _phone);
+        String? response = await createUser(
+            name: _name, email: _email, password: _password, phone: _phone);
 
         setState(() {
           _registerFailed = response == null ? false : true;

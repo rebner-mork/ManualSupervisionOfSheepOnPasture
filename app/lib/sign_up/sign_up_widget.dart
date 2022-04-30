@@ -2,6 +2,7 @@ import 'package:app/trip/start_trip_page.dart';
 import 'package:app/utils/authentication.dart';
 import 'package:app/utils/field_validation.dart';
 import 'package:app/utils/custom_widgets.dart';
+import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
 
 class SignUpWidget extends StatefulWidget {
@@ -56,7 +57,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                   children: [
                     const Icon(Icons.account_circle,
                         size: 90, color: Colors.black54),
-                    inputFieldSpacer(),
+                    const InputFieldSpacer(),
                     TextFormField(
                         key: const Key('inputName'),
                         textCapitalization: TextCapitalization.words,
@@ -65,9 +66,9 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         onChanged: _onFieldChange,
                         textInputAction: TextInputAction.go,
                         onFieldSubmitted: (value) => _createUser(),
-                        decoration:
-                            customInputDecoration('Fullt navn', Icons.badge)),
-                    inputFieldSpacer(),
+                        decoration: customInputDecoration(
+                            labelText: 'Fullt navn', icon: Icons.badge)),
+                    const InputFieldSpacer(),
                     TextFormField(
                         key: const Key('inputEmail'),
                         validator: (input) => validateEmail(input),
@@ -75,9 +76,9 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         onChanged: _onFieldChange,
                         textInputAction: TextInputAction.go,
                         onFieldSubmitted: (value) => _createUser(),
-                        decoration:
-                            customInputDecoration('E-post', Icons.mail)),
-                    inputFieldSpacer(),
+                        decoration: customInputDecoration(
+                            labelText: 'E-post', icon: Icons.mail)),
+                    const InputFieldSpacer(),
                     TextFormField(
                         controller: passwordOneController,
                         key: const Key('inputPasswordOne'),
@@ -87,11 +88,13 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         textInputAction: TextInputAction.go,
                         onFieldSubmitted: (value) => _createUser(),
                         obscureText: !_visiblePassword,
-                        decoration: customInputDecoration('Passord', Icons.lock,
+                        decoration: customInputDecoration(
+                            labelText: 'Passord',
+                            icon: Icons.lock,
                             passwordField: true,
                             isVisible: _visiblePassword,
                             onPressed: _toggleVisiblePassword)),
-                    inputFieldSpacer(),
+                    const InputFieldSpacer(),
                     TextFormField(
                         key: const Key('inputPasswordTwo'),
                         validator: (input) => validatePasswords(
@@ -101,11 +104,12 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         onFieldSubmitted: (value) => _createUser(),
                         obscureText: !_visiblePassword,
                         decoration: customInputDecoration(
-                            'Gjenta passord', Icons.lock,
+                            labelText: 'Gjenta passord',
+                            icon: Icons.lock,
                             passwordField: true,
                             isVisible: _visiblePassword,
                             onPressed: _toggleVisiblePassword)),
-                    inputFieldSpacer(),
+                    const InputFieldSpacer(),
                     TextFormField(
                         key: const Key('inputPhone'),
                         validator: (input) => validatePhone(input),
@@ -113,9 +117,9 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         onChanged: _onFieldChange,
                         textInputAction: TextInputAction.go,
                         onFieldSubmitted: (value) => _createUser(),
-                        decoration:
-                            customInputDecoration('Telefon', Icons.phone)),
-                    inputFieldSpacer(),
+                        decoration: customInputDecoration(
+                            labelText: 'Telefon', icon: Icons.phone)),
+                    const InputFieldSpacer(),
                     AnimatedOpacity(
                       opacity: _registerFailed ? 1.0 : 0.0,
                       duration: const Duration(milliseconds: 200),
@@ -147,7 +151,8 @@ class _SignUpWidgetState extends State<SignUpWidget> {
     if (formState!.validate()) {
       formState.save();
       try {
-        String? response = await createUser(_name, _email, _password, _phone);
+        String? response = await createUser(
+            name: _name, email: _email, password: _password, phone: _phone);
 
         setState(() {
           _registerFailed = response == null ? false : true;
