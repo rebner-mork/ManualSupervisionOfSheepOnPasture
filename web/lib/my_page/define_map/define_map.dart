@@ -43,7 +43,7 @@ class _DefineMapState extends State<DefineMap> {
                     _isSecondMarkerPlacedCorrectly(point))) {
               setState(() {
                 _markers.add(map_utils.getCornerMarker(
-                    position: point, upperLeft: _markers.length == 1));
+                    position: point, isUpperLeft: _markers.length == 1));
               });
               widget.onCornerMarked({'northWest': _markers[0].point});
               if (_markers.length == 2 && !_rectangleDrawn) {

@@ -55,7 +55,7 @@ Marker getMarker(Map<String, dynamic> registration) {
           )));
 }
 
-Marker getCornerMarker({required LatLng position, required bool upperLeft}) {
+Marker getCornerMarker({required LatLng position, required bool isUpperLeft}) {
   const double size = 50;
   return Marker(
       point: position,
@@ -64,7 +64,7 @@ Marker getCornerMarker({required LatLng position, required bool upperLeft}) {
       builder: (context) => Transform.rotate(
           angle: 45 * pi / 180,
           child: Icon(
-            upperLeft ? Icons.chevron_right : Icons.chevron_left,
+            isUpperLeft ? Icons.chevron_right : Icons.chevron_left,
             color: Colors.pink,
             size: size,
           )));
