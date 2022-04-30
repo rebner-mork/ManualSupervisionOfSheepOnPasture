@@ -105,7 +105,6 @@ class _StartTripPageState extends State<StartTripPage>
   }
 
   void _speechToTextError(SpeechRecognitionError error) {
-    debugPrint('error');
     setState(() {
       _ongoingDialog.value = false;
     });
