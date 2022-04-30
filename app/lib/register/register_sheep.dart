@@ -153,7 +153,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
 
     if (Provider.of<SettingsProvider>(context, listen: false).autoDialog) {
       if (widget.stt.isAvailable) {
-        _startDialog(questions, questionContexts);
+        _startDialog(questions: questions, questionContexts: questionContexts);
       }
     }
   }
@@ -164,7 +164,8 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
   }
 
   void _startDialog(
-      List<String> questions, List<QuestionContext> questionContexts) async {
+      {required List<String> questions,
+      required List<QuestionContext> questionContexts}) async {
     setState(() {
       widget.ongoingDialog.value = true;
       FocusManager.instance.primaryFocus?.unfocus();
@@ -585,7 +586,8 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
                                 padding: const EdgeInsets.only(left: 10),
                                 child: StartDialogButton(
                                     onPressed: () => _startDialog(
-                                        questions, questionContexts))),
+                                        questions: questions,
+                                        questionContexts: questionContexts))),
                           MediaQuery.of(context).viewInsets.bottom == 0
                               ? const SizedBox(
                                   width: 20,
