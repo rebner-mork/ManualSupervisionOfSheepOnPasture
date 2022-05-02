@@ -136,7 +136,7 @@ class _MainPageState extends State<MainPage> {
           if (widget.onCompleted != null) {
             widget.onCompleted!();
           }
-          Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
+          Navigator.pop(context);
         }
       }
       return isFinished ?? true;

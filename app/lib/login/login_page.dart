@@ -68,5 +68,3 @@ class _LoginPageState extends State<LoginPage> {
     ));
   }
 }
-
-// Navigator.popAndPushNamed(context, StartTripPage.route);
