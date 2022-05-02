@@ -83,7 +83,7 @@ class _MapState extends State<MapWidget> {
     _currentPositionMarker = map_utils.getDevicePositionMarker(userPosition);
     _movementPoints.add(userPosition);
 
-    timer = Timer.periodic(const Duration(seconds: 30), (_) => _updateMap());
+    timer = Timer.periodic(const Duration(seconds: 15), (_) => _updateMap());
   }
 
   Future<void> _updateMap() async {
