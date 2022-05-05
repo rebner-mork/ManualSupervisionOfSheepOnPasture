@@ -20,6 +20,7 @@ class MainPage extends StatefulWidget {
   const MainPage(
       {required this.speechToText,
       required this.ongoingDialog,
+      required this.isOfflineMode,
       required this.northWest,
       required this.southEast,
       required this.mapName,
@@ -34,6 +35,7 @@ class MainPage extends StatefulWidget {
 
   final SpeechToText speechToText;
   final ValueNotifier<bool> ongoingDialog;
+  final bool isOfflineMode;
 
   final VoidCallback? onCompleted;
 
@@ -121,13 +123,15 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
+  // 0: discard, 1 or null: continue, 2: end trip
   Future<bool> _endTrip(BuildContext context) async {
     bool isConnected = await isConnectedToInternet();
-    await showEndTripDialog(context, isConnected).then((bool? isFinished) {
-      if (isFinished == null) {
-        Navigator.popUntil(context, ModalRoute.withName(StartTripPage.route));
-      } else {
-        if (isFinished) {
+    await showEndTripDialog(context, isConnected).then((int? statusCode) {
+      debugPrint(statusCode.toString());
+      // If trip should end
+      if (statusCode != null && statusCode != 1) {
+        // If trip should upload
+        if (statusCode == 2) {
           if (isConnected) {
             _tripData.post();
           } else {
@@ -136,10 +140,24 @@ class _MainPageState extends State<MainPage> {
           if (widget.onCompleted != null) {
             widget.onCompleted!();
           }
-          Navigator.pop(context);
+          if (widget.isOfflineMode) {
+            Navigator.pop(context);
+          } else {
+            Navigator.popUntil(
+                context, ModalRoute.withName(StartTripPage.route));
+          }
+        } // If trip was discarded
+        else {
+          if (widget.isOfflineMode) {
+            Navigator.pop(context);
+          } else {
+            Navigator.popUntil(
+                context, ModalRoute.withName(StartTripPage.route));
+          }
         }
+
+        return true;
       }
-      return isFinished ?? true;
     });
     return false;
   }
