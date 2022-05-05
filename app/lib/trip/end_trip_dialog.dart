@@ -1,6 +1,7 @@
 import 'package:app/utils/styles.dart';
 import 'package:flutter/material.dart';
 
+// 0: discard, 1 or null: continue, 2: end trip
 class EndTripDialog extends StatelessWidget {
   const EndTripDialog({Key? key, required this.isConnected}) : super(key: key);
 
@@ -44,14 +45,14 @@ class EndTripDialog extends StatelessWidget {
                             color: Colors.red,
                             fontSize: okDialogButtonTextStyle.fontSize,
                             fontWeight: okDialogButtonTextStyle.fontWeight))),
-                onPressed: () => {Navigator.pop(context, null)}),
+                onPressed: () => {Navigator.pop(context, 0)}),
             SimpleDialogOption(
                 padding:
                     const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
                 child: Center(
                     child:
                         Text("Fortsett", style: cancelDialogButtonTextStyle)),
-                onPressed: () => Navigator.pop(context, false)),
+                onPressed: () => Navigator.pop(context, 1)),
             SimpleDialogOption(
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
               child: Center(
@@ -59,14 +60,15 @@ class EndTripDialog extends StatelessWidget {
                 "Fullfør",
                 style: okDialogButtonTextStyle,
               )),
-              onPressed: () => Navigator.pop(context, true),
+              onPressed: () => Navigator.pop(context, 2),
             ),
           ]),
         ]);
   }
 }
 
-Future<bool?> showEndTripDialog(BuildContext context, connected) async {
+// 0: discard, 1 or null: continue, 2: end trip
+Future<int?> showEndTripDialog(BuildContext context, connected) async {
   return await showDialog(
       context: context,
       builder: (BuildContext context) {

@@ -21,10 +21,10 @@ import 'trip_data_manager.dart';
 import '../utils/other.dart';
 
 class StartTripPage extends StatefulWidget {
-  const StartTripPage({Key? key, this.isConnected = true}) : super(key: key);
+  const StartTripPage({Key? key, this.isOfflineMode = true}) : super(key: key);
 
   static const String route = 'start-trip';
-  final bool isConnected;
+  final bool isOfflineMode;
 
   static const IconData downloadedIcon = Icons.download_done;
   static const IconData notDownloadedIcon = Icons.download_for_offline_sharp;
@@ -128,7 +128,7 @@ class _StartTripPageState extends State<StartTripPage>
     return Material(
         child: Scaffold(
             appBar: AppBar(
-              title: Text(widget.isConnected
+              title: Text(widget.isOfflineMode
                   ? 'Start oppsynstur'
                   : 'Start oppsynstur offline'),
               actions: const [SettingsIconButton()],
@@ -139,7 +139,7 @@ class _StartTripPageState extends State<StartTripPage>
                   : Column(
                       children: _farmNames.isEmpty
                           ? [
-                              widget.isConnected
+                              widget.isOfflineMode
                                   ? const NoFarmInfo()
                                   : const NoFarmNoInternetInfo()
                             ]
@@ -275,12 +275,12 @@ class _StartTripPageState extends State<StartTripPage>
                   _mapIcon,
                   color: _mapDownloaded
                       ? Colors.green
-                      : widget.isConnected
+                      : widget.isOfflineMode
                           ? null
                           : Colors.red,
                 ),
                 onPressed: () {
-                  if (widget.isConnected && !_mapDownloaded) {
+                  if (widget.isOfflineMode && !_mapDownloaded) {
                     setState(() {
                       _animationController.repeat();
                       _downloadingMap = true;
@@ -338,10 +338,10 @@ class _StartTripPageState extends State<StartTripPage>
         maxZoom: OfflineZoomLevels.max);
     _mapIcon = _mapDownloaded
         ? StartTripPage.downloadedIcon
-        : widget.isConnected
+        : widget.isOfflineMode
             ? StartTripPage.notDownloadedIcon
             : Icons.clear;
-    if (!widget.isConnected && !_mapDownloaded) {
+    if (!widget.isOfflineMode && !_mapDownloaded) {
       setState(() {
         _feedbackText =
             'Kan ikke starte oppsynstur,\nvalgt kart er ikke nedlastet';
@@ -360,12 +360,12 @@ class _StartTripPageState extends State<StartTripPage>
               MaterialStateProperty.all(Size.fromHeight(mainButtonHeight)),
           backgroundColor: MaterialStateProperty.all((_noMapsDefined ||
                   _downloadingMap ||
-                  (!widget.isConnected && !_mapDownloaded))
+                  (!widget.isOfflineMode && !_mapDownloaded))
               ? Colors.grey
               : null)),
       onPressed: () async {
         if (!_noMapsDefined) {
-          if (widget.isConnected) {
+          if (widget.isOfflineMode) {
             _startTrip();
           } else {
             if (_mapDownloaded) {
@@ -417,6 +417,7 @@ class _StartTripPageState extends State<StartTripPage>
                             const Duration(seconds: 15),
                             (_) => trySynchronize());
                       },
+                      isOfflineMode: widget.isOfflineMode,
                       northWest: mapBounds['northWest']!,
                       southEast: mapBounds['southEast']!,
                       farmId: _farmDocs[_farmNames.indexOf(_selectedFarmName)]
@@ -501,7 +502,7 @@ class _StartTripPageState extends State<StartTripPage>
   }
 
   Future<void> _readFarms() async {
-    if (widget.isConnected) {
+    if (widget.isOfflineMode) {
       QuerySnapshot farmsSnapshot = await FirebaseFirestore.instance
           .collection('farms')
           .where('personnel',
@@ -533,7 +534,7 @@ class _StartTripPageState extends State<StartTripPage>
       for (int i = 0; i < _farmDocs.length; i++) {
         _farmNames.add(_farmDocs[i]['name']);
 
-        if (widget.isConnected) {
+        if (widget.isOfflineMode) {
           offlineFarmElement = _farmDocs[i];
           offlineFarmElement.remove('personnel');
           offlineFarmData.add(offlineFarmElement);
@@ -544,7 +545,7 @@ class _StartTripPageState extends State<StartTripPage>
         }
       }
 
-      if (widget.isConnected) {
+      if (widget.isOfflineMode) {
         File(offlineFarmsFilePath)
             .writeAsStringSync(json.encode(offlineFarmData));
       }
