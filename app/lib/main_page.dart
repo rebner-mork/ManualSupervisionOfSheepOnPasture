@@ -174,7 +174,7 @@ class _MainPageState extends State<MainPage> {
         break;
       case RegistrationType.predator:
         setState(() {
-          _registeredPredatorAmount += 1;
+          _registeredPredatorAmount += data['quantity'] as int;
         });
         break;
       case RegistrationType.note:
