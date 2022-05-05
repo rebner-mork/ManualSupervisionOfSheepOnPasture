@@ -186,13 +186,12 @@ class _MainPageState extends State<MainPage> {
         break;
       case RegistrationType.cadaver:
         setState(() {
-          _registeredTotalSheepAmount += 1;
           _registeredCadaverAmount += 1;
         });
         break;
       case RegistrationType.predator:
         setState(() {
-          _registeredPredatorAmount += 1;
+          _registeredPredatorAmount += data['quantity'] as int;
         });
         break;
       case RegistrationType.note:
@@ -321,26 +320,6 @@ class _MainPageState extends State<MainPage> {
                                     _cancelSelectPositionMode,
                                 onRegistrationComplete:
                                     (Map<String, Object> data) {
-                                  switch (_selectedRegistrationType) {
-                                    case RegistrationType.sheep:
-                                      int sheepAmountRegistered =
-                                          data['sheep']! as int;
-                                      if (sheepAmountRegistered > 0) {
-                                        setState(() {
-                                          _registeredTotalSheepAmount +=
-                                              sheepAmountRegistered;
-                                        });
-                                      }
-                                      break;
-                                    case RegistrationType.injury:
-                                      setState(() {
-                                        _registeredTotalSheepAmount += 1;
-                                      });
-                                      break;
-                                    default:
-                                      break;
-                                  }
-
                                   _onRegistrationComplete(data);
                                 },
                                 onNewPosition: (position) =>

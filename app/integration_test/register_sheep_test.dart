@@ -1,5 +1,6 @@
 import 'package:app/providers/settings_provider.dart';
 import 'package:app/register/register_sheep.dart';
+import 'package:app/utils/constants.dart';
 import 'package:app/utils/map_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -24,6 +25,7 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   testWidgets('Distance: Initial layout and content',
       (WidgetTester tester) async {
+    await setConstants();
     await tester.pumpWidget(MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (context) => SettingsProvider())
