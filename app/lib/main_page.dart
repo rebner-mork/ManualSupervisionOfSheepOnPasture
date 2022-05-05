@@ -127,7 +127,6 @@ class _MainPageState extends State<MainPage> {
   Future<bool> _endTrip(BuildContext context) async {
     bool isConnected = await isConnectedToInternet();
     await showEndTripDialog(context, isConnected).then((int? statusCode) {
-      debugPrint(statusCode.toString());
       // If trip should end
       if (statusCode != null && statusCode != 1) {
         // If trip should upload
