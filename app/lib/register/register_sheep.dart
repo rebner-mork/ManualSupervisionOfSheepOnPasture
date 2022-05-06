@@ -111,8 +111,8 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
   Future<void> _initGpsQuestionsAndDialog() async {
     // TODO: try/catch (Unhandled Exception: Location services does not have permissions)
     await getDevicePosition();
-    _isShortDistance = true;
-    //distance.distance(_devicePosition, widget.sheepPosition) < 50;
+    _isShortDistance =
+        distance.distance(_devicePosition, widget.sheepPosition) < 50;
 
     questions = List.from(distanceSheepQuestions);
     questionContexts = [
@@ -525,11 +525,11 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
                               InputRowImage(
                                   text: 'Lam',
                                   controller: _textControllers['lambs']!,
-                                  imagePath: 'images/sheep.png', // TODO: lite
-                                  isSmall: true, // TODO: lite bool small
+                                  imagePath: 'images/sheep.png',
+                                  isSmall: true,
                                   onChanged: _validateInput,
                                   isFieldValid: _isFieldValid['lambs']!),
-                              const InputFieldSpacer(), // TODO: add headline
+                              const InputFieldSpacer(),
                               const InputDividerWithHeadline(
                                   headline: 'Ullfarger'),
                               InputRowImage(
