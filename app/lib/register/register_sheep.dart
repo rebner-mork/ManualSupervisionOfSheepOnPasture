@@ -111,8 +111,8 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
   Future<void> _initGpsQuestionsAndDialog() async {
     // TODO: try/catch (Unhandled Exception: Location services does not have permissions)
     await getDevicePosition();
-    _isShortDistance =
-        distance.distance(_devicePosition, widget.sheepPosition) < 50;
+    _isShortDistance = true;
+    //distance.distance(_devicePosition, widget.sheepPosition) < 50;
 
     questions = List.from(distanceSheepQuestions);
     questionContexts = [
@@ -443,7 +443,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
       eartags.add(InputDividerWithHeadline(
           headline: 'Øremerker', globalKey: firstHeadlineFieldKeys[1]));
       for (String eartagColor in widget.eartags.keys) {
-        eartags.add(InputRow(
+        eartags.add(InputRowIcon(
             text: colorValueStringToColorStringGuiPlural[eartagColor]!,
             controller: _textControllers[
                 '${colorValueStringToColorString[eartagColor]}Ear']!,
@@ -469,7 +469,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
       ties.add(InputDividerWithHeadline(
           headline: 'Slips', globalKey: firstHeadlineFieldKeys[2]));
       for (String tieColor in widget.ties.keys) {
-        ties.add(InputRow(
+        ties.add(InputRowIcon(
           text: colorValueStringToColorStringGuiPlural[tieColor]!,
           controller: _textControllers[
               '${colorValueStringToColorString[tieColor]}Tie']!,
@@ -514,56 +514,52 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
                               const SizedBox(height: 10),
                               const InputDividerWithHeadline(
                                   headline: 'Antall'),
-                              InputRow(
+                              InputRowImage(
                                   text: 'Sauer & lam',
                                   controller: _textControllers['sheep']!,
-                                  iconData: RpgAwesome.sheep,
-                                  color: Colors.grey,
+                                  imagePath: 'images/sheep.png',
                                   onChanged: _validateInput,
                                   isFieldValid: _isFieldValid['sheep']!),
                               const InputFieldSpacer(),
-                              InputRow(
+                              InputRowImage(
                                   text: 'Lam',
                                   controller: _textControllers['lambs']!,
-                                  iconData: RpgAwesome.sheep,
-                                  color: Colors.grey,
-                                  iconSize: 24,
+                                  imagePath: 'images/sheep.png', // TODO: lite
+                                  isSmall: true, // TODO: lite bool small
                                   onChanged: _validateInput,
                                   isFieldValid: _isFieldValid['lambs']!),
-                              const InputFieldSpacer(),
-                              InputRow(
+                              const InputFieldSpacer(), // TODO: add headline
+                              const InputDividerWithHeadline(
+                                  headline: 'Ullfarger'),
+                              InputRowImage(
                                   text: 'Hvite',
                                   controller: _textControllers['white']!,
-                                  iconData: RpgAwesome.sheep,
-                                  color: Colors.white,
+                                  imagePath: 'images/sheep.png',
                                   scrollController: scrollController,
                                   globalKey: firstHeadlineFieldKeys[0],
                                   ownKey: firstHeadlineFieldKeys[0],
                                   onChanged: _validateInput,
                                   isFieldValid: _isFieldValid['colors']!),
                               const InputFieldSpacer(),
-                              InputRow(
+                              InputRowImage(
                                   text: 'Brune',
                                   controller: _textControllers['brown']!,
-                                  iconData: RpgAwesome.sheep,
-                                  color: Colors.brown,
+                                  imagePath: 'images/brown_sheep.png',
                                   onChanged: _validateInput,
                                   isFieldValid: _isFieldValid['colors']!),
                               const InputFieldSpacer(),
-                              InputRow(
+                              InputRowImage(
                                   text: 'Svarte',
                                   controller: _textControllers['black']!,
-                                  iconData: RpgAwesome.sheep,
-                                  color: Colors.black,
+                                  imagePath: 'images/black_sheep.png',
                                   onChanged: _validateInput,
                                   isFieldValid: _isFieldValid['colors']!),
                               const InputFieldSpacer(),
-                              InputRow(
+                              InputRowImage(
                                   text: 'Svart hode',
                                   controller: _textControllers['blackHead']!,
                                   isFieldValid: _isFieldValid['colors']!,
-                                  iconData: RpgAwesome.sheep,
-                                  color: Colors.black,
+                                  imagePath: 'images/blackhead_sheep.png',
                                   onChanged: _validateInput,
                                   scrollController: scrollController,
                                   globalKey: firstHeadlineFieldKeys[1]),

@@ -91,8 +91,8 @@ class _LoadingDataState extends State<LoadingData>
   }
 }
 
-class InputRow extends StatelessWidget {
-  const InputRow(
+class InputRowIcon extends StatelessWidget {
+  const InputRowIcon(
       {required this.text,
       required this.controller,
       required this.iconData,
@@ -130,11 +130,96 @@ class InputRow extends StatelessWidget {
                   color: color == Colors.white
                       ? Colors.grey.shade400
                       : Colors.transparent,
-                  child: Icon(
-                    iconData,
-                    color: color,
-                    size: iconSize,
+                  child: Icon(iconData, color: color, size: iconSize))),
+          const Spacer(),
+          Flexible(
+              flex: 11,
+              child: SizedBox(
+                  width: 115,
+                  child: Text(
+                    text,
+                    style: const TextStyle(fontSize: 19),
                   ))),
+          const Spacer(),
+          Flexible(
+              flex: 20,
+              child: Container(
+                  constraints: const BoxConstraints(maxWidth: 70),
+                  child: TextFormField(
+                    textAlign: TextAlign.center,
+                    keyboardType: TextInputType.number,
+                    textInputAction: TextInputAction.next,
+                    controller: controller,
+                    onFieldSubmitted: (_) => {
+                      if (scrollController != null && globalKey != null)
+                        scrollToKey(
+                            scrollController: scrollController!,
+                            key: globalKey!),
+                    },
+                    onChanged: (_) => {
+                      if (onChanged != null) {onChanged!()}
+                    },
+                    decoration: InputDecoration(
+                      focusedBorder: OutlineInputBorder(
+                          gapPadding: 4.0,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(4.0)),
+                          borderSide: isFieldValid
+                              ? const BorderSide(color: Colors.grey)
+                              : const BorderSide(color: Colors.red)),
+                      enabledBorder: OutlineInputBorder(
+                          gapPadding: 4.0,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(4.0)),
+                          borderSide: isFieldValid
+                              ? const BorderSide(color: Colors.grey)
+                              : const BorderSide(color: Colors.red)),
+                      hintText: '0',
+                      border: const OutlineInputBorder(),
+                      contentPadding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                    ),
+                  )))
+        ]);
+  }
+}
+
+class InputRowImage extends StatelessWidget {
+  const InputRowImage(
+      {required this.text,
+      required this.controller,
+      required this.imagePath,
+      this.isSmall = false,
+      this.scrollController,
+      this.isFieldValid = true,
+      this.onChanged,
+      this.globalKey,
+      this.ownKey,
+      Key? key})
+      : super(key: key);
+
+  final String text;
+  final TextEditingController controller;
+  final String imagePath;
+  final bool isSmall;
+  final ScrollController? scrollController;
+  final bool isFieldValid;
+  final VoidCallback? onChanged;
+  final GlobalKey? globalKey;
+  final GlobalKey? ownKey;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        key: ownKey,
+        children: [
+          Flexible(
+              flex: 5,
+              child: isSmall
+                  ? SizedBox(
+                      width: 45,
+                      child: Image(image: AssetImage(imagePath), height: 35))
+                  : Image(image: AssetImage(imagePath), height: 45)),
           const Spacer(),
           Flexible(
               flex: 11,
