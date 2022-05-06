@@ -515,9 +515,10 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
                               const InputDividerWithHeadline(
                                   headline: 'Antall'),
                               InputRowImage(
-                                  text: 'Sauer & lam',
+                                  text: 'Totalt',
                                   controller: _textControllers['sheep']!,
                                   imagePath: 'images/sheep.png',
+                                  isSheepAndLamb: true,
                                   onChanged: _validateInput,
                                   isFieldValid: _isFieldValid['sheep']!),
                               const InputFieldSpacer(),
