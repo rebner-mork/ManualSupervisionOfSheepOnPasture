@@ -410,12 +410,7 @@ class _MainPageState extends State<MainPage> {
                                     MediaQuery.of(context).viewPadding.bottom,
                                 right: buttonInset,
                                 child: CircularButton(
-                                  child: const Text(
-                                    '+?',
-                                    style: TextStyle(
-                                        fontSize: 28,
-                                        fontWeight: FontWeight.bold),
-                                  ),
+                                  child: Icon(Icons.add, size: iconSize + 8),
                                   onPressed: () {
                                     Scaffold.of(context).openEndDrawer();
                                   },
