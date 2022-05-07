@@ -297,7 +297,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
       setState(() {
         _isFieldValid['sheep'] = false;
         _isFieldValid['lambs'] = false;
-        _validatorText = 'Det er flere lam enn sauer & lam';
+        _validatorText = 'Det er flere lam enn totalt antall sau';
       });
       returnValue = false;
     } else if (_isFieldValid['lambs'] == false) {
@@ -318,7 +318,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
       setState(() {
         _isFieldValid['colors'] = false;
         _isFieldValid['sheep'] = false;
-        _validatorText = 'Summen av ullfarger er høyere enn antall sauer & lam';
+        _validatorText = 'Summen av ullfarger er høyere enn totalt antall sau';
       });
       returnValue = false;
     } else if (_isFieldValid['colors'] == false) {
@@ -347,7 +347,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
         setState(() {
           _isFieldValid['eartags'] = false;
           _isFieldValid['sheep'] = false;
-          _validatorText = 'Det er flere øremerker enn sauer & lam';
+          _validatorText = 'Det er flere øremerker enn totalt antall sau';
         });
         returnValue = false;
       } else if (_isFieldValid['eartags'] == false) {
@@ -375,7 +375,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
         setState(() {
           _isFieldValid['ties'] = false;
           _isFieldValid['sheep'] = false;
-          _validatorText = 'Det er flere slips enn sauer & lam';
+          _validatorText = 'Det er flere slips enn totalt antall sau';
         });
         returnValue = false;
       } else if (_isFieldValid['ties'] == false) {
