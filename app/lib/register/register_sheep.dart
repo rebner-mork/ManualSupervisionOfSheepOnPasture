@@ -297,7 +297,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
       setState(() {
         _isFieldValid['sheep'] = false;
         _isFieldValid['lambs'] = false;
-        _validatorText = 'Det er flere lam enn totalt antall sau';
+        _validatorText = 'Det er flere lam enn totalt';
       });
       returnValue = false;
     } else if (_isFieldValid['lambs'] == false) {
