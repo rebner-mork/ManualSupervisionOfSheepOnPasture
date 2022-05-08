@@ -163,7 +163,7 @@ class InputRowIcon extends StatelessWidget {
                           borderRadius:
                               const BorderRadius.all(Radius.circular(4.0)),
                           borderSide: isFieldValid
-                              ? const BorderSide(color: Colors.grey)
+                              ? const BorderSide(color: Colors.green)
                               : const BorderSide(color: Colors.red)),
                       enabledBorder: OutlineInputBorder(
                           gapPadding: 4.0,
@@ -258,7 +258,7 @@ class InputRowImage extends StatelessWidget {
                       borderRadius:
                           const BorderRadius.all(Radius.circular(4.0)),
                       borderSide: isFieldValid
-                          ? const BorderSide(color: Colors.grey)
+                          ? const BorderSide(color: Colors.green)
                           : const BorderSide(color: Colors.red)),
                   enabledBorder: OutlineInputBorder(
                       gapPadding: 4.0,
