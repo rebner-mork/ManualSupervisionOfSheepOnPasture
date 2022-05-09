@@ -314,7 +314,7 @@ class InputDividerWithHeadline extends StatelessWidget {
   }
 }
 
-Future<bool> cancelRegistrationDialog(BuildContext context) async {
+Future<bool?> cancelRegistrationDialog(BuildContext context) async {
   return await showDialog(
       context: context,
       builder: (BuildContext context) {

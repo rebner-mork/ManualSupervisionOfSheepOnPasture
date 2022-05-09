@@ -8,7 +8,7 @@ abstract class RegisterPage {
   Future<void> backButtonPressed(
       BuildContext context, VoidCallback? onWillPop) async {
     await cancelRegistrationDialog(context).then((value) => {
-          if (value)
+          if (value != null && value)
             {
               if (onWillPop != null) {onWillPop()},
               Navigator.pop(context)
@@ -19,7 +19,7 @@ abstract class RegisterPage {
   Future<bool> onWillPop(BuildContext context, VoidCallback? onWillPop) async {
     bool returnValue = false;
     await cancelRegistrationDialog(context)
-        .then((value) => {returnValue = value});
+        .then((value) => {returnValue = value ?? false});
     if (returnValue && onWillPop != null) {
       onWillPop();
     }
