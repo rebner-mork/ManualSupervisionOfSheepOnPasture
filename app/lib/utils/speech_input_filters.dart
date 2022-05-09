@@ -73,8 +73,8 @@ final Map<String, List<String>?> colorsFilter = {
   'yellow': ['mellow', 'yeah love'],
   'blue': ['glue', 'boo', 'play', 'flute', 'bleed', 'lou', 'luke'],
   'green': ['great', 'when'],
-  'purple': null, // test
-  'pink': null, // test
-  'grey': null, // test
-  'orange': null // test
+  'purple': [], // test
+  'pink': [], // test
+  'grey': [], // test
+  'orange': [] // test
 };
