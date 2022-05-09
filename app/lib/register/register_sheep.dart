@@ -416,7 +416,7 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
       });
     }
     await cancelRegistrationDialog(context).then((value) => {
-          if (value)
+          if (value != null && value)
             {
               if (widget.onWillPop != null) {widget.onWillPop!()},
               Navigator.pop(context)
