@@ -146,9 +146,11 @@ class _RegisterSheepState extends State<RegisterSheep> with RegisterPage {
       }
     }
 
-    setState(() {
-      _isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
 
     if (Provider.of<SettingsProvider>(context, listen: false).autoDialog) {
       if (widget.stt.isAvailable) {
