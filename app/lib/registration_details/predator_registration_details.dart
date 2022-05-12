@@ -19,7 +19,7 @@ class PredatorRegistrationDetails extends StatelessWidget {
             child: Table(
                 columnWidths: const {
                   0: FixedColumnWidth(80),
-                  1: FixedColumnWidth(80)
+                  1: FixedColumnWidth(120)
                 },
                 defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                 children: [
