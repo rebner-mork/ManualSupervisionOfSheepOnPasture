@@ -8,7 +8,6 @@ import 'package:integration_test/integration_test.dart';
 import 'package:provider/provider.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:fluttericon/rpg_awesome_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 
 final Map<String, bool> eartags = {
@@ -50,13 +49,11 @@ void main() {
     expect(find.text('Avstandsregistrering sau'), findsOneWidget);
 
     expect(find.text('Antall'), findsOneWidget);
-    expect(find.text('Sauer & lam'), findsOneWidget);
+    expect(find.text('Totalt'), findsOneWidget);
     expect(find.text('Lam'), findsOneWidget);
     expect(find.text('Hvite'), findsOneWidget);
     expect(find.text('Svarte'), findsOneWidget);
     expect(find.text('Svart hode'), findsOneWidget);
-
-    expect(find.byIcon(RpgAwesome.sheep), findsWidgets);
   });
 
   testWidgets('Close: Initial layout and content', (WidgetTester tester) async {
@@ -86,12 +83,11 @@ void main() {
     expect(find.text('Nærregistrering sau'), findsOneWidget);
 
     expect(find.text('Antall'), findsOneWidget);
-    expect(find.text('Sauer & lam'), findsOneWidget);
+    expect(find.text('Totalt'), findsOneWidget);
     expect(find.text('Lam'), findsOneWidget);
     expect(find.text('Hvite'), findsOneWidget);
     expect(find.text('Svarte'), findsOneWidget);
     expect(find.text('Svart hode'), findsOneWidget);
-    expect(find.byIcon(RpgAwesome.sheep), findsWidgets);
 
     expect(find.text('Slips'), findsOneWidget);
     expect(find.byIcon(FontAwesome5.black_tie), findsWidgets);
