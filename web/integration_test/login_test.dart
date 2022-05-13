@@ -12,6 +12,7 @@ void main() async {
   await firebaseSetup(createUser: true);
 
   testWidgets('Integration test login', (WidgetTester tester) async {
+    FlutterError.onError = ignoreOverflowErrors;
     await tester.pumpWidget(MaterialApp(
         home: const Material(child: LoginWidget()),
         routes: {MainTabs.route: (context) => const MainTabs()}));
@@ -26,8 +27,9 @@ void main() async {
     // Enter login information and log in
     await tester.enterText(emailField, email);
     await tester.enterText(passwordField, password);
+
     await tester.tap(loginButton);
-    await tester.pump(const Duration(seconds: 2));
+    await tester.pump(const Duration(seconds: 3));
 
     // Assert user is signed in
     expect(FirebaseAuth.instance.currentUser, isNotNull);
@@ -35,4 +37,26 @@ void main() async {
     // Assert LoginPage is no longer visible
     expect(find.text('Logg inn'), findsNothing);
   });
+}
+// Ignoring because we are running web on a mobile emulator
+// https://itnext.io/widget-testing-dealing-with-renderflex-overflow-errors-9488f9cf9a29
+void ignoreOverflowErrors(
+  FlutterErrorDetails details, {
+  bool forceReport = false,
+}) {
+  bool ifIsOverflowError = false;
+
+// Detect overflow error.
+  var exception = details.exception;
+  if (exception is FlutterError) {
+    ifIsOverflowError = !exception.diagnostics.any(
+      (e) => e.value.toString().startsWith("A RenderFlex overflowed by"),
+    );
+  }
+// Ignore if is overflow error.
+  if (ifIsOverflowError) {
+    debugPrint('Ignored overflow error');
+  } else {
+    FlutterError.dumpErrorToConsole(details, forceReport: forceReport);
+  }
 }
