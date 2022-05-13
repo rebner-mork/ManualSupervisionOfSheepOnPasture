@@ -38,7 +38,7 @@ void main() async {
     expect(find.text('Logg inn'), findsNothing);
   });
 }
-
+// Ignoring because we are running web on a mobile emulator
 // https://itnext.io/widget-testing-dealing-with-renderflex-overflow-errors-9488f9cf9a29
 void ignoreOverflowErrors(
   FlutterErrorDetails details, {
