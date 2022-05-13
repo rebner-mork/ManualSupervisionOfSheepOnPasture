@@ -45,7 +45,7 @@ void ignoreOverflowErrors(
   bool forceReport = false,
 }) {
   bool ifIsOverflowError = false;
-  bool isUnableToLoadAsset = false;
+
 // Detect overflow error.
   var exception = details.exception;
   if (exception is FlutterError) {
