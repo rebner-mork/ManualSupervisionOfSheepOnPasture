@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:web/my_page/my_farm_page.dart';
+import 'package:web/my_page/define_farm.dart';
 
 import 'firebase_setup.dart';
 
