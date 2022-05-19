@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:web/login_and_sign_up/login_or_sign_up_page.dart';
+import 'package:web/login_or_sign_up/login_or_sign_up_page.dart';
 import 'package:web/main_tabs/main_tabs.dart';
 import 'firebase_options.dart';
 import 'package:web/firebase_options.dart';

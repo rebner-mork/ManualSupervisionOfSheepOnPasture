@@ -4,8 +4,8 @@ import 'package:latlong2/latlong.dart';
 
 import '../../../utils/map_utils.dart' as map_utils;
 
-class MapOfTripWidget extends StatefulWidget {
-  const MapOfTripWidget(
+class MapOfTrip extends StatefulWidget {
+  const MapOfTrip(
       {required this.mapCenter,
       required this.track,
       required this.registrations,
@@ -17,11 +17,11 @@ class MapOfTripWidget extends StatefulWidget {
   final List<Map<String, dynamic>> registrations;
 
   @override
-  State<MapOfTripWidget> createState() => _MapOfTripWidgetState();
+  State<MapOfTrip> createState() => _MapOfTripState();
 }
 
-class _MapOfTripWidgetState extends State<MapOfTripWidget> {
-  _MapOfTripWidgetState();
+class _MapOfTripState extends State<MapOfTrip> {
+  _MapOfTripState();
 
   MapController _mapController = MapController();
   late List<Polyline> linesOfSight;
