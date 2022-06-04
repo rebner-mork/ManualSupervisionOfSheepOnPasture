@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:web/login_and_sign_up/sign_up_widget.dart';
+import 'package:web/login_or_sign_up/sign_up_widget.dart';
 
 void main() {
   group('Widget tests', () {

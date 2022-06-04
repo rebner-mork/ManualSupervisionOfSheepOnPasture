@@ -4,7 +4,7 @@ import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:web/trips/detailed/cadaver_table.dart';
 import 'package:web/trips/detailed/injured_sheep_table.dart';
 import 'package:web/trips/detailed/main_trip_info_table.dart';
-import 'package:web/trips/detailed/map_of_trip_widget.dart';
+import 'package:web/trips/detailed/map_of_trip.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:web/trips/detailed/predator_table.dart';
 import 'package:web/trips/detailed/note_table.dart';
@@ -267,7 +267,7 @@ class _DetailedTripState extends State<DetailedTrip> {
           flex: 3,
           child: Padding(
               padding: const EdgeInsets.only(top: 20, left: 20, bottom: 20),
-              child: MapOfTripWidget(
+              child: MapOfTrip(
                   mapCenter: widget.tripData['mapCenter']! as LatLng,
                   track: widget.tripData['track']! as List<Map<String, double>>,
                   registrations: widget.tripData['registrations']!
