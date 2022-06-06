@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "867330479261",
+    "project_id": "master-backend-93896",
+    "storage_bucket": "master-backend-93896.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:867330479261:android:a2909a54354bcec03c3074",
+        "android_client_info": {
+          "package_name": "android.master.sheep"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "867330479261-r6hq8qmgcugtl40jk9badk5nr9unoh6g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRxlk2vXTO0z8FYNGEyt9wNE_yWc8M5c0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "867330479261-r6hq8qmgcugtl40jk9badk5nr9unoh6g.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "867330479261-rm5k0la2clbg9p4t6mlugshumg7a5nlv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "ios.master.sheep"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
